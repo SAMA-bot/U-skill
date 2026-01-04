@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, GraduationCap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
@@ -16,6 +17,7 @@ const navLinks = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -77,7 +79,7 @@ export function Header() {
           <div className="hidden md:flex items-center gap-2">
             <ThemeToggle />
             <Button
-              onClick={() => scrollToSection('#contact')}
+              onClick={() => navigate('/auth/login')}
               className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
             >
               Get Started
@@ -117,7 +119,10 @@ export function Header() {
                 </button>
               ))}
               <Button
-                onClick={() => scrollToSection('#contact')}
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  navigate('/auth/login');
+                }}
                 className="mt-2 bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 Get Started
