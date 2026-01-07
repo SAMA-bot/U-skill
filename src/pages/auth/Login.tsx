@@ -39,13 +39,14 @@ export default function Login() {
 
     setIsLoading(true);
     
-    // Simulate login - replace with actual auth when backend is connected
+    // Simulate login - navigate to dashboard for demo
     setTimeout(() => {
       setIsLoading(false);
       toast({
-        title: "Demo Mode",
-        description: "Authentication will be available once the backend is connected.",
+        title: "Login Successful",
+        description: "Welcome to your dashboard!",
       });
+      navigate('/dashboard');
     }, 1500);
   };
 
