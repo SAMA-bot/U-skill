@@ -14,10 +14,14 @@ import {
   Menu,
   Download,
   FileText,
-  X
+  X,
+  TrendingUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import PerformanceChart from "@/components/dashboard/PerformanceChart";
+import CapacityRadarChart from "@/components/dashboard/CapacityRadarChart";
+import MotivationTrendChart from "@/components/dashboard/MotivationTrendChart";
 
 const sidebarItems = [
   { icon: Home, label: "Dashboard", active: true },
@@ -260,13 +264,21 @@ const FacultyDashboard = () => {
                 </p>
               </div>
               <div className="px-4 py-5 sm:p-6">
-                <div className="h-64 flex items-center justify-center bg-muted/30 rounded-lg">
-                  <div className="text-center">
-                    <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">Performance Chart</p>
-                    <p className="text-xs text-muted-foreground mt-1">Interactive chart coming soon</p>
+                <div className="flex gap-4 mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-primary" />
+                    <span className="text-xs text-muted-foreground">Teaching</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-accent" />
+                    <span className="text-xs text-muted-foreground">Research</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-green-500" />
+                    <span className="text-xs text-muted-foreground">Service</span>
                   </div>
                 </div>
+                <PerformanceChart />
               </div>
             </motion.div>
 
@@ -284,16 +296,55 @@ const FacultyDashboard = () => {
                 </p>
               </div>
               <div className="px-4 py-5 sm:p-6">
-                <div className="h-64 flex items-center justify-center bg-muted/30 rounded-lg">
-                  <div className="text-center">
-                    <ClipboardList className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">Radar Chart</p>
-                    <p className="text-xs text-muted-foreground mt-1">Interactive chart coming soon</p>
+                <div className="flex gap-4 mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-primary" />
+                    <span className="text-xs text-muted-foreground">Current</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-muted-foreground" style={{ opacity: 0.5 }} />
+                    <span className="text-xs text-muted-foreground">Target</span>
                   </div>
                 </div>
+                <CapacityRadarChart />
               </div>
             </motion.div>
           </div>
+
+          {/* Motivation Trend Chart */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.55 }}
+            className="bg-card shadow-sm rounded-lg overflow-hidden border border-border mb-8"
+          >
+            <div className="px-4 py-5 sm:px-6 border-b border-border">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-medium text-foreground flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                    Motivation Index Trends
+                  </h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Weekly motivation and engagement scores
+                  </p>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-primary" />
+                    <span className="text-xs text-muted-foreground">Motivation</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-accent" />
+                    <span className="text-xs text-muted-foreground">Engagement</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="px-4 py-5 sm:p-6">
+              <MotivationTrendChart />
+            </div>
+          </motion.div>
 
           {/* Activities and Resources */}
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 mb-8">
