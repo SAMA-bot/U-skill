@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { GraduationCap, Eye, EyeOff, Loader2 } from 'lucide-react';
@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 const loginSchema = z.object({
   email: z.string().trim().email({ message: "Please enter a valid email address" }),
@@ -21,6 +23,14 @@ export default function Login() {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, loading } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/dashboard');
+    }
+  }, [user, loading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,15 +49,27 @@ export default function Login() {
 
     setIsLoading(true);
     
-    // Simulate login - navigate to dashboard for demo
-    setTimeout(() => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+
+    if (error) {
       setIsLoading(false);
       toast({
-        title: "Login Successful",
-        description: "Welcome to your dashboard!",
+        title: "Login Failed",
+        description: error.message,
+        variant: "destructive",
       });
-      navigate('/dashboard');
-    }, 1500);
+      return;
+    }
+
+    toast({
+      title: "Login Successful",
+      description: "Welcome to your dashboard!",
+    });
+    navigate('/dashboard');
+    setIsLoading(false);
   };
 
   return (
