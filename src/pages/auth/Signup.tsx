@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { GraduationCap, Eye, EyeOff, Loader2 } from 'lucide-react';
@@ -15,6 +15,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 const signupSchema = z.object({
   fullName: z.string().trim().min(2, { message: "Full name must be at least 2 characters" }).max(100),
@@ -44,6 +46,14 @@ export default function Signup() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, loading } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/dashboard');
+    }
+  }, [user, loading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,14 +71,43 @@ export default function Signup() {
 
     setIsLoading(true);
     
-    // Simulate signup - replace with actual auth when backend is connected
-    setTimeout(() => {
+    const { error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: {
+        emailRedirectTo: window.location.origin,
+        data: {
+          full_name: fullName.trim(),
+          department,
+        },
+      },
+    });
+
+    if (error) {
       setIsLoading(false);
       toast({
-        title: "Demo Mode",
-        description: "Account creation will be available once the backend is connected.",
+        title: "Signup Failed",
+        description: error.message,
+        variant: "destructive",
       });
-    }, 1500);
+      return;
+    }
+
+    // Update the profile with department after signup
+    const { data: { user: newUser } } = await supabase.auth.getUser();
+    if (newUser) {
+      await supabase
+        .from('profiles')
+        .update({ department })
+        .eq('user_id', newUser.id);
+    }
+
+    toast({
+      title: "Account Created",
+      description: "Welcome! Redirecting to your dashboard...",
+    });
+    navigate('/dashboard');
+    setIsLoading(false);
   };
 
   return (

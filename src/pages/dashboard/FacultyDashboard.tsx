@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -15,13 +15,23 @@ import {
   Download,
   FileText,
   X,
-  TrendingUp
+  TrendingUp,
+  Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
 import CapacityRadarChart from "@/components/dashboard/CapacityRadarChart";
 import MotivationTrendChart from "@/components/dashboard/MotivationTrendChart";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+interface Profile {
+  full_name: string;
+  department: string | null;
+  designation: string | null;
+}
 
 const sidebarItems = [
   { icon: Home, label: "Dashboard", active: true },
@@ -30,37 +40,6 @@ const sidebarItems = [
   { icon: Clock, label: "Training Schedule" },
   { icon: Star, label: "Motivation Tools" },
   { icon: Calendar, label: "My Calendar" },
-];
-
-const statsCards = [
-  { label: "Capacity Score", value: "84/100", icon: ClipboardList },
-  { label: "Performance Score", value: "78/100", icon: BarChart3 },
-  { label: "Motivation Index", value: "82/100", icon: Star },
-  { label: "Training Hours", value: "68h", icon: Clock },
-];
-
-const activities = [
-  {
-    title: "Innovative Teaching Methods Workshop",
-    description: "Completed 4-hour intensive workshop on modern pedagogy techniques",
-    time: "2 days ago",
-    status: "Completed",
-    statusColor: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  },
-  {
-    title: "Research Methodology Webinar",
-    description: "Attended international webinar on advanced qualitative research methods",
-    time: "1 week ago",
-    status: "In Progress",
-    statusColor: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-  },
-  {
-    title: "Peer Review Session",
-    description: "Participated in departmental peer teaching observation program",
-    time: "2 weeks ago",
-    status: "Completed",
-    statusColor: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-  },
 ];
 
 const resources = [
@@ -84,11 +63,182 @@ const resources = [
 
 const FacultyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [activities, setActivities] = useState<any[]>([]);
+  const [statsData, setStatsData] = useState({
+    capacityScore: 0,
+    performanceScore: 0,
+    motivationIndex: 0,
+    trainingHours: 0,
+  });
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  
   const navigate = useNavigate();
+  const { user, loading, signOut } = useAuth();
+  const { toast } = useToast();
 
-  const handleLogout = () => {
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate('/auth/login');
+    }
+  }, [user, loading, navigate]);
+
+  // Fetch user profile and data
+  useEffect(() => {
+    if (user) {
+      fetchUserData();
+    }
+  }, [user]);
+
+  const fetchUserData = async () => {
+    if (!user) return;
+
+    try {
+      // Fetch profile
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('full_name, department, designation')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (profileData) {
+        setProfile(profileData);
+      }
+
+      // Fetch activities
+      const { data: activitiesData } = await supabase
+        .from('activities')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (activitiesData) {
+        setActivities(activitiesData);
+      }
+
+      // Fetch latest capacity skills average
+      const { data: skillsData } = await supabase
+        .from('capacity_skills')
+        .select('current_level')
+        .eq('user_id', user.id);
+
+      if (skillsData && skillsData.length > 0) {
+        const avgCapacity = Math.round(
+          skillsData.reduce((sum, s) => sum + (s.current_level || 0), 0) / skillsData.length
+        );
+        setStatsData(prev => ({ ...prev, capacityScore: avgCapacity }));
+      }
+
+      // Fetch latest performance metrics
+      const { data: perfData } = await supabase
+        .from('performance_metrics')
+        .select('teaching_score, research_score, service_score')
+        .eq('user_id', user.id)
+        .order('year', { ascending: false })
+        .order('month', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (perfData) {
+        const avgPerf = Math.round(
+          ((perfData.teaching_score || 0) + (perfData.research_score || 0) + (perfData.service_score || 0)) / 3
+        );
+        setStatsData(prev => ({ ...prev, performanceScore: avgPerf }));
+      }
+
+      // Fetch latest motivation score
+      const { data: motivationData } = await supabase
+        .from('motivation_scores')
+        .select('motivation_index')
+        .eq('user_id', user.id)
+        .order('year', { ascending: false })
+        .order('week_number', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (motivationData) {
+        setStatsData(prev => ({ ...prev, motivationIndex: motivationData.motivation_index || 0 }));
+      }
+
+      // Calculate training hours from completed activities
+      const { data: completedActivities } = await supabase
+        .from('activities')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('status', 'completed');
+
+      if (completedActivities) {
+        // Assume 4 hours per completed activity
+        setStatsData(prev => ({ ...prev, trainingHours: completedActivities.length * 4 }));
+      }
+
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    } finally {
+      setLoadingProfile(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    toast({
+      title: "Signed out",
+      description: "You have been signed out successfully.",
+    });
     navigate("/auth/login");
   };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const formatTimeAgo = (date: string) => {
+    const now = new Date();
+    const past = new Date(date);
+    const diffMs = now.getTime() - past.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    return `${Math.floor(diffDays / 30)} months ago`;
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'in_progress':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+      default:
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+    }
+  };
+
+  const statsCards = [
+    { label: "Capacity Score", value: `${statsData.capacityScore}/100`, icon: ClipboardList },
+    { label: "Performance Score", value: `${statsData.performanceScore}/100`, icon: BarChart3 },
+    { label: "Motivation Index", value: `${statsData.motivationIndex}/100`, icon: Star },
+    { label: "Training Hours", value: `${statsData.trainingHours}h`, icon: Clock },
+  ];
+
+  if (loading || loadingProfile) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const displayName = profile?.full_name || user?.email || 'Faculty Member';
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -119,10 +269,10 @@ const FacultyDashboard = () => {
               </button>
               <div className="flex items-center">
                 <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <span className="text-white font-bold text-xs">JS</span>
+                  <span className="text-white font-bold text-xs">{getInitials(displayName)}</span>
                 </div>
                 <span className="ml-2 text-foreground font-medium hidden md:inline">
-                  Dr. John Smith
+                  {displayName}
                 </span>
               </div>
             </div>
@@ -202,7 +352,7 @@ const FacultyDashboard = () => {
             <div>
               <h1 className="text-2xl font-bold text-foreground">Faculty Dashboard</h1>
               <p className="text-muted-foreground">
-                Welcome back, Dr. John Smith! Here's your performance overview
+                Welcome back, {displayName}! Here's your performance overview
               </p>
             </div>
             <div className="flex space-x-3">
@@ -362,29 +512,37 @@ const FacultyDashboard = () => {
                 </p>
               </div>
               <div className="divide-y divide-border">
-                {activities.map((activity, index) => (
-                  <div key={index} className="px-4 py-5 sm:px-6 hover:bg-muted/50 transition-colors">
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0">
-                        <div className="h-12 w-12 rounded-md bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                          <FileText className="h-6 w-6 text-primary" />
+                {activities.length > 0 ? (
+                  activities.map((activity, index) => (
+                    <div key={activity.id || index} className="px-4 py-5 sm:px-6 hover:bg-muted/50 transition-colors">
+                      <div className="flex items-start">
+                        <div className="flex-shrink-0">
+                          <div className="h-12 w-12 rounded-md bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                            <FileText className="h-6 w-6 text-primary" />
+                          </div>
                         </div>
-                      </div>
-                      <div className="ml-4 flex-1">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-medium text-primary">{activity.title}</h4>
-                          <span className="text-xs text-muted-foreground">{activity.time}</span>
-                        </div>
-                        <p className="mt-1 text-sm text-muted-foreground">{activity.description}</p>
-                        <div className="mt-2">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${activity.statusColor}`}>
-                            {activity.status}
-                          </span>
+                        <div className="ml-4 flex-1">
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-sm font-medium text-primary">{activity.title}</h4>
+                            <span className="text-xs text-muted-foreground">{formatTimeAgo(activity.created_at)}</span>
+                          </div>
+                          <p className="mt-1 text-sm text-muted-foreground">{activity.description || 'No description'}</p>
+                          <div className="mt-2">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
+                              {activity.status === 'in_progress' ? 'In Progress' : activity.status.charAt(0).toUpperCase() + activity.status.slice(1)}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="px-4 py-8 text-center">
+                    <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-muted-foreground">No activities yet</p>
+                    <p className="text-sm text-muted-foreground mt-1">Start your training journey to see activities here</p>
                   </div>
-                ))}
+                )}
                 <div className="px-4 py-5 sm:px-6">
                   <a
                     href="#"
