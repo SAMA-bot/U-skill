@@ -31,6 +31,7 @@ interface Profile {
   full_name: string;
   department: string | null;
   designation: string | null;
+  avatar_url: string | null;
 }
 
 const sidebarItems = [
@@ -98,7 +99,7 @@ const FacultyDashboard = () => {
       // Fetch profile
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('full_name, department, designation')
+        .select('full_name, department, designation, avatar_url')
         .eq('user_id', user.id)
         .maybeSingle();
 
@@ -268,8 +269,12 @@ const FacultyDashboard = () => {
                 <Bell className="h-5 w-5" />
               </button>
               <div className="flex items-center">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <span className="text-white font-bold text-xs">{getInitials(displayName)}</span>
+                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center overflow-hidden">
+                  {profile?.avatar_url ? (
+                    <img src={profile.avatar_url} alt="Avatar" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-white font-bold text-xs">{getInitials(displayName)}</span>
+                  )}
                 </div>
                 <span className="ml-2 text-foreground font-medium hidden md:inline">
                   {displayName}
@@ -327,13 +332,13 @@ const FacultyDashboard = () => {
             </nav>
 
             <div className="px-2 pt-4 pb-2 border-t border-border">
-              <a
-                href="#"
-                className="text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+              <button
+                onClick={() => navigate('/dashboard/settings')}
+                className="w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center px-3 py-2 text-sm font-medium rounded-md"
               >
                 <Settings className="mr-3 flex-shrink-0 h-5 w-5" />
                 Settings
-              </a>
+              </button>
               <button
                 onClick={handleLogout}
                 className="w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center px-3 py-2 text-sm font-medium rounded-md"
