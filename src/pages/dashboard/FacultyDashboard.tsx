@@ -16,7 +16,8 @@ import {
   FileText,
   X,
   TrendingUp,
-  Loader2
+  Loader2,
+  Shield
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -24,6 +25,7 @@ import PerformanceChart from "@/components/dashboard/PerformanceChart";
 import CapacityRadarChart from "@/components/dashboard/CapacityRadarChart";
 import MotivationTrendChart from "@/components/dashboard/MotivationTrendChart";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -76,6 +78,7 @@ const FacultyDashboard = () => {
   
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
+  const { isAdmin } = useUserRole();
   const { toast } = useToast();
 
   // Redirect if not logged in
@@ -332,6 +335,15 @@ const FacultyDashboard = () => {
             </nav>
 
             <div className="px-2 pt-4 pb-2 border-t border-border">
+              {isAdmin && (
+                <button
+                  onClick={() => navigate('/admin')}
+                  className="w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+                >
+                  <Shield className="mr-3 flex-shrink-0 h-5 w-5" />
+                  Admin Dashboard
+                </button>
+              )}
               <button
                 onClick={() => navigate('/dashboard/settings')}
                 className="w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center px-3 py-2 text-sm font-medium rounded-md"
