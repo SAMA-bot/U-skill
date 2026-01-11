@@ -19,6 +19,7 @@ import {
   GraduationCap,
   Activity,
   ChevronRight,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -36,6 +37,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { RoleManagement } from "@/components/admin/RoleManagement";
 
 interface FacultyMember {
   user_id: string;
@@ -56,16 +58,18 @@ interface DepartmentStats {
 }
 
 const sidebarItems = [
-  { icon: Home, label: "Dashboard", active: true },
-  { icon: Users, label: "Faculty Management" },
-  { icon: BarChart3, label: "Performance Reports" },
-  { icon: Building2, label: "Departments" },
-  { icon: Award, label: "Achievements" },
-  { icon: Activity, label: "Activity Logs" },
+  { icon: Home, label: "Dashboard", id: "dashboard" },
+  { icon: Shield, label: "Role Management", id: "roles" },
+  { icon: Users, label: "Faculty Management", id: "faculty" },
+  { icon: BarChart3, label: "Performance Reports", id: "reports" },
+  { icon: Building2, label: "Departments", id: "departments" },
+  { icon: Award, label: "Achievements", id: "achievements" },
+  { icon: Activity, label: "Activity Logs", id: "logs" },
 ];
 
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("dashboard");
   const [facultyList, setFacultyList] = useState<FacultyMember[]>([]);
   const [departmentStats, setDepartmentStats] = useState<DepartmentStats[]>([]);
   const [institutionStats, setInstitutionStats] = useState({
@@ -339,22 +343,25 @@ const AdminDashboard = () => {
             </div>
 
             <nav className="mt-6 flex-1 flex flex-col px-2 space-y-1">
-              {sidebarItems.map((item, index) => (
-                <a
-                  key={index}
-                  href="#"
-                  className={`
-                    group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
-                    ${item.active
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    }
-                  `}
-                >
-                  <item.icon className={`mr-3 flex-shrink-0 h-5 w-5 ${item.active ? "text-primary" : ""}`} />
-                  {item.label}
-                </a>
-              ))}
+              {sidebarItems.map((item, index) => {
+                const isActive = activeSection === item.id;
+                return (
+                  <button
+                    key={index}
+                    onClick={() => setActiveSection(item.id)}
+                    className={`
+                      group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors w-full text-left
+                      ${isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }
+                    `}
+                  >
+                    <item.icon className={`mr-3 flex-shrink-0 h-5 w-5 ${isActive ? "text-primary" : ""}`} />
+                    {item.label}
+                  </button>
+                );
+              })}
             </nav>
 
             <div className="px-2 pt-4 pb-2 border-t border-border">
@@ -378,6 +385,20 @@ const AdminDashboard = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto focus:outline-none p-6">
+          {activeSection === "roles" ? (
+            <>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground">Role Management</h1>
+                  <p className="text-muted-foreground">
+                    Manage user roles and access permissions
+                  </p>
+                </div>
+              </div>
+              <RoleManagement />
+            </>
+          ) : (
+            <>
           {/* Page Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
@@ -578,6 +599,8 @@ const AdminDashboard = () => {
               </Button>
             </div>
           </motion.div>
+            </>
+          )}
         </main>
       </div>
     </div>
