@@ -20,6 +20,7 @@ import {
   Activity,
   ChevronRight,
   Shield,
+  ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -365,6 +366,13 @@ const AdminDashboard = () => {
             </nav>
 
             <div className="px-2 pt-4 pb-2 border-t border-border">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+              >
+                <ArrowLeft className="mr-3 flex-shrink-0 h-5 w-5" />
+                Back to Faculty Dashboard
+              </button>
               <button
                 onClick={() => navigate('/dashboard/settings')}
                 className="w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center px-3 py-2 text-sm font-medium rounded-md"
