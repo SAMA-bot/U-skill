@@ -24,6 +24,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
 import CapacityRadarChart from "@/components/dashboard/CapacityRadarChart";
 import MotivationTrendChart from "@/components/dashboard/MotivationTrendChart";
+import CoursesViewer from "@/components/faculty/CoursesViewer";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,13 +37,15 @@ interface Profile {
   avatar_url: string | null;
 }
 
-const sidebarItems = [
-  { icon: Home, label: "Dashboard", active: true },
-  { icon: ClipboardList, label: "Capacity Building" },
-  { icon: BarChart3, label: "Performance Assessment" },
-  { icon: Clock, label: "Training Schedule" },
-  { icon: Star, label: "Motivation Tools" },
-  { icon: Calendar, label: "My Calendar" },
+type ActiveSection = "dashboard" | "courses" | "performance" | "training" | "motivation" | "calendar";
+
+const sidebarItems: { icon: typeof Home; label: string; section: ActiveSection }[] = [
+  { icon: Home, label: "Dashboard", section: "dashboard" },
+  { icon: ClipboardList, label: "Capacity Building", section: "courses" },
+  { icon: BarChart3, label: "Performance Assessment", section: "performance" },
+  { icon: Clock, label: "Training Schedule", section: "training" },
+  { icon: Star, label: "Motivation Tools", section: "motivation" },
+  { icon: Calendar, label: "My Calendar", section: "calendar" },
 ];
 
 const resources = [
@@ -66,6 +69,7 @@ const resources = [
 
 const FacultyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<ActiveSection>("dashboard");
   const [profile, setProfile] = useState<Profile | null>(null);
   const [activities, setActivities] = useState<any[]>([]);
   const [statsData, setStatsData] = useState({
@@ -316,22 +320,28 @@ const FacultyDashboard = () => {
             </div>
             
             <nav className="mt-6 flex-1 flex flex-col px-2 space-y-1">
-              {sidebarItems.map((item, index) => (
-                <a
-                  key={index}
-                  href="#"
-                  className={`
-                    group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
-                    ${item.active 
-                      ? "bg-primary/10 text-primary" 
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    }
-                  `}
-                >
-                  <item.icon className={`mr-3 flex-shrink-0 h-5 w-5 ${item.active ? "text-primary" : ""}`} />
-                  {item.label}
-                </a>
-              ))}
+              {sidebarItems.map((item, index) => {
+                const isActive = activeSection === item.section;
+                return (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setActiveSection(item.section);
+                      setSidebarOpen(false);
+                    }}
+                    className={`
+                      group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors w-full text-left
+                      ${isActive 
+                        ? "bg-primary/10 text-primary" 
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }
+                    `}
+                  >
+                    <item.icon className={`mr-3 flex-shrink-0 h-5 w-5 ${isActive ? "text-primary" : ""}`} />
+                    {item.label}
+                  </button>
+                );
+              })}
             </nav>
 
             <div className="px-2 pt-4 pb-2 border-t border-border">
@@ -364,250 +374,265 @@ const FacultyDashboard = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto focus:outline-none p-6">
-          {/* Page Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Faculty Dashboard</h1>
-              <p className="text-muted-foreground">
-                Welcome back, {displayName}! Here's your performance overview
-              </p>
-            </div>
-            <div className="flex space-x-3">
-              <Button variant="outline" size="sm">
-                <Download className="mr-2 h-4 w-4" />
-                Export
-              </Button>
-              <Button size="sm">
-                <FileText className="mr-2 h-4 w-4" />
-                Generate Report
-              </Button>
-            </div>
-          </div>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-            {statsCards.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-md transition-shadow"
-              >
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <div className="bg-gradient-to-br from-primary to-accent rounded-md p-3">
-                        <stat.icon className="h-6 w-6 text-white" />
-                      </div>
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dt className="text-sm font-medium text-muted-foreground truncate">
-                        {stat.label}
-                      </dt>
-                      <dd className="text-lg font-semibold text-foreground">
-                        {stat.value}
-                      </dd>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 mb-8">
-            {/* Performance Chart */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="bg-card shadow-sm rounded-lg overflow-hidden border border-border"
-            >
-              <div className="px-4 py-5 sm:px-6 border-b border-border">
-                <h3 className="text-lg font-medium text-foreground">Performance Assessment</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Your progress over the last 6 months
-                </p>
-              </div>
-              <div className="px-4 py-5 sm:p-6">
-                <div className="flex gap-4 mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-primary" />
-                    <span className="text-xs text-muted-foreground">Teaching</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-accent" />
-                    <span className="text-xs text-muted-foreground">Research</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-green-500" />
-                    <span className="text-xs text-muted-foreground">Service</span>
-                  </div>
-                </div>
-                <PerformanceChart />
-              </div>
-            </motion.div>
-
-            {/* Capacity Building */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="bg-card shadow-sm rounded-lg overflow-hidden border border-border"
-            >
-              <div className="px-4 py-5 sm:px-6 border-b border-border">
-                <h3 className="text-lg font-medium text-foreground">Capacity Building Progress</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Skills acquired vs skills to develop
-                </p>
-              </div>
-              <div className="px-4 py-5 sm:p-6">
-                <div className="flex gap-4 mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-primary" />
-                    <span className="text-xs text-muted-foreground">Current</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-muted-foreground" style={{ opacity: 0.5 }} />
-                    <span className="text-xs text-muted-foreground">Target</span>
-                  </div>
-                </div>
-                <CapacityRadarChart />
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Motivation Trend Chart */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.55 }}
-            className="bg-card shadow-sm rounded-lg overflow-hidden border border-border mb-8"
-          >
-            <div className="px-4 py-5 sm:px-6 border-b border-border">
-              <div className="flex items-center justify-between">
+          {activeSection === "courses" ? (
+            <CoursesViewer />
+          ) : activeSection === "dashboard" ? (
+            <>
+              {/* Page Header */}
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div>
-                  <h3 className="text-lg font-medium text-foreground flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-primary" />
-                    Motivation Index Trends
-                  </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Weekly motivation and engagement scores
+                  <h1 className="text-2xl font-bold text-foreground">Faculty Dashboard</h1>
+                  <p className="text-muted-foreground">
+                    Welcome back, {displayName}! Here's your performance overview
                   </p>
                 </div>
-                <div className="flex gap-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-primary" />
-                    <span className="text-xs text-muted-foreground">Motivation</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-accent" />
-                    <span className="text-xs text-muted-foreground">Engagement</span>
-                  </div>
+                <div className="flex space-x-3">
+                  <Button variant="outline" size="sm">
+                    <Download className="mr-2 h-4 w-4" />
+                    Export
+                  </Button>
+                  <Button size="sm">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Generate Report
+                  </Button>
                 </div>
               </div>
-            </div>
-            <div className="px-4 py-5 sm:p-6">
-              <MotivationTrendChart />
-            </div>
-          </motion.div>
 
-          {/* Activities and Resources */}
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 mb-8">
-            {/* Recent Activities */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="bg-card shadow-sm rounded-lg overflow-hidden col-span-1 lg:col-span-2 border border-border"
-            >
-              <div className="px-4 py-5 sm:px-6 border-b border-border">
-                <h3 className="text-lg font-medium text-foreground">Recent Activities</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Your latest training and development activities
-                </p>
-              </div>
-              <div className="divide-y divide-border">
-                {activities.length > 0 ? (
-                  activities.map((activity, index) => (
-                    <div key={activity.id || index} className="px-4 py-5 sm:px-6 hover:bg-muted/50 transition-colors">
-                      <div className="flex items-start">
-                        <div className="flex-shrink-0">
-                          <div className="h-12 w-12 rounded-md bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                            <FileText className="h-6 w-6 text-primary" />
-                          </div>
-                        </div>
-                        <div className="ml-4 flex-1">
-                          <div className="flex items-center justify-between">
-                            <h4 className="text-sm font-medium text-primary">{activity.title}</h4>
-                            <span className="text-xs text-muted-foreground">{formatTimeAgo(activity.created_at)}</span>
-                          </div>
-                          <p className="mt-1 text-sm text-muted-foreground">{activity.description || 'No description'}</p>
-                          <div className="mt-2">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
-                              {activity.status === 'in_progress' ? 'In Progress' : activity.status.charAt(0).toUpperCase() + activity.status.slice(1)}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="px-4 py-8 text-center">
-                    <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-muted-foreground">No activities yet</p>
-                    <p className="text-sm text-muted-foreground mt-1">Start your training journey to see activities here</p>
-                  </div>
-                )}
-                <div className="px-4 py-5 sm:px-6">
-                  <a
-                    href="#"
-                    className="block text-center px-4 py-2 border border-dashed border-border rounded-md text-sm font-medium text-muted-foreground hover:bg-muted transition-colors"
+              {/* Stats Cards */}
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+                {statsCards.map((stat, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-md transition-shadow"
                   >
-                    View All Activities
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Recommended Resources */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="bg-card shadow-sm rounded-lg overflow-hidden border border-border"
-            >
-              <div className="px-4 py-5 sm:px-6 border-b border-border">
-                <h3 className="text-lg font-medium text-foreground">Recommended Resources</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Based on your development goals
-                </p>
-              </div>
-              <div className="p-4">
-                <div className="space-y-4">
-                  {resources.map((resource, index) => (
-                    <div key={index} className="flex items-start">
-                      <div className="flex-shrink-0">
-                        <div className="h-12 w-12 rounded-md bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
-                          <FileText className="h-6 w-6 text-accent" />
+                    <div className="p-5">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <div className="bg-gradient-to-br from-primary to-accent rounded-md p-3">
+                            <stat.icon className="h-6 w-6 text-white" />
+                          </div>
                         </div>
-                      </div>
-                      <div className="ml-4">
-                        <h4 className="text-sm font-medium text-foreground">{resource.title}</h4>
-                        <p className="mt-1 text-xs text-muted-foreground">{resource.subtitle}</p>
-                        <div className="mt-2">
-                          <a href="#" className="text-xs text-primary hover:underline">
-                            View Resource →
-                          </a>
+                        <div className="ml-5 w-0 flex-1">
+                          <dt className="text-sm font-medium text-muted-foreground truncate">
+                            {stat.label}
+                          </dt>
+                          <dd className="text-lg font-semibold text-foreground">
+                            {stat.value}
+                          </dd>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </motion.div>
+                ))}
               </div>
-            </motion.div>
-          </div>
+
+              {/* Charts Section */}
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 mb-8">
+                {/* Performance Chart */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="bg-card shadow-sm rounded-lg overflow-hidden border border-border"
+                >
+                  <div className="px-4 py-5 sm:px-6 border-b border-border">
+                    <h3 className="text-lg font-medium text-foreground">Performance Assessment</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Your progress over the last 6 months
+                    </p>
+                  </div>
+                  <div className="px-4 py-5 sm:p-6">
+                    <div className="flex gap-4 mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-primary" />
+                        <span className="text-xs text-muted-foreground">Teaching</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-accent" />
+                        <span className="text-xs text-muted-foreground">Research</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-green-500" />
+                        <span className="text-xs text-muted-foreground">Service</span>
+                      </div>
+                    </div>
+                    <PerformanceChart />
+                  </div>
+                </motion.div>
+
+                {/* Capacity Building */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="bg-card shadow-sm rounded-lg overflow-hidden border border-border"
+                >
+                  <div className="px-4 py-5 sm:px-6 border-b border-border">
+                    <h3 className="text-lg font-medium text-foreground">Capacity Building Progress</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Skills acquired vs skills to develop
+                    </p>
+                  </div>
+                  <div className="px-4 py-5 sm:p-6">
+                    <div className="flex gap-4 mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-primary" />
+                        <span className="text-xs text-muted-foreground">Current</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-muted-foreground" style={{ opacity: 0.5 }} />
+                        <span className="text-xs text-muted-foreground">Target</span>
+                      </div>
+                    </div>
+                    <CapacityRadarChart />
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Motivation Trend Chart */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.55 }}
+                className="bg-card shadow-sm rounded-lg overflow-hidden border border-border mb-8"
+              >
+                <div className="px-4 py-5 sm:px-6 border-b border-border">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-medium text-foreground flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-primary" />
+                        Motivation Index Trends
+                      </h3>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Weekly motivation and engagement scores
+                      </p>
+                    </div>
+                    <div className="flex gap-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-primary" />
+                        <span className="text-xs text-muted-foreground">Motivation</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-accent" />
+                        <span className="text-xs text-muted-foreground">Engagement</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="px-4 py-5 sm:p-6">
+                  <MotivationTrendChart />
+                </div>
+              </motion.div>
+
+              {/* Activities and Resources */}
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 mb-8">
+                {/* Recent Activities */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="bg-card shadow-sm rounded-lg overflow-hidden col-span-1 lg:col-span-2 border border-border"
+                >
+                  <div className="px-4 py-5 sm:px-6 border-b border-border">
+                    <h3 className="text-lg font-medium text-foreground">Recent Activities</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Your latest training and development activities
+                    </p>
+                  </div>
+                  <div className="divide-y divide-border">
+                    {activities.length > 0 ? (
+                      activities.map((activity, index) => (
+                        <div key={activity.id || index} className="px-4 py-5 sm:px-6 hover:bg-muted/50 transition-colors">
+                          <div className="flex items-start">
+                            <div className="flex-shrink-0">
+                              <div className="h-12 w-12 rounded-md bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                                <FileText className="h-6 w-6 text-primary" />
+                              </div>
+                            </div>
+                            <div className="ml-4 flex-1">
+                              <div className="flex items-center justify-between">
+                                <h4 className="text-sm font-medium text-primary">{activity.title}</h4>
+                                <span className="text-xs text-muted-foreground">{formatTimeAgo(activity.created_at)}</span>
+                              </div>
+                              <p className="mt-1 text-sm text-muted-foreground">{activity.description || 'No description'}</p>
+                              <div className="mt-2">
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
+                                  {activity.status === 'in_progress' ? 'In Progress' : activity.status.charAt(0).toUpperCase() + activity.status.slice(1)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-4 py-8 text-center">
+                        <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                        <p className="text-muted-foreground">No activities yet</p>
+                        <p className="text-sm text-muted-foreground mt-1">Start your training journey to see activities here</p>
+                      </div>
+                    )}
+                    <div className="px-4 py-5 sm:px-6">
+                      <a
+                        href="#"
+                        className="block text-center px-4 py-2 border border-dashed border-border rounded-md text-sm font-medium text-muted-foreground hover:bg-muted transition-colors"
+                      >
+                        View All Activities
+                      </a>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Recommended Resources */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 }}
+                  className="bg-card shadow-sm rounded-lg overflow-hidden border border-border"
+                >
+                  <div className="px-4 py-5 sm:px-6 border-b border-border">
+                    <h3 className="text-lg font-medium text-foreground">Recommended Resources</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Based on your development goals
+                    </p>
+                  </div>
+                  <div className="p-4">
+                    <div className="space-y-4">
+                      {resources.map((resource, index) => (
+                        <div key={index} className="flex items-start">
+                          <div className="flex-shrink-0">
+                            <div className="h-12 w-12 rounded-md bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
+                              <FileText className="h-6 w-6 text-accent" />
+                            </div>
+                          </div>
+                          <div className="ml-4">
+                            <h4 className="text-sm font-medium text-foreground">{resource.title}</h4>
+                            <p className="mt-1 text-xs text-muted-foreground">{resource.subtitle}</p>
+                            <div className="mt-2">
+                              <a href="#" className="text-xs text-primary hover:underline">
+                                View Resource →
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <h2 className="text-xl font-semibold text-foreground mb-2">
+                  {sidebarItems.find(item => item.section === activeSection)?.label}
+                </h2>
+                <p className="text-muted-foreground">This section is coming soon.</p>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>
