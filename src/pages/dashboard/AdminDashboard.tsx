@@ -39,6 +39,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RoleManagement } from "@/components/admin/RoleManagement";
+import { CourseManagement } from "@/components/admin/CourseManagement";
 
 interface FacultyMember {
   user_id: string;
@@ -61,6 +62,7 @@ interface DepartmentStats {
 const sidebarItems = [
   { icon: Home, label: "Dashboard", id: "dashboard" },
   { icon: Shield, label: "Role Management", id: "roles" },
+  { icon: GraduationCap, label: "Capacity Building", id: "courses" },
   { icon: Users, label: "Faculty Management", id: "faculty" },
   { icon: BarChart3, label: "Performance Reports", id: "reports" },
   { icon: Building2, label: "Departments", id: "departments" },
@@ -404,6 +406,18 @@ const AdminDashboard = () => {
                 </div>
               </div>
               <RoleManagement />
+            </>
+          ) : activeSection === "courses" ? (
+            <>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground">Capacity Building</h1>
+                  <p className="text-muted-foreground">
+                    Manage courses and training programs for faculty development
+                  </p>
+                </div>
+              </div>
+              <CourseManagement />
             </>
           ) : (
             <>

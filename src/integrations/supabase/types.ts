@@ -77,6 +77,51 @@ export type Database = {
         }
         Relationships: []
       }
+      courses: {
+        Row: {
+          category: string
+          course_url: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          duration_hours: number | null
+          id: string
+          instructor_name: string | null
+          is_published: boolean
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          course_url?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          duration_hours?: number | null
+          id?: string
+          instructor_name?: string | null
+          is_published?: boolean
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          course_url?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          duration_hours?: number | null
+          id?: string
+          instructor_name?: string | null
+          is_published?: boolean
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       motivation_scores: {
         Row: {
           created_at: string
