@@ -1,1 +1,7 @@
 project_id = "sowlwwoesurgvgjykiow"
+
+[functions.update-user-role]
+verify_jwt = false
+
+[functions.upload-avatar]
+verify_jwt = false
