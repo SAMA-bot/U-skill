@@ -151,11 +151,12 @@ const ProfileSettings = () => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
+    // Client-side validation (server also validates)
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
       toast({
         title: "Invalid file type",
-        description: "Please upload an image file",
+        description: "Please upload a JPEG, PNG, GIF, or WebP image",
         variant: "destructive",
       });
       return;
@@ -173,33 +174,34 @@ const ProfileSettings = () => {
 
     setUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${user.id}/avatar.${fileExt}`;
+      // Get session for auth header
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Not authenticated');
+      }
 
-      // Upload to storage
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, file, { upsert: true });
+      // Upload via secure edge function
+      const formData = new FormData();
+      formData.append('file', file);
 
-      if (uploadError) throw uploadError;
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-avatar`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: formData,
+        }
+      );
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
+      const result = await response.json();
 
-      // Add cache-busting parameter
-      const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to upload avatar');
+      }
 
-      // Update profile with new avatar URL
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ avatar_url: avatarUrl })
-        .eq('user_id', user.id);
-
-      if (updateError) throw updateError;
-
-      setProfile(prev => prev ? { ...prev, avatar_url: avatarUrl } : null);
+      setProfile(prev => prev ? { ...prev, avatar_url: result.avatar_url } : null);
       toast({
         title: "Success",
         description: "Avatar uploaded successfully",
@@ -208,7 +210,7 @@ const ProfileSettings = () => {
       console.error('Error uploading avatar:', error);
       toast({
         title: "Error",
-        description: "Failed to upload avatar",
+        description: error instanceof Error ? error.message : "Failed to upload avatar",
         variant: "destructive",
       });
     } finally {
