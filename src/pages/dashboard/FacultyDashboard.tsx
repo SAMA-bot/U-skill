@@ -25,6 +25,7 @@ import PerformanceChart from "@/components/dashboard/PerformanceChart";
 import CapacityRadarChart from "@/components/dashboard/CapacityRadarChart";
 import MotivationTrendChart from "@/components/dashboard/MotivationTrendChart";
 import CoursesViewer from "@/components/faculty/CoursesViewer";
+import PerformanceAssessment from "@/components/faculty/PerformanceAssessment";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
@@ -376,6 +377,8 @@ const FacultyDashboard = () => {
         <main className="flex-1 overflow-auto focus:outline-none p-6">
           {activeSection === "courses" ? (
             <CoursesViewer />
+          ) : activeSection === "performance" ? (
+            <PerformanceAssessment />
           ) : activeSection === "dashboard" ? (
             <>
               {/* Page Header */}
