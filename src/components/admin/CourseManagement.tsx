@@ -33,7 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Pencil, Trash2, Loader2, BookOpen, Clock, User, ExternalLink } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, BookOpen, Clock, User, ExternalLink, Video, FileText } from 'lucide-react';
 
 interface Course {
   id: string;
@@ -44,11 +44,18 @@ interface Course {
   instructor_name: string | null;
   thumbnail_url: string | null;
   course_url: string | null;
+  video_url: string | null;
+  course_type: string;
   is_published: boolean;
   created_by: string;
   created_at: string;
   updated_at: string;
 }
+
+const COURSE_TYPES = [
+  { value: 'regular', label: 'Regular Course', icon: FileText },
+  { value: 'video', label: 'Video Course', icon: Video },
+];
 
 const COURSE_CATEGORIES = [
   'general',
@@ -77,9 +84,11 @@ export function CourseManagement() {
     title: '',
     description: '',
     category: 'general',
+    course_type: 'regular',
     duration_hours: '',
     instructor_name: '',
     course_url: '',
+    video_url: '',
     is_published: false,
   });
 
@@ -113,9 +122,11 @@ export function CourseManagement() {
       title: '',
       description: '',
       category: 'general',
+      course_type: 'regular',
       duration_hours: '',
       instructor_name: '',
       course_url: '',
+      video_url: '',
       is_published: false,
     });
     setThumbnailFile(null);
@@ -129,9 +140,11 @@ export function CourseManagement() {
         title: course.title,
         description: course.description || '',
         category: course.category,
+        course_type: course.course_type || 'regular',
         duration_hours: course.duration_hours?.toString() || '',
         instructor_name: course.instructor_name || '',
         course_url: course.course_url || '',
+        video_url: course.video_url || '',
         is_published: course.is_published,
       });
     } else {
@@ -186,9 +199,11 @@ export function CourseManagement() {
         title: formData.title,
         description: formData.description || null,
         category: formData.category,
+        course_type: formData.course_type,
         duration_hours: formData.duration_hours ? parseInt(formData.duration_hours) : null,
         instructor_name: formData.instructor_name || null,
         course_url: formData.course_url || null,
+        video_url: formData.video_url || null,
         thumbnail_url: thumbnailUrl,
         is_published: formData.is_published,
         created_by: user.id,
@@ -369,6 +384,28 @@ export function CourseManagement() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
+                    <Label htmlFor="course_type">Course Type</Label>
+                    <Select
+                      value={formData.course_type}
+                      onValueChange={(value) => setFormData({ ...formData, course_type: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {COURSE_TYPES.map((type) => (
+                          <SelectItem key={type.value} value={type.value}>
+                            <div className="flex items-center gap-2">
+                              <type.icon className="h-4 w-4" />
+                              {type.label}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
                     <Label htmlFor="category">Category</Label>
                     <Select
                       value={formData.category}
@@ -386,7 +423,9 @@ export function CourseManagement() {
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
 
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="duration">Duration (hours)</Label>
                     <Input
@@ -400,19 +439,36 @@ export function CourseManagement() {
                       placeholder="e.g., 10"
                     />
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="instructor">Instructor Name</Label>
+                    <Input
+                      id="instructor"
+                      value={formData.instructor_name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, instructor_name: e.target.value })
+                      }
+                      placeholder="Enter instructor name"
+                    />
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="instructor">Instructor Name</Label>
-                  <Input
-                    id="instructor"
-                    value={formData.instructor_name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, instructor_name: e.target.value })
-                    }
-                    placeholder="Enter instructor name"
-                  />
-                </div>
+                {formData.course_type === 'video' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="video_url">Video URL *</Label>
+                    <Input
+                      id="video_url"
+                      type="url"
+                      value={formData.video_url}
+                      onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                      placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
+                      required={formData.course_type === 'video'}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Supports YouTube, Vimeo, or direct video links
+                    </p>
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="course_url">Course URL</Label>
@@ -525,10 +581,19 @@ export function CourseManagement() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="secondary" className={getCategoryBadgeStyle(course.category)}>
-                          {course.category.charAt(0).toUpperCase() +
-                            course.category.slice(1).replace('-', ' ')}
-                        </Badge>
+                        <div className="flex flex-col gap-1">
+                          <Badge variant="secondary" className={getCategoryBadgeStyle(course.category)}>
+                            {course.category.charAt(0).toUpperCase() +
+                              course.category.slice(1).replace('-', ' ')}
+                          </Badge>
+                          <Badge variant="outline" className="w-fit text-xs">
+                            {course.course_type === 'video' ? (
+                              <><Video className="h-3 w-3 mr-1" /> Video</>
+                            ) : (
+                              <><FileText className="h-3 w-3 mr-1" /> Regular</>
+                            )}
+                          </Badge>
+                        </div>
                       </TableCell>
                       <TableCell>
                         {course.duration_hours ? (
