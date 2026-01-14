@@ -6,7 +6,11 @@ import {
   User, 
   ExternalLink,
   BookOpen,
-  Filter
+  Filter,
+  Video,
+  FileText,
+  Play,
+  X
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,6 +22,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -30,6 +46,8 @@ interface Course {
   instructor_name: string | null;
   thumbnail_url: string | null;
   course_url: string | null;
+  video_url: string | null;
+  course_type: string;
 }
 
 const CoursesViewer = () => {
@@ -37,6 +55,9 @@ const CoursesViewer = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const { toast } = useToast();
 
   const categories = [
@@ -83,8 +104,38 @@ const CoursesViewer = () => {
     const matchesCategory =
       categoryFilter === "all" || course.category === categoryFilter;
 
-    return matchesSearch && matchesCategory;
+    const matchesType =
+      typeFilter === "all" || course.course_type === typeFilter;
+
+    return matchesSearch && matchesCategory && matchesType;
   });
+
+  const videoCourses = filteredCourses.filter(c => c.course_type === 'video');
+  const regularCourses = filteredCourses.filter(c => c.course_type === 'regular');
+
+  const getEmbedUrl = (url: string) => {
+    // YouTube
+    const youtubeMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+    if (youtubeMatch) {
+      return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+    }
+    // Vimeo
+    const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    if (vimeoMatch) {
+      return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+    }
+    // Direct video URL
+    return url;
+  };
+
+  const isEmbeddable = (url: string) => {
+    return url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com');
+  };
+
+  const handlePlayVideo = (course: Course) => {
+    setSelectedCourse(course);
+    setVideoModalOpen(true);
+  };
 
   const getCategoryLabel = (value: string) => {
     return categories.find((c) => c.value === value)?.label || value;
@@ -109,6 +160,104 @@ const CoursesViewer = () => {
       </div>
     );
   }
+
+  const renderCourseCard = (course: Course, index: number) => (
+    <motion.div
+      key={course.id}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+    >
+      {/* Thumbnail */}
+      <div className="aspect-video bg-muted relative group">
+        {course.thumbnail_url ? (
+          <img
+            src={course.thumbnail_url}
+            alt={course.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            {course.course_type === 'video' ? (
+              <Video className="h-12 w-12 text-muted-foreground" />
+            ) : (
+              <BookOpen className="h-12 w-12 text-muted-foreground" />
+            )}
+          </div>
+        )}
+        <div className="absolute top-2 left-2 flex gap-2">
+          <Badge className={getCategoryColor(course.category)}>
+            {getCategoryLabel(course.category)}
+          </Badge>
+          {course.course_type === 'video' && (
+            <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+              <Video className="h-3 w-3 mr-1" />
+              Video
+            </Badge>
+          )}
+        </div>
+        {course.course_type === 'video' && course.video_url && (
+          <div 
+            className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+            onClick={() => handlePlayVideo(course)}
+          >
+            <div className="bg-white/90 rounded-full p-4">
+              <Play className="h-8 w-8 text-primary fill-primary" />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="p-4 space-y-3">
+        <h3 className="font-semibold text-foreground line-clamp-2">
+          {course.title}
+        </h3>
+        
+        {course.description && (
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {course.description}
+          </p>
+        )}
+
+        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+          {course.instructor_name && (
+            <div className="flex items-center gap-1">
+              <User className="h-4 w-4" />
+              <span>{course.instructor_name}</span>
+            </div>
+          )}
+          {course.duration_hours && (
+            <div className="flex items-center gap-1">
+              <Clock className="h-4 w-4" />
+              <span>{course.duration_hours}h</span>
+            </div>
+          )}
+        </div>
+
+        {course.course_type === 'video' && course.video_url ? (
+          <Button
+            variant="default"
+            className="w-full mt-2"
+            onClick={() => handlePlayVideo(course)}
+          >
+            <Play className="h-4 w-4 mr-2" />
+            Watch Video
+          </Button>
+        ) : course.course_url ? (
+          <Button
+            variant="outline"
+            className="w-full mt-2"
+            onClick={() => window.open(course.course_url!, "_blank")}
+          >
+            <ExternalLink className="h-4 w-4 mr-2" />
+            Access Course
+          </Button>
+        ) : null}
+      </div>
+    </motion.div>
+  );
 
   return (
     <div className="space-y-6">
@@ -144,89 +293,148 @@ const CoursesViewer = () => {
             ))}
           </SelectContent>
         </Select>
+        <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <SelectTrigger className="w-full sm:w-[150px]">
+            <SelectValue placeholder="Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="regular">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Regular
+              </div>
+            </SelectItem>
+            <SelectItem value="video">
+              <div className="flex items-center gap-2">
+                <Video className="h-4 w-4" />
+                Video
+              </div>
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Courses Grid */}
-      {filteredCourses.length === 0 ? (
-        <div className="text-center py-12">
-          <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-foreground">No courses found</h3>
-          <p className="text-muted-foreground mt-1">
-            {searchQuery || categoryFilter !== "all"
-              ? "Try adjusting your search or filter criteria"
-              : "No courses are available at the moment"}
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCourses.map((course, index) => (
-            <motion.div
-              key={course.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
-            >
-              {/* Thumbnail */}
-              <div className="aspect-video bg-muted relative">
-                {course.thumbnail_url ? (
-                  <img
-                    src={course.thumbnail_url}
-                    alt={course.title}
-                    className="w-full h-full object-cover"
+      {/* Courses Tabs */}
+      <Tabs defaultValue="all" className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-3">
+          <TabsTrigger value="all" className="flex items-center gap-2">
+            <BookOpen className="h-4 w-4" />
+            All ({filteredCourses.length})
+          </TabsTrigger>
+          <TabsTrigger value="video" className="flex items-center gap-2">
+            <Video className="h-4 w-4" />
+            Videos ({videoCourses.length})
+          </TabsTrigger>
+          <TabsTrigger value="regular" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Courses ({regularCourses.length})
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all" className="mt-6">
+          {filteredCourses.length === 0 ? (
+            <div className="text-center py-12">
+              <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground">No courses found</h3>
+              <p className="text-muted-foreground mt-1">
+                {searchQuery || categoryFilter !== "all" || typeFilter !== "all"
+                  ? "Try adjusting your search or filter criteria"
+                  : "No courses are available at the moment"}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredCourses.map((course, index) => renderCourseCard(course, index))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="video" className="mt-6">
+          {videoCourses.length === 0 ? (
+            <div className="text-center py-12">
+              <Video className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground">No video courses found</h3>
+              <p className="text-muted-foreground mt-1">
+                Video courses will appear here when available
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {videoCourses.map((course, index) => renderCourseCard(course, index))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="regular" className="mt-6">
+          {regularCourses.length === 0 ? (
+            <div className="text-center py-12">
+              <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground">No regular courses found</h3>
+              <p className="text-muted-foreground mt-1">
+                Regular courses will appear here when available
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {regularCourses.map((course, index) => renderCourseCard(course, index))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+
+      {/* Video Modal */}
+      <Dialog open={videoModalOpen} onOpenChange={setVideoModalOpen}>
+        <DialogContent className="max-w-4xl p-0 overflow-hidden">
+          <DialogHeader className="p-4 pb-0">
+            <DialogTitle className="flex items-center gap-2">
+              <Video className="h-5 w-5" />
+              {selectedCourse?.title}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="p-4">
+            {selectedCourse?.video_url && (
+              isEmbeddable(selectedCourse.video_url) ? (
+                <div className="aspect-video">
+                  <iframe
+                    src={getEmbedUrl(selectedCourse.video_url)}
+                    className="w-full h-full rounded-lg"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
                   />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <BookOpen className="h-12 w-12 text-muted-foreground" />
-                  </div>
-                )}
-                <Badge className={`absolute top-2 left-2 ${getCategoryColor(course.category)}`}>
-                  {getCategoryLabel(course.category)}
-                </Badge>
-              </div>
-
-              {/* Content */}
-              <div className="p-4 space-y-3">
-                <h3 className="font-semibold text-foreground line-clamp-2">
-                  {course.title}
-                </h3>
-                
-                {course.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {course.description}
-                  </p>
-                )}
-
-                <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-                  {course.instructor_name && (
-                    <div className="flex items-center gap-1">
-                      <User className="h-4 w-4" />
-                      <span>{course.instructor_name}</span>
-                    </div>
-                  )}
-                  {course.duration_hours && (
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      <span>{course.duration_hours}h</span>
-                    </div>
-                  )}
                 </div>
-
-                {course.course_url && (
-                  <Button
-                    variant="outline"
-                    className="w-full mt-2"
-                    onClick={() => window.open(course.course_url!, "_blank")}
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Access Course
-                  </Button>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      )}
+              ) : (
+                <div className="aspect-video">
+                  <video
+                    src={selectedCourse.video_url}
+                    controls
+                    className="w-full h-full rounded-lg"
+                  />
+                </div>
+              )
+            )}
+            {selectedCourse?.description && (
+              <p className="mt-4 text-muted-foreground">
+                {selectedCourse.description}
+              </p>
+            )}
+            <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
+              {selectedCourse?.instructor_name && (
+                <div className="flex items-center gap-1">
+                  <User className="h-4 w-4" />
+                  <span>{selectedCourse.instructor_name}</span>
+                </div>
+              )}
+              {selectedCourse?.duration_hours && (
+                <div className="flex items-center gap-1">
+                  <Clock className="h-4 w-4" />
+                  <span>{selectedCourse.duration_hours} hours</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
