@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Info,
   Loader2,
+  FileDown,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,9 +38,12 @@ import {
   RadialBarChart,
   RadialBar,
 } from "recharts";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import GoalSetting from "./GoalSetting";
+import PerformanceReport from "./PerformanceReport";
 
 interface PerformanceMetric {
   id: string;
@@ -57,6 +61,11 @@ interface CapacitySkill {
   target_level: number;
 }
 
+interface Profile {
+  full_name: string;
+  department: string | null;
+}
+
 const PerformanceAssessment = () => {
   const [loading, setLoading] = useState(true);
   const [performanceMetrics, setPerformanceMetrics] = useState<PerformanceMetric[]>([]);
@@ -64,6 +73,7 @@ const PerformanceAssessment = () => {
   const [overallScore, setOverallScore] = useState(0);
   const [trend, setTrend] = useState<"up" | "down" | "stable">("stable");
   const [trendPercentage, setTrendPercentage] = useState(0);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   const { user } = useAuth();
   const { toast } = useToast();
@@ -78,6 +88,17 @@ const PerformanceAssessment = () => {
     if (!user) return;
 
     try {
+      // Fetch profile
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("full_name, department")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (profileData) {
+        setProfile(profileData);
+      }
+
       // Fetch performance metrics
       const { data: perfData, error: perfError } = await supabase
         .from("performance_metrics")
@@ -366,10 +387,12 @@ const PerformanceAssessment = () => {
 
       {/* Tabs for Different Views */}
       <Tabs defaultValue="trends" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
+        <TabsList className="grid w-full max-w-2xl grid-cols-5">
           <TabsTrigger value="trends">Trends</TabsTrigger>
-          <TabsTrigger value="skills">Skills Progress</TabsTrigger>
+          <TabsTrigger value="skills">Skills</TabsTrigger>
           <TabsTrigger value="comparison">Comparison</TabsTrigger>
+          <TabsTrigger value="goals">Goals</TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
         </TabsList>
 
         {/* Trends Tab */}
@@ -606,6 +629,37 @@ const PerformanceAssessment = () => {
                   </motion.div>
                 ))}
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Goals Tab */}
+        <TabsContent value="goals" className="mt-6">
+          <GoalSetting />
+        </TabsContent>
+
+        {/* Reports Tab */}
+        <TabsContent value="reports" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <FileDown className="h-5 w-5 text-primary" />
+                Performance Report
+              </CardTitle>
+              <CardDescription>
+                Generate and export your performance report for review meetings
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <PerformanceReport
+                profileName={profile?.full_name || "Faculty Member"}
+                department={profile?.department || ""}
+                performanceMetrics={performanceMetrics}
+                skills={skills}
+                overallScore={overallScore}
+                trend={trend}
+                trendPercentage={trendPercentage}
+              />
             </CardContent>
           </Card>
         </TabsContent>
