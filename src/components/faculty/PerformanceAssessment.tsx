@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Info,
   Loader2,
+  Bell,
   FileDown,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -32,9 +33,6 @@ import {
   CartesianGrid,
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
-  Cell,
   RadialBarChart,
   RadialBar,
 } from "recharts";
@@ -43,6 +41,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import GoalSetting from "./GoalSetting";
 import PerformanceReport from "./PerformanceReport";
+import PeerComparison from "./PeerComparison";
+import NotificationCenter from "./NotificationCenter";
 
 interface PerformanceMetric {
   id: string;
@@ -386,11 +386,15 @@ const PerformanceAssessment = () => {
 
       {/* Tabs for Different Views */}
       <Tabs defaultValue="trends" className="w-full">
-        <TabsList className="grid w-full max-w-2xl grid-cols-5">
+        <TabsList className="grid w-full max-w-3xl grid-cols-6">
           <TabsTrigger value="trends">Trends</TabsTrigger>
           <TabsTrigger value="skills">Skills</TabsTrigger>
-          <TabsTrigger value="comparison">Comparison</TabsTrigger>
+          <TabsTrigger value="peers">Peer Comparison</TabsTrigger>
           <TabsTrigger value="goals">Goals</TabsTrigger>
+          <TabsTrigger value="notifications">
+            <Bell className="h-4 w-4 mr-1" />
+            Alerts
+          </TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
         </TabsList>
 
@@ -558,83 +562,19 @@ const PerformanceAssessment = () => {
           </Card>
         </TabsContent>
 
-        {/* Comparison Tab */}
-        <TabsContent value="comparison" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Category Comparison</CardTitle>
-              <CardDescription>Compare your scores across different categories</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {categoryData.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  No performance data available
-                </div>
-              ) : (
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={categoryData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis
-                      dataKey="name"
-                      tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                      axisLine={{ stroke: "hsl(var(--border))" }}
-                    />
-                    <YAxis
-                      tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                      axisLine={{ stroke: "hsl(var(--border))" }}
-                      domain={[0, 100]}
-                    />
-                    <RechartsTooltip
-                      contentStyle={{
-                        backgroundColor: "hsl(var(--card))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
-                        color: "hsl(var(--foreground))",
-                      }}
-                      cursor={{ fill: "hsl(var(--muted))" }}
-                    />
-                    <Bar dataKey="score" radius={[8, 8, 0, 0]}>
-                      {categoryData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              )}
-
-              {/* Performance Summary */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                {categoryData.map((category, index) => (
-                  <motion.div
-                    key={category.name}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="p-4 rounded-lg border border-border text-center"
-                  >
-                    <div
-                      className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center"
-                      style={{ backgroundColor: `${category.fill}20` }}
-                    >
-                      <category.icon className="h-6 w-6" style={{ color: category.fill }} />
-                    </div>
-                    <h4 className="font-medium text-foreground">{category.name}</h4>
-                    <p className={`text-2xl font-bold mt-1 ${getScoreColor(category.score)}`}>
-                      {category.score}%
-                    </p>
-                    <Badge variant={getBadgeVariant(category.score)} className="mt-2">
-                      {getPerformanceLabel(category.score)}
-                    </Badge>
-                  </motion.div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+        {/* Peer Comparison Tab */}
+        <TabsContent value="peers" className="mt-6">
+          <PeerComparison />
         </TabsContent>
 
         {/* Goals Tab */}
         <TabsContent value="goals" className="mt-6">
           <GoalSetting />
+        </TabsContent>
+
+        {/* Notifications Tab */}
+        <TabsContent value="notifications" className="mt-6">
+          <NotificationCenter />
         </TabsContent>
 
         {/* Reports Tab */}
