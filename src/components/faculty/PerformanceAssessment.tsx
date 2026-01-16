@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   BarChart3,
@@ -39,6 +39,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { useMultipleRealtimeData } from "@/hooks/useRealtimeData";
 import GoalSetting from "./GoalSetting";
 import PerformanceReport from "./PerformanceReport";
 import PeerComparison from "./PeerComparison";
@@ -77,11 +78,37 @@ const PerformanceAssessment = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
+  // Initial data fetch
   useEffect(() => {
     if (user) {
       fetchData();
     }
   }, [user]);
+
+  // Realtime subscriptions for performance data
+  useMultipleRealtimeData([
+    {
+      table: "performance_metrics",
+      userId: user?.id,
+      onChange: () => {
+        if (user) fetchData();
+      },
+    },
+    {
+      table: "capacity_skills",
+      userId: user?.id,
+      onChange: () => {
+        if (user) fetchData();
+      },
+    },
+    {
+      table: "profiles",
+      userId: user?.id,
+      onChange: () => {
+        if (user) fetchData();
+      },
+    },
+  ]);
 
   const fetchData = async () => {
     if (!user) return;

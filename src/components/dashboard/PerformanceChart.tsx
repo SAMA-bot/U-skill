@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   AreaChart,
   Area,
@@ -7,17 +8,84 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useRealtimeData } from "@/hooks/useRealtimeData";
+import { Loader2 } from "lucide-react";
 
-const performanceData = [
-  { month: "Jan", teaching: 72, research: 65, service: 78 },
-  { month: "Feb", teaching: 75, research: 68, service: 80 },
-  { month: "Mar", teaching: 78, research: 72, service: 82 },
-  { month: "Apr", teaching: 74, research: 75, service: 79 },
-  { month: "May", teaching: 80, research: 78, service: 85 },
-  { month: "Jun", teaching: 82, research: 80, service: 88 },
-];
+interface PerformanceData {
+  month: string;
+  teaching: number;
+  research: number;
+  service: number;
+}
 
 const PerformanceChart = () => {
+  const [performanceData, setPerformanceData] = useState<PerformanceData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+
+  const fetchData = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("performance_metrics")
+        .select("month, teaching_score, research_score, service_score")
+        .eq("user_id", user.id)
+        .order("year", { ascending: true })
+        .order("month", { ascending: true })
+        .limit(6);
+
+      if (error) throw error;
+
+      if (data) {
+        const formattedData = data.map((item) => ({
+          month: item.month,
+          teaching: item.teaching_score || 0,
+          research: item.research_score || 0,
+          service: item.service_score || 0,
+        }));
+        setPerformanceData(formattedData);
+      }
+    } catch (error) {
+      console.error("Error fetching performance data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
+
+  // Realtime subscription
+  useRealtimeData({
+    table: "performance_metrics",
+    userId: user?.id,
+    onChange: () => {
+      if (user) fetchData();
+    },
+  });
+
+  if (loading) {
+    return (
+      <div className="h-64 flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (performanceData.length === 0) {
+    return (
+      <div className="h-64 flex items-center justify-center text-muted-foreground">
+        No performance data available
+      </div>
+    );
+  }
+
   return (
     <ResponsiveContainer width="100%" height={256}>
       <AreaChart data={performanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

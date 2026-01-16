@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { 
   Search, 
@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useRealtimeData } from "@/hooks/useRealtimeData";
 
 interface Course {
   id: string;
@@ -48,6 +49,7 @@ interface Course {
   course_url: string | null;
   video_url: string | null;
   course_type: string;
+  is_published: boolean;
 }
 
 const CoursesViewer = () => {
@@ -70,9 +72,42 @@ const CoursesViewer = () => {
     { value: "general", label: "General Development" },
   ];
 
+  // Initial fetch
   useEffect(() => {
     fetchCourses();
   }, []);
+
+  // Realtime subscription for courses
+  useRealtimeData({
+    table: "courses",
+    onInsert: (newCourse) => {
+      if (newCourse.is_published) {
+        setCourses((prev) => [newCourse, ...prev]);
+        toast({
+          title: "New course available!",
+          description: `"${newCourse.title}" has been added.`,
+        });
+      }
+    },
+    onUpdate: (updatedCourse) => {
+      setCourses((prev) => {
+        // If course is now unpublished, remove it
+        if (!updatedCourse.is_published) {
+          return prev.filter((c) => c.id !== updatedCourse.id);
+        }
+        // If course exists, update it
+        const exists = prev.find((c) => c.id === updatedCourse.id);
+        if (exists) {
+          return prev.map((c) => (c.id === updatedCourse.id ? updatedCourse : c));
+        }
+        // If course is newly published, add it
+        return [updatedCourse, ...prev];
+      });
+    },
+    onDelete: (deletedCourse) => {
+      setCourses((prev) => prev.filter((c) => c.id !== deletedCourse.id));
+    },
+  });
 
   const fetchCourses = async () => {
     try {
