@@ -10,7 +10,6 @@ import {
   Calendar, 
   Settings, 
   LogOut,
-  Bell,
   Menu,
   Download,
   FileText,
@@ -26,11 +25,13 @@ import CapacityRadarChart from "@/components/dashboard/CapacityRadarChart";
 import MotivationTrendChart from "@/components/dashboard/MotivationTrendChart";
 import CoursesViewer from "@/components/faculty/CoursesViewer";
 import PerformanceAssessment from "@/components/faculty/PerformanceAssessment";
+import HeaderNotifications from "@/components/layout/HeaderNotifications";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useMultipleRealtimeData } from "@/hooks/useRealtimeData";
+import { NotificationsProvider } from "@/hooks/useNotifications";
 
 interface Profile {
   full_name: string;
@@ -290,6 +291,7 @@ const FacultyDashboard = () => {
   const displayName = profile?.full_name || user?.email || 'Faculty Member';
 
   return (
+    <NotificationsProvider>
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="bg-card border-b border-border shadow-sm z-30 sticky top-0">
@@ -313,9 +315,7 @@ const FacultyDashboard = () => {
             </div>
             <div className="flex items-center space-x-4">
               <ThemeToggle />
-              <button className="bg-muted p-2 rounded-full text-muted-foreground hover:text-foreground focus:outline-none">
-                <Bell className="h-5 w-5" />
-              </button>
+              <HeaderNotifications />
               <div className="flex items-center">
                 <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center overflow-hidden">
                   {profile?.avatar_url ? (
@@ -679,6 +679,7 @@ const FacultyDashboard = () => {
         </main>
       </div>
     </div>
+    </NotificationsProvider>
   );
 };
 
