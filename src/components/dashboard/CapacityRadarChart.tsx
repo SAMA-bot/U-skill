@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   RadarChart,
   PolarGrid,
@@ -7,17 +8,79 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useRealtimeData } from "@/hooks/useRealtimeData";
+import { Loader2 } from "lucide-react";
 
-const capacityData = [
-  { skill: "Pedagogy", current: 85, target: 95 },
-  { skill: "Research", current: 75, target: 90 },
-  { skill: "Technology", current: 80, target: 85 },
-  { skill: "Leadership", current: 70, target: 80 },
-  { skill: "Communication", current: 88, target: 92 },
-  { skill: "Innovation", current: 72, target: 88 },
-];
+interface CapacityData {
+  skill: string;
+  current: number;
+  target: number;
+}
 
 const CapacityRadarChart = () => {
+  const [capacityData, setCapacityData] = useState<CapacityData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+
+  const fetchData = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("capacity_skills")
+        .select("skill_name, current_level, target_level")
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+
+      if (data) {
+        const formattedData = data.map((item) => ({
+          skill: item.skill_name,
+          current: item.current_level || 0,
+          target: item.target_level || 100,
+        }));
+        setCapacityData(formattedData);
+      }
+    } catch (error) {
+      console.error("Error fetching capacity data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchData();
+    }
+  }, [user]);
+
+  // Realtime subscription
+  useRealtimeData({
+    table: "capacity_skills",
+    userId: user?.id,
+    onChange: () => {
+      if (user) fetchData();
+    },
+  });
+
+  if (loading) {
+    return (
+      <div className="h-64 flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (capacityData.length === 0) {
+    return (
+      <div className="h-64 flex items-center justify-center text-muted-foreground">
+        No capacity data available
+      </div>
+    );
+  }
+
   return (
     <ResponsiveContainer width="100%" height={256}>
       <RadarChart data={capacityData} margin={{ top: 10, right: 30, left: 30, bottom: 10 }}>

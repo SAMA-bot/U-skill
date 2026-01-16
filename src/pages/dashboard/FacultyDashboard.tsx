@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -30,6 +30,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useMultipleRealtimeData } from "@/hooks/useRealtimeData";
 
 interface Profile {
   full_name: string;
@@ -93,12 +94,51 @@ const FacultyDashboard = () => {
     }
   }, [user, loading, navigate]);
 
-  // Fetch user profile and data
+  // Fetch user data on mount and when user changes
   useEffect(() => {
     if (user) {
       fetchUserData();
     }
   }, [user]);
+
+  // Realtime subscriptions for dashboard data
+  useMultipleRealtimeData([
+    {
+      table: "profiles",
+      userId: user?.id,
+      onChange: () => {
+        if (user) fetchUserData();
+      },
+    },
+    {
+      table: "performance_metrics",
+      userId: user?.id,
+      onChange: () => {
+        if (user) fetchUserData();
+      },
+    },
+    {
+      table: "capacity_skills",
+      userId: user?.id,
+      onChange: () => {
+        if (user) fetchUserData();
+      },
+    },
+    {
+      table: "motivation_scores",
+      userId: user?.id,
+      onChange: () => {
+        if (user) fetchUserData();
+      },
+    },
+    {
+      table: "activities",
+      userId: user?.id,
+      onChange: () => {
+        if (user) fetchUserData();
+      },
+    },
+  ]);
 
   const fetchUserData = async () => {
     if (!user) return;
