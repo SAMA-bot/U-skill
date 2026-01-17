@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield } from "lucide-react";
+import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
@@ -9,6 +9,7 @@ import CapacityRadarChart from "@/components/dashboard/CapacityRadarChart";
 import MotivationTrendChart from "@/components/dashboard/MotivationTrendChart";
 import CoursesViewer from "@/components/faculty/CoursesViewer";
 import PerformanceAssessment from "@/components/faculty/PerformanceAssessment";
+import ActivityLogger from "@/components/faculty/ActivityLogger";
 import HeaderNotifications from "@/components/layout/HeaderNotifications";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -22,7 +23,7 @@ interface Profile {
   designation: string | null;
   avatar_url: string | null;
 }
-type ActiveSection = "dashboard" | "courses" | "performance" | "training" | "motivation" | "calendar";
+type ActiveSection = "dashboard" | "courses" | "performance" | "activities" | "motivation" | "calendar";
 const sidebarItems: {
   icon: typeof Home;
   label: string;
@@ -40,9 +41,9 @@ const sidebarItems: {
   label: "Performance Assessment",
   section: "performance"
 }, {
-  icon: Clock,
-  label: "Training Schedule",
-  section: "training"
+  icon: Activity,
+  label: "Activity Log",
+  section: "activities"
 }, {
   icon: Star,
   label: "Motivation Tools",
@@ -360,7 +361,21 @@ const FacultyDashboard = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto focus:outline-none p-6">
-          {activeSection === "courses" ? <CoursesViewer /> : activeSection === "performance" ? <PerformanceAssessment /> : activeSection === "dashboard" ? <>
+          {activeSection === "courses" ? <CoursesViewer /> : activeSection === "performance" ? <PerformanceAssessment /> : activeSection === "activities" ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="max-w-5xl mx-auto"
+            >
+              <div className="mb-6">
+                <h1 className="text-2xl font-bold text-foreground">Activity Log</h1>
+                <p className="text-muted-foreground">
+                  Track your professional activities and watch your skills grow automatically
+                </p>
+              </div>
+              <ActivityLogger />
+            </motion.div>
+          ) : activeSection === "dashboard" ? <>
               {/* Page Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div>
@@ -566,9 +581,12 @@ const FacultyDashboard = () => {
                         <p className="text-sm text-muted-foreground mt-1">Start your training journey to see activities here</p>
                       </div>}
                     <div className="px-4 py-5 sm:px-6">
-                      <a href="#" className="block text-center px-4 py-2 border border-dashed border-border rounded-md text-sm font-medium text-muted-foreground hover:bg-muted transition-colors">
+                      <button 
+                        onClick={() => setActiveSection("activities")}
+                        className="block w-full text-center px-4 py-2 border border-dashed border-border rounded-md text-sm font-medium text-muted-foreground hover:bg-muted transition-colors"
+                      >
                         View All Activities
-                      </a>
+                      </button>
                     </div>
                   </div>
                 </motion.div>
