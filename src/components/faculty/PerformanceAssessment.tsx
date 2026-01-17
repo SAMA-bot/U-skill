@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   BarChart3,
@@ -261,6 +261,9 @@ const PerformanceAssessment = () => {
     );
   }
 
+  // Check if user has no performance data yet
+  const hasNoData = performanceMetrics.length === 0;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -271,6 +274,24 @@ const PerformanceAssessment = () => {
         </p>
       </div>
 
+      {hasNoData && (
+        <Card className="border-dashed">
+          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <BarChart3 className="h-8 w-8 text-primary" />
+            </div>
+            <h3 className="text-xl font-semibold text-foreground mb-2">Welcome to Your Performance Dashboard</h3>
+            <p className="text-muted-foreground max-w-md mb-4">
+              Your performance metrics will appear here as you complete activities, courses, and receive assessments.
+              Start by exploring the Capacity Building section to begin your professional development journey.
+            </p>
+            <Badge variant="secondary">Get started by completing your first activity</Badge>
+          </CardContent>
+        </Card>
+      )}
+
+      {!hasNoData && (
+        <>
       {/* Overall Score Card */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <motion.div
@@ -630,6 +651,8 @@ const PerformanceAssessment = () => {
           </Card>
         </TabsContent>
       </Tabs>
+        </>
+      )}
     </div>
   );
 };

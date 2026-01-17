@@ -79,8 +79,11 @@ const MotivationTrendChart = () => {
 
   if (motivationData.length === 0) {
     return (
-      <div className="h-52 flex items-center justify-center text-muted-foreground">
-        No motivation data available
+      <div className="h-52 flex flex-col items-center justify-center text-center px-4">
+        <div className="text-lg font-medium text-foreground mb-2">Track Your Motivation</div>
+        <p className="text-sm text-muted-foreground max-w-xs">
+          Engage with activities to start tracking your motivation and engagement scores.
+        </p>
       </div>
     );
   }
