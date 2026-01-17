@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { getUserFriendlyError } from '@/lib/errorMessages';
 
 const signupSchema = z.object({
   fullName: z.string().trim().min(2, { message: "Full name must be at least 2 characters" }).max(100),
@@ -87,7 +88,7 @@ export default function Signup() {
       setIsLoading(false);
       toast({
         title: "Signup Failed",
-        description: error.message,
+        description: getUserFriendlyError(error, 'auth'),
         variant: "destructive",
       });
       return;
