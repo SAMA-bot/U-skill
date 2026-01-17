@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { getUserFriendlyError } from '@/lib/errorMessages';
 
 const loginSchema = z.object({
   email: z.string().trim().email({ message: "Please enter a valid email address" }),
@@ -58,7 +59,7 @@ export default function Login() {
       setIsLoading(false);
       toast({
         title: "Login Failed",
-        description: error.message,
+        description: getUserFriendlyError(error, 'auth'),
         variant: "destructive",
       });
       return;

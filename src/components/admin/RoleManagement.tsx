@@ -45,6 +45,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import type { Database } from "@/integrations/supabase/types";
+import { getUserFriendlyError } from "@/lib/errorMessages";
 
 type AppRole = Database["public"]["Enums"]["app_role"];
 
@@ -160,7 +161,7 @@ export function RoleManagement() {
       console.error("Error updating role:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to update user role",
+        description: getUserFriendlyError(error, 'general'),
         variant: "destructive",
       });
     } finally {
@@ -224,7 +225,7 @@ export function RoleManagement() {
       console.error("Error creating user:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to create user",
+        description: getUserFriendlyError(error, 'general'),
         variant: "destructive",
       });
     } finally {
@@ -254,7 +255,7 @@ export function RoleManagement() {
       console.error("Error deleting user:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to delete user",
+        description: getUserFriendlyError(error, 'general'),
         variant: "destructive",
       });
     } finally {
