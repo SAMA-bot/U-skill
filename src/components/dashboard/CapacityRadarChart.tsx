@@ -73,10 +73,25 @@ const CapacityRadarChart = () => {
     );
   }
 
+  // Check if user has no capacity progress (all zeros)
+  const hasNoProgress = capacityData.length === 0 || capacityData.every(d => d.current === 0);
+
   if (capacityData.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center text-muted-foreground">
-        No capacity data available
+      <div className="h-64 flex flex-col items-center justify-center text-center px-4">
+        <div className="text-muted-foreground mb-2">No capacity data available</div>
+        <p className="text-sm text-muted-foreground/70">Complete activities to build your skills</p>
+      </div>
+    );
+  }
+
+  if (hasNoProgress) {
+    return (
+      <div className="h-64 flex flex-col items-center justify-center text-center px-4">
+        <div className="text-lg font-medium text-foreground mb-2">Start Building Your Skills!</div>
+        <p className="text-sm text-muted-foreground max-w-xs">
+          Complete courses and activities to track your capacity growth across Teaching, Research, Leadership, and more.
+        </p>
       </div>
     );
   }

@@ -80,8 +80,11 @@ const PerformanceChart = () => {
 
   if (performanceData.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center text-muted-foreground">
-        No performance data available
+      <div className="h-64 flex flex-col items-center justify-center text-center px-4">
+        <div className="text-lg font-medium text-foreground mb-2">No Performance Data Yet</div>
+        <p className="text-sm text-muted-foreground max-w-xs">
+          Your performance metrics will appear here as you complete activities and receive assessments.
+        </p>
       </div>
     );
   }
