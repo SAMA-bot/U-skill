@@ -10,11 +10,15 @@ import {
   Video,
   FileText,
   Play,
-  X
+  CheckCircle2,
+  PlayCircle,
+  Award,
+  TrendingUp
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -37,6 +41,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
+import { useCourseEnrollments } from "@/hooks/useCourseEnrollments";
 
 interface Course {
   id: string;
@@ -61,6 +66,16 @@ const CoursesViewer = () => {
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const { toast } = useToast();
+  const { 
+    enrollInCourse, 
+    startCourse, 
+    completeCourse, 
+    getEnrollment, 
+    isEnrolled, 
+    isCompleted,
+    getCompletedCount,
+    getInProgressCount
+  } = useCourseEnrollments();
 
   const categories = [
     { value: "all", label: "All Categories" },
@@ -196,112 +211,195 @@ const CoursesViewer = () => {
     );
   }
 
-  const renderCourseCard = (course: Course, index: number) => (
-    <motion.div
-      key={course.id}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
-      className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
-    >
-      {/* Thumbnail */}
-      <div className="aspect-video bg-muted relative group">
-        {course.thumbnail_url ? (
-          <img
-            src={course.thumbnail_url}
-            alt={course.title}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            {course.course_type === 'video' ? (
-              <Video className="h-12 w-12 text-muted-foreground" />
-            ) : (
-              <BookOpen className="h-12 w-12 text-muted-foreground" />
+  const renderCourseCard = (course: Course, index: number) => {
+    const enrollment = getEnrollment(course.id);
+    const enrolled = isEnrolled(course.id);
+    const completed = isCompleted(course.id);
+
+    return (
+      <motion.div
+        key={course.id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05 }}
+        className={`bg-card border rounded-lg overflow-hidden hover:shadow-lg transition-shadow ${
+          completed ? "border-green-500/50" : "border-border"
+        }`}
+      >
+        {/* Thumbnail */}
+        <div className="aspect-video bg-muted relative group">
+          {course.thumbnail_url ? (
+            <img
+              src={course.thumbnail_url}
+              alt={course.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              {course.course_type === 'video' ? (
+                <Video className="h-12 w-12 text-muted-foreground" />
+              ) : (
+                <BookOpen className="h-12 w-12 text-muted-foreground" />
+              )}
+            </div>
+          )}
+          <div className="absolute top-2 left-2 flex gap-2">
+            <Badge className={getCategoryColor(course.category)}>
+              {getCategoryLabel(course.category)}
+            </Badge>
+            {course.course_type === 'video' && (
+              <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+                <Video className="h-3 w-3 mr-1" />
+                Video
+              </Badge>
             )}
           </div>
-        )}
-        <div className="absolute top-2 left-2 flex gap-2">
-          <Badge className={getCategoryColor(course.category)}>
-            {getCategoryLabel(course.category)}
-          </Badge>
-          {course.course_type === 'video' && (
-            <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
-              <Video className="h-3 w-3 mr-1" />
-              Video
-            </Badge>
+          {completed && (
+            <div className="absolute top-2 right-2">
+              <Badge className="bg-green-500 text-white">
+                <CheckCircle2 className="h-3 w-3 mr-1" />
+                Completed
+              </Badge>
+            </div>
+          )}
+          {course.course_type === 'video' && course.video_url && (
+            <div 
+              className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+              onClick={() => handlePlayVideo(course)}
+            >
+              <div className="bg-white/90 rounded-full p-4">
+                <Play className="h-8 w-8 text-primary fill-primary" />
+              </div>
+            </div>
           )}
         </div>
-        {course.course_type === 'video' && course.video_url && (
-          <div 
-            className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
-            onClick={() => handlePlayVideo(course)}
-          >
-            <div className="bg-white/90 rounded-full p-4">
-              <Play className="h-8 w-8 text-primary fill-primary" />
-            </div>
+
+        {/* Content */}
+        <div className="p-4 space-y-3">
+          <h3 className="font-semibold text-foreground line-clamp-2">
+            {course.title}
+          </h3>
+          
+          {course.description && (
+            <p className="text-sm text-muted-foreground line-clamp-2">
+              {course.description}
+            </p>
+          )}
+
+          <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+            {course.instructor_name && (
+              <div className="flex items-center gap-1">
+                <User className="h-4 w-4" />
+                <span>{course.instructor_name}</span>
+              </div>
+            )}
+            {course.duration_hours && (
+              <div className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                <span>{course.duration_hours}h</span>
+              </div>
+            )}
+            {course.duration_hours && (
+              <div className="flex items-center gap-1">
+                <Award className="h-4 w-4 text-primary" />
+                <span className="text-primary font-medium">+{Math.min(course.duration_hours * 5, 25)} pts</span>
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      {/* Content */}
-      <div className="p-4 space-y-3">
-        <h3 className="font-semibold text-foreground line-clamp-2">
-          {course.title}
-        </h3>
-        
-        {course.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2">
-            {course.description}
-          </p>
-        )}
-
-        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-          {course.instructor_name && (
-            <div className="flex items-center gap-1">
-              <User className="h-4 w-4" />
-              <span>{course.instructor_name}</span>
+          {/* Progress bar for in-progress courses */}
+          {enrollment && enrollment.status === "in_progress" && (
+            <div className="space-y-1">
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Progress</span>
+                <span>{enrollment.progress_percentage}%</span>
+              </div>
+              <Progress value={enrollment.progress_percentage} className="h-2" />
             </div>
           )}
-          {course.duration_hours && (
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              <span>{course.duration_hours}h</span>
-            </div>
-          )}
+
+          {/* Action buttons based on enrollment status */}
+          <div className="space-y-2 pt-2">
+            {completed ? (
+              <Button variant="outline" className="w-full" disabled>
+                <CheckCircle2 className="h-4 w-4 mr-2 text-green-500" />
+                Completed
+              </Button>
+            ) : enrollment?.status === "in_progress" ? (
+              <Button
+                variant="default"
+                className="w-full"
+                onClick={() => completeCourse(course.id)}
+              >
+                <CheckCircle2 className="h-4 w-4 mr-2" />
+                Mark as Complete
+              </Button>
+            ) : enrolled ? (
+              <Button
+                variant="default"
+                className="w-full"
+                onClick={() => startCourse(course.id)}
+              >
+                <PlayCircle className="h-4 w-4 mr-2" />
+                Start Learning
+              </Button>
+            ) : (
+              <Button
+                variant="default"
+                className="w-full"
+                onClick={() => enrollInCourse(course.id)}
+              >
+                <TrendingUp className="h-4 w-4 mr-2" />
+                Enroll Now
+              </Button>
+            )}
+
+            {/* Secondary action for video/external link */}
+            {course.course_type === 'video' && course.video_url ? (
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => handlePlayVideo(course)}
+              >
+                <Play className="h-4 w-4 mr-2" />
+                Watch Video
+              </Button>
+            ) : course.course_url ? (
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => window.open(course.course_url!, "_blank")}
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Access Course
+              </Button>
+            ) : null}
+          </div>
         </div>
-
-        {course.course_type === 'video' && course.video_url ? (
-          <Button
-            variant="default"
-            className="w-full mt-2"
-            onClick={() => handlePlayVideo(course)}
-          >
-            <Play className="h-4 w-4 mr-2" />
-            Watch Video
-          </Button>
-        ) : course.course_url ? (
-          <Button
-            variant="outline"
-            className="w-full mt-2"
-            onClick={() => window.open(course.course_url!, "_blank")}
-          >
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Access Course
-          </Button>
-        ) : null}
-      </div>
-    </motion.div>
-  );
+      </motion.div>
+    );
+  };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-foreground">Capacity Building Courses</h2>
-        <p className="text-muted-foreground mt-1">
-          Browse and access training courses to enhance your skills
-        </p>
+      {/* Header with Stats */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">Capacity Building Courses</h2>
+          <p className="text-muted-foreground mt-1">
+            Browse and complete courses to earn skill points
+          </p>
+        </div>
+        <div className="flex gap-4">
+          <div className="bg-primary/10 rounded-lg px-4 py-2 text-center">
+            <div className="text-2xl font-bold text-primary">{getCompletedCount()}</div>
+            <div className="text-xs text-muted-foreground">Completed</div>
+          </div>
+          <div className="bg-orange-500/10 rounded-lg px-4 py-2 text-center">
+            <div className="text-2xl font-bold text-orange-500">{getInProgressCount()}</div>
+            <div className="text-xs text-muted-foreground">In Progress</div>
+          </div>
+        </div>
       </div>
 
       {/* Filters */}
