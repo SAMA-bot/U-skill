@@ -45,6 +45,7 @@ interface Course {
   thumbnail_url: string | null;
   course_url: string | null;
   video_url: string | null;
+  document_url: string | null;
   course_type: string;
   is_published: boolean;
   created_by: string;
@@ -75,6 +76,9 @@ export function CourseManagement() {
   const [submitting, setSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<string>('');
 
   const { user } = useAuth();
   const { toast } = useToast();
@@ -87,8 +91,6 @@ export function CourseManagement() {
     course_type: 'regular',
     duration_hours: '',
     instructor_name: '',
-    course_url: '',
-    video_url: '',
     is_published: false,
   });
 
@@ -125,11 +127,12 @@ export function CourseManagement() {
       course_type: 'regular',
       duration_hours: '',
       instructor_name: '',
-      course_url: '',
-      video_url: '',
       is_published: false,
     });
     setThumbnailFile(null);
+    setDocumentFile(null);
+    setVideoFile(null);
+    setUploadProgress('');
     setEditingCourse(null);
   };
 
@@ -143,8 +146,6 @@ export function CourseManagement() {
         course_type: course.course_type || 'regular',
         duration_hours: course.duration_hours?.toString() || '',
         instructor_name: course.instructor_name || '',
-        course_url: course.course_url || '',
-        video_url: course.video_url || '',
         is_published: course.is_published,
       });
     } else {
@@ -158,7 +159,7 @@ export function CourseManagement() {
     resetForm();
   };
 
-  const uploadThumbnail = async (file: File): Promise<string | null> => {
+  const uploadFile = async (file: File, bucket: string): Promise<string | null> => {
     if (!user) return null;
 
     const fileExt = file.name.split('.').pop();
@@ -166,16 +167,16 @@ export function CourseManagement() {
     const filePath = `${user.id}/${fileName}`;
 
     const { error } = await supabase.storage
-      .from('course-thumbnails')
+      .from(bucket)
       .upload(filePath, file);
 
     if (error) {
-      console.error('Error uploading thumbnail:', error);
-      throw new Error('Failed to upload thumbnail');
+      console.error(`Error uploading to ${bucket}:`, error);
+      throw new Error(`Failed to upload file to ${bucket}`);
     }
 
     const { data: urlData } = supabase.storage
-      .from('course-thumbnails')
+      .from(bucket)
       .getPublicUrl(filePath);
 
     return urlData.publicUrl;
@@ -185,15 +186,51 @@ export function CourseManagement() {
     e.preventDefault();
     if (!user) return;
 
+    // Validate required files
+    if (formData.course_type === 'regular' && !documentFile && !editingCourse?.document_url) {
+      toast({
+        title: 'Document Required',
+        description: 'Please upload a document file (PDF, Word, or Text) for regular courses.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (formData.course_type === 'video' && !videoFile && !editingCourse?.video_url) {
+      toast({
+        title: 'Video Required',
+        description: 'Please upload a video file for video courses.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setSubmitting(true);
 
     try {
       let thumbnailUrl = editingCourse?.thumbnail_url || null;
+      let documentUrl = editingCourse?.document_url || null;
+      let videoUrl = editingCourse?.video_url || null;
 
       // Upload thumbnail if a new file is selected
       if (thumbnailFile) {
-        thumbnailUrl = await uploadThumbnail(thumbnailFile);
+        setUploadProgress('Uploading thumbnail...');
+        thumbnailUrl = await uploadFile(thumbnailFile, 'course-thumbnails');
       }
+
+      // Upload document if a new file is selected
+      if (documentFile) {
+        setUploadProgress('Uploading document...');
+        documentUrl = await uploadFile(documentFile, 'course-documents');
+      }
+
+      // Upload video if a new file is selected
+      if (videoFile) {
+        setUploadProgress('Uploading video (this may take a while)...');
+        videoUrl = await uploadFile(videoFile, 'course-videos');
+      }
+
+      setUploadProgress('Saving course...');
 
       const courseData = {
         title: formData.title,
@@ -202,8 +239,8 @@ export function CourseManagement() {
         course_type: formData.course_type,
         duration_hours: formData.duration_hours ? parseInt(formData.duration_hours) : null,
         instructor_name: formData.instructor_name || null,
-        course_url: formData.course_url || null,
-        video_url: formData.video_url || null,
+        document_url: documentUrl,
+        video_url: videoUrl,
         thumbnail_url: thumbnailUrl,
         is_published: formData.is_published,
         created_by: user.id,
@@ -247,6 +284,7 @@ export function CourseManagement() {
       });
     } finally {
       setSubmitting(false);
+      setUploadProgress('');
     }
   };
 
@@ -455,34 +493,46 @@ export function CourseManagement() {
 
                 {formData.course_type === 'video' && (
                   <div className="space-y-2">
-                    <Label htmlFor="video_url">Video URL *</Label>
+                    <Label htmlFor="video_file">Video File *</Label>
                     <Input
-                      id="video_url"
-                      type="url"
-                      value={formData.video_url}
-                      onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
-                      placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
-                      required={formData.course_type === 'video'}
+                      id="video_file"
+                      type="file"
+                      accept="video/*"
+                      onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
                     />
+                    {editingCourse?.video_url && !videoFile && (
+                      <p className="text-sm text-muted-foreground">
+                        Current video will be kept if no new file is selected.
+                      </p>
+                    )}
                     <p className="text-xs text-muted-foreground">
-                      Supports YouTube, Vimeo, or direct video links
+                      Upload MP4, WebM, or other video formats
+                    </p>
+                  </div>
+                )}
+
+                {formData.course_type === 'regular' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="document_file">Course Document *</Label>
+                    <Input
+                      id="document_file"
+                      type="file"
+                      accept=".pdf,.doc,.docx,.txt,.rtf"
+                      onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
+                    />
+                    {editingCourse?.document_url && !documentFile && (
+                      <p className="text-sm text-muted-foreground">
+                        Current document will be kept if no new file is selected.
+                      </p>
+                    )}
+                    <p className="text-xs text-muted-foreground">
+                      Upload PDF, Word (.doc, .docx), or Text (.txt) files
                     </p>
                   </div>
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="course_url">Course URL</Label>
-                  <Input
-                    id="course_url"
-                    type="url"
-                    value={formData.course_url}
-                    onChange={(e) => setFormData({ ...formData, course_url: e.target.value })}
-                    placeholder="https://example.com/course"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="thumbnail">Thumbnail Image</Label>
+                  <Label htmlFor="thumbnail">Thumbnail Image (Optional)</Label>
                   <Input
                     id="thumbnail"
                     type="file"
@@ -495,6 +545,13 @@ export function CourseManagement() {
                     </p>
                   )}
                 </div>
+
+                {uploadProgress && (
+                  <div className="flex items-center gap-2 text-sm text-primary">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {uploadProgress}
+                  </div>
+                )}
 
                 <div className="flex items-center space-x-2">
                   <Switch

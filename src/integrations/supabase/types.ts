@@ -123,6 +123,7 @@ export type Database = {
           created_at: string
           created_by: string
           description: string | null
+          document_url: string | null
           duration_hours: number | null
           id: string
           instructor_name: string | null
@@ -139,6 +140,7 @@ export type Database = {
           created_at?: string
           created_by: string
           description?: string | null
+          document_url?: string | null
           duration_hours?: number | null
           id?: string
           instructor_name?: string | null
@@ -155,6 +157,7 @@ export type Database = {
           created_at?: string
           created_by?: string
           description?: string | null
+          document_url?: string | null
           duration_hours?: number | null
           id?: string
           instructor_name?: string | null
