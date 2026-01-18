@@ -4,7 +4,7 @@ import {
   Search, 
   Clock, 
   User, 
-  ExternalLink,
+  Download,
   BookOpen,
   Filter,
   Video,
@@ -13,7 +13,9 @@ import {
   CheckCircle2,
   PlayCircle,
   Award,
-  TrendingUp
+  TrendingUp,
+  FileIcon,
+  X
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -53,6 +55,7 @@ interface Course {
   thumbnail_url: string | null;
   course_url: string | null;
   video_url: string | null;
+  document_url: string | null;
   course_type: string;
   is_published: boolean;
 }
@@ -64,6 +67,7 @@ const CoursesViewer = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [documentModalOpen, setDocumentModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const { toast } = useToast();
   const { 
@@ -163,28 +167,34 @@ const CoursesViewer = () => {
   const videoCourses = filteredCourses.filter(c => c.course_type === 'video');
   const regularCourses = filteredCourses.filter(c => c.course_type === 'regular');
 
-  const getEmbedUrl = (url: string) => {
-    // YouTube
-    const youtubeMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
-    if (youtubeMatch) {
-      return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
-    }
-    // Vimeo
-    const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-    if (vimeoMatch) {
-      return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-    }
-    // Direct video URL
-    return url;
-  };
-
-  const isEmbeddable = (url: string) => {
-    return url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com');
-  };
-
   const handlePlayVideo = (course: Course) => {
     setSelectedCourse(course);
     setVideoModalOpen(true);
+  };
+
+  const handleViewDocument = (course: Course) => {
+    setSelectedCourse(course);
+    setDocumentModalOpen(true);
+  };
+
+  const getDocumentType = (url: string) => {
+    const extension = url.split('.').pop()?.toLowerCase();
+    if (extension === 'pdf') return 'pdf';
+    if (['doc', 'docx'].includes(extension || '')) return 'word';
+    if (['txt', 'rtf'].includes(extension || '')) return 'text';
+    return 'unknown';
+  };
+
+  const getDocumentIcon = (url: string) => {
+    const type = getDocumentType(url);
+    switch (type) {
+      case 'pdf':
+        return <FileIcon className="h-4 w-4 text-red-500" />;
+      case 'word':
+        return <FileIcon className="h-4 w-4 text-blue-500" />;
+      default:
+        return <FileText className="h-4 w-4" />;
+    }
   };
 
   const getCategoryLabel = (value: string) => {
@@ -354,7 +364,7 @@ const CoursesViewer = () => {
               </Button>
             )}
 
-            {/* Secondary action for video/external link */}
+            {/* Secondary action for video/document */}
             {course.course_type === 'video' && course.video_url ? (
               <Button
                 variant="outline"
@@ -364,14 +374,14 @@ const CoursesViewer = () => {
                 <Play className="h-4 w-4 mr-2" />
                 Watch Video
               </Button>
-            ) : course.course_url ? (
+            ) : course.course_type === 'regular' && course.document_url ? (
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => window.open(course.course_url!, "_blank")}
+                onClick={() => handleViewDocument(course)}
               >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Access Course
+                {getDocumentIcon(course.document_url)}
+                <span className="ml-2">View Document</span>
               </Button>
             ) : null}
           </div>
@@ -527,24 +537,14 @@ const CoursesViewer = () => {
           </DialogHeader>
           <div className="p-4">
             {selectedCourse?.video_url && (
-              isEmbeddable(selectedCourse.video_url) ? (
-                <div className="aspect-video">
-                  <iframe
-                    src={getEmbedUrl(selectedCourse.video_url)}
-                    className="w-full h-full rounded-lg"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-              ) : (
-                <div className="aspect-video">
-                  <video
-                    src={selectedCourse.video_url}
-                    controls
-                    className="w-full h-full rounded-lg"
-                  />
-                </div>
-              )
+              <div className="aspect-video">
+                <video
+                  src={selectedCourse.video_url}
+                  controls
+                  className="w-full h-full rounded-lg"
+                  autoPlay
+                />
+              </div>
             )}
             {selectedCourse?.description && (
               <p className="mt-4 text-muted-foreground">
@@ -565,6 +565,57 @@ const CoursesViewer = () => {
                 </div>
               )}
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Document Modal */}
+      <Dialog open={documentModalOpen} onOpenChange={setDocumentModalOpen}>
+        <DialogContent className="max-w-5xl h-[90vh] p-0 overflow-hidden flex flex-col">
+          <DialogHeader className="p-4 pb-0 flex-shrink-0">
+            <DialogTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                {selectedCourse?.title}
+              </div>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 p-4 overflow-hidden">
+            {selectedCourse?.document_url && (
+              <>
+                {getDocumentType(selectedCourse.document_url) === 'pdf' ? (
+                  <iframe
+                    src={selectedCourse.document_url}
+                    className="w-full h-full rounded-lg border"
+                    title={selectedCourse.title}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full gap-6 text-center">
+                    <div className="bg-muted rounded-full p-8">
+                      {getDocumentIcon(selectedCourse.document_url)}
+                      <FileIcon className="h-16 w-16 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">Document Preview</h3>
+                      <p className="text-muted-foreground mb-4">
+                        This document type cannot be previewed in the browser.
+                      </p>
+                      <Button
+                        onClick={() => window.open(selectedCourse.document_url!, '_blank')}
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download Document
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+            {selectedCourse?.description && (
+              <p className="mt-4 text-muted-foreground">
+                {selectedCourse.description}
+              </p>
+            )}
           </div>
         </DialogContent>
       </Dialog>
