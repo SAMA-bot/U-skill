@@ -113,6 +113,13 @@ export type Database = {
             referencedRelation: "courses"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "course_enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       courses: {
@@ -288,7 +295,57 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      courses_public: {
+        Row: {
+          category: string | null
+          course_type: string | null
+          course_url: string | null
+          created_at: string | null
+          description: string | null
+          document_url: string | null
+          duration_hours: number | null
+          id: string | null
+          instructor_name: string | null
+          is_published: boolean | null
+          thumbnail_url: string | null
+          title: string | null
+          updated_at: string | null
+          video_url: string | null
+        }
+        Insert: {
+          category?: string | null
+          course_type?: string | null
+          course_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          document_url?: string | null
+          duration_hours?: number | null
+          id?: string | null
+          instructor_name?: string | null
+          is_published?: boolean | null
+          thumbnail_url?: string | null
+          title?: string | null
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          category?: string | null
+          course_type?: string | null
+          course_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          document_url?: string | null
+          duration_hours?: number | null
+          id?: string | null
+          instructor_name?: string | null
+          is_published?: boolean | null
+          thumbnail_url?: string | null
+          title?: string | null
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {

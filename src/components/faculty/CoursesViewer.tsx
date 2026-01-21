@@ -15,7 +15,8 @@ import {
   Award,
   TrendingUp,
   FileIcon,
-  X
+  X,
+  Loader2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -44,7 +45,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
 import { useCourseEnrollments } from "@/hooks/useCourseEnrollments";
+import { getVideoSignedUrl, getDocumentSignedUrl } from "@/lib/storageUtils";
 
+// Course interface without sensitive created_by field (using public view)
 interface Course {
   id: string;
   title: string;
@@ -69,6 +72,9 @@ const CoursesViewer = () => {
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [documentModalOpen, setDocumentModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [signedVideoUrl, setSignedVideoUrl] = useState<string | null>(null);
+  const [signedDocumentUrl, setSignedDocumentUrl] = useState<string | null>(null);
+  const [loadingMedia, setLoadingMedia] = useState(false);
   const { toast } = useToast();
   const { 
     enrollInCourse, 
@@ -130,14 +136,14 @@ const CoursesViewer = () => {
 
   const fetchCourses = async () => {
     try {
+      // Use the public view that excludes sensitive created_by field
       const { data, error } = await supabase
-        .from("courses")
+        .from("courses_public" as any)
         .select("*")
-        .eq("is_published", true)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setCourses(data || []);
+      setCourses((data || []) as unknown as Course[]);
     } catch (error: any) {
       toast({
         title: "Error loading courses",
@@ -167,14 +173,47 @@ const CoursesViewer = () => {
   const videoCourses = filteredCourses.filter(c => c.course_type === 'video');
   const regularCourses = filteredCourses.filter(c => c.course_type === 'regular');
 
-  const handlePlayVideo = (course: Course) => {
+  const handlePlayVideo = async (course: Course) => {
+    if (!course.video_url) return;
+    
     setSelectedCourse(course);
+    setLoadingMedia(true);
     setVideoModalOpen(true);
+    
+    // Get signed URL for private video content
+    const signedUrl = await getVideoSignedUrl(course.video_url);
+    setSignedVideoUrl(signedUrl);
+    setLoadingMedia(false);
   };
 
-  const handleViewDocument = (course: Course) => {
+  const handleViewDocument = async (course: Course) => {
+    if (!course.document_url) return;
+    
     setSelectedCourse(course);
+    setLoadingMedia(true);
     setDocumentModalOpen(true);
+    
+    // Get signed URL for private document content
+    const signedUrl = await getDocumentSignedUrl(course.document_url);
+    setSignedDocumentUrl(signedUrl);
+    setLoadingMedia(false);
+  };
+
+  // Reset signed URLs when modals close
+  const handleVideoModalClose = (open: boolean) => {
+    setVideoModalOpen(open);
+    if (!open) {
+      setSignedVideoUrl(null);
+      setSelectedCourse(null);
+    }
+  };
+
+  const handleDocumentModalClose = (open: boolean) => {
+    setDocumentModalOpen(open);
+    if (!open) {
+      setSignedDocumentUrl(null);
+      setSelectedCourse(null);
+    }
   };
 
   const getDocumentType = (url: string) => {
@@ -527,7 +566,7 @@ const CoursesViewer = () => {
       </Tabs>
 
       {/* Video Modal */}
-      <Dialog open={videoModalOpen} onOpenChange={setVideoModalOpen}>
+      <Dialog open={videoModalOpen} onOpenChange={handleVideoModalClose}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden">
           <DialogHeader className="p-4 pb-0">
             <DialogTitle className="flex items-center gap-2">
@@ -536,14 +575,22 @@ const CoursesViewer = () => {
             </DialogTitle>
           </DialogHeader>
           <div className="p-4">
-            {selectedCourse?.video_url && (
+            {loadingMedia ? (
+              <div className="aspect-video flex items-center justify-center bg-muted rounded-lg">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : signedVideoUrl ? (
               <div className="aspect-video">
                 <video
-                  src={selectedCourse.video_url}
+                  src={signedVideoUrl}
                   controls
                   className="w-full h-full rounded-lg"
                   autoPlay
                 />
+              </div>
+            ) : (
+              <div className="aspect-video flex items-center justify-center bg-muted rounded-lg">
+                <p className="text-muted-foreground">Unable to load video. Please enroll in this course first.</p>
               </div>
             )}
             {selectedCourse?.description && (
@@ -570,7 +617,7 @@ const CoursesViewer = () => {
       </Dialog>
 
       {/* Document Modal */}
-      <Dialog open={documentModalOpen} onOpenChange={setDocumentModalOpen}>
+      <Dialog open={documentModalOpen} onOpenChange={handleDocumentModalClose}>
         <DialogContent className="max-w-5xl h-[90vh] p-0 overflow-hidden flex flex-col">
           <DialogHeader className="p-4 pb-0 flex-shrink-0">
             <DialogTitle className="flex items-center justify-between">
@@ -581,11 +628,15 @@ const CoursesViewer = () => {
             </DialogTitle>
           </DialogHeader>
           <div className="flex-1 p-4 overflow-hidden">
-            {selectedCourse?.document_url && (
+            {loadingMedia ? (
+              <div className="flex items-center justify-center h-full">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : signedDocumentUrl && selectedCourse?.document_url ? (
               <>
                 {getDocumentType(selectedCourse.document_url) === 'pdf' ? (
                   <iframe
-                    src={selectedCourse.document_url}
+                    src={signedDocumentUrl}
                     className="w-full h-full rounded-lg border"
                     title={selectedCourse.title}
                   />
@@ -601,7 +652,7 @@ const CoursesViewer = () => {
                         This document type cannot be previewed in the browser.
                       </p>
                       <Button
-                        onClick={() => window.open(selectedCourse.document_url!, '_blank')}
+                        onClick={() => window.open(signedDocumentUrl, '_blank')}
                       >
                         <Download className="h-4 w-4 mr-2" />
                         Download Document
@@ -610,6 +661,10 @@ const CoursesViewer = () => {
                   </div>
                 )}
               </>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-muted-foreground">Unable to load document. Please enroll in this course first.</p>
+              </div>
             )}
             {selectedCourse?.description && (
               <p className="mt-4 text-muted-foreground">
