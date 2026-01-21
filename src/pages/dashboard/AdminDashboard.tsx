@@ -40,6 +40,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RoleManagement } from "@/components/admin/RoleManagement";
 import { CourseManagement } from "@/components/admin/CourseManagement";
+import AuditLogViewer from "@/components/admin/AuditLogViewer";
 
 interface FacultyMember {
   user_id: string;
@@ -67,7 +68,7 @@ const sidebarItems = [
   { icon: BarChart3, label: "Performance Reports", id: "reports" },
   { icon: Building2, label: "Departments", id: "departments" },
   { icon: Award, label: "Achievements", id: "achievements" },
-  { icon: Activity, label: "Activity Logs", id: "logs" },
+  { icon: Activity, label: "Audit Logs", id: "audit" },
 ];
 
 const AdminDashboard = () => {
@@ -419,6 +420,8 @@ const AdminDashboard = () => {
               </div>
               <CourseManagement />
             </>
+          ) : activeSection === "audit" ? (
+            <AuditLogViewer />
           ) : (
             <>
           {/* Page Header */}
