@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
+import { getUserFriendlyError } from "@/lib/errorMessages";
 
 type EnrollmentStatus = "enrolled" | "in_progress" | "completed";
 
@@ -14,6 +15,14 @@ interface CourseEnrollment {
   completed_at: string | null;
   status: EnrollmentStatus;
   progress_percentage: number;
+}
+
+interface CourseActionResponse {
+  success?: boolean;
+  data?: CourseEnrollment;
+  error?: string;
+  message?: string;
+  retryAfter?: number;
 }
 
 export const useCourseEnrollments = () => {
@@ -47,10 +56,49 @@ export const useCourseEnrollments = () => {
 
   // Realtime subscription
   useRealtimeData({
-    table: "courses" as any, // Using courses as proxy since course_enrollments isn't in TableName type yet
+    table: "courses" as any,
     userId: user?.id,
     onChange: fetchEnrollments,
   });
+
+  const callCourseAction = async (
+    action: string,
+    courseId: string,
+    progressPercentage?: number
+  ): Promise<CourseEnrollment | null> => {
+    try {
+      const { data, error } = await supabase.functions.invoke<CourseActionResponse>(
+        "course-actions",
+        {
+          body: { action, courseId, progressPercentage },
+        }
+      );
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data?.error) {
+        // Handle rate limit
+        if (data.error === "Rate Limit Exceeded") {
+          const retryMinutes = Math.ceil((data.retryAfter || 3600) / 60);
+          toast({
+            title: "Too many requests",
+            description: `Please wait ${retryMinutes} minutes before trying again.`,
+            variant: "destructive",
+          });
+          return null;
+        }
+
+        throw new Error(data.message || "Action failed");
+      }
+
+      return data?.data || null;
+    } catch (error: any) {
+      console.error(`Course action ${action} failed:`, error);
+      throw error;
+    }
+  };
 
   const enrollInCourse = async (courseId: string) => {
     if (!user) {
@@ -63,40 +111,30 @@ export const useCourseEnrollments = () => {
     }
 
     try {
-      const { data, error } = await supabase
-        .from("course_enrollments")
-        .insert({
-          user_id: user.id,
-          course_id: courseId,
-          status: "enrolled",
-        })
-        .select()
-        .single();
+      const result = await callCourseAction("enroll", courseId);
 
-      if (error) {
-        if (error.code === "23505") {
-          toast({
-            title: "Already enrolled",
-            description: "You are already enrolled in this course",
-          });
-          return null;
-        }
-        throw error;
+      if (result) {
+        setEnrollments((prev) => [result, ...prev]);
+        toast({
+          title: "Enrolled successfully!",
+          description: "You have been enrolled in this course",
+        });
       }
 
-      setEnrollments((prev) => [data as CourseEnrollment, ...prev]);
-      toast({
-        title: "Enrolled successfully!",
-        description: "You have been enrolled in this course",
-      });
-
-      return data as CourseEnrollment;
+      return result;
     } catch (error: any) {
-      toast({
-        title: "Enrollment failed",
-        description: error.message,
-        variant: "destructive",
-      });
+      if (error.message?.includes("already enrolled")) {
+        toast({
+          title: "Already enrolled",
+          description: "You are already enrolled in this course",
+        });
+      } else {
+        toast({
+          title: "Enrollment failed",
+          description: getUserFriendlyError(error, "general"),
+          variant: "destructive",
+        });
+      }
       return null;
     }
   };
@@ -104,41 +142,27 @@ export const useCourseEnrollments = () => {
   const startCourse = async (courseId: string) => {
     if (!user) return null;
 
-    const enrollment = enrollments.find((e) => e.course_id === courseId);
-    if (!enrollment) {
-      // Enroll first if not enrolled
-      const newEnrollment = await enrollInCourse(courseId);
-      if (!newEnrollment) return null;
-    }
-
     try {
-      const { data, error } = await supabase
-        .from("course_enrollments")
-        .update({
-          status: "in_progress",
-          progress_percentage: 10,
-        })
-        .eq("user_id", user.id)
-        .eq("course_id", courseId)
-        .select()
-        .single();
+      const result = await callCourseAction("start", courseId);
 
-      if (error) throw error;
+      if (result) {
+        setEnrollments((prev) =>
+          prev.some((e) => e.course_id === courseId)
+            ? prev.map((e) => (e.course_id === courseId ? result : e))
+            : [result, ...prev]
+        );
 
-      setEnrollments((prev) =>
-        prev.map((e) => (e.course_id === courseId ? (data as CourseEnrollment) : e))
-      );
+        toast({
+          title: "Course started!",
+          description: "Good luck with your learning journey",
+        });
+      }
 
-      toast({
-        title: "Course started!",
-        description: "Good luck with your learning journey",
-      });
-
-      return data as CourseEnrollment;
+      return result;
     } catch (error: any) {
       toast({
         title: "Failed to start course",
-        description: error.message,
+        description: getUserFriendlyError(error, "general"),
         variant: "destructive",
       });
       return null;
@@ -149,34 +173,24 @@ export const useCourseEnrollments = () => {
     if (!user) return null;
 
     try {
-      const { data, error } = await supabase
-        .from("course_enrollments")
-        .update({
-          status: "completed",
-          progress_percentage: 100,
-          completed_at: new Date().toISOString(),
-        })
-        .eq("user_id", user.id)
-        .eq("course_id", courseId)
-        .select()
-        .single();
+      const result = await callCourseAction("complete", courseId);
 
-      if (error) throw error;
+      if (result) {
+        setEnrollments((prev) =>
+          prev.map((e) => (e.course_id === courseId ? result : e))
+        );
 
-      setEnrollments((prev) =>
-        prev.map((e) => (e.course_id === courseId ? (data as CourseEnrollment) : e))
-      );
+        toast({
+          title: "🎉 Course completed!",
+          description: "Congratulations! Your skill points have been updated.",
+        });
+      }
 
-      toast({
-        title: "🎉 Course completed!",
-        description: "Congratulations! Your skill points have been updated.",
-      });
-
-      return data as CourseEnrollment;
+      return result;
     } catch (error: any) {
       toast({
         title: "Failed to complete course",
-        description: error.message,
+        description: getUserFriendlyError(error, "general"),
         variant: "destructive",
       });
       return null;
@@ -187,32 +201,22 @@ export const useCourseEnrollments = () => {
     if (!user) return null;
 
     try {
-      const { data, error } = await supabase
-        .from("course_enrollments")
-        .update({
-          progress_percentage: Math.min(100, Math.max(0, percentage)),
-          status: percentage >= 100 ? "completed" : "in_progress",
-          completed_at: percentage >= 100 ? new Date().toISOString() : null,
-        })
-        .eq("user_id", user.id)
-        .eq("course_id", courseId)
-        .select()
-        .single();
+      const result = await callCourseAction("progress", courseId, percentage);
 
-      if (error) throw error;
+      if (result) {
+        setEnrollments((prev) =>
+          prev.map((e) => (e.course_id === courseId ? result : e))
+        );
 
-      setEnrollments((prev) =>
-        prev.map((e) => (e.course_id === courseId ? (data as CourseEnrollment) : e))
-      );
-
-      if (percentage >= 100) {
-        toast({
-          title: "🎉 Course completed!",
-          description: "Congratulations! Your skill points have been updated.",
-        });
+        if (percentage >= 100) {
+          toast({
+            title: "🎉 Course completed!",
+            description: "Congratulations! Your skill points have been updated.",
+          });
+        }
       }
 
-      return data as CourseEnrollment;
+      return result;
     } catch (error: any) {
       console.error("Failed to update progress:", error);
       return null;
