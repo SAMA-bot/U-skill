@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
 import { getUserFriendlyError } from "@/lib/errorMessages";
+import { useAcademicYear } from "@/contexts/AcademicYearContext";
 
 type EnrollmentStatus = "enrolled" | "in_progress" | "completed";
 
@@ -30,16 +31,28 @@ export const useCourseEnrollments = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { selectedYear, getDateRangeForYear } = useAcademicYear();
 
   const fetchEnrollments = useCallback(async () => {
     if (!user) return;
 
+    // Get date range for selected academic year
+    const dateRange = getDateRangeForYear(selectedYear);
+    const startDate = dateRange?.start.toISOString();
+    const endDate = dateRange?.end.toISOString();
+
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from("course_enrollments")
         .select("*")
-        .eq("user_id", user.id)
-        .order("enrolled_at", { ascending: false });
+        .eq("user_id", user.id);
+      
+      // Filter by academic year date range
+      if (startDate && endDate) {
+        query = query.gte("enrolled_at", startDate).lte("enrolled_at", endDate);
+      }
+      
+      const { data, error } = await query.order("enrolled_at", { ascending: false });
 
       if (error) throw error;
       setEnrollments((data || []) as CourseEnrollment[]);
@@ -48,7 +61,7 @@ export const useCourseEnrollments = () => {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, selectedYear, getDateRangeForYear]);
 
   useEffect(() => {
     fetchEnrollments();

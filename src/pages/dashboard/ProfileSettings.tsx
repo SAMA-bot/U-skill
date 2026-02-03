@@ -22,6 +22,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import AcademicYearSelector from "@/components/AcademicYearSelector";
 
 const departments = [
   "Computer Science",
@@ -253,6 +254,7 @@ const ProfileSettings = () => {
               </Button>
             </div>
             <div className="flex items-center gap-4">
+              <AcademicYearSelector showLabel={false} />
               <ThemeToggle />
             </div>
           </div>
