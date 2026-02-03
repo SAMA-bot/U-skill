@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import AcademicYearSelector from "@/components/AcademicYearSelector";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
 import CapacityRadarChart from "@/components/dashboard/CapacityRadarChart";
 import MotivationTrendChart from "@/components/dashboard/MotivationTrendChart";
@@ -17,6 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useMultipleRealtimeData } from "@/hooks/useRealtimeData";
 import { NotificationsProvider } from "@/hooks/useNotifications";
+import { useAcademicYear } from "@/contexts/AcademicYearContext";
 interface Profile {
   full_name: string;
   department: string | null;
@@ -90,6 +92,7 @@ const FacultyDashboard = () => {
   const {
     toast
   } = useToast();
+  const { selectedYear, getDateRangeForYear } = useAcademicYear();
 
   // Redirect if not logged in
   useEffect(() => {
@@ -98,12 +101,12 @@ const FacultyDashboard = () => {
     }
   }, [user, loading, navigate]);
 
-  // Fetch user data on mount and when user changes
+  // Fetch user data on mount, when user changes, or when academic year changes
   useEffect(() => {
     if (user) {
       fetchUserData();
     }
-  }, [user]);
+  }, [user, selectedYear]);
 
   // Realtime subscriptions for dashboard data
   useMultipleRealtimeData([{
@@ -139,8 +142,17 @@ const FacultyDashboard = () => {
   }]);
   const fetchUserData = async () => {
     if (!user) return;
+    
+    // Get date range for selected academic year
+    const dateRange = getDateRangeForYear(selectedYear);
+    const startDate = dateRange?.start.toISOString();
+    const endDate = dateRange?.end.toISOString();
+    
+    // Parse academic year to get the start year (e.g., "2024-25" -> 2024)
+    const academicStartYear = parseInt(selectedYear.split('-')[0]);
+    
     try {
-      // Fetch profile
+      // Fetch profile (not filtered by year)
       const {
         data: profileData
       } = await supabase.from('profiles').select('full_name, department, designation, avatar_url').eq('user_id', user.id).maybeSingle();
@@ -148,17 +160,17 @@ const FacultyDashboard = () => {
         setProfile(profileData);
       }
 
-      // Fetch activities
-      const {
-        data: activitiesData
-      } = await supabase.from('activities').select('*').eq('user_id', user.id).order('created_at', {
-        ascending: false
-      }).limit(3);
+      // Fetch activities filtered by academic year
+      let activitiesQuery = supabase.from('activities').select('*').eq('user_id', user.id);
+      if (startDate && endDate) {
+        activitiesQuery = activitiesQuery.gte('created_at', startDate).lte('created_at', endDate);
+      }
+      const { data: activitiesData } = await activitiesQuery.order('created_at', { ascending: false }).limit(3);
       if (activitiesData) {
         setActivities(activitiesData);
       }
 
-      // Fetch latest capacity skills average
+      // Fetch capacity skills (current snapshot, not filtered by year)
       const {
         data: skillsData
       } = await supabase.from('capacity_skills').select('current_level').eq('user_id', user.id);
@@ -170,47 +182,61 @@ const FacultyDashboard = () => {
         }));
       }
 
-      // Fetch latest performance metrics
-      const {
-        data: perfData
-      } = await supabase.from('performance_metrics').select('teaching_score, research_score, service_score').eq('user_id', user.id).order('year', {
-        ascending: false
-      }).order('month', {
-        ascending: false
-      }).limit(1).maybeSingle();
+      // Fetch performance metrics filtered by academic year
+      // Academic year spans two calendar years: July 2024 - June 2025 for "2024-25"
+      const { data: perfData } = await supabase
+        .from('performance_metrics')
+        .select('teaching_score, research_score, service_score')
+        .eq('user_id', user.id)
+        .or(`year.eq.${academicStartYear},year.eq.${academicStartYear + 1}`)
+        .order('year', { ascending: false })
+        .order('month', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      
       if (perfData) {
         const avgPerf = Math.round(((perfData.teaching_score || 0) + (perfData.research_score || 0) + (perfData.service_score || 0)) / 3);
         setStatsData(prev => ({
           ...prev,
           performanceScore: avgPerf
         }));
+      } else {
+        setStatsData(prev => ({ ...prev, performanceScore: 0 }));
       }
 
-      // Fetch latest motivation score
-      const {
-        data: motivationData
-      } = await supabase.from('motivation_scores').select('motivation_index').eq('user_id', user.id).order('year', {
-        ascending: false
-      }).order('week_number', {
-        ascending: false
-      }).limit(1).maybeSingle();
+      // Fetch motivation scores filtered by academic year
+      const { data: motivationData } = await supabase
+        .from('motivation_scores')
+        .select('motivation_index')
+        .eq('user_id', user.id)
+        .or(`year.eq.${academicStartYear},year.eq.${academicStartYear + 1}`)
+        .order('year', { ascending: false })
+        .order('week_number', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      
       if (motivationData) {
         setStatsData(prev => ({
           ...prev,
           motivationIndex: motivationData.motivation_index || 0
         }));
+      } else {
+        setStatsData(prev => ({ ...prev, motivationIndex: 0 }));
       }
 
-      // Calculate training hours from completed activities
-      const {
-        data: completedActivities
-      } = await supabase.from('activities').select('id').eq('user_id', user.id).eq('status', 'completed');
+      // Calculate training hours from completed activities in academic year
+      let completedQuery = supabase.from('activities').select('id').eq('user_id', user.id).eq('status', 'completed');
+      if (startDate && endDate) {
+        completedQuery = completedQuery.gte('created_at', startDate).lte('created_at', endDate);
+      }
+      const { data: completedActivities } = await completedQuery;
       if (completedActivities) {
-        // Assume 4 hours per completed activity
         setStatsData(prev => ({
           ...prev,
           trainingHours: completedActivities.length * 4
         }));
+      } else {
+        setStatsData(prev => ({ ...prev, trainingHours: 0 }));
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -291,6 +317,7 @@ const FacultyDashboard = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <AcademicYearSelector showLabel={false} />
               <ThemeToggle />
               <HeaderNotifications />
               <div className="flex items-center">

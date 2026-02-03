@@ -40,6 +40,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useMultipleRealtimeData } from "@/hooks/useRealtimeData";
+import { useAcademicYear } from "@/contexts/AcademicYearContext";
 import GoalSetting from "./GoalSetting";
 import PerformanceReport from "./PerformanceReport";
 import PeerComparison from "./PeerComparison";
@@ -77,13 +78,14 @@ const PerformanceAssessment = () => {
 
   const { user } = useAuth();
   const { toast } = useToast();
+  const { selectedYear } = useAcademicYear();
 
-  // Initial data fetch
+  // Initial data fetch and refetch on academic year change
   useEffect(() => {
     if (user) {
       fetchData();
     }
-  }, [user]);
+  }, [user, selectedYear]);
 
   // Realtime subscriptions for performance data
   useMultipleRealtimeData([
@@ -113,6 +115,9 @@ const PerformanceAssessment = () => {
   const fetchData = async () => {
     if (!user) return;
 
+    // Parse academic year to get the years (e.g., "2024-25" -> 2024, 2025)
+    const academicStartYear = parseInt(selectedYear.split('-')[0]);
+
     try {
       // Fetch profile
       const { data: profileData } = await supabase
@@ -125,11 +130,12 @@ const PerformanceAssessment = () => {
         setProfile(profileData);
       }
 
-      // Fetch performance metrics
+      // Fetch performance metrics filtered by academic year
       const { data: perfData, error: perfError } = await supabase
         .from("performance_metrics")
         .select("*")
         .eq("user_id", user.id)
+        .or(`year.eq.${academicStartYear},year.eq.${academicStartYear + 1}`)
         .order("year", { ascending: true })
         .order("month", { ascending: true });
 

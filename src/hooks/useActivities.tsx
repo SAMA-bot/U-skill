@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
+import { useAcademicYear } from "@/contexts/AcademicYearContext";
 
 export type ActivityType = 
   | "teaching" 
@@ -54,18 +55,30 @@ export const ACTIVITY_TYPES: { value: ActivityType; label: string; description: 
 export function useActivities() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { selectedYear, getDateRangeForYear } = useAcademicYear();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchActivities = useCallback(async () => {
     if (!user) return;
 
+    // Get date range for selected academic year
+    const dateRange = getDateRangeForYear(selectedYear);
+    const startDate = dateRange?.start.toISOString();
+    const endDate = dateRange?.end.toISOString();
+
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from("activities")
         .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
+        .eq("user_id", user.id);
+      
+      // Filter by academic year date range
+      if (startDate && endDate) {
+        query = query.gte("created_at", startDate).lte("created_at", endDate);
+      }
+      
+      const { data, error } = await query.order("created_at", { ascending: false });
 
       if (error) throw error;
       setActivities(data as Activity[]);
@@ -74,7 +87,7 @@ export function useActivities() {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, selectedYear, getDateRangeForYear]);
 
   // Subscribe to realtime changes
   useRealtimeData({
