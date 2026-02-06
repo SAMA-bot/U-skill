@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
+import PerformanceScoreCard from "@/components/dashboard/PerformanceScoreCard";
+import { usePerformanceScore } from "@/hooks/usePerformanceScore";
 import CapacityRadarChart from "@/components/dashboard/CapacityRadarChart";
 import MotivationTrendChart from "@/components/dashboard/MotivationTrendChart";
 import CoursesViewer from "@/components/faculty/CoursesViewer";
@@ -93,6 +95,7 @@ const FacultyDashboard = () => {
     toast
   } = useToast();
   const { selectedYear, getDateRangeForYear } = useAcademicYear();
+  const performanceScoreData = usePerformanceScore(user?.id);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -452,6 +455,11 @@ const FacultyDashboard = () => {
                       </div>
                     </div>
                   </motion.div>)}
+              </div>
+
+              {/* Performance Score */}
+              <div className="mb-8">
+                <PerformanceScoreCard data={performanceScoreData} />
               </div>
 
               {/* Charts Section */}

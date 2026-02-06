@@ -23,6 +23,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
+import PerformanceScoreCard from "@/components/dashboard/PerformanceScoreCard";
+import { usePerformanceScore } from "@/hooks/usePerformanceScore";
 
 const departments = [
   "Computer Science",
@@ -70,6 +72,7 @@ const ProfileSettings = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
+  const performanceScoreData = usePerformanceScore(user?.id);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -322,6 +325,9 @@ const ProfileSettings = () => {
               </div>
             </div>
           </div>
+
+          {/* Performance Score */}
+          <PerformanceScoreCard data={performanceScoreData} />
 
           {/* Profile Information */}
           <div className="bg-card border border-border rounded-lg p-6">
