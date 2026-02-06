@@ -21,6 +21,7 @@ import {
   ChevronRight,
   Shield,
   ArrowLeft,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -43,6 +44,7 @@ import { CourseManagement } from "@/components/admin/CourseManagement";
 import AuditLogViewer from "@/components/admin/AuditLogViewer";
 import PerformanceScoreCard from "@/components/dashboard/PerformanceScoreCard";
 import { usePerformanceScore } from "@/hooks/usePerformanceScore";
+import ActionItems from "@/components/admin/ActionItems";
 
 interface FacultyMember {
   user_id: string;
@@ -617,11 +619,32 @@ const AdminDashboard = () => {
             </motion.div>
           </div>
 
-          {/* Quick Actions */}
+          {/* Action Items */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
+            className="bg-card shadow-sm rounded-lg overflow-hidden border border-border mb-8"
+          >
+            <div className="px-4 py-5 sm:px-6 border-b border-border">
+              <h3 className="text-lg font-medium text-foreground flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+                Action Items
+              </h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Faculty members requiring attention
+              </p>
+            </div>
+            <div className="p-4 sm:p-6 max-h-96 overflow-y-auto">
+              <ActionItems />
+            </div>
+          </motion.div>
+
+          {/* Quick Actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
             className="bg-card shadow-sm rounded-lg overflow-hidden border border-border"
           >
             <div className="px-4 py-5 sm:px-6 border-b border-border">
