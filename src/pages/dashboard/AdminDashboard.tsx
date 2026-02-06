@@ -41,6 +41,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RoleManagement } from "@/components/admin/RoleManagement";
 import { CourseManagement } from "@/components/admin/CourseManagement";
 import AuditLogViewer from "@/components/admin/AuditLogViewer";
+import PerformanceScoreCard from "@/components/dashboard/PerformanceScoreCard";
+import { usePerformanceScore } from "@/hooks/usePerformanceScore";
 
 interface FacultyMember {
   user_id: string;
@@ -85,7 +87,8 @@ const AdminDashboard = () => {
     completedTrainings: 0,
   });
   const [loadingData, setLoadingData] = useState(true);
-
+  const [selectedFacultyId, setSelectedFacultyId] = useState<string | null>(null);
+  const selectedFacultyScore = usePerformanceScore(selectedFacultyId || undefined);
   const navigate = useNavigate();
   const { user, loading: authLoading, signOut } = useAuth();
   const { isAdmin, loading: roleLoading } = useUserRole();
@@ -543,6 +546,7 @@ const AdminDashboard = () => {
                       <TableHead className="text-center">Performance</TableHead>
                       <TableHead className="text-center">Capacity</TableHead>
                       <TableHead className="text-center">Motivation</TableHead>
+                      <TableHead className="text-center">Score</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -580,11 +584,23 @@ const AdminDashboard = () => {
                             {faculty.latestMotivation || 0}%
                           </Badge>
                         </TableCell>
+                        <TableCell className="text-center">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-primary text-xs"
+                            onClick={() => setSelectedFacultyId(
+                              selectedFacultyId === faculty.user_id ? null : faculty.user_id
+                            )}
+                          >
+                            View Score
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                     {facultyList.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                        <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                           No faculty data available
                         </TableCell>
                       </TableRow>
@@ -592,6 +608,12 @@ const AdminDashboard = () => {
                   </TableBody>
                 </Table>
               </div>
+              {/* Selected Faculty Score */}
+              {selectedFacultyId && (
+                <div className="p-4 border-t border-border">
+                  <PerformanceScoreCard data={selectedFacultyScore} />
+                </div>
+              )}
             </motion.div>
           </div>
 
