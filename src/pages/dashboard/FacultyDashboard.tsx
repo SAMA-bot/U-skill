@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, Activity } from "lucide-react";
+import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, Activity, FolderUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
@@ -14,6 +14,7 @@ import CoursesViewer from "@/components/faculty/CoursesViewer";
 import PerformanceAssessment from "@/components/faculty/PerformanceAssessment";
 import ActivityLogger from "@/components/faculty/ActivityLogger";
 import HeaderNotifications from "@/components/layout/HeaderNotifications";
+import DocumentUpload from "@/components/faculty/DocumentUpload";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,7 +28,7 @@ interface Profile {
   designation: string | null;
   avatar_url: string | null;
 }
-type ActiveSection = "dashboard" | "courses" | "performance" | "activities" | "motivation" | "calendar";
+type ActiveSection = "dashboard" | "courses" | "performance" | "activities" | "documents" | "motivation" | "calendar";
 const sidebarItems: {
   icon: typeof Home;
   label: string;
@@ -48,6 +49,10 @@ const sidebarItems: {
   icon: Activity,
   label: "Activity Log",
   section: "activities"
+}, {
+  icon: FolderUp,
+  label: "My Documents",
+  section: "documents"
 }, {
   icon: Star,
   label: "Motivation Tools",
@@ -404,6 +409,20 @@ const FacultyDashboard = () => {
                 </p>
               </div>
               <ActivityLogger />
+            </motion.div>
+          ) : activeSection === "documents" ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="max-w-5xl mx-auto"
+            >
+              <div className="mb-6">
+                <h1 className="text-2xl font-bold text-foreground">My Documents</h1>
+                <p className="text-muted-foreground">
+                  Upload certificates, publications, and other documents for verification
+                </p>
+              </div>
+              <DocumentUpload />
             </motion.div>
           ) : activeSection === "dashboard" ? <>
               {/* Page Header */}
