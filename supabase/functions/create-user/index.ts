@@ -54,12 +54,45 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Parse the request body
+    // Parse and validate the request body
     const { email, password, fullName, department, role } = await req.json();
 
     if (!email || !password || !fullName) {
       return new Response(
         JSON.stringify({ error: "Email, password, and full name are required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (typeof email !== "string" || !emailRegex.test(email) || email.length > 255) {
+      return new Response(
+        JSON.stringify({ error: "Invalid email format" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate password length
+    if (typeof password !== "string" || password.length < 6 || password.length > 72) {
+      return new Response(
+        JSON.stringify({ error: "Password must be between 6 and 72 characters" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate fullName length
+    if (typeof fullName !== "string" || fullName.trim().length < 2 || fullName.trim().length > 100) {
+      return new Response(
+        JSON.stringify({ error: "Full name must be between 2 and 100 characters" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate department if provided
+    if (department !== undefined && (typeof department !== "string" || department.trim().length > 100)) {
+      return new Response(
+        JSON.stringify({ error: "Department must be less than 100 characters" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

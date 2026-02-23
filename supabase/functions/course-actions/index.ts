@@ -1,9 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { getCorsHeaders } from "../_shared/cors.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
 
 // Rate limit configurations
 const RATE_LIMITS = {
@@ -14,6 +11,9 @@ const RATE_LIMITS = {
 };
 
 Deno.serve(async (req) => {
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -55,12 +55,30 @@ Deno.serve(async (req) => {
 
     console.log(`User ${user.id} making course action request`);
 
-    // Parse request body
-    const { action, courseId, progressPercentage } = await req.json();
+    // Parse and validate request body
+    const body = await req.json();
+    const { action, courseId, progressPercentage } = body;
 
-    if (!action || !courseId) {
+    if (!action || typeof action !== "string" || !courseId || typeof courseId !== "string") {
       return new Response(
-        JSON.stringify({ error: "Bad Request", message: "Missing action or courseId" }),
+        JSON.stringify({ error: "Bad Request", message: "Missing or invalid action or courseId" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate courseId is a valid UUID
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(courseId)) {
+      return new Response(
+        JSON.stringify({ error: "Bad Request", message: "Invalid courseId format" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate progressPercentage if provided
+    if (progressPercentage !== undefined && (typeof progressPercentage !== "number" || progressPercentage < 0 || progressPercentage > 100)) {
+      return new Response(
+        JSON.stringify({ error: "Bad Request", message: "progressPercentage must be a number between 0 and 100" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

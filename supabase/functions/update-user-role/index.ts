@@ -60,7 +60,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Parse request body
+    // Parse and validate request body
     const { userId, newRole } = await req.json();
 
     if (!userId || !newRole) {
@@ -70,9 +70,18 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Validate userId is a valid UUID
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (typeof userId !== "string" || !uuidRegex.test(userId)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid userId format" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Validate role
     const validRoles = ["admin", "hod", "faculty"];
-    if (!validRoles.includes(newRole)) {
+    if (typeof newRole !== "string" || !validRoles.includes(newRole)) {
       return new Response(
         JSON.stringify({ error: "Invalid role. Must be admin, hod, or faculty" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
