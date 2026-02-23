@@ -23,6 +23,7 @@ import {
   ArrowLeft,
   AlertTriangle,
   FolderCheck,
+  Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -47,6 +48,7 @@ import PerformanceScoreCard from "@/components/dashboard/PerformanceScoreCard";
 import { usePerformanceScore } from "@/hooks/usePerformanceScore";
 import ActionItems from "@/components/admin/ActionItems";
 import DocumentReview from "@/components/admin/DocumentReview";
+import FeedbackAnalytics from "@/components/admin/FeedbackAnalytics";
 
 interface FacultyMember {
   user_id: string;
@@ -76,6 +78,7 @@ const sidebarItems = [
   { icon: Building2, label: "Departments", id: "departments" },
   { icon: Award, label: "Achievements", id: "achievements" },
   { icon: Activity, label: "Audit Logs", id: "audit" },
+  { icon: Star, label: "Feedback Analytics", id: "feedback" },
 ];
 
 const AdminDashboard = () => {
@@ -432,6 +435,8 @@ const AdminDashboard = () => {
             <AuditLogViewer />
           ) : activeSection === "documents" ? (
             <DocumentReview />
+          ) : activeSection === "feedback" ? (
+            <FeedbackAnalytics />
           ) : (
             <>
           {/* Page Header */}

@@ -257,6 +257,36 @@ export type Database = {
         }
         Relationships: []
       }
+      faculty_feedback: {
+        Row: {
+          category: string
+          comment: string | null
+          created_at: string
+          faculty_id: string
+          id: string
+          rating: number
+          reviewer_id: string
+        }
+        Insert: {
+          category?: string
+          comment?: string | null
+          created_at?: string
+          faculty_id: string
+          id?: string
+          rating: number
+          reviewer_id: string
+        }
+        Update: {
+          category?: string
+          comment?: string | null
+          created_at?: string
+          faculty_id?: string
+          id?: string
+          rating?: number
+          reviewer_id?: string
+        }
+        Relationships: []
+      }
       motivation_scores: {
         Row: {
           created_at: string
