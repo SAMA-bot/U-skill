@@ -49,7 +49,8 @@ import { usePerformanceScore } from "@/hooks/usePerformanceScore";
 import ActionItems from "@/components/admin/ActionItems";
 import DocumentReview from "@/components/admin/DocumentReview";
 import FeedbackAnalytics from "@/components/admin/FeedbackAnalytics";
-
+import PendingApprovals from "@/components/admin/PendingApprovals";
+import AcademicYearSelector from "@/components/AcademicYearSelector";
 interface FacultyMember {
   user_id: string;
   full_name: string;
@@ -318,6 +319,7 @@ const AdminDashboard = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <AcademicYearSelector showLabel={false} />
               <ThemeToggle />
               <button className="bg-muted p-2 rounded-full text-muted-foreground hover:text-foreground focus:outline-none">
                 <Bell className="h-5 w-5" />
@@ -490,6 +492,57 @@ const AdminDashboard = () => {
             ))}
           </div>
 
+          {/* Approval Panel & Action Items */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="bg-card shadow-sm rounded-lg overflow-hidden border border-border"
+            >
+              <div className="px-4 py-5 sm:px-6 border-b border-border">
+                <h3 className="text-lg font-medium text-foreground flex items-center gap-2">
+                  <FolderCheck className="h-5 w-5 text-primary" />
+                  Document Approvals
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Pending document reviews and verification status
+                </p>
+              </div>
+              <div className="p-4 sm:p-6">
+                <PendingApprovals />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-4"
+                  onClick={() => setActiveSection("documents")}
+                >
+                  Review Documents
+                </Button>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-card shadow-sm rounded-lg overflow-hidden border border-border"
+            >
+              <div className="px-4 py-5 sm:px-6 border-b border-border">
+                <h3 className="text-lg font-medium text-foreground flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-destructive" />
+                  Alerts &amp; Action Items
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Faculty members requiring attention
+                </p>
+              </div>
+              <div className="p-4 sm:p-6 max-h-80 overflow-y-auto">
+                <ActionItems />
+              </div>
+            </motion.div>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             {/* Department Performance */}
             <motion.div
@@ -629,26 +682,8 @@ const AdminDashboard = () => {
             </motion.div>
           </div>
 
-          {/* Action Items */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="bg-card shadow-sm rounded-lg overflow-hidden border border-border mb-8"
-          >
-            <div className="px-4 py-5 sm:px-6 border-b border-border">
-              <h3 className="text-lg font-medium text-foreground flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-destructive" />
-                Action Items
-              </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Faculty members requiring attention
-              </p>
-            </div>
-            <div className="p-4 sm:p-6 max-h-96 overflow-y-auto">
-              <ActionItems />
-            </div>
-          </motion.div>
+
+
 
           {/* Quick Actions */}
           <motion.div

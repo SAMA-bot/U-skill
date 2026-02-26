@@ -15,6 +15,7 @@ import PerformanceAssessment from "@/components/faculty/PerformanceAssessment";
 import ActivityLogger from "@/components/faculty/ActivityLogger";
 import HeaderNotifications from "@/components/layout/HeaderNotifications";
 import DocumentUpload from "@/components/faculty/DocumentUpload";
+import AreasToImprove from "@/components/faculty/AreasToImprove";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
@@ -479,6 +480,11 @@ const FacultyDashboard = () => {
               {/* Performance Score */}
               <div className="mb-8">
                 <PerformanceScoreCard data={performanceScoreData} />
+              </div>
+
+              {/* Areas to Improve & Suggested Trainings */}
+              <div className="mb-8">
+                <AreasToImprove />
               </div>
 
               {/* Charts Section */}
