@@ -14,6 +14,11 @@ import {
   Loader2,
   Bell,
   FileDown,
+  ClipboardCheck,
+  Edit3,
+  CalendarRange,
+  History,
+  AlertCircle,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,10 +46,17 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useMultipleRealtimeData } from "@/hooks/useRealtimeData";
 import { useAcademicYear } from "@/contexts/AcademicYearContext";
+import { usePerformanceScore } from "@/hooks/usePerformanceScore";
+import PerformanceScoreCard from "@/components/dashboard/PerformanceScoreCard";
+import AreasToImprove from "./AreasToImprove";
 import GoalSetting from "./GoalSetting";
 import PerformanceReport from "./PerformanceReport";
 import PeerComparison from "./PeerComparison";
 import NotificationCenter from "./NotificationCenter";
+import SelfAssessmentForm from "./SelfAssessmentForm";
+import EditableMetrics from "./EditableMetrics";
+import YearWiseComparison from "./YearWiseComparison";
+import PerformanceTimeline from "./PerformanceTimeline";
 
 interface PerformanceMetric {
   id: string;
@@ -79,6 +91,7 @@ const PerformanceAssessment = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { selectedYear } = useAcademicYear();
+  const performanceScoreData = usePerformanceScore(user?.id);
 
   // Initial data fetch and refetch on academic year change
   useEffect(() => {
@@ -296,6 +309,42 @@ const PerformanceAssessment = () => {
         </Card>
       )}
 
+      {/* Always-available tabs (self-assessment, timeline, year-wise, improve) */}
+      {hasNoData && (
+        <Tabs defaultValue="self-assessment" className="w-full">
+          <TabsList className="flex w-full max-w-3xl overflow-x-auto">
+            <TabsTrigger value="self-assessment">
+              <ClipboardCheck className="h-4 w-4 mr-1" />
+              Self-Assessment
+            </TabsTrigger>
+            <TabsTrigger value="timeline">
+              <History className="h-4 w-4 mr-1" />
+              Timeline
+            </TabsTrigger>
+            <TabsTrigger value="year-compare">
+              <CalendarRange className="h-4 w-4 mr-1" />
+              Year-wise
+            </TabsTrigger>
+            <TabsTrigger value="improve">
+              <AlertCircle className="h-4 w-4 mr-1" />
+              Improve
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="self-assessment" className="mt-6">
+            <SelfAssessmentForm />
+          </TabsContent>
+          <TabsContent value="timeline" className="mt-6">
+            <PerformanceTimeline />
+          </TabsContent>
+          <TabsContent value="year-compare" className="mt-6">
+            <YearWiseComparison />
+          </TabsContent>
+          <TabsContent value="improve" className="mt-6">
+            <AreasToImprove />
+          </TabsContent>
+        </Tabs>
+      )}
+
       {!hasNoData && (
         <>
       {/* Overall Score Card */}
@@ -439,11 +488,36 @@ const PerformanceAssessment = () => {
       </div>
 
       {/* Tabs for Different Views */}
+      {/* Performance Score Breakdown */}
+      <div className="mb-6">
+        <PerformanceScoreCard data={performanceScoreData} />
+      </div>
+
       <Tabs defaultValue="trends" className="w-full">
-        <TabsList className="grid w-full max-w-3xl grid-cols-6">
+        <TabsList className="flex w-full max-w-5xl overflow-x-auto">
           <TabsTrigger value="trends">Trends</TabsTrigger>
           <TabsTrigger value="skills">Skills</TabsTrigger>
-          <TabsTrigger value="peers">Peer Comparison</TabsTrigger>
+          <TabsTrigger value="self-assessment">
+            <ClipboardCheck className="h-4 w-4 mr-1" />
+            Self-Assessment
+          </TabsTrigger>
+          <TabsTrigger value="edit-metrics">
+            <Edit3 className="h-4 w-4 mr-1" />
+            Edit Metrics
+          </TabsTrigger>
+          <TabsTrigger value="year-compare">
+            <CalendarRange className="h-4 w-4 mr-1" />
+            Year-wise
+          </TabsTrigger>
+          <TabsTrigger value="timeline">
+            <History className="h-4 w-4 mr-1" />
+            Timeline
+          </TabsTrigger>
+          <TabsTrigger value="improve">
+            <AlertCircle className="h-4 w-4 mr-1" />
+            Improve
+          </TabsTrigger>
+          <TabsTrigger value="peers">Peers</TabsTrigger>
           <TabsTrigger value="goals">Goals</TabsTrigger>
           <TabsTrigger value="notifications">
             <Bell className="h-4 w-4 mr-1" />
@@ -614,6 +688,31 @@ const PerformanceAssessment = () => {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Self-Assessment Tab */}
+        <TabsContent value="self-assessment" className="mt-6">
+          <SelfAssessmentForm />
+        </TabsContent>
+
+        {/* Edit Metrics Tab */}
+        <TabsContent value="edit-metrics" className="mt-6">
+          <EditableMetrics />
+        </TabsContent>
+
+        {/* Year-wise Comparison Tab */}
+        <TabsContent value="year-compare" className="mt-6">
+          <YearWiseComparison />
+        </TabsContent>
+
+        {/* Performance Timeline Tab */}
+        <TabsContent value="timeline" className="mt-6">
+          <PerformanceTimeline />
+        </TabsContent>
+
+        {/* Improvement Suggestions Tab */}
+        <TabsContent value="improve" className="mt-6">
+          <AreasToImprove />
         </TabsContent>
 
         {/* Peer Comparison Tab */}

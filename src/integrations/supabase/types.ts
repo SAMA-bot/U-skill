@@ -413,6 +413,51 @@ export type Database = {
         }
         Relationships: []
       }
+      self_assessments: {
+        Row: {
+          academic_year: string
+          additional_comments: string | null
+          created_at: string
+          goals: string | null
+          id: string
+          research_rating: number
+          service_rating: number
+          strengths: string | null
+          teaching_rating: number
+          updated_at: string
+          user_id: string
+          weaknesses: string | null
+        }
+        Insert: {
+          academic_year: string
+          additional_comments?: string | null
+          created_at?: string
+          goals?: string | null
+          id?: string
+          research_rating: number
+          service_rating: number
+          strengths?: string | null
+          teaching_rating: number
+          updated_at?: string
+          user_id: string
+          weaknesses?: string | null
+        }
+        Update: {
+          academic_year?: string
+          additional_comments?: string | null
+          created_at?: string
+          goals?: string | null
+          id?: string
+          research_rating?: number
+          service_rating?: number
+          strengths?: string | null
+          teaching_rating?: number
+          updated_at?: string
+          user_id?: string
+          weaknesses?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
