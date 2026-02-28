@@ -16,6 +16,7 @@ import ActivityLogger from "@/components/faculty/ActivityLogger";
 import HeaderNotifications from "@/components/layout/HeaderNotifications";
 import DocumentUpload from "@/components/faculty/DocumentUpload";
 import AreasToImprove from "@/components/faculty/AreasToImprove";
+import ActivityLogTimeline from "@/components/faculty/ActivityLogTimeline";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
@@ -401,7 +402,7 @@ const FacultyDashboard = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="max-w-5xl mx-auto"
+              className="max-w-5xl mx-auto space-y-8"
             >
               <div className="mb-6">
                 <h1 className="text-2xl font-bold text-foreground">Activity Log</h1>
@@ -410,6 +411,7 @@ const FacultyDashboard = () => {
                 </p>
               </div>
               <ActivityLogger />
+              <ActivityLogTimeline />
             </motion.div>
           ) : activeSection === "documents" ? (
             <motion.div
