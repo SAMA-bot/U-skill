@@ -400,7 +400,7 @@ const FacultyDashboard = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto focus:outline-none p-6">
-          {activeSection === "courses" ? <CoursesViewer /> : activeSection === "performance" ? <PerformanceAssessment /> : activeSection === "motivation" ? <MotivationTools /> : activeSection === "activities" ? (
+          {activeSection === "calendar" ? <MyCalendar /> : activeSection === "courses" ? <CoursesViewer /> : activeSection === "performance" ? <PerformanceAssessment /> : activeSection === "motivation" ? <MotivationTools /> : activeSection === "activities" ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
