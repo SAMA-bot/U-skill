@@ -86,6 +86,7 @@ const sidebarItems = [
 
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
   const [facultyList, setFacultyList] = useState<FacultyMember[]>([]);
   const [departmentStats, setDepartmentStats] = useState<DepartmentStats[]>([]);
@@ -346,10 +347,11 @@ const AdminDashboard = () => {
         {/* Sidebar */}
         <aside
           className={`
-            bg-card w-64 flex-shrink-0 border-r border-border
+            bg-card flex-shrink-0 border-r border-border
             fixed md:sticky inset-y-0 left-0 z-50 md:z-auto
-            transform transition-transform duration-200 ease-in-out
+            transform transition-all duration-200 ease-in-out
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+            ${sidebarCollapsed ? "w-16" : "w-64"}
             h-screen md:h-[calc(100vh-4rem)] overflow-y-auto
           `}
         >
@@ -361,7 +363,18 @@ const AdminDashboard = () => {
               </button>
             </div>
 
-            <nav className="mt-6 flex-1 flex flex-col px-2 space-y-1">
+            {/* Collapse toggle - desktop only */}
+            <div className="hidden md:flex justify-end px-2 mb-2">
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                {sidebarCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+              </button>
+            </div>
+
+            <nav className="mt-2 flex-1 flex flex-col px-2 space-y-1">
               {sidebarItems.map((item, index) => {
                 const isActive = activeSection === item.id;
                 return (
@@ -369,15 +382,16 @@ const AdminDashboard = () => {
                     key={index}
                     onClick={() => setActiveSection(item.id)}
                     className={`
-                      group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors w-full text-left
+                      group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md transition-colors w-full text-left
                       ${isActive
                         ? "bg-primary/10 text-primary"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       }
                     `}
+                    title={sidebarCollapsed ? item.label : undefined}
                   >
-                    <item.icon className={`mr-3 flex-shrink-0 h-5 w-5 ${isActive ? "text-primary" : ""}`} />
-                    {item.label}
+                    <item.icon className={`flex-shrink-0 h-5 w-5 ${isActive ? "text-primary" : ""} ${sidebarCollapsed ? "" : "mr-3"}`} />
+                    {!sidebarCollapsed && item.label}
                   </button>
                 );
               })}
@@ -386,24 +400,27 @@ const AdminDashboard = () => {
             <div className="px-2 pt-4 pb-2 border-t border-border">
               <button
                 onClick={() => navigate('/dashboard')}
-                className="w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+                className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`}
+                title={sidebarCollapsed ? "Back to Faculty Dashboard" : undefined}
               >
-                <ArrowLeft className="mr-3 flex-shrink-0 h-5 w-5" />
-                Back to Faculty Dashboard
+                <ArrowLeft className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
+                {!sidebarCollapsed && "Back to Faculty Dashboard"}
               </button>
               <button
                 onClick={() => navigate('/dashboard/settings')}
-                className="w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+                className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`}
+                title={sidebarCollapsed ? "Settings" : undefined}
               >
-                <Settings className="mr-3 flex-shrink-0 h-5 w-5" />
-                Settings
+                <Settings className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
+                {!sidebarCollapsed && "Settings"}
               </button>
               <button
                 onClick={handleLogout}
-                className="w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center px-3 py-2 text-sm font-medium rounded-md"
+                className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`}
+                title={sidebarCollapsed ? "Sign out" : undefined}
               >
-                <LogOut className="mr-3 flex-shrink-0 h-5 w-5" />
-                Sign out
+                <LogOut className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
+                {!sidebarCollapsed && "Sign out"}
               </button>
             </div>
           </div>
