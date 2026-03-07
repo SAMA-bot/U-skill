@@ -100,11 +100,11 @@ export default function MyCalendar() {
   const fetchEvents = useCallback(async () => {
     if (!user) return;
     try {
-      const { data, error } = await supabase
-        .from("calendar_events")
+      const { data, error } = await (supabase
+        .from("calendar_events" as any)
         .select("*")
         .eq("user_id", user.id)
-        .order("event_date", { ascending: true });
+        .order("event_date", { ascending: true }) as any);
       if (error) throw error;
       setEvents((data as CalendarEvent[]) || []);
     } catch (err) {
@@ -229,7 +229,7 @@ export default function MyCalendar() {
   const handleCreateEvent = async () => {
     if (!user || !newEvent.title.trim()) return;
     try {
-      const { error } = await supabase.from("calendar_events").insert({
+      const { error } = await (supabase.from("calendar_events" as any).insert({
         user_id: user.id,
         title: newEvent.title,
         description: newEvent.description || null,
@@ -237,7 +237,7 @@ export default function MyCalendar() {
         event_date: newEvent.event_date,
         event_time: newEvent.event_time || null,
         is_important: newEvent.is_important,
-      });
+      }) as any);
       if (error) throw error;
       toast({ title: "Event Created", description: "Calendar event added successfully." });
       setDialogOpen(false);
@@ -258,7 +258,7 @@ export default function MyCalendar() {
   const handleDeleteEvent = async (id: string) => {
     if (id.startsWith("course_") || id.startsWith("goal_")) return; // can't delete system events
     try {
-      const { error } = await supabase.from("calendar_events").delete().eq("id", id);
+      const { error } = await (supabase.from("calendar_events" as any).delete().eq("id", id) as any);
       if (error) throw error;
       toast({ title: "Event Deleted" });
     } catch (err) {
