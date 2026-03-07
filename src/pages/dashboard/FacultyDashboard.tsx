@@ -18,6 +18,7 @@ import DocumentUpload from "@/components/faculty/DocumentUpload";
 import AreasToImprove from "@/components/faculty/AreasToImprove";
 import ActivityLogTimeline from "@/components/faculty/ActivityLogTimeline";
 import MotivationTools from "@/components/faculty/MotivationTools";
+import MyCalendar from "@/components/faculty/MyCalendar";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
@@ -399,7 +400,7 @@ const FacultyDashboard = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto focus:outline-none p-6">
-          {activeSection === "courses" ? <CoursesViewer /> : activeSection === "performance" ? <PerformanceAssessment /> : activeSection === "motivation" ? <MotivationTools /> : activeSection === "activities" ? (
+          {activeSection === "calendar" ? <MyCalendar /> : activeSection === "courses" ? <CoursesViewer /> : activeSection === "performance" ? <PerformanceAssessment /> : activeSection === "motivation" ? <MotivationTools /> : activeSection === "activities" ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
