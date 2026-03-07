@@ -24,6 +24,8 @@ import {
   AlertTriangle,
   FolderCheck,
   Star,
+  PanelLeftClose,
+  PanelLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";

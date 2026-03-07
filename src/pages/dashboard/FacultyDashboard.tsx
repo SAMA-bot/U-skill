@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, Activity, FolderUp } from "lucide-react";
+import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, Activity, FolderUp, PanelLeftClose, PanelLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
@@ -81,6 +81,7 @@ const resources = [{
 }];
 const FacultyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState<ActiveSection>("dashboard");
   const [profile, setProfile] = useState<Profile | null>(null);
   const [activities, setActivities] = useState<any[]>([]);
@@ -351,10 +352,11 @@ const FacultyDashboard = () => {
 
         {/* Sidebar */}
         <aside className={`
-            bg-card w-64 flex-shrink-0 border-r border-border
+            bg-card flex-shrink-0 border-r border-border
             fixed md:sticky inset-y-0 left-0 z-50 md:z-auto
-            transform transition-transform duration-200 ease-in-out
+            transform transition-all duration-200 ease-in-out
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+            ${sidebarCollapsed ? "w-16" : "w-64"}
             h-screen md:h-[calc(100vh-4rem)] overflow-y-auto
           `}>
           <div className="flex flex-col h-full pt-5 pb-4">
@@ -365,34 +367,47 @@ const FacultyDashboard = () => {
               </button>
             </div>
             
-            <nav className="mt-6 flex-1 flex flex-col px-2 space-y-1">
+            {/* Collapse toggle - desktop only */}
+            <div className="hidden md:flex justify-end px-2 mb-2">
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                {sidebarCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+              </button>
+            </div>
+
+            <nav className="mt-2 flex-1 flex flex-col px-2 space-y-1">
               {sidebarItems.map((item, index) => {
                 const isActive = activeSection === item.section;
                 return <button key={index} onClick={() => {
                   setActiveSection(item.section);
                   setSidebarOpen(false);
                 }} className={`
-                      group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors w-full text-left
+                      group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md transition-colors w-full text-left
                       ${isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"}
-                    `}>
-                    <item.icon className={`mr-3 flex-shrink-0 h-5 w-5 ${isActive ? "text-primary" : ""}`} />
-                    {item.label}
+                    `}
+                  title={sidebarCollapsed ? item.label : undefined}
+                >
+                    <item.icon className={`flex-shrink-0 h-5 w-5 ${isActive ? "text-primary" : ""} ${sidebarCollapsed ? "" : "mr-3"}`} />
+                    {!sidebarCollapsed && item.label}
                   </button>;
               })}
             </nav>
 
             <div className="px-2 pt-4 pb-2 border-t border-border">
-              {isAdmin && <button onClick={() => navigate('/admin')} className="w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center px-3 py-2 text-sm font-medium rounded-md">
-                  <Shield className="mr-3 flex-shrink-0 h-5 w-5" />
-                  Admin Dashboard
+              {isAdmin && <button onClick={() => navigate('/admin')} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`} title={sidebarCollapsed ? "Admin Dashboard" : undefined}>
+                  <Shield className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
+                  {!sidebarCollapsed && "Admin Dashboard"}
                 </button>}
-              <button onClick={() => navigate('/dashboard/settings')} className="w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center px-3 py-2 text-sm font-medium rounded-md">
-                <Settings className="mr-3 flex-shrink-0 h-5 w-5" />
-                Settings
+              <button onClick={() => navigate('/dashboard/settings')} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`} title={sidebarCollapsed ? "Settings" : undefined}>
+                <Settings className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
+                {!sidebarCollapsed && "Settings"}
               </button>
-              <button onClick={handleLogout} className="w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center px-3 py-2 text-sm font-medium rounded-md">
-                <LogOut className="mr-3 flex-shrink-0 h-5 w-5" />
-                Sign out
+              <button onClick={handleLogout} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`} title={sidebarCollapsed ? "Sign out" : undefined}>
+                <LogOut className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
+                {!sidebarCollapsed && "Sign out"}
               </button>
             </div>
           </div>
