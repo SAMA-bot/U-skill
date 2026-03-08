@@ -44,7 +44,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RoleManagement } from "@/components/admin/RoleManagement";
+import RoleAccessMatrix from "@/components/admin/RoleAccessMatrix";
+import RoleSummaryCards from "@/components/admin/RoleSummaryCards";
 import { CourseManagement } from "@/components/admin/CourseManagement";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AuditLogViewer from "@/components/admin/AuditLogViewer";
 import PerformanceScoreCard from "@/components/dashboard/PerformanceScoreCard";
 import { usePerformanceScore } from "@/hooks/usePerformanceScore";
@@ -430,15 +433,30 @@ const AdminDashboard = () => {
         <main className="flex-1 overflow-auto focus:outline-none p-6">
           {activeSection === "roles" ? (
             <>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div>
                   <h1 className="text-2xl font-bold text-foreground">Role Management</h1>
                   <p className="text-muted-foreground">
-                    Manage user roles and access permissions
+                    Manage user roles, permissions, and access control
                   </p>
                 </div>
               </div>
-              <RoleManagement />
+              <Tabs defaultValue="overview" className="space-y-6">
+                <TabsList className="bg-muted/50">
+                  <TabsTrigger value="overview">Role Overview</TabsTrigger>
+                  <TabsTrigger value="users">User Assignments</TabsTrigger>
+                  <TabsTrigger value="matrix">Access Matrix</TabsTrigger>
+                </TabsList>
+                <TabsContent value="overview">
+                  <RoleSummaryCards />
+                </TabsContent>
+                <TabsContent value="users">
+                  <RoleManagement />
+                </TabsContent>
+                <TabsContent value="matrix">
+                  <RoleAccessMatrix />
+                </TabsContent>
+              </Tabs>
             </>
           ) : activeSection === "courses" ? (
             <>
