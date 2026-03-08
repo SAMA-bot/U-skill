@@ -82,7 +82,7 @@ const PendingApprovals = () => {
           className={`flex flex-col items-center gap-2 p-4 rounded-xl border ${item.bg} ${item.border}`}
         >
           <item.Icon className={`h-5 w-5 ${item.iconColor}`} />
-          <span className={`text-2xl font-bold ${item.textColor}`}>{item.value}</span>
+          <span className={`text-3xl font-extrabold ${item.textColor}`}>{item.value}</span>
           <span className="text-[11px] font-medium text-muted-foreground">{item.label}</span>
         </div>
       ))}
