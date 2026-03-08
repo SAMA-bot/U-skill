@@ -397,6 +397,10 @@ const FacultyDashboard = () => {
                   <Shield className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
                   {!sidebarCollapsed && "Admin Dashboard"}
                 </button>}
+              {isHod && <button onClick={() => navigate('/hod')} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`} title={sidebarCollapsed ? "HOD Dashboard" : undefined}>
+                  <Building2 className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
+                  {!sidebarCollapsed && "HOD Dashboard"}
+                </button>}
               <button onClick={() => navigate('/dashboard/settings')} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`} title={sidebarCollapsed ? "Settings" : undefined}>
                 <Settings className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
                 {!sidebarCollapsed && "Settings"}
