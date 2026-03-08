@@ -8,8 +8,11 @@ type TableName =
   | "motivation_scores"
   | "activities"
   | "courses"
+  | "course_enrollments"
   | "profiles"
-  | "calendar_events";
+  | "calendar_events"
+  | "achievement_badges"
+  | "faculty_feedback";
 
 interface UseRealtimeDataOptions {
   table: TableName;
