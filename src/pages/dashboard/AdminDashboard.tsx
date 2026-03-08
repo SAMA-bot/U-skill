@@ -737,9 +737,16 @@ const AdminDashboard = () => {
                     </div>
                   ))}
                   {departmentStats.length === 0 && (
-                    <p className="text-sm text-muted-foreground text-center py-4">
-                      No department data available
-                    </p>
+                    <div className="flex flex-col items-center py-8 text-center">
+                      <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-3">
+                        <Building2 className="h-7 w-7 text-primary" />
+                      </div>
+                      <p className="font-medium text-foreground mb-1">No departments yet</p>
+                      <p className="text-xs text-muted-foreground max-w-[200px]">Add departments and assign faculty to see rankings here.</p>
+                      <Button variant="outline" size="sm" className="mt-3" onClick={() => setActiveSection("departments")}>
+                        Manage Departments
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>

@@ -457,15 +457,15 @@ const ActivityLogTimeline = () => {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : filteredLogs.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <History className="h-10 w-10 text-muted-foreground mb-2" />
-              <p className="font-medium text-foreground">No activity logs found</p>
-              <p className="text-sm text-muted-foreground">
-                {searchQuery || categoryFilter !== "all"
-                  ? "Try adjusting your filters"
-                  : "Your activity history will appear here as you use the system"}
-              </p>
-            </div>
+            <SmartEmptyState
+              icon={History}
+              title={searchQuery || categoryFilter !== "all" ? "No matching activities" : "No activity logs yet"}
+              description={searchQuery || categoryFilter !== "all"
+                ? "Try adjusting your search or filter criteria to find specific activities."
+                : "Your activity history will appear here as you complete courses, upload documents, and log professional activities."}
+              actionLabel={searchQuery || categoryFilter !== "all" ? "Clear Filters" : undefined}
+              onAction={searchQuery || categoryFilter !== "all" ? () => { setSearchQuery(""); setCategoryFilter("all"); } : undefined}
+            />
           ) : (
             <ScrollArea className="max-h-[600px] pr-2">
               <div className="relative">

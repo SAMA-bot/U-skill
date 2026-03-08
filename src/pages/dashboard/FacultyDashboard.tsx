@@ -647,10 +647,15 @@ const FacultyDashboard = () => {
                               </div>
                             </div>
                           </div>
-                        </div>) : <div className="px-4 py-8 text-center">
-                        <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                        <p className="text-muted-foreground">No activities yet</p>
-                        <p className="text-sm text-muted-foreground mt-1">Start your training journey to see activities here</p>
+                        </div>) : <div className="px-4 py-6 text-center">
+                        <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-3">
+                          <FileText className="h-7 w-7 text-primary" />
+                        </div>
+                        <p className="font-medium text-foreground mb-1">No activities yet</p>
+                        <p className="text-sm text-muted-foreground max-w-xs mx-auto">Start logging professional activities to track your growth and earn performance points.</p>
+                        <Button variant="outline" size="sm" className="mt-3" onClick={() => setActiveSection("activities")}>
+                          Log Your First Activity
+                        </Button>
                       </div>}
                     <div className="px-4 py-5 sm:px-6">
                       <button 
