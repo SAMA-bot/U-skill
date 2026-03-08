@@ -516,21 +516,28 @@ const AdminDashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-md transition-shadow"
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg transition-all duration-300 cursor-default"
               >
                 <div className="p-4">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <div className={`bg-gradient-to-br ${stat.color} rounded-md p-2`}>
+                      <motion.div
+                        className={`bg-gradient-to-br ${stat.color} rounded-md p-2`}
+                        whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
+                      >
                         <stat.icon className="h-5 w-5 text-white" />
-                      </div>
+                      </motion.div>
                     </div>
                     <div className="ml-3 w-0 flex-1">
                       <dt className="text-xs font-medium text-muted-foreground truncate">
                         {stat.label}
                       </dt>
                       <dd className="text-lg font-semibold text-foreground">
-                        {stat.value}
+                        <AnimatedCounter
+                          value={stat.numValue}
+                          suffix={stat.suffix}
+                        />
                       </dd>
                     </div>
                   </div>
