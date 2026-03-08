@@ -609,11 +609,7 @@ const CoursesViewer = () => {
                 <img src={detailCourse.thumbnail_url} alt={detailCourse.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  {detailCourse.course_type === 'video' ? (
-                    <Video className="h-16 w-16 text-muted-foreground" />
-                  ) : (
-                    <BookOpen className="h-16 w-16 text-muted-foreground" />
-                  )}
+                  <span className="text-5xl">{getContentTypeIcon(detailCourse.content_type)}</span>
                 </div>
               )}
               {completed && (
@@ -631,11 +627,9 @@ const CoursesViewer = () => {
               <Badge variant="outline" className={difficulty.color}>
                 {difficulty.label}
               </Badge>
-              {detailCourse.course_type === 'video' && (
-                <Badge variant="secondary" className="bg-destructive/10 text-destructive">
-                  <Video className="h-3 w-3 mr-1" />Video
-                </Badge>
-              )}
+              <Badge variant="secondary" className="bg-muted text-foreground">
+                {getContentTypeIcon(detailCourse.content_type)} {getContentTypeLabel(detailCourse.content_type)}
+              </Badge>
             </div>
 
             {/* Description */}
