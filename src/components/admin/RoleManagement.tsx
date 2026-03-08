@@ -268,6 +268,62 @@ export function RoleManagement() {
     }
   };
 
+  const toggleUserSelection = (userId: string) => {
+    setSelectedUsers((prev) => {
+      const next = new Set(prev);
+      if (next.has(userId)) next.delete(userId);
+      else next.add(userId);
+      return next;
+    });
+  };
+
+  const toggleAllOnPage = () => {
+    const pageIds = paginatedUsers.map((u) => u.user_id);
+    const allSelected = pageIds.every((id) => selectedUsers.has(id));
+    setSelectedUsers((prev) => {
+      const next = new Set(prev);
+      pageIds.forEach((id) => (allSelected ? next.delete(id) : next.add(id)));
+      return next;
+    });
+  };
+
+  const handleBulkRoleChange = async () => {
+    if (selectedUsers.size === 0) return;
+    setIsBulkUpdating(true);
+    try {
+      const promises = Array.from(selectedUsers).map((userId) =>
+        supabase.functions.invoke("update-user-role", {
+          body: { userId, newRole: bulkRole },
+        })
+      );
+      const results = await Promise.allSettled(promises);
+      const failed = results.filter((r) => r.status === "rejected").length;
+
+      setUsers((prev) =>
+        prev.map((user) =>
+          selectedUsers.has(user.user_id) ? { ...user, role: bulkRole } : user
+        )
+      );
+      setSelectedUsers(new Set());
+
+      toast({
+        title: "Bulk Update Complete",
+        description: failed
+          ? `Updated ${selectedUsers.size - failed} users, ${failed} failed`
+          : `Updated ${selectedUsers.size} users to ${bulkRole}`,
+        variant: failed ? "destructive" : "default",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: getUserFriendlyError(error, "general"),
+        variant: "destructive",
+      });
+    } finally {
+      setIsBulkUpdating(false);
+    }
+  };
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
