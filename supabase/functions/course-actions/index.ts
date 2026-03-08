@@ -1,59 +1,53 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 
-
 // Rate limit configurations
 const RATE_LIMITS = {
-  enroll: { maxRequests: 10, windowMinutes: 60 }, // 10 enrollments per hour
-  start: { maxRequests: 20, windowMinutes: 60 }, // 20 starts per hour
-  complete: { maxRequests: 10, windowMinutes: 60 }, // 10 completions per hour
-  progress: { maxRequests: 100, windowMinutes: 60 }, // 100 progress updates per hour
+  enroll: { maxRequests: 10, windowMinutes: 60 },
+  start: { maxRequests: 20, windowMinutes: 60 },
+  complete: { maxRequests: 10, windowMinutes: 60 },
+  progress: { maxRequests: 100, windowMinutes: 60 },
 };
 
 Deno.serve(async (req) => {
   const origin = req.headers.get("origin");
   const corsHeaders = getCorsHeaders(origin);
 
-  // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Get authorization header
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      console.error("No authorization header provided");
+    if (!authHeader?.startsWith("Bearer ")) {
       return new Response(
         JSON.stringify({ error: "Unauthorized", message: "No authorization header" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Create Supabase clients
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-    // Client with user's token for auth verification
+    // Validate user via getClaims
+    const token = authHeader.replace("Bearer ", "");
     const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
-
-    // Service role client for rate limiting and data operations
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
-
-    // Verify the user
-    const { data: { user }, error: userError } = await supabaseUser.auth.getUser();
-    if (userError || !user) {
-      console.error("Auth error:", userError);
+    const { data: claimsData, error: claimsError } = await supabaseUser.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      console.error("Auth error:", claimsError);
       return new Response(
         JSON.stringify({ error: "Unauthorized", message: "Invalid token" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    console.log(`User ${user.id} making course action request`);
+    const userId = claimsData.claims.sub as string;
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+
+    console.log(`User ${userId} making course action request`);
 
     // Parse and validate request body
     const body = await req.json();
@@ -66,7 +60,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate courseId is a valid UUID
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(courseId)) {
       return new Response(
@@ -75,7 +68,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate progressPercentage if provided
     if (progressPercentage !== undefined && (typeof progressPercentage !== "number" || progressPercentage < 0 || progressPercentage > 100)) {
       return new Response(
         JSON.stringify({ error: "Bad Request", message: "progressPercentage must be a number between 0 and 100" }),
@@ -83,7 +75,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`Action: ${action}, Course: ${courseId}, User: ${user.id}`);
+    console.log(`Action: ${action}, Course: ${courseId}, User: ${userId}`);
 
     // Check rate limit
     const rateConfig = RATE_LIMITS[action as keyof typeof RATE_LIMITS];
@@ -97,7 +89,7 @@ Deno.serve(async (req) => {
     const { data: rateLimitPassed, error: rateLimitError } = await supabaseAdmin.rpc(
       "check_rate_limit",
       {
-        p_user_id: user.id,
+        p_user_id: userId,
         p_action_type: `course_${action}`,
         p_max_requests: rateConfig.maxRequests,
         p_window_minutes: rateConfig.windowMinutes,
@@ -113,7 +105,7 @@ Deno.serve(async (req) => {
     }
 
     if (!rateLimitPassed) {
-      console.warn(`Rate limit exceeded for user ${user.id} on action ${action}`);
+      console.warn(`Rate limit exceeded for user ${userId} on action ${action}`);
       return new Response(
         JSON.stringify({
           error: "Rate Limit Exceeded",
@@ -135,16 +127,16 @@ Deno.serve(async (req) => {
     let result;
     switch (action) {
       case "enroll":
-        result = await handleEnroll(supabaseAdmin, user.id, courseId);
+        result = await handleEnroll(supabaseAdmin, userId, courseId);
         break;
       case "start":
-        result = await handleStart(supabaseAdmin, user.id, courseId);
+        result = await handleStart(supabaseAdmin, userId, courseId);
         break;
       case "complete":
-        result = await handleComplete(supabaseAdmin, user.id, courseId);
+        result = await handleComplete(supabaseAdmin, userId, courseId);
         break;
       case "progress":
-        result = await handleProgress(supabaseAdmin, user.id, courseId, progressPercentage);
+        result = await handleProgress(supabaseAdmin, userId, courseId, progressPercentage);
         break;
       default:
         return new Response(
@@ -162,7 +154,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`Action ${action} completed successfully for user ${user.id}`);
+    console.log(`Action ${action} completed successfully for user ${userId}`);
     return new Response(
       JSON.stringify({ success: true, data: result.data }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -177,7 +169,6 @@ Deno.serve(async (req) => {
 });
 
 async function handleEnroll(supabase: any, userId: string, courseId: string) {
-  // Check if already enrolled
   const { data: existing } = await supabase
     .from("course_enrollments")
     .select("id")
@@ -208,16 +199,14 @@ async function handleEnroll(supabase: any, userId: string, courseId: string) {
 }
 
 async function handleStart(supabase: any, userId: string, courseId: string) {
-  // Check if enrolled
   const { data: existing } = await supabase
     .from("course_enrollments")
-    .select("id, status")
+    .select("id, status, progress_percentage")
     .eq("user_id", userId)
     .eq("course_id", courseId)
     .single();
 
   if (!existing) {
-    // Enroll first
     const { data: enrolled, error: enrollError } = await supabase
       .from("course_enrollments")
       .insert({
@@ -235,7 +224,6 @@ async function handleStart(supabase: any, userId: string, courseId: string) {
     return { data: enrolled };
   }
 
-  // Update to in_progress
   const { data, error } = await supabase
     .from("course_enrollments")
     .update({

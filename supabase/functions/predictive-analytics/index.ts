@@ -12,7 +12,7 @@ serve(async (req) => {
 
   try {
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
+    if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Missing authorization" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -20,7 +20,8 @@ serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
 
     if (!lovableApiKey) {
@@ -30,25 +31,27 @@ serve(async (req) => {
       });
     }
 
-    // Verify user is admin
-    const supabaseAuth = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
+    // Validate user via getClaims
+    const token = authHeader.replace("Bearer ", "");
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
-    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
-    if (authError || !user) {
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const currentUserId = claimsData.claims.sub as string;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Check admin role
     const { data: roleData } = await supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", user.id)
+      .eq("user_id", currentUserId)
       .eq("role", "admin")
       .maybeSingle();
 
@@ -69,11 +72,9 @@ serve(async (req) => {
       supabase.from("capacity_skills").select("user_id, skill_name, current_level, target_level"),
     ]);
 
-    // Build summary for AI
     const totalFaculty = profilesRes.data?.length || 0;
     const departments = [...new Set((profilesRes.data || []).map(p => p.department).filter(Boolean))];
 
-    // Aggregate performance by department
     const deptPerf: Record<string, { total: number; count: number }> = {};
     for (const m of metricsRes.data || []) {
       const profile = profilesRes.data?.find(p => p.user_id === m.user_id);
@@ -86,16 +87,14 @@ serve(async (req) => {
 
     const deptSummary = Object.entries(deptPerf).map(([dept, v]) => ({
       department: dept,
-      avgScore: Math.round(v.total / v.count),
+      avgScore: v.count > 0 ? Math.round(v.total / v.count) : 0,
       dataPoints: v.count,
     }));
 
-    // Training completion rates
     const enrolled = (enrollmentsRes.data || []).length;
     const completed = (enrollmentsRes.data || []).filter(e => e.status === "completed").length;
     const completionRate = enrolled > 0 ? Math.round((completed / enrolled) * 100) : 0;
 
-    // Skill gaps
     const skillGaps = (skillsRes.data || [])
       .filter(s => (s.target_level || 100) - (s.current_level || 0) > 30)
       .reduce((acc: Record<string, number>, s) => {
@@ -103,7 +102,6 @@ serve(async (req) => {
         return acc;
       }, {});
 
-    // Activity trends
     const activityTypes: Record<string, number> = {};
     for (const a of activitiesRes.data || []) {
       if (a.status === "completed" && a.activity_type) {
@@ -111,9 +109,9 @@ serve(async (req) => {
       }
     }
 
-    // Feedback trends
-    const avgRating = (feedbackRes.data || []).length > 0
-      ? ((feedbackRes.data || []).reduce((s, f) => s + f.rating, 0) / (feedbackRes.data || []).length).toFixed(1)
+    const feedbackData = feedbackRes.data || [];
+    const avgRating = feedbackData.length > 0
+      ? (feedbackData.reduce((s, f) => s + f.rating, 0) / feedbackData.length).toFixed(1)
       : "N/A";
 
     const dataContext = `
@@ -211,6 +209,9 @@ Base predictions on actual data patterns. Be specific and actionable.`;
 
     if (!aiResponse.ok) {
       const status = aiResponse.status;
+      const errorText = await aiResponse.text();
+      console.error("AI gateway error:", status, errorText);
+      
       if (status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again shortly." }), {
           status: 429,
@@ -223,8 +224,6 @@ Base predictions on actual data patterns. Be specific and actionable.`;
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      const errorText = await aiResponse.text();
-      console.error("AI gateway error:", status, errorText);
       return new Response(JSON.stringify({ error: "Failed to generate predictions" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
