@@ -12,9 +12,12 @@ export type NotificationType =
   | "course_completed"
   | "course_started"
   | "achievement_earned"
+  | "document_approved"
+  | "document_rejected"
+  | "document_pending"
   | "system";
 
-export type NotificationCategory = "alert" | "course" | "achievement";
+export type NotificationCategory = "alert" | "course" | "achievement" | "document";
 
 export interface Notification {
   id: string;
