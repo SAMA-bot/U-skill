@@ -35,6 +35,7 @@ const TABS: { key: TabKey; label: string; icon: typeof Bell }[] = [
   { key: "alert", label: "Alerts", icon: AlertTriangle },
   { key: "course", label: "Courses", icon: GraduationCap },
   { key: "achievement", label: "Badges", icon: Award },
+  { key: "document", label: "Docs", icon: FileText },
 ];
 
 const HeaderNotifications = () => {
