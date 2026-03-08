@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, Activity, FolderUp, PanelLeftClose, PanelLeft, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
+import { FacultySkeleton } from "@/components/dashboard/DashboardSkeletons";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
