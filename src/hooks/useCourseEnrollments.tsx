@@ -21,7 +21,7 @@ export const useCourseEnrollments = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
-  const { selectedYear, getDateRangeForYear } = useAcademicYear();
+  
 
   const fetchEnrollments = useCallback(async () => {
     if (!user) return;
