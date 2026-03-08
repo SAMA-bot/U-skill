@@ -48,6 +48,7 @@ import RoleAccessMatrix from "@/components/admin/RoleAccessMatrix";
 import RoleSummaryCards from "@/components/admin/RoleSummaryCards";
 import { CourseManagement } from "@/components/admin/CourseManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import FacultyManagement from "@/components/admin/FacultyManagement";
 import AuditLogViewer from "@/components/admin/AuditLogViewer";
 import PerformanceScoreCard from "@/components/dashboard/PerformanceScoreCard";
 import { usePerformanceScore } from "@/hooks/usePerformanceScore";
@@ -476,6 +477,8 @@ const AdminDashboard = () => {
             <DocumentReview />
           ) : activeSection === "feedback" ? (
             <FeedbackAnalytics />
+          ) : activeSection === "faculty" ? (
+            <FacultyManagement />
           ) : (
             <>
           {/* Page Header */}
