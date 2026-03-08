@@ -112,7 +112,7 @@ export const TRACKS: TrackDefinition[] = [
     key: "general",
     label: "General Development",
     icon: BookOpen,
-    categories: ["general"],
+    categories: ["general", "professional-development"],
     accentClass: "border-border",
     iconBgClass: "bg-muted text-foreground",
   },
