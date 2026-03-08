@@ -71,19 +71,6 @@ const sidebarItems: {
   label: "My Calendar",
   section: "calendar"
 }];
-const resources = [{
-  title: "Effective Teaching Strategies for Higher Education",
-  subtitle: "John E. Smith, 2022"
-}, {
-  title: "Digital Transformation in Education - Online Course",
-  subtitle: "Coursera, 12 hours"
-}, {
-  title: "Research Publication Toolkit",
-  subtitle: "University Research Center"
-}, {
-  title: "Faculty Development Network Membership",
-  subtitle: "Annual Subscription"
-}];
 const FacultyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
