@@ -309,25 +309,33 @@ const FacultyDashboard = () => {
     value: statsData.capacityScore,
     suffix: "/100",
     icon: ClipboardList,
-    metricType: "capacity" as const
+    metricType: "capacity" as const,
+    sparkline: sparkData.capacity,
+    sparkColor: "hsl(var(--primary))",
   }, {
     label: "Performance Score",
     value: statsData.performanceScore,
     suffix: "/100",
     icon: BarChart3,
-    metricType: "performance" as const
+    metricType: "performance" as const,
+    sparkline: sparkData.performance,
+    sparkColor: "hsl(var(--accent))",
   }, {
     label: "Motivation Index",
     value: statsData.motivationIndex,
     suffix: "/100",
     icon: Star,
-    metricType: "motivation" as const
+    metricType: "motivation" as const,
+    sparkline: sparkData.motivation,
+    sparkColor: "hsl(var(--success))",
   }, {
     label: "Training Hours",
     value: statsData.trainingHours,
     suffix: "h",
     icon: Clock,
-    metricType: "training_hours" as const
+    metricType: "training_hours" as const,
+    sparkline: sparkData.training,
+    sparkColor: "hsl(var(--info))",
   }];
 
   const [metricSheetOpen, setMetricSheetOpen] = useState(false);
