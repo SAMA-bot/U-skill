@@ -982,14 +982,26 @@ const CoursesViewer = () => {
 
       {/* Video Modal */}
       <Dialog open={videoModalOpen} onOpenChange={handleVideoModalClose}>
-        <DialogContent className="max-w-4xl p-0 overflow-hidden">
-          <DialogHeader className="p-4 pb-0">
-            <DialogTitle className="flex items-center gap-2">
-              <Video className="h-5 w-5" />
+        <DialogContent className="max-w-5xl h-[90vh] p-0 overflow-hidden flex flex-col">
+          {/* Sticky back button header */}
+          <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-md border-b border-border/40 px-4 py-3 flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2 text-muted-foreground hover:text-foreground transition-colors group"
+              onClick={() => handleVideoModalClose(false)}
+            >
+              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+              Back to Courses
+            </Button>
+            <DialogTitle className="text-sm font-medium text-foreground truncate max-w-[50%] flex items-center gap-2">
+              <Video className="h-4 w-4 shrink-0" />
               {selectedCourse?.title}
             </DialogTitle>
-          </DialogHeader>
-          <div className="p-4">
+            <div className="w-[120px]" />
+          </div>
+
+          <div className="flex-1 p-4 overflow-y-auto space-y-4">
             {loadingMedia ? (
               <div className="aspect-video flex items-center justify-center bg-muted rounded-lg">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -1014,9 +1026,9 @@ const CoursesViewer = () => {
               </div>
             )}
             {selectedCourse?.description && (
-              <p className="mt-4 text-muted-foreground">{selectedCourse.description}</p>
+              <p className="text-sm text-muted-foreground">{selectedCourse.description}</p>
             )}
-            <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
+            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               {selectedCourse?.instructor_name && (
                 <div className="flex items-center gap-1"><User className="h-4 w-4" /><span>{selectedCourse.instructor_name}</span></div>
               )}
@@ -1025,20 +1037,49 @@ const CoursesViewer = () => {
               )}
             </div>
           </div>
+
+          {/* Lesson navigation footer */}
+          {selectedCourse && (() => {
+            const sameCourses = courses.filter(c => c.content_type === selectedCourse.content_type && c.video_url);
+            const currentIdx = sameCourses.findIndex(c => c.id === selectedCourse.id);
+            const prevCourse = currentIdx > 0 ? sameCourses[currentIdx - 1] : null;
+            const nextCourse = currentIdx < sameCourses.length - 1 ? sameCourses[currentIdx + 1] : null;
+            if (!prevCourse && !nextCourse) return null;
+            return (
+              <div className="border-t border-border/40 bg-card/95 backdrop-blur-md px-4 py-3 flex items-center justify-between">
+                <Button variant="outline" size="sm" disabled={!prevCourse} className="gap-2" onClick={() => prevCourse && handlePlayVideo(prevCourse)}>
+                  <ChevronLeft className="h-4 w-4" /> Previous Lesson
+                </Button>
+                <span className="text-xs text-muted-foreground">{currentIdx + 1} / {sameCourses.length}</span>
+                <Button variant="outline" size="sm" disabled={!nextCourse} className="gap-2" onClick={() => nextCourse && handlePlayVideo(nextCourse)}>
+                  Next Lesson <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            );
+          })()}
         </DialogContent>
       </Dialog>
 
       {/* Document Modal */}
       <Dialog open={documentModalOpen} onOpenChange={handleDocumentModalClose}>
         <DialogContent className="max-w-5xl h-[90vh] p-0 overflow-hidden flex flex-col">
-          <DialogHeader className="p-4 pb-0 flex-shrink-0">
-            <DialogTitle className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                {selectedCourse?.title}
-              </div>
+          <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-md border-b border-border/40 px-4 py-3 flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2 text-muted-foreground hover:text-foreground transition-colors group"
+              onClick={() => handleDocumentModalClose(false)}
+            >
+              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+              Back to Courses
+            </Button>
+            <DialogTitle className="text-sm font-medium text-foreground truncate max-w-[50%] flex items-center gap-2">
+              <FileText className="h-4 w-4 shrink-0" />
+              {selectedCourse?.title}
             </DialogTitle>
-          </DialogHeader>
+            <div className="w-[120px]" />
+          </div>
+
           <div className="flex-1 p-4 overflow-hidden">
             {loadingMedia ? (
               <div className="flex items-center justify-center h-full">
@@ -1070,10 +1111,26 @@ const CoursesViewer = () => {
                 <p className="text-muted-foreground">Unable to load document. Please enroll in this course first.</p>
               </div>
             )}
-            {selectedCourse?.description && (
-              <p className="mt-4 text-muted-foreground">{selectedCourse.description}</p>
-            )}
           </div>
+
+          {selectedCourse && (() => {
+            const sameCourses = courses.filter(c => c.content_type === selectedCourse.content_type && c.document_url);
+            const currentIdx = sameCourses.findIndex(c => c.id === selectedCourse.id);
+            const prevCourse = currentIdx > 0 ? sameCourses[currentIdx - 1] : null;
+            const nextCourse = currentIdx < sameCourses.length - 1 ? sameCourses[currentIdx + 1] : null;
+            if (!prevCourse && !nextCourse) return null;
+            return (
+              <div className="border-t border-border/40 bg-card/95 backdrop-blur-md px-4 py-3 flex items-center justify-between">
+                <Button variant="outline" size="sm" disabled={!prevCourse} className="gap-2" onClick={() => prevCourse && handleViewDocument(prevCourse)}>
+                  <ChevronLeft className="h-4 w-4" /> Previous Lesson
+                </Button>
+                <span className="text-xs text-muted-foreground">{currentIdx + 1} / {sameCourses.length}</span>
+                <Button variant="outline" size="sm" disabled={!nextCourse} className="gap-2" onClick={() => nextCourse && handleViewDocument(nextCourse)}>
+                  Next Lesson <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            );
+          })()}
         </DialogContent>
       </Dialog>
     </div>
