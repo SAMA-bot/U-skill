@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell,
@@ -17,8 +17,6 @@ import {
   FileX,
   FileCheck,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Popover,
@@ -30,13 +28,59 @@ import { toast } from "sonner";
 
 type TabKey = "all" | NotificationCategory;
 
-const TABS: { key: TabKey; label: string; icon: typeof Bell }[] = [
-  { key: "all", label: "All", icon: Bell },
-  { key: "alert", label: "Alerts", icon: AlertTriangle },
-  { key: "course", label: "Courses", icon: GraduationCap },
-  { key: "achievement", label: "Badges", icon: Award },
-  { key: "document", label: "Docs", icon: FileText },
+const TABS: { key: TabKey; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "alert", label: "Alerts" },
+  { key: "course", label: "Courses" },
+  { key: "achievement", label: "Badges" },
+  { key: "document", label: "Docs" },
 ];
+
+const getIcon = (type: Notification["type"], severity: Notification["severity"]) => {
+  const cls = "h-3.5 w-3.5";
+  switch (type) {
+    case "goal_achieved":
+      return <CheckCircle2 className={`${cls} text-success`} />;
+    case "goal_deadline":
+      return <Calendar className={`${cls} text-accent`} />;
+    case "goal_at_risk":
+      return <AlertTriangle className={`${cls} text-destructive`} />;
+    case "performance_change":
+      return severity === "success"
+        ? <TrendingUp className={`${cls} text-success`} />
+        : <TrendingDown className={`${cls} text-destructive`} />;
+    case "course_completed":
+      return <CheckCircle2 className={`${cls} text-success`} />;
+    case "course_started":
+      return <PlayCircle className={`${cls} text-primary`} />;
+    case "course_enrolled":
+      return <BookOpen className={`${cls} text-primary`} />;
+    case "achievement_earned":
+      return <Award className={`${cls} text-accent`} />;
+    case "document_approved":
+      return <FileCheck className={`${cls} text-success`} />;
+    case "document_rejected":
+      return <FileX className={`${cls} text-destructive`} />;
+    default:
+      return <Bell className={`${cls} text-muted-foreground`} />;
+  }
+};
+
+const stripEmojis = (text: string) =>
+  text.replace(/[\u{1F600}-\u{1F9FF}\u{2600}-\u{2B55}\u{FE00}-\u{FEFF}\u{1FA00}-\u{1FAFF}\u{200D}\u{20E3}\u{E0020}-\u{E007F}✅❌]/gu, "").trim();
+
+const formatTimestamp = (date: Date) => {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString();
+};
 
 const HeaderNotifications = () => {
   const {
@@ -56,62 +100,10 @@ const HeaderNotifications = () => {
       ? notifications
       : notifications.filter((n) => n.category === activeTab);
 
-  const getIcon = (type: Notification["type"], severity: Notification["severity"]) => {
-    switch (type) {
-      case "goal_achieved":
-        return <CheckCircle2 className="h-4 w-4 text-success" />;
-      case "goal_deadline":
-        return <Calendar className="h-4 w-4 text-accent" />;
-      case "goal_at_risk":
-        return <AlertTriangle className="h-4 w-4 text-destructive" />;
-      case "performance_change":
-        return severity === "success" ? (
-          <TrendingUp className="h-4 w-4 text-success" />
-        ) : (
-          <TrendingDown className="h-4 w-4 text-destructive" />
-        );
-      case "course_completed":
-        return <CheckCircle2 className="h-4 w-4 text-success" />;
-      case "course_started":
-        return <PlayCircle className="h-4 w-4 text-primary" />;
-      case "course_enrolled":
-        return <BookOpen className="h-4 w-4 text-info" />;
-      case "achievement_earned":
-        return <Award className="h-4 w-4 text-accent" />;
-      case "document_approved":
-        return <FileCheck className="h-4 w-4 text-success" />;
-      case "document_rejected":
-        return <FileX className="h-4 w-4 text-destructive" />;
-      default:
-        return <Bell className="h-4 w-4 text-muted-foreground" />;
-    }
-  };
-
-  const getSeverityStyles = (severity: Notification["severity"]) => {
-    switch (severity) {
-      case "success":
-        return "border-l-success/70 bg-success/5";
-      case "warning":
-        return "border-l-accent/70 bg-accent/5";
-      case "error":
-        return "border-l-destructive/70 bg-destructive/5";
-      default:
-        return "border-l-info/70 bg-info/5";
-    }
-  };
-
-  const formatTimestamp = (date: Date) => {
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
-    const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours}h ago`;
-    const diffDays = Math.floor(diffHours / 24);
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString();
-  };
+  const getTabCount = (key: TabKey) =>
+    key === "all"
+      ? notifications.length
+      : notifications.filter((n) => n.category === key).length;
 
   return (
     <Popover>
@@ -124,7 +116,7 @@ const HeaderNotifications = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
-                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center bg-destructive text-destructive-foreground text-xs font-bold rounded-full shadow-sm"
+                className="absolute -top-0.5 -right-0.5 h-4 w-4 flex items-center justify-center bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full"
               >
                 {unreadCount > 9 ? "9+" : unreadCount}
               </motion.span>
@@ -132,159 +124,161 @@ const HeaderNotifications = () => {
           </AnimatePresence>
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-96 p-0 border-border/60 shadow-lg" align="end" sideOffset={8}>
-        {/* Header */}
-        <div className="px-4 pt-4 pb-3 border-b border-border/50">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <h4 className="font-semibold text-foreground text-base">Notifications</h4>
-              {unreadCount > 0 && (
-                <Badge className="bg-primary/15 text-primary border-primary/25 text-[10px] px-1.5 h-5">
-                  {unreadCount} new
-                </Badge>
+
+      <PopoverContent
+        className="w-[360px] max-w-[calc(100vw-1rem)] p-0 rounded-xl border-border/50 shadow-xl overflow-hidden"
+        align="end"
+        sideOffset={8}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.15 }}
+        >
+          {/* Header */}
+          <div className="px-4 pt-3 pb-2 border-b border-border/40">
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="font-semibold text-foreground text-sm">Notifications</h4>
+              {notifications.length > 0 && (
+                <div className="flex gap-1">
+                  {unreadCount > 0 && (
+                    <button
+                      className="text-[11px] text-muted-foreground hover:text-foreground transition-colors px-1.5 py-0.5 rounded"
+                      onClick={() => {
+                        markAllAsRead();
+                        toast.success("All marked as read");
+                      }}
+                    >
+                      Mark all read
+                    </button>
+                  )}
+                  <button
+                    className="text-[11px] text-muted-foreground hover:text-destructive transition-colors px-1.5 py-0.5 rounded"
+                    onClick={() => {
+                      clearAll();
+                      toast("Cleared");
+                    }}
+                  >
+                    Clear
+                  </button>
+                </div>
               )}
             </div>
-            {notifications.length > 0 && (
-              <div className="flex gap-1">
-                {unreadCount > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 text-xs text-muted-foreground hover:text-foreground"
-                    onClick={() => {
-                      markAllAsRead();
-                      toast.success("All notifications marked as read");
-                    }}
-                  >
-                    Mark all read
-                  </Button>
-                )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 text-xs text-muted-foreground hover:text-destructive"
-                  onClick={() => {
-                    clearAll();
-                    toast("Notifications cleared");
-                  }}
-                >
-                  Clear
-                </Button>
-              </div>
-            )}
-          </div>
 
-          {/* Category Tabs */}
-          <div className="flex gap-1">
-            {TABS.map((tab) => {
-              const count =
-                tab.key === "all"
-                  ? notifications.length
-                  : notifications.filter((n) => n.category === tab.key).length;
-              const isActive = activeTab === tab.key;
-              return (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`
-                    flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all
-                    ${isActive
-                      ? "bg-primary/10 text-primary border border-primary/20"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted border border-transparent"
-                    }
-                  `}
-                >
-                  <tab.icon className="h-3 w-3" />
-                  {tab.label}
-                  <span className={`
-                    inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-semibold
-                    ${isActive
-                      ? "bg-primary/15 text-primary"
-                      : "bg-muted text-muted-foreground"
-                    }
-                  `}>
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Content */}
-        {loading ? (
-          <div className="flex items-center justify-center py-10">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          </div>
-        ) : filteredNotifications.length === 0 ? (
-          <div className="text-center py-10 px-4">
-            <div className="h-12 w-12 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-3">
-              <CheckCircle2 className="h-6 w-6 text-success" />
-            </div>
-            <p className="font-medium text-foreground text-sm">All caught up!</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {activeTab === "all"
-                ? "No new notifications"
-                : `No ${TABS.find((t) => t.key === activeTab)?.label.toLowerCase()} notifications`}
-            </p>
-          </div>
-        ) : (
-          <ScrollArea className="max-h-[380px]">
-            <AnimatePresence mode="popLayout">
-              {filteredNotifications.slice(0, 15).map((notification, index) => (
-                <motion.div
-                  key={notification.id}
-                  layout
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, x: -40, transition: { duration: 0.2 } }}
-                  transition={{ delay: index * 0.025 }}
-                  className={`
-                    group flex items-start gap-3 px-4 py-3 border-b border-border/40 cursor-pointer transition-all hover:bg-muted/40
-                    ${notification.read ? "opacity-50" : "bg-primary/[0.03]"}
-                  `}
-                  onClick={() => markAsRead(notification.id)}
-                >
-                  <div className={`flex-shrink-0 mt-0.5 p-1.5 rounded-lg ${notification.read ? "bg-muted/40" : "bg-muted/80"}`}>
-                    {getIcon(notification.type, notification.severity)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className={`text-sm truncate ${notification.read ? "font-normal text-muted-foreground" : "font-semibold text-foreground"}`}>
-                        {notification.title}
-                      </p>
-                      {!notification.read && (
-                        <span className="flex-shrink-0 w-2 h-2 rounded-full bg-primary" />
-                      )}
-                    </div>
-                    <p className={`text-xs line-clamp-2 mt-0.5 ${notification.read ? "text-muted-foreground/60" : "text-muted-foreground"}`}>
-                      {notification.message}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground/50 mt-1">
-                      {formatTimestamp(notification.timestamp)}
-                    </p>
-                  </div>
+            {/* Tabs */}
+            <div className="flex gap-0.5 overflow-x-auto no-scrollbar">
+              {TABS.map((tab) => {
+                const count = getTabCount(tab.key);
+                const isActive = activeTab === tab.key;
+                return (
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      dismissNotification(notification.id);
-                    }}
-                    className="flex-shrink-0 p-1 rounded-full hover:bg-muted transition-colors opacity-0 group-hover:opacity-100"
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key)}
+                    className={`
+                      flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium transition-all
+                      ${isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                      }
+                    `}
                   >
-                    <X className="h-3 w-3 text-muted-foreground" />
+                    {tab.label}
+                    <span className={`
+                      text-[10px] tabular-nums
+                      ${isActive ? "text-primary/70" : "text-muted-foreground/60"}
+                    `}>
+                      ({count})
+                    </span>
                   </button>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-            {filteredNotifications.length > 15 && (
-              <div className="p-3 text-center border-t border-border/40">
-                <p className="text-xs text-muted-foreground">
-                  +{filteredNotifications.length - 15} more notifications
-                </p>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Content */}
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-5 w-5 animate-spin text-primary" />
+            </div>
+          ) : filteredNotifications.length === 0 ? (
+            <div className="text-center py-8 px-4">
+              <CheckCircle2 className="h-8 w-8 text-success/60 mx-auto mb-2" />
+              <p className="text-sm font-medium text-foreground">All caught up</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                {activeTab === "all"
+                  ? "No notifications"
+                  : `No ${TABS.find((t) => t.key === activeTab)?.label.toLowerCase()} notifications`}
+              </p>
+            </div>
+          ) : (
+            <ScrollArea className="max-h-[320px]">
+              <div className="py-1">
+                <AnimatePresence mode="popLayout">
+                  {filteredNotifications.slice(0, 15).map((notification, index) => (
+                    <motion.div
+                      key={notification.id}
+                      layout
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, x: -20, transition: { duration: 0.15 } }}
+                      transition={{ delay: index * 0.02 }}
+                      className={`
+                        group flex items-start gap-2.5 px-4 py-2.5 cursor-pointer transition-colors hover:bg-muted/40
+                        ${notification.read ? "opacity-50" : ""}
+                      `}
+                      onClick={() => markAsRead(notification.id)}
+                    >
+                      {/* Unread dot + Icon */}
+                      <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                            notification.read ? "bg-transparent" : "bg-primary"
+                          }`}
+                        />
+                        {getIcon(notification.type, notification.severity)}
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-[13px] leading-tight truncate ${
+                          notification.read
+                            ? "font-normal text-muted-foreground"
+                            : "font-medium text-foreground"
+                        }`}>
+                          {stripEmojis(notification.title)}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground/80 line-clamp-1 mt-0.5">
+                          {notification.message}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground/50 mt-0.5">
+                          {formatTimestamp(notification.timestamp)}
+                        </p>
+                      </div>
+
+                      {/* Dismiss */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          dismissNotification(notification.id);
+                        }}
+                        className="flex-shrink-0 p-0.5 rounded hover:bg-muted transition-colors opacity-0 group-hover:opacity-100 mt-0.5"
+                      >
+                        <X className="h-3 w-3 text-muted-foreground" />
+                      </button>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
-            )}
-          </ScrollArea>
-        )}
+              {filteredNotifications.length > 15 && (
+                <div className="px-4 py-2 text-center border-t border-border/30">
+                  <p className="text-[11px] text-muted-foreground">
+                    +{filteredNotifications.length - 15} more
+                  </p>
+                </div>
+              )}
+            </ScrollArea>
+          )}
+        </motion.div>
       </PopoverContent>
     </Popover>
   );
