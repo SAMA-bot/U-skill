@@ -476,7 +476,7 @@ const FacultyDashboard = () => {
               </div>
 
               {/* Stats Cards */}
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
                 {statsCards.map((stat, index) => <motion.div key={index} initial={{
                 opacity: 0,
                 y: 20
@@ -486,12 +486,13 @@ const FacultyDashboard = () => {
               }} transition={{
                 delay: index * 0.1
               }} whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg transition-all duration-300 cursor-default">
+              onClick={() => { setSelectedMetric(stat); setMetricSheetOpen(true); }}
+              className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
                     <div className="p-5">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
                           <motion.div
-                            className="bg-gradient-to-br from-primary to-accent rounded-md p-3"
+                            className="bg-gradient-to-br from-primary to-accent rounded-md p-3 group-hover:scale-110 transition-transform"
                             whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
                           >
                             <stat.icon className="h-6 w-6 text-white" />
@@ -514,10 +515,26 @@ const FacultyDashboard = () => {
                             )}
                           </dd>
                         </div>
+                        <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                     </div>
                   </motion.div>)}
               </div>
+
+              {/* Metric Detail Sheet */}
+              {selectedMetric && (
+                <MetricDetailSheet
+                  open={metricSheetOpen}
+                  onOpenChange={setMetricSheetOpen}
+                  metricType={selectedMetric.metricType}
+                  metricLabel={selectedMetric.label}
+                  metricValue={selectedMetric.value}
+                  metricSuffix={selectedMetric.suffix}
+                  metricIcon={selectedMetric.icon}
+                  userId={user?.id}
+                  onNavigate={(section) => setActiveSection(section as ActiveSection)}
+                />
+              )}
 
               {/* AI Insights */}
               <div className="mb-8">
