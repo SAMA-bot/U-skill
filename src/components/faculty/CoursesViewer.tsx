@@ -325,14 +325,34 @@ const CoursesViewer = () => {
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      teaching: "bg-primary/10 text-primary",
-      research: "bg-info/10 text-info",
-      technology: "bg-success/10 text-success",
-      leadership: "bg-accent/15 text-accent-foreground",
-      communication: "bg-destructive/10 text-destructive",
-      general: "bg-muted text-muted-foreground",
+      teaching: "bg-primary/15 text-primary border-primary/25",
+      research: "bg-info/15 text-info border-info/25",
+      technology: "bg-success/15 text-success border-success/25",
+      leadership: "bg-accent/15 text-accent border-accent/25",
+      communication: "bg-destructive/15 text-destructive border-destructive/25",
+      general: "bg-muted text-muted-foreground border-border",
+      "professional-development": "bg-primary/15 text-primary border-primary/25",
     };
     return colors[category] || colors.general;
+  };
+
+  const getCategoryIcon = (category: string) => {
+    const icons: Record<string, string> = {
+      teaching: "📚",
+      research: "🔬",
+      technology: "💻",
+      leadership: "🎯",
+      communication: "💬",
+      general: "📖",
+      "professional-development": "🚀",
+    };
+    return icons[category] || "📖";
+  };
+
+  const getDifficultyColor = (hours: number | null) => {
+    if (!hours || hours <= 2) return "bg-success/10 text-success border-success/20";
+    if (hours <= 5) return "bg-accent/10 text-accent border-accent/20";
+    return "bg-destructive/10 text-destructive border-destructive/20";
   };
 
   if (loading) {
@@ -413,29 +433,37 @@ const CoursesViewer = () => {
             <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
           )}
 
-          {/* Difficulty + Duration + Points row */}
-          {(() => {
-            const difficulty = getDifficultyFromDuration(course.duration_hours);
-            return (
-              <div className="flex flex-wrap gap-1.5">
-                <Badge variant="outline" className={`text-[10px] px-2 py-0.5 h-5 font-medium ${difficulty.color}`}>
+          {/* Skill tags row */}
+          <div className="flex flex-wrap gap-1.5">
+            {/* Category skill tag */}
+            <Badge variant="outline" className={`text-[10px] px-2.5 py-0.5 h-5 font-semibold border ${getCategoryColor(course.category)}`}>
+              <span className="mr-1">{getCategoryIcon(course.category)}</span>
+              {getCategoryLabel(course.category)}
+            </Badge>
+            {/* Difficulty tag */}
+            {(() => {
+              const difficulty = getDifficultyFromDuration(course.duration_hours);
+              return (
+                <Badge variant="outline" className={`text-[10px] px-2.5 py-0.5 h-5 font-semibold border ${getDifficultyColor(course.duration_hours)}`}>
                   {difficulty.label}
                 </Badge>
-                {course.duration_hours && (
-                  <Badge variant="outline" className="text-[10px] px-2 py-0.5 h-5 text-muted-foreground">
-                    <Clock className="h-2.5 w-2.5 mr-1" />
-                    {course.duration_hours}h
-                  </Badge>
-                )}
-                {course.duration_hours && (
-                  <Badge variant="outline" className="text-[10px] px-2 py-0.5 h-5 text-primary border-primary/30">
-                    <Award className="h-2.5 w-2.5 mr-1" />
-                    +{Math.min(course.duration_hours * 5, 25)} pts
-                  </Badge>
-                )}
-              </div>
-            );
-          })()}
+              );
+            })()}
+            {/* Duration tag */}
+            {course.duration_hours && (
+              <Badge variant="outline" className="text-[10px] px-2 py-0.5 h-5 text-muted-foreground border-border/50">
+                <Clock className="h-2.5 w-2.5 mr-1" />
+                {course.duration_hours}h
+              </Badge>
+            )}
+            {/* Points tag */}
+            {course.duration_hours && (
+              <Badge variant="outline" className="text-[10px] px-2 py-0.5 h-5 font-semibold text-primary border-primary/20 bg-primary/5">
+                <Award className="h-2.5 w-2.5 mr-1" />
+                +{Math.min(course.duration_hours * 5, 25)} pts
+              </Badge>
+            )}
+          </div>
 
           {course.instructor_name && (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
