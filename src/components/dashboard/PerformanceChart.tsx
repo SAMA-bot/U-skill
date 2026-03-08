@@ -158,6 +158,8 @@ const PerformanceChart = () => {
           fill="url(#colorService)"
           strokeWidth={2}
           name="Service"
+          animationDuration={1600}
+          animationEasing="ease-out"
         />
       </AreaChart>
     </ResponsiveContainer>
