@@ -481,20 +481,28 @@ const FacultyDashboard = () => {
                 y: 0
               }} transition={{
                 delay: index * 0.1
-              }} className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-md transition-shadow">
+              }} whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg transition-all duration-300 cursor-default">
                     <div className="p-5">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
-                          <div className="bg-gradient-to-br from-primary to-accent rounded-md p-3">
+                          <motion.div
+                            className="bg-gradient-to-br from-primary to-accent rounded-md p-3"
+                            whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
+                          >
                             <stat.icon className="h-6 w-6 text-white" />
-                          </div>
+                          </motion.div>
                         </div>
                         <div className="ml-5 w-0 flex-1">
                           <dt className="text-sm font-medium text-muted-foreground truncate">
                             {stat.label}
                           </dt>
                           <dd className="flex items-center gap-2">
-                            <span className="text-lg font-semibold text-foreground">{stat.value}</span>
+                            <AnimatedCounter
+                              value={stat.value}
+                              suffix={stat.suffix}
+                              className="text-lg font-semibold text-foreground"
+                            />
                             {stat.label === "Performance Score" && (
                               <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${getPerformanceBadgeColor(statsData.performanceScore)}`}>
                                 {getPerformanceBadgeLabel(statsData.performanceScore)}
