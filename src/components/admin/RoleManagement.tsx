@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Shield, UserCog, Loader2, Search, UserPlus, Trash2 } from "lucide-react";
+import { Shield, UserCog, Loader2, Search, UserPlus, Trash2, Crown, GraduationCap, User, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -72,6 +72,7 @@ export function RoleManagement() {
   const [updating, setUpdating] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [newUser, setNewUser] = useState<NewUserForm>({
@@ -272,6 +273,19 @@ export function RoleManagement() {
       .slice(0, 2);
   };
 
+  const getRoleIcon = (role: AppRole) => {
+    switch (role) {
+      case "admin":
+        return <Crown className="h-3.5 w-3.5" />;
+      case "hod":
+        return <GraduationCap className="h-3.5 w-3.5" />;
+      case "faculty":
+        return <User className="h-3.5 w-3.5" />;
+      default:
+        return <User className="h-3.5 w-3.5" />;
+    }
+  };
+
   const getRoleBadgeStyle = (role: AppRole): React.CSSProperties => {
     switch (role) {
       case "admin":
@@ -292,6 +306,19 @@ export function RoleManagement() {
       (user.department?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
       user.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Pagination
+  const ITEMS_PER_PAGE = 10;
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / ITEMS_PER_PAGE));
+  const paginatedUsers = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredUsers.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredUsers, currentPage]);
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   if (loading) {
     return (
@@ -433,9 +460,9 @@ export function RoleManagement() {
           </div>
         </div>
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto max-h-[600px] overflow-y-auto relative">
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-10 bg-card shadow-sm">
             <TableRow>
               <TableHead>User</TableHead>
               <TableHead>Email</TableHead>
@@ -446,13 +473,13 @@ export function RoleManagement() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredUsers.map((user) => (
-              <TableRow key={user.user_id}>
+            {paginatedUsers.map((user) => (
+              <TableRow key={user.user_id} className="transition-colors hover:bg-muted/50">
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={user.avatar_url || undefined} />
-                      <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-xs">
+                      <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-primary-foreground text-xs">
                         {getInitials(user.full_name)}
                       </AvatarFallback>
                     </Avatar>
@@ -468,7 +495,8 @@ export function RoleManagement() {
                   {user.department || "Unassigned"}
                 </TableCell>
                 <TableCell>
-                  <Badge style={getRoleBadgeStyle(user.role)} className="border-0">
+                  <Badge style={getRoleBadgeStyle(user.role)} className="border-0 inline-flex items-center gap-1.5">
+                    {getRoleIcon(user.role)}
                     {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                   </Badge>
                 </TableCell>
@@ -555,6 +583,38 @@ export function RoleManagement() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination */}
+      {filteredUsers.length > ITEMS_PER_PAGE && (
+        <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+          <p className="text-sm text-muted-foreground">
+            Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredUsers.length)} of {filteredUsers.length} users
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground px-2">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage((p) => p + 1)}
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }
