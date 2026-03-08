@@ -86,7 +86,7 @@ const PerformanceScoreCard = ({ data, compact = false }: PerformanceScoreCardPro
               Faculty Performance Score
             </h3>
           </div>
-          <Badge className={`text-sm ${getBadgeStyle(data.badge)}`}>{data.badge}</Badge>
+          <Badge style={badgeInlineStyle(data.badge)} className="text-sm border-0">{data.badge}</Badge>
         </div>
       </div>
 
