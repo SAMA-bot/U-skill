@@ -43,7 +43,10 @@ const PerformanceScoreCard = ({ data, compact = false }: PerformanceScoreCardPro
           {data.compositeScore}
         </div>
         <div className="text-sm text-muted-foreground">/100</div>
-        <Badge style={badgeInlineStyle(data.badge)} className="border-0">{data.badge}</Badge>
+        <Badge style={badgeInlineStyle(data.badge)} className="border-0 gap-1">
+          {data.badge === "Needs Improvement" && <AlertTriangle className="h-3 w-3" />}
+          {data.badge}
+        </Badge>
       </div>
     );
   }
