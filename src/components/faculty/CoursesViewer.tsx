@@ -129,8 +129,27 @@ interface Course {
   video_url: string | null;
   document_url: string | null;
   course_type: string;
+  content_type: string;
   is_published: boolean;
 }
+
+const getContentTypeIcon = (contentType: string) => {
+  switch (contentType) {
+    case 'platform_video': return '🎥';
+    case 'external_url': return '🔗';
+    case 'pdf_course': return '📄';
+    default: return '📖';
+  }
+};
+
+const getContentTypeLabel = (contentType: string) => {
+  switch (contentType) {
+    case 'platform_video': return 'Platform Video';
+    case 'external_url': return 'External Link';
+    case 'pdf_course': return 'PDF Course';
+    default: return 'Course';
+  }
+};
 
 const CoursesViewer = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -229,7 +248,7 @@ const CoursesViewer = () => {
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.instructor_name?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = typeFilter === "all" || course.course_type === typeFilter;
+    const matchesType = typeFilter === "all" || course.content_type === typeFilter;
     return matchesSearch && matchesType;
   });
 
@@ -238,8 +257,9 @@ const CoursesViewer = () => {
     return categoryFilter === "all" || course.category === categoryFilter;
   });
 
-  const videoCourses = filteredCourses.filter(c => c.course_type === 'video');
-  const regularCourses = filteredCourses.filter(c => c.course_type === 'regular');
+  const videoCourses = filteredCourses.filter(c => c.content_type === 'platform_video');
+  const regularCourses = filteredCourses.filter(c => c.content_type === 'pdf_course');
+  const externalCourses = filteredCourses.filter(c => c.content_type === 'external_url');
 
   // My Learning: courses the user is enrolled in
   const myLearningCourses = courses.filter((c) => isEnrolled(c.id));
@@ -392,23 +412,16 @@ const CoursesViewer = () => {
             <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted/60 to-muted/30">
-              {course.course_type === 'video' ? (
-                <Video className="h-12 w-12 text-muted-foreground/60" />
-              ) : (
-                <BookOpen className="h-12 w-12 text-muted-foreground/60" />
-              )}
+              <span className="text-4xl">{getContentTypeIcon(course.content_type)}</span>
             </div>
           )}
           <div className="absolute top-2 left-2 flex gap-2">
             <Badge className={`backdrop-blur-sm ${getCategoryColor(course.category)}`}>
               {getCategoryLabel(course.category)}
             </Badge>
-            {course.course_type === 'video' && (
-              <Badge variant="secondary" className="bg-destructive/15 text-destructive backdrop-blur-sm border-0">
-                <Video className="h-3 w-3 mr-1" />
-                Video
-              </Badge>
-            )}
+            <Badge variant="secondary" className="backdrop-blur-sm border-0 bg-card/70 text-foreground text-[10px]">
+              {getContentTypeIcon(course.content_type)} {getContentTypeLabel(course.content_type)}
+            </Badge>
           </div>
           {completed && (
             <div className="absolute top-2 right-2">
@@ -597,11 +610,7 @@ const CoursesViewer = () => {
                 <img src={detailCourse.thumbnail_url} alt={detailCourse.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  {detailCourse.course_type === 'video' ? (
-                    <Video className="h-16 w-16 text-muted-foreground" />
-                  ) : (
-                    <BookOpen className="h-16 w-16 text-muted-foreground" />
-                  )}
+                  <span className="text-5xl">{getContentTypeIcon(detailCourse.content_type)}</span>
                 </div>
               )}
               {completed && (
@@ -619,11 +628,9 @@ const CoursesViewer = () => {
               <Badge variant="outline" className={difficulty.color}>
                 {difficulty.label}
               </Badge>
-              {detailCourse.course_type === 'video' && (
-                <Badge variant="secondary" className="bg-destructive/10 text-destructive">
-                  <Video className="h-3 w-3 mr-1" />Video
-                </Badge>
-              )}
+              <Badge variant="secondary" className="bg-muted text-foreground">
+                {getContentTypeIcon(detailCourse.content_type)} {getContentTypeLabel(detailCourse.content_type)}
+              </Badge>
             </div>
 
             {/* Description */}
@@ -654,8 +661,8 @@ const CoursesViewer = () => {
                 </div>
               )}
               <div>
-                <p className="text-muted-foreground text-xs mb-0.5">Type</p>
-                <p className="font-medium text-foreground capitalize">{detailCourse.course_type}</p>
+                <p className="text-muted-foreground text-xs mb-0.5">Content Type</p>
+                <p className="font-medium text-foreground">{getContentTypeIcon(detailCourse.content_type)} {getContentTypeLabel(detailCourse.content_type)}</p>
               </div>
             </div>
 
@@ -709,36 +716,38 @@ const CoursesViewer = () => {
                 </Button>
               )}
 
-              {/* Media buttons */}
-              {detailCourse.course_type === 'video' && detailCourse.video_url && (
+              {/* Access Course - content_type based */}
+              {detailCourse.content_type === 'platform_video' && detailCourse.video_url && (
                 isEmbeddableUrl(detailCourse.video_url) ? (
                   <Button variant="outline" className="w-full" onClick={() => { handlePlayVideo(detailCourse); setDetailCourse(null); }}>
                     <Play className="h-4 w-4 mr-2" />
-                    Watch Video
+                    🎥 Watch Video
                   </Button>
                 ) : (
                   <div className="bg-muted/50 border border-border rounded-lg p-4 space-y-3">
-                    <p className="text-sm text-muted-foreground">This course is hosted externally. Click below to continue learning.</p>
+                    <p className="text-sm text-muted-foreground">This video is hosted externally.</p>
                     <Button variant="outline" className="w-full" onClick={() => window.open(detailCourse.video_url!, '_blank', 'noopener,noreferrer')}>
                       <ExternalLink className="h-4 w-4 mr-2" />
-                      Open Course
+                      Open Video
                     </Button>
                   </div>
                 )
               )}
-              {detailCourse.course_url && !detailCourse.video_url && (
-                <div className="bg-muted/50 border border-border rounded-lg p-4 space-y-3">
-                  <p className="text-sm text-muted-foreground">This course is hosted externally. Click below to continue learning.</p>
+              {detailCourse.content_type === 'external_url' && detailCourse.course_url && (
+                <div className="bg-info/5 border border-info/20 rounded-lg p-4 space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    🔗 This course is hosted externally. Click below to continue learning.
+                  </p>
                   <Button variant="outline" className="w-full" onClick={() => window.open(detailCourse.course_url!, '_blank', 'noopener,noreferrer')}>
                     <ExternalLink className="h-4 w-4 mr-2" />
-                    Open Course
+                    Access Course
                   </Button>
                 </div>
               )}
-              {detailCourse.course_type === 'regular' && detailCourse.document_url && (
+              {detailCourse.content_type === 'pdf_course' && detailCourse.document_url && (
                 <Button variant="outline" className="w-full" onClick={() => { handleViewDocument(detailCourse); setDetailCourse(null); }}>
                   {getDocumentIcon(detailCourse.document_url)}
-                  <span className="ml-2">View Document</span>
+                  <span className="ml-2">📄 Open PDF Viewer</span>
                 </Button>
               )}
             </div>
@@ -786,23 +795,14 @@ const CoursesViewer = () => {
           />
         </div>
         <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-full sm:w-[150px]">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="regular">
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Regular
-              </div>
-            </SelectItem>
-            <SelectItem value="video">
-              <div className="flex items-center gap-2">
-                <Video className="h-4 w-4" />
-                Video
-              </div>
-            </SelectItem>
+            <SelectItem value="platform_video">🎥 Platform Video</SelectItem>
+            <SelectItem value="external_url">🔗 External URL</SelectItem>
+            <SelectItem value="pdf_course">📄 PDF Course</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -832,26 +832,26 @@ const CoursesViewer = () => {
 
       {/* Courses Tabs */}
       <Tabs defaultValue="tracks" className="w-full">
-        <TabsList className="grid w-full max-w-2xl grid-cols-5">
-          <TabsTrigger value="tracks" className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
+        <TabsList className="grid w-full max-w-3xl grid-cols-6">
+          <TabsTrigger value="tracks" className="flex items-center gap-1 text-xs">
+            <BookOpen className="h-3.5 w-3.5" />
             Tracks
           </TabsTrigger>
-          <TabsTrigger value="all" className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
+          <TabsTrigger value="all" className="flex items-center gap-1 text-xs">
             All ({filteredCourses.length})
           </TabsTrigger>
-          <TabsTrigger value="my-learning" className="flex items-center gap-2">
-            <GraduationCap className="h-4 w-4" />
-            My Learning ({myLearningCourses.length})
+          <TabsTrigger value="my-learning" className="flex items-center gap-1 text-xs">
+            <GraduationCap className="h-3.5 w-3.5" />
+            My Learning
           </TabsTrigger>
-          <TabsTrigger value="video" className="flex items-center gap-2">
-            <Video className="h-4 w-4" />
-            Videos ({videoCourses.length})
+          <TabsTrigger value="platform_video" className="flex items-center gap-1 text-xs">
+            🎥 Videos ({videoCourses.length})
           </TabsTrigger>
-          <TabsTrigger value="regular" className="flex items-center gap-2">
-            <FileText className="h-4 w-4" />
-            Courses ({regularCourses.length})
+          <TabsTrigger value="external_url" className="flex items-center gap-1 text-xs">
+            🔗 External ({externalCourses.length})
+          </TabsTrigger>
+          <TabsTrigger value="pdf_course" className="flex items-center gap-1 text-xs">
+            📄 PDFs ({regularCourses.length})
           </TabsTrigger>
         </TabsList>
 
@@ -978,13 +978,9 @@ const CoursesViewer = () => {
           )}
         </TabsContent>
 
-        <TabsContent value="video" className="mt-6">
+        <TabsContent value="platform_video" className="mt-6">
           {videoCourses.length === 0 ? (
-            <SmartEmptyState
-              icon={Video}
-              title="No video courses yet"
-              description="Video-based training courses will appear here once they're published by your admin."
-            />
+            <SmartEmptyState icon={Video} title="No video courses yet" description="Platform video courses will appear here once published." />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {videoCourses.map((course, index) => renderCourseCard(course, index))}
@@ -992,13 +988,19 @@ const CoursesViewer = () => {
           )}
         </TabsContent>
 
-        <TabsContent value="regular" className="mt-6">
+        <TabsContent value="external_url" className="mt-6">
+          {externalCourses.length === 0 ? (
+            <SmartEmptyState icon={ExternalLink} title="No external courses yet" description="Courses linked to external platforms will appear here." />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {externalCourses.map((course, index) => renderCourseCard(course, index))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="pdf_course" className="mt-6">
           {regularCourses.length === 0 ? (
-            <SmartEmptyState
-              icon={FileText}
-              title="No regular courses yet"
-              description="Document-based courses and training materials will appear here when available."
-            />
+            <SmartEmptyState icon={FileText} title="No PDF courses yet" description="PDF-based training materials will appear here when available." />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {regularCourses.map((course, index) => renderCourseCard(course, index))}
