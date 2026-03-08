@@ -447,17 +447,29 @@ const CoursesViewer = () => {
           {/* Progress indicator for enrolled courses */}
           {enrollment && enrollment.status === "in_progress" && (
             <div className="space-y-1.5">
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span className="font-medium">Progress</span>
-                <span>{enrollment.progress_percentage}%</span>
+              <div className="flex justify-between text-xs">
+                <span className="font-medium text-foreground">Progress</span>
+                <span className="font-semibold text-primary">{enrollment.progress_percentage}%</span>
               </div>
-              <Progress value={enrollment.progress_percentage} className="h-2" />
+              <Progress value={enrollment.progress_percentage} className="h-2.5" showGlow />
+            </div>
+          )}
+          {enrollment && enrollment.status === "completed" && (
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-xs">
+                <span className="font-medium text-success">Completed</span>
+                <span className="font-semibold text-success">100%</span>
+              </div>
+              <Progress value={100} animated={false} className="h-2 [&>div:first-child]:bg-gradient-to-r [&>div:first-child]:from-success [&>div:first-child]:to-success/70" />
             </div>
           )}
           {enrollment && enrollment.status === "enrolled" && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <BookOpen className="h-3.5 w-3.5" />
-              <span>Enrolled — not started</span>
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span className="font-medium flex items-center gap-1"><BookOpen className="h-3 w-3" /> Not started</span>
+                <span>0%</span>
+              </div>
+              <Progress value={0} animated={false} className="h-2" />
             </div>
           )}
 
@@ -813,6 +825,44 @@ const CoursesViewer = () => {
             />
           ) : (
             <div className="space-y-6">
+              {/* Overall progress summary */}
+              {(() => {
+                const total = myLearningCourses.length;
+                const completedCount = myLearningCourses.filter(c => isCompleted(c.id)).length;
+                const inProgressCount = myLearningCourses.filter(c => getEnrollment(c.id)?.status === "in_progress").length;
+                const overallPercent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+                const avgProgress = total > 0
+                  ? Math.round(myLearningCourses.reduce((sum, c) => sum + (getEnrollment(c.id)?.progress_percentage || 0), 0) / total)
+                  : 0;
+                return (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-md p-5 space-y-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-semibold text-foreground">Overall Learning Progress</h3>
+                      <span className="text-xs text-muted-foreground">{completedCount}/{total} courses completed</span>
+                    </div>
+                    <Progress value={avgProgress} className="h-3" showGlow />
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div className="space-y-1">
+                        <p className="text-2xl font-bold text-primary">{inProgressCount}</p>
+                        <p className="text-[11px] text-muted-foreground">In Progress</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-2xl font-bold text-success">{completedCount}</p>
+                        <p className="text-[11px] text-muted-foreground">Completed</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-2xl font-bold text-accent">{overallPercent}%</p>
+                        <p className="text-[11px] text-muted-foreground">Completion Rate</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })()}
+
               {/* In Progress section */}
               {(() => {
                 const inProgress = myLearningCourses.filter(c => getEnrollment(c.id)?.status === "in_progress");
