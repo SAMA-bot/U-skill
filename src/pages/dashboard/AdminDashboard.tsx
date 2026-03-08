@@ -28,6 +28,7 @@ import {
   PanelLeftClose,
   PanelLeft,
   Trophy,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
@@ -66,6 +67,7 @@ import DepartmentLeaderboard from "@/components/admin/DepartmentLeaderboard";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
 import InstitutionalOverview from "@/components/admin/InstitutionalOverview";
 import FacultyComparison from "@/components/admin/FacultyComparison";
+import PredictiveAnalytics from "@/components/admin/PredictiveAnalytics";
 interface FacultyMember {
   user_id: string;
   full_name: string;
@@ -94,6 +96,7 @@ const sidebarItems = [
   { icon: Building2, label: "Departments", id: "departments" },
   { icon: Activity, label: "Audit Logs", id: "audit" },
   { icon: Star, label: "Feedback Analytics", id: "feedback" },
+  { icon: Sparkles, label: "Predictive Analytics", id: "predictions" },
 ];
 
 const AdminDashboard = () => {
@@ -481,6 +484,8 @@ const AdminDashboard = () => {
             <DocumentReview />
           ) : activeSection === "feedback" ? (
             <FeedbackAnalytics />
+          ) : activeSection === "predictions" ? (
+            <PredictiveAnalytics />
           ) : activeSection === "faculty" ? (
             <FacultyManagement />
           ) : activeSection === "reports" ? (
