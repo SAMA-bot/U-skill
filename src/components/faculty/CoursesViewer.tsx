@@ -599,7 +599,7 @@ const CoursesViewer = () => {
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Search + Type filter */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -610,19 +610,6 @@ const CoursesViewer = () => {
             className="pl-10"
           />
         </div>
-        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-full sm:w-[200px]">
-            <Filter className="h-4 w-4 mr-2" />
-            <SelectValue placeholder="Category" />
-          </SelectTrigger>
-          <SelectContent>
-            {categories.map((category) => (
-              <SelectItem key={category.value} value={category.value}>
-                {category.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
         <Select value={typeFilter} onValueChange={setTypeFilter}>
           <SelectTrigger className="w-full sm:w-[150px]">
             <SelectValue placeholder="Type" />
@@ -643,6 +630,29 @@ const CoursesViewer = () => {
             </SelectItem>
           </SelectContent>
         </Select>
+      </div>
+
+      {/* Category tabs */}
+      <div className="flex flex-wrap gap-2">
+        {categories.map((cat) => {
+          const count = cat.value === "all"
+            ? filteredByTypeAndSearch.length
+            : filteredByTypeAndSearch.filter((c) => c.category === cat.value).length;
+          return (
+            <Button
+              key={cat.value}
+              variant={categoryFilter === cat.value ? "default" : "outline"}
+              size="sm"
+              className="rounded-full text-xs"
+              onClick={() => setCategoryFilter(cat.value)}
+            >
+              {cat.label}
+              <Badge variant="secondary" className="ml-1.5 h-5 min-w-[20px] px-1.5 text-[10px] rounded-full">
+                {count}
+              </Badge>
+            </Button>
+          );
+        })}
       </div>
 
       {/* Courses Tabs */}
