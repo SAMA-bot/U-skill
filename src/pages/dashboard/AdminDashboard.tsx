@@ -54,6 +54,7 @@ import { RoleManagement } from "@/components/admin/RoleManagement";
 import RoleAccessMatrix from "@/components/admin/RoleAccessMatrix";
 import RoleSummaryCards from "@/components/admin/RoleSummaryCards";
 import { CourseManagement } from "@/components/admin/CourseManagement";
+import { LearningPathManagement } from "@/components/admin/LearningPathManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FacultyManagement from "@/components/admin/FacultyManagement";
 import AchievementManagement from "@/components/admin/AchievementManagement";
