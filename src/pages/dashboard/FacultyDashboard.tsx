@@ -676,7 +676,7 @@ const FacultyDashboard = () => {
                   <RecommendationPanel onNavigate={(section) => setActiveSection(section as ActiveSection)} />
                 </motion.div>
               </div>
-            </> : <div className="flex items-center justify-center h-64">
+            </>)} </> : <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <h2 className="text-xl font-semibold text-foreground mb-2">
                   {sidebarItems.find(item => item.section === activeSection)?.label}
