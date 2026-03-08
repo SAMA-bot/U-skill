@@ -33,7 +33,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Pencil, Trash2, Loader2, BookOpen, Clock, User, ExternalLink, Video, FileText } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, BookOpen, Clock, User, ExternalLink, Video, FileText, AlertTriangle, Building2, CalendarDays } from 'lucide-react';
+import CourseEnrollmentStats from '@/components/admin/CourseEnrollmentStats';
 
 interface Course {
   id: string;
@@ -48,6 +49,9 @@ interface Course {
   document_url: string | null;
   course_type: string;
   is_published: boolean;
+  is_mandatory: boolean;
+  department: string | null;
+  training_date: string | null;
   created_by: string;
   created_at: string;
   updated_at: string;
@@ -92,6 +96,9 @@ export function CourseManagement() {
     duration_hours: '',
     instructor_name: '',
     is_published: false,
+    is_mandatory: false,
+    department: '',
+    training_date: '',
   });
 
   useEffect(() => {
@@ -128,6 +135,9 @@ export function CourseManagement() {
       duration_hours: '',
       instructor_name: '',
       is_published: false,
+      is_mandatory: false,
+      department: '',
+      training_date: '',
     });
     setThumbnailFile(null);
     setDocumentFile(null);
@@ -147,6 +157,9 @@ export function CourseManagement() {
         duration_hours: course.duration_hours?.toString() || '',
         instructor_name: course.instructor_name || '',
         is_published: course.is_published,
+        is_mandatory: course.is_mandatory || false,
+        department: course.department || '',
+        training_date: course.training_date || '',
       });
     } else {
       resetForm();
@@ -243,6 +256,9 @@ export function CourseManagement() {
         video_url: videoUrl,
         thumbnail_url: thumbnailUrl,
         is_published: formData.is_published,
+        is_mandatory: formData.is_mandatory,
+        department: formData.department || null,
+        training_date: formData.training_date || null,
         created_by: user.id,
       };
 
@@ -491,6 +507,32 @@ export function CourseManagement() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="department">Assign to Department</Label>
+                    <Input
+                      id="department"
+                      value={formData.department}
+                      onChange={(e) =>
+                        setFormData({ ...formData, department: e.target.value })
+                      }
+                      placeholder="e.g., Computer Science (leave blank for all)"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="training_date">Training Date</Label>
+                    <Input
+                      id="training_date"
+                      type="date"
+                      value={formData.training_date}
+                      onChange={(e) =>
+                        setFormData({ ...formData, training_date: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+
                 {formData.course_type === 'video' && (
                   <div className="space-y-2">
                     <Label htmlFor="video_file">Video File *</Label>
@@ -553,15 +595,30 @@ export function CourseManagement() {
                   </div>
                 )}
 
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="published"
-                    checked={formData.is_published}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, is_published: checked })
-                    }
-                  />
-                  <Label htmlFor="published">Publish course immediately</Label>
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="published"
+                      checked={formData.is_published}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, is_published: checked })
+                      }
+                    />
+                    <Label htmlFor="published">Publish course immediately</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="mandatory"
+                      checked={formData.is_mandatory}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, is_mandatory: checked })
+                      }
+                    />
+                    <Label htmlFor="mandatory" className="flex items-center gap-1.5">
+                      <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+                      Mark as mandatory training
+                    </Label>
+                  </div>
                 </div>
 
                 <DialogFooter>
@@ -600,8 +657,9 @@ export function CourseManagement() {
                   <TableRow>
                     <TableHead>Course</TableHead>
                     <TableHead>Category</TableHead>
-                    <TableHead>Duration</TableHead>
-                    <TableHead>Instructor</TableHead>
+                    <TableHead>Details</TableHead>
+                    <TableHead>Department</TableHead>
+                    <TableHead>Enrolled</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -623,7 +681,14 @@ export function CourseManagement() {
                             </div>
                           )}
                           <div>
-                            <p className="font-medium">{course.title}</p>
+                            <div className="flex items-center gap-1.5">
+                              <p className="font-medium">{course.title}</p>
+                              {course.is_mandatory && (
+                                <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 text-[10px] px-1.5 py-0">
+                                  Mandatory
+                                </Badge>
+                              )}
+                            </div>
                             {course.course_url && (
                               <a
                                 href={course.course_url}
@@ -653,24 +718,39 @@ export function CourseManagement() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {course.duration_hours ? (
+                        <div className="flex flex-col gap-1 text-sm">
+                          {course.duration_hours ? (
+                            <span className="flex items-center gap-1">
+                              <Clock className="h-3 w-3 text-muted-foreground" />
+                              {course.duration_hours}h
+                            </span>
+                          ) : null}
+                          {course.instructor_name && (
+                            <span className="flex items-center gap-1">
+                              <User className="h-3 w-3 text-muted-foreground" />
+                              {course.instructor_name}
+                            </span>
+                          )}
+                          {course.training_date && (
+                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <CalendarDays className="h-3 w-3" />
+                              {new Date(course.training_date).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {course.department ? (
                           <span className="flex items-center gap-1 text-sm">
-                            <Clock className="h-3 w-3" />
-                            {course.duration_hours}h
+                            <Building2 className="h-3 w-3 text-muted-foreground" />
+                            {course.department}
                           </span>
                         ) : (
-                          '-'
+                          <span className="text-xs text-muted-foreground">All</span>
                         )}
                       </TableCell>
                       <TableCell>
-                        {course.instructor_name ? (
-                          <span className="flex items-center gap-1 text-sm">
-                            <User className="h-3 w-3" />
-                            {course.instructor_name}
-                          </span>
-                        ) : (
-                          '-'
-                        )}
+                        <CourseEnrollmentStats courseId={course.id} courseTitle={course.title} />
                       </TableCell>
                       <TableCell>
                         <Switch

@@ -243,14 +243,17 @@ export type Database = {
           course_url: string | null
           created_at: string
           created_by: string
+          department: string | null
           description: string | null
           document_url: string | null
           duration_hours: number | null
           id: string
           instructor_name: string | null
+          is_mandatory: boolean
           is_published: boolean
           thumbnail_url: string | null
           title: string
+          training_date: string | null
           updated_at: string
           video_url: string | null
         }
@@ -260,14 +263,17 @@ export type Database = {
           course_url?: string | null
           created_at?: string
           created_by: string
+          department?: string | null
           description?: string | null
           document_url?: string | null
           duration_hours?: number | null
           id?: string
           instructor_name?: string | null
+          is_mandatory?: boolean
           is_published?: boolean
           thumbnail_url?: string | null
           title: string
+          training_date?: string | null
           updated_at?: string
           video_url?: string | null
         }
@@ -277,14 +283,17 @@ export type Database = {
           course_url?: string | null
           created_at?: string
           created_by?: string
+          department?: string | null
           description?: string | null
           document_url?: string | null
           duration_hours?: number | null
           id?: string
           instructor_name?: string | null
+          is_mandatory?: boolean
           is_published?: boolean
           thumbnail_url?: string | null
           title?: string
+          training_date?: string | null
           updated_at?: string
           video_url?: string | null
         }
