@@ -9,21 +9,24 @@ interface PerformanceScoreCardProps {
   compact?: boolean;
 }
 
-const getBadgeStyle = (badge: PerformanceScoreData["badge"]) => {
+const badgeInlineStyle = (badge: PerformanceScoreData["badge"]): React.CSSProperties => {
   switch (badge) {
     case "Excellent":
-      return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800";
+      return { background: "rgba(59,130,246,0.15)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.4)" };
     case "Good":
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800";
+      return { background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.4)" };
+    case "Average":
+      return { background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.4)" };
     default:
-      return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800";
+      return { background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.4)" };
   }
 };
 
 const getScoreColor = (score: number) => {
-  if (score >= 80) return "text-green-600 dark:text-green-400";
-  if (score >= 60) return "text-yellow-600 dark:text-yellow-400";
-  return "text-red-600 dark:text-red-400";
+  if (score >= 80) return "text-[#3b82f6]";
+  if (score >= 70) return "text-[#22c55e]";
+  if (score >= 60) return "text-[#f59e0b]";
+  return "text-[#ef4444]";
 };
 
 const PerformanceScoreCard = ({ data, compact = false }: PerformanceScoreCardProps) => {
