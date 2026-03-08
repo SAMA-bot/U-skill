@@ -75,6 +75,9 @@ export function RoleManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
+  const [bulkRole, setBulkRole] = useState<AppRole>("faculty");
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false);
   const [newUser, setNewUser] = useState<NewUserForm>({
     email: "",
     password: "",
