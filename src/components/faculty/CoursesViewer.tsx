@@ -500,7 +500,7 @@ const CoursesViewer = () => {
       </div>
 
       {/* Courses Tabs */}
-      <Tabs defaultValue="all" className="w-full">
+      <Tabs defaultValue="tracks" className="w-full">
         <TabsList className="grid w-full max-w-lg grid-cols-4">
           <TabsTrigger value="tracks" className="flex items-center gap-2">
             <BookOpen className="h-4 w-4" />
