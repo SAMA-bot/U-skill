@@ -467,7 +467,7 @@ export function RoleManagement() {
                   {user.department || "Unassigned"}
                 </TableCell>
                 <TableCell>
-                  <Badge className={getRoleBadgeStyle(user.role)}>
+                  <Badge style={getRoleBadgeStyle(user.role)} className="border-0">
                     {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                   </Badge>
                 </TableCell>

@@ -196,7 +196,7 @@ export default function RoleAccessMatrix() {
                       selectedRole && selectedRole !== role ? "opacity-30" : ""
                     }`}
                   >
-                    <Badge className={getRoleBadgeStyle(role)}>
+                    <Badge style={getRoleBadgeStyle(role)} className="border-0">
                       {role === "hod" ? "HOD / Reviewer" : role.charAt(0).toUpperCase() + role.slice(1)}
                     </Badge>
                   </TableHead>
