@@ -612,10 +612,29 @@ const CoursesViewer = () => {
 
               {/* Media buttons */}
               {detailCourse.course_type === 'video' && detailCourse.video_url && (
-                <Button variant="outline" className="w-full" onClick={() => { handlePlayVideo(detailCourse); setDetailCourse(null); }}>
-                  <Play className="h-4 w-4 mr-2" />
-                  Watch Video
-                </Button>
+                isEmbeddableUrl(detailCourse.video_url) ? (
+                  <Button variant="outline" className="w-full" onClick={() => { handlePlayVideo(detailCourse); setDetailCourse(null); }}>
+                    <Play className="h-4 w-4 mr-2" />
+                    Watch Video
+                  </Button>
+                ) : (
+                  <div className="bg-muted/50 border border-border rounded-lg p-4 space-y-3">
+                    <p className="text-sm text-muted-foreground">This course is hosted externally. Click below to continue learning.</p>
+                    <Button variant="outline" className="w-full" onClick={() => window.open(detailCourse.video_url!, '_blank', 'noopener,noreferrer')}>
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Open Course
+                    </Button>
+                  </div>
+                )
+              )}
+              {detailCourse.course_url && !detailCourse.video_url && (
+                <div className="bg-muted/50 border border-border rounded-lg p-4 space-y-3">
+                  <p className="text-sm text-muted-foreground">This course is hosted externally. Click below to continue learning.</p>
+                  <Button variant="outline" className="w-full" onClick={() => window.open(detailCourse.course_url!, '_blank', 'noopener,noreferrer')}>
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Open Course
+                  </Button>
+                </div>
               )}
               {detailCourse.course_type === 'regular' && detailCourse.document_url && (
                 <Button variant="outline" className="w-full" onClick={() => { handleViewDocument(detailCourse); setDetailCourse(null); }}>
