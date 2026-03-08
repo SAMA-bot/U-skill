@@ -434,31 +434,31 @@ const CoursesViewer = () => {
             <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
           )}
 
-          {/* Skill tags row */}
-          <div className="flex flex-wrap gap-1.5 overflow-hidden">
-            <Badge variant="outline" className={`text-[10px] px-2 py-0.5 h-auto leading-tight font-semibold border whitespace-nowrap shrink-0 ${getCategoryColor(course.category)}`}>
+          {/* Skill tags */}
+          <div className="flex flex-wrap gap-1.5">
+            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold whitespace-nowrap ${getCategoryColor(course.category)}`}>
               <span className="mr-1">{getCategoryIcon(course.category)}</span>
               {getCategoryLabel(course.category)}
-            </Badge>
+            </span>
             {(() => {
               const difficulty = getDifficultyFromDuration(course.duration_hours);
               return (
-                <Badge variant="outline" className={`text-[10px] px-2 py-0.5 h-auto leading-tight font-semibold border whitespace-nowrap shrink-0 ${getDifficultyColor(course.duration_hours)}`}>
+                <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold whitespace-nowrap ${getDifficultyColor(course.duration_hours)}`}>
                   {difficulty.label}
-                </Badge>
+                </span>
               );
             })()}
             {course.duration_hours && (
-              <Badge variant="outline" className="text-[10px] px-2 py-0.5 h-auto leading-tight text-muted-foreground border-border/50 whitespace-nowrap shrink-0">
+              <span className="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-medium whitespace-nowrap bg-muted text-muted-foreground ring-1 ring-border/60">
                 <Clock className="h-2.5 w-2.5 mr-1 shrink-0" />
                 {course.duration_hours}h
-              </Badge>
+              </span>
             )}
             {course.duration_hours && (
-              <Badge variant="outline" className="text-[10px] px-2 py-0.5 h-auto leading-tight font-semibold text-primary border-primary/20 bg-primary/5 whitespace-nowrap shrink-0">
+              <span className="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold whitespace-nowrap bg-primary/8 text-primary ring-1 ring-primary/15">
                 <Award className="h-2.5 w-2.5 mr-1 shrink-0" />
                 +{Math.min(course.duration_hours * 5, 25)} pts
-              </Badge>
+              </span>
             )}
           </div>
 
