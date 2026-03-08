@@ -68,6 +68,7 @@ import AcademicYearSelector from "@/components/AcademicYearSelector";
 import InstitutionalOverview from "@/components/admin/InstitutionalOverview";
 import FacultyComparison from "@/components/admin/FacultyComparison";
 import PredictiveAnalytics from "@/components/admin/PredictiveAnalytics";
+import PerformanceHeatmap from "@/components/admin/PerformanceHeatmap";
 interface FacultyMember {
   user_id: string;
   full_name: string;
@@ -499,14 +500,18 @@ const AdminDashboard = () => {
                 </div>
               </div>
               <Tabs defaultValue="reports" className="space-y-6">
-                <TabsList className="bg-muted/50">
+                <TabsList className="bg-muted/50 flex-wrap">
                   <TabsTrigger value="reports">Reports</TabsTrigger>
+                  <TabsTrigger value="heatmap">Heatmap</TabsTrigger>
                   <TabsTrigger value="comparison">Faculty Comparison</TabsTrigger>
                   <TabsTrigger value="achievements">Achievements</TabsTrigger>
                   <TabsTrigger value="leaderboards">Leaderboards</TabsTrigger>
                 </TabsList>
                 <TabsContent value="reports">
                   <PerformanceReports />
+                </TabsContent>
+                <TabsContent value="heatmap">
+                  <PerformanceHeatmap />
                 </TabsContent>
                 <TabsContent value="comparison">
                   <FacultyComparison />
