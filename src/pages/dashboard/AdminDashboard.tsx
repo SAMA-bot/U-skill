@@ -27,6 +27,7 @@ import {
   Star,
   PanelLeftClose,
   PanelLeft,
+  Trophy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
@@ -61,6 +62,7 @@ import DocumentReview from "@/components/admin/DocumentReview";
 import FeedbackAnalytics from "@/components/admin/FeedbackAnalytics";
 import PendingApprovals from "@/components/admin/PendingApprovals";
 import DepartmentManagement from "@/components/admin/DepartmentManagement";
+import DepartmentLeaderboard from "@/components/admin/DepartmentLeaderboard";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
 interface FacultyMember {
   user_id: string;
@@ -91,6 +93,7 @@ const sidebarItems = [
   { icon: Award, label: "Achievements", id: "achievements" },
   { icon: Activity, label: "Audit Logs", id: "audit" },
   { icon: Star, label: "Feedback Analytics", id: "feedback" },
+  { icon: Trophy, label: "Leaderboards", id: "leaderboards" },
 ];
 
 const AdminDashboard = () => {
@@ -486,6 +489,8 @@ const AdminDashboard = () => {
             <DepartmentManagement />
           ) : activeSection === "achievements" ? (
             <AchievementManagement />
+          ) : activeSection === "leaderboards" ? (
+            <DepartmentLeaderboard />
           ) : (
             <>
           {/* Page Header */}
