@@ -127,6 +127,8 @@ const CapacityRadarChart = () => {
           fillOpacity={0.3}
           strokeWidth={2}
           strokeDasharray="5 5"
+          animationDuration={1200}
+          animationEasing="ease-out"
         />
         <Radar
           name="Current"
@@ -135,6 +137,8 @@ const CapacityRadarChart = () => {
           fill="hsl(var(--primary))"
           fillOpacity={0.4}
           strokeWidth={2}
+          animationDuration={1400}
+          animationEasing="ease-out"
         />
       </RadarChart>
     </ResponsiveContainer>
