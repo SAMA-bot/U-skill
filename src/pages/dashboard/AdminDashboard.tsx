@@ -803,36 +803,6 @@ const AdminDashboard = () => {
 
 
 
-
-          {/* Quick Actions */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="bg-card shadow-sm rounded-lg overflow-hidden border border-border"
-          >
-            <div className="px-4 py-5 sm:px-6 border-b border-border">
-              <h3 className="text-lg font-medium text-foreground">Quick Actions</h3>
-            </div>
-            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Button variant="outline" className="h-auto py-4 flex flex-col gap-2">
-                <Users className="h-6 w-6" />
-                <span>Add Faculty</span>
-              </Button>
-              <Button variant="outline" className="h-auto py-4 flex flex-col gap-2">
-                <BarChart3 className="h-6 w-6" />
-                <span>Bulk Assessment</span>
-              </Button>
-              <Button variant="outline" className="h-auto py-4 flex flex-col gap-2">
-                <GraduationCap className="h-6 w-6" />
-                <span>Schedule Training</span>
-              </Button>
-              <Button variant="outline" className="h-auto py-4 flex flex-col gap-2">
-                <Award className="h-6 w-6" />
-                <span>Award Recognition</span>
-              </Button>
-            </div>
-          </motion.div>
             </>
           )}
         </main>
