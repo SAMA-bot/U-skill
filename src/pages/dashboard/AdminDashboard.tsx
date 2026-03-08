@@ -833,14 +833,18 @@ const AdminDashboard = () => {
                           </div>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant="outline" className={getPerformanceColor(faculty.avgCapacity || 0)}>
-                            {faculty.avgCapacity || 0}%
-                          </Badge>
+                          <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold">
+                            <span className={`${(faculty.avgCapacity || 0) >= 80 ? 'text-[#3b82f6]' : (faculty.avgCapacity || 0) >= 70 ? 'text-[#22c55e]' : (faculty.avgCapacity || 0) >= 60 ? 'text-[#f59e0b]' : 'text-[#ef4444]'}`}>
+                              {faculty.avgCapacity || 0}%
+                            </span>
+                          </span>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge variant="outline" className={getPerformanceColor(faculty.latestMotivation || 0)}>
-                            {faculty.latestMotivation || 0}%
-                          </Badge>
+                          <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold">
+                            <span className={`${(faculty.latestMotivation || 0) >= 80 ? 'text-[#3b82f6]' : (faculty.latestMotivation || 0) >= 70 ? 'text-[#22c55e]' : (faculty.latestMotivation || 0) >= 60 ? 'text-[#f59e0b]' : 'text-[#ef4444]'}`}>
+                              {faculty.latestMotivation || 0}%
+                            </span>
+                          </span>
                         </TableCell>
                         <TableCell className="text-center">
                           <Button
