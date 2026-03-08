@@ -65,6 +65,7 @@ import DepartmentManagement from "@/components/admin/DepartmentManagement";
 import DepartmentLeaderboard from "@/components/admin/DepartmentLeaderboard";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
 import InstitutionalOverview from "@/components/admin/InstitutionalOverview";
+import FacultyComparison from "@/components/admin/FacultyComparison";
 interface FacultyMember {
   user_id: string;
   full_name: string;
@@ -495,11 +496,15 @@ const AdminDashboard = () => {
               <Tabs defaultValue="reports" className="space-y-6">
                 <TabsList className="bg-muted/50">
                   <TabsTrigger value="reports">Reports</TabsTrigger>
+                  <TabsTrigger value="comparison">Faculty Comparison</TabsTrigger>
                   <TabsTrigger value="achievements">Achievements</TabsTrigger>
                   <TabsTrigger value="leaderboards">Leaderboards</TabsTrigger>
                 </TabsList>
                 <TabsContent value="reports">
                   <PerformanceReports />
+                </TabsContent>
+                <TabsContent value="comparison">
+                  <FacultyComparison />
                 </TabsContent>
                 <TabsContent value="achievements">
                   <AchievementManagement />
