@@ -274,42 +274,35 @@ const NotificationCenter = () => {
                   exit={{ opacity: 0, x: -100 }}
                   transition={{ delay: index * 0.05 }}
                   className={`
-                    relative p-4 mb-3 rounded-lg border-l-4 transition-all
+                    group flex items-start gap-3 p-4 mb-3 rounded-lg border-l-4 transition-all cursor-pointer
                     ${getSeverityStyles(notification.severity)}
                     ${notification.read ? "opacity-60" : ""}
                   `}
                   onClick={() => markAsRead(notification.id)}
                 >
+                  <div className="flex-shrink-0 mt-0.5">
+                    {getIcon(notification.type, notification.severity)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-foreground text-sm">
+                      {notification.title}
+                    </h4>
+                    <p className="text-sm text-muted-foreground mt-0.5">
+                      {notification.message}
+                    </p>
+                    <p className="text-xs text-muted-foreground/60 mt-1.5">
+                      Just now
+                    </p>
+                  </div>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       dismissNotification(notification.id);
                     }}
-                    className="absolute top-2 right-2 p-1 rounded-full hover:bg-muted transition-colors"
+                    className="flex-shrink-0 p-1 rounded-full hover:bg-muted transition-colors opacity-0 group-hover:opacity-100"
                   >
                     <X className="h-4 w-4 text-muted-foreground" />
                   </button>
-                  <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 mt-0.5">
-                      {getIcon(notification.type, notification.severity)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-medium text-foreground text-sm">
-                          {notification.title}
-                        </h4>
-                        {!notification.read && (
-                          <div className="w-2 h-2 rounded-full bg-primary" />
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {notification.message}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Just now
-                      </p>
-                    </div>
-                  </div>
                 </motion.div>
               ))}
             </AnimatePresence>
