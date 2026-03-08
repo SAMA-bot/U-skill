@@ -236,15 +236,22 @@ const HeaderNotifications = () => {
                       `}
                       onClick={() => markAsRead(notification.id)}
                     >
-                      {/* Unread dot + Icon */}
-                      <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
-                        <span
-                          className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
-                            notification.read ? "bg-transparent" : "bg-primary"
-                          }`}
-                        />
-                        {getIcon(notification.type, notification.severity)}
-                      </div>
+                      {/* Icon with colored background */}
+                      {(() => {
+                        const config = getIconConfig(notification.type, notification.severity);
+                        return (
+                          <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                                notification.read ? "bg-transparent" : "bg-primary"
+                              }`}
+                            />
+                            <div className={`p-1 rounded-md ${config.bg} ${config.text}`}>
+                              {config.icon}
+                            </div>
+                          </div>
+                        );
+                      })()}
 
                       {/* Content */}
                       <div className="flex-1 min-w-0">

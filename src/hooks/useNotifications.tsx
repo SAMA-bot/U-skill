@@ -386,6 +386,36 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
         });
       }
 
+      // === TRAINING REMINDER NOTIFICATIONS ===
+      const { data: upcomingCourses } = await supabase
+        .from("courses")
+        .select("id, title, training_date")
+        .eq("is_published", true)
+        .not("training_date", "is", null);
+
+      if (upcomingCourses) {
+        const now = new Date();
+        upcomingCourses.forEach((course) => {
+          if (!course.training_date) return;
+          const trainingDate = new Date(course.training_date);
+          const daysUntil = Math.ceil((trainingDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+          if (daysUntil > 0 && daysUntil <= 7) {
+            newNotifications.push({
+              id: `training_reminder_${course.id}`,
+              type: "training_reminder",
+              category: "course",
+              title: "Upcoming Training",
+              message: `"${course.title}" starts in ${daysUntil} day${daysUntil !== 1 ? "s" : ""}.`,
+              severity: daysUntil <= 2 ? "warning" : "info",
+              timestamp: now,
+              read: false,
+              data: { courseId: course.id },
+            });
+          }
+        });
+      }
+
       // === GROUP SIMILAR NOTIFICATIONS ===
       const grouped = groupSimilarNotifications(newNotifications);
 
