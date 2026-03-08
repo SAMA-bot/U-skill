@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLessonProgress } from "@/hooks/useLessonProgress";
 import { getVideoSignedUrl, getDocumentSignedUrl } from "@/lib/storageUtils";
 import { cn } from "@/lib/utils";
+import LearningTracks, { type Course } from "@/components/faculty/LearningTracks";
 
 // Types
 interface LearningPath {
