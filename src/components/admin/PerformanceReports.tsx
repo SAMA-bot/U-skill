@@ -70,9 +70,19 @@ export default function PerformanceReports() {
   const { toast } = useToast();
   const reportRef = useRef<HTMLDivElement>(null);
 
+  const fetchAllCb = useCallback(() => { fetchAll(); }, [selectedYear]);
+
   useEffect(() => {
     fetchAll();
   }, [selectedYear]);
+
+  // Realtime subscriptions for live updates
+  useMultipleRealtimeData([
+    { table: "performance_metrics", onChange: fetchAllCb },
+    { table: "activities", onChange: fetchAllCb },
+    { table: "course_enrollments", onChange: fetchAllCb },
+    { table: "profiles", onChange: fetchAllCb },
+  ]);
 
   const fetchAll = async () => {
     setLoading(true);

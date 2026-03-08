@@ -30,9 +30,16 @@ const DepartmentLeaderboard = () => {
   const [expandedDepts, setExpandedDepts] = useState<Set<string>>(new Set());
   const { selectedYear } = useAcademicYear();
 
+  const refetchCb = useCallback(() => { fetchLeaderboardData(); }, [selectedYear]);
+
   useEffect(() => {
     fetchLeaderboardData();
   }, [selectedYear]);
+
+  useMultipleRealtimeData([
+    { table: "performance_metrics", onChange: refetchCb },
+    { table: "profiles", onChange: refetchCb },
+  ]);
 
   const fetchLeaderboardData = async () => {
     setLoading(true);
