@@ -657,8 +657,9 @@ export function CourseManagement() {
                   <TableRow>
                     <TableHead>Course</TableHead>
                     <TableHead>Category</TableHead>
-                    <TableHead>Duration</TableHead>
-                    <TableHead>Instructor</TableHead>
+                    <TableHead>Details</TableHead>
+                    <TableHead>Department</TableHead>
+                    <TableHead>Enrolled</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -680,7 +681,14 @@ export function CourseManagement() {
                             </div>
                           )}
                           <div>
-                            <p className="font-medium">{course.title}</p>
+                            <div className="flex items-center gap-1.5">
+                              <p className="font-medium">{course.title}</p>
+                              {course.is_mandatory && (
+                                <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 text-[10px] px-1.5 py-0">
+                                  Mandatory
+                                </Badge>
+                              )}
+                            </div>
                             {course.course_url && (
                               <a
                                 href={course.course_url}
@@ -710,24 +718,39 @@ export function CourseManagement() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {course.duration_hours ? (
+                        <div className="flex flex-col gap-1 text-sm">
+                          {course.duration_hours ? (
+                            <span className="flex items-center gap-1">
+                              <Clock className="h-3 w-3 text-muted-foreground" />
+                              {course.duration_hours}h
+                            </span>
+                          ) : null}
+                          {course.instructor_name && (
+                            <span className="flex items-center gap-1">
+                              <User className="h-3 w-3 text-muted-foreground" />
+                              {course.instructor_name}
+                            </span>
+                          )}
+                          {course.training_date && (
+                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <CalendarDays className="h-3 w-3" />
+                              {new Date(course.training_date).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {course.department ? (
                           <span className="flex items-center gap-1 text-sm">
-                            <Clock className="h-3 w-3" />
-                            {course.duration_hours}h
+                            <Building2 className="h-3 w-3 text-muted-foreground" />
+                            {course.department}
                           </span>
                         ) : (
-                          '-'
+                          <span className="text-xs text-muted-foreground">All</span>
                         )}
                       </TableCell>
                       <TableCell>
-                        {course.instructor_name ? (
-                          <span className="flex items-center gap-1 text-sm">
-                            <User className="h-3 w-3" />
-                            {course.instructor_name}
-                          </span>
-                        ) : (
-                          '-'
-                        )}
+                        <CourseEnrollmentStats courseId={course.id} courseTitle={course.title} />
                       </TableCell>
                       <TableCell>
                         <Switch
