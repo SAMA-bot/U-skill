@@ -358,7 +358,7 @@ const FacultyDashboard = () => {
               </button>
               <div className="flex-shrink-0 flex items-center">
                 <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">FU</span>
+                  <span className="text-white font-bold text-sm">USL</span>
                 </div>
                 <span className="ml-2 text-xl font-semibold text-foreground hidden md:block">USKILL</span>
               </div>
