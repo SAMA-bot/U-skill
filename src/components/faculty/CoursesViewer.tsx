@@ -152,19 +152,44 @@ const CoursesViewer = () => {
     return "locked";
   };
 
+  const markContentViewed = (contentId: string) => {
+    setViewedContentIds(prev => {
+      const next = new Set(prev);
+      next.add(contentId);
+      return next;
+    });
+  };
+
+  // Auto-complete when all content items are viewed
+  useEffect(() => {
+    if (!viewingLesson || lessonContent.length === 0 || loadingMedia || autoCompleting) return;
+    if (isLessonCompleted(viewingLesson.id)) return;
+    const allViewed = lessonContent.every(item => viewedContentIds.has(item.id));
+    if (allViewed) {
+      setAutoCompleting(true);
+      completeLesson(viewingLesson.id, viewingLesson.xp_reward).then(() => {
+        setAutoCompleting(false);
+      });
+    }
+  }, [viewedContentIds, lessonContent, viewingLesson, loadingMedia]);
+
   const handleLessonClick = async (lesson: Lesson, state: NodeState) => {
     if (state === "locked") return;
-    // Mark as started if not yet
     await startLesson(lesson.id);
-    // Load content
     setViewingLesson(lesson);
+    setViewedContentIds(new Set());
     setLoadingMedia(true);
     const content = await fetchContentForLesson(lesson.id);
     setLessonContent(content);
 
-    // Pre-sign URLs for videos/docs
+    // Auto-mark text content as viewed immediately (no interaction needed beyond reading)
+    const autoViewedIds = new Set<string>();
+    
     const urls: Record<string, string> = {};
     for (const item of content) {
+      if (item.content_type === "text") {
+        autoViewedIds.add(item.id);
+      }
       if (item.content_type === "platform_video" && item.video_url) {
         const ytEmbed = getYouTubeEmbedUrl(item.video_url);
         if (ytEmbed) { urls[item.id] = ytEmbed; }
@@ -179,6 +204,7 @@ const CoursesViewer = () => {
       }
     }
     setSignedUrls(urls);
+    setViewedContentIds(autoViewedIds);
     setLoadingMedia(false);
   };
 
