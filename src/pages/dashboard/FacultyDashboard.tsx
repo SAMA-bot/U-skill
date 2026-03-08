@@ -287,23 +287,30 @@ const FacultyDashboard = () => {
     label: "Capacity Score",
     value: statsData.capacityScore,
     suffix: "/100",
-    icon: ClipboardList
+    icon: ClipboardList,
+    metricType: "capacity" as const
   }, {
     label: "Performance Score",
     value: statsData.performanceScore,
     suffix: "/100",
-    icon: BarChart3
+    icon: BarChart3,
+    metricType: "performance" as const
   }, {
     label: "Motivation Index",
     value: statsData.motivationIndex,
     suffix: "/100",
-    icon: Star
+    icon: Star,
+    metricType: "motivation" as const
   }, {
     label: "Training Hours",
     value: statsData.trainingHours,
     suffix: "h",
-    icon: Clock
+    icon: Clock,
+    metricType: "training_hours" as const
   }];
+
+  const [metricSheetOpen, setMetricSheetOpen] = useState(false);
+  const [selectedMetric, setSelectedMetric] = useState<typeof statsCards[0] | null>(null);
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
