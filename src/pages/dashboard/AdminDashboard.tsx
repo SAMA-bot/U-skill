@@ -29,10 +29,12 @@ import {
   PanelLeft,
   Trophy,
   Sparkles,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeletons";
+import MetricDetailSheet from "@/components/dashboard/MetricDetailSheet";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -296,13 +298,16 @@ const AdminDashboard = () => {
   const getPerformanceColor = (score: number) => getPerformanceBadgeColor(score);
 
   const statsCards = [
-    { label: "Total Faculty", numValue: institutionStats.totalFaculty, suffix: "", icon: Users, color: "from-blue-500 to-blue-600" },
-    { label: "Avg Performance", numValue: institutionStats.avgPerformance, suffix: "%", icon: BarChart3, color: "from-green-500 to-green-600" },
-    { label: "Avg Capacity", numValue: institutionStats.avgCapacity, suffix: "%", icon: TrendingUp, color: "from-purple-500 to-purple-600" },
-    { label: "Avg Motivation", numValue: institutionStats.avgMotivation, suffix: "%", icon: Award, color: "from-orange-500 to-orange-600" },
-    { label: "Departments", numValue: institutionStats.totalDepartments, suffix: "", icon: Building2, color: "from-pink-500 to-pink-600" },
-    { label: "Completed Trainings", numValue: institutionStats.completedTrainings, suffix: "", icon: GraduationCap, color: "from-teal-500 to-teal-600" },
+    { label: "Total Faculty", numValue: institutionStats.totalFaculty, suffix: "", icon: Users, color: "from-blue-500 to-blue-600", metricType: "total_faculty" as const },
+    { label: "Avg Performance", numValue: institutionStats.avgPerformance, suffix: "%", icon: BarChart3, color: "from-green-500 to-green-600", metricType: "avg_performance" as const },
+    { label: "Avg Capacity", numValue: institutionStats.avgCapacity, suffix: "%", icon: TrendingUp, color: "from-purple-500 to-purple-600", metricType: "avg_capacity" as const },
+    { label: "Avg Motivation", numValue: institutionStats.avgMotivation, suffix: "%", icon: Award, color: "from-orange-500 to-orange-600", metricType: "avg_motivation" as const },
+    { label: "Departments", numValue: institutionStats.totalDepartments, suffix: "", icon: Building2, color: "from-pink-500 to-pink-600", metricType: "departments" as const },
+    { label: "Completed Trainings", numValue: institutionStats.completedTrainings, suffix: "", icon: GraduationCap, color: "from-teal-500 to-teal-600", metricType: "completed_trainings" as const },
   ];
+
+  const [adminMetricSheetOpen, setAdminMetricSheetOpen] = useState(false);
+  const [selectedAdminMetric, setSelectedAdminMetric] = useState<typeof statsCards[0] | null>(null);
 
   if (authLoading || roleLoading) {
     return (
@@ -559,13 +564,14 @@ const AdminDashboard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg transition-all duration-300 cursor-default"
+                onClick={() => { setSelectedAdminMetric(stat); setAdminMetricSheetOpen(true); }}
+                className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group"
               >
                 <div className="p-4">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <motion.div
-                        className={`bg-gradient-to-br ${stat.color} rounded-md p-2`}
+                        className={`bg-gradient-to-br ${stat.color} rounded-md p-2 group-hover:scale-110 transition-transform`}
                         whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
                       >
                         <stat.icon className="h-5 w-5 text-white" />
@@ -582,11 +588,27 @@ const AdminDashboard = () => {
                         />
                       </dd>
                     </div>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
+
+          {/* Admin Metric Detail Sheet */}
+          {selectedAdminMetric && (
+            <MetricDetailSheet
+              open={adminMetricSheetOpen}
+              onOpenChange={setAdminMetricSheetOpen}
+              metricType={selectedAdminMetric.metricType}
+              metricLabel={selectedAdminMetric.label}
+              metricValue={selectedAdminMetric.numValue}
+              metricSuffix={selectedAdminMetric.suffix}
+              metricIcon={selectedAdminMetric.icon}
+              userId={user?.id}
+              onNavigate={(section) => setActiveSection(section)}
+            />
+          )}
 
           {/* Institutional Overview */}
           <InstitutionalOverview />
