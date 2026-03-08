@@ -97,14 +97,20 @@ serve(async (req) => {
 
     console.log("Calling AI gateway...");
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000); // 25s timeout
+
+    let response: Response;
+    try {
+      response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        signal: controller.signal,
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: [
           {
             role: "system",
@@ -124,27 +130,31 @@ If data is sparse, provide encouraging or general advisory insights based on wha
         ],
         temperature: 0.7,
         max_tokens: 500,
-      }),
-    });
+      });
+    } catch (fetchErr) {
+      clearTimeout(timeoutId);
+      const isTimeout = fetchErr instanceof DOMException && fetchErr.name === "AbortError";
+      console.error(isTimeout ? "AI gateway request timed out" : "AI gateway fetch failed:", fetchErr);
+      return new Response(JSON.stringify({
+        insights: [
+          { icon: "trend", title: "Keep Going!", description: "Continue logging activities to build a detailed performance profile.", type: "neutral" },
+          { icon: "training", title: "Explore Courses", description: "Enroll in available training programs to boost your skills.", type: "neutral" },
+          { icon: "performance", title: "Track Progress", description: "Regularly update your metrics to see growth trends.", type: "neutral" },
+          { icon: "motivation", title: "Stay Consistent", description: "Daily engagement helps build momentum and improve scores.", type: "positive" },
+        ],
+        fallback: true,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI gateway error:", response.status, errorText);
 
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI service quota reached. Try again later." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-
-      // Return fallback insights instead of error
+      // Return fallback insights for any error
       return new Response(JSON.stringify({
         insights: [
           { icon: "trend", title: "Keep Going!", description: "Continue logging activities to build a detailed performance profile.", type: "neutral" },
@@ -161,7 +171,6 @@ If data is sparse, provide encouraging or general advisory insights based on wha
     const aiResponse = await response.json();
     const content = aiResponse.choices?.[0]?.message?.content || "[]";
 
-    // Parse JSON from response, handling potential markdown wrapping
     let insights;
     try {
       const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
@@ -181,8 +190,17 @@ If data is sparse, provide encouraging or general advisory insights based on wha
   } catch (e) {
     console.error("ai-insights error:", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({
+        insights: [
+          { icon: "trend", title: "Keep Going!", description: "Continue logging activities to build a detailed performance profile.", type: "neutral" },
+          { icon: "training", title: "Explore Courses", description: "Enroll in available training programs to boost your skills.", type: "neutral" },
+          { icon: "performance", title: "Track Progress", description: "Regularly update your metrics to see growth trends.", type: "neutral" },
+          { icon: "motivation", title: "Stay Consistent", description: "Daily engagement helps build momentum and improve scores.", type: "positive" },
+        ],
+        fallback: true,
+        error: "AI insights temporarily unavailable. Please try again later.",
+      }),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });

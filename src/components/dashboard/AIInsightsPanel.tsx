@@ -89,24 +89,20 @@ const AIInsightsPanel = () => {
 
       if (fnError) {
         console.error("Edge function invocation error:", fnError);
-        // Check if it's a network error worth retrying
         if (retryCount < MAX_RETRIES) {
           console.log(`Retrying in ${RETRY_DELAY_MS}ms... (attempt ${retryCount + 2}/${MAX_RETRIES + 1})`);
           await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
           return fetchInsights(retryCount + 1);
         }
-        throw new Error("Unable to reach the AI service. Showing general tips instead.");
+        throw new Error("AI insights temporarily unavailable. Please try again later.");
       }
 
-      if (data?.error) {
-        console.error("AI insights returned error:", data.error);
-        // Auth errors shouldn't retry
-        if (data.error.includes("Unauthorized") || data.error.includes("Session expired")) {
-          throw new Error("Session expired. Please refresh the page.");
-        }
-        // Retry transient errors
+      if (data?.fallback) {
+        setIsFallback(true);
+      }
+
+      if (data?.error && !data?.insights) {
         if (retryCount < MAX_RETRIES) {
-          console.log(`Retrying due to error response... (attempt ${retryCount + 2}/${MAX_RETRIES + 1})`);
           await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
           return fetchInsights(retryCount + 1);
         }
