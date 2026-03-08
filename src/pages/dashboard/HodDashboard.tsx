@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Home, BarChart3, Users, GraduationCap, Star, Settings, LogOut, Menu, X,
   Loader2, TrendingUp, Award, Clock, Shield, PanelLeftClose, PanelLeft,
-  Calendar, Activity, FolderUp, ClipboardList,
+  Calendar, Activity, FolderUp, ClipboardList, FileCheck, MessageSquarePlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +29,9 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
 } from "recharts";
 import DepartmentAlerts from "@/components/hod/DepartmentAlerts";
+import HodDocumentApprovals from "@/components/hod/HodDocumentApprovals";
+import HodPerformanceReview from "@/components/hod/HodPerformanceReview";
+import HodFeedbackSystem from "@/components/hod/HodFeedbackSystem";
 
 interface FacultyRanking {
   user_id: string;
@@ -52,6 +55,7 @@ interface DeptMetrics {
 const HodDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
   const [hodDepartment, setHodDepartment] = useState<string | null>(null);
   const [metrics, setMetrics] = useState<DeptMetrics>({
     avgPerformance: 0, avgFeedback: 0, trainingParticipation: 0,
@@ -317,10 +321,25 @@ const HodDashboard = () => {
                 </button>
               </div>
               <nav className="mt-2 flex-1 flex flex-col px-2 space-y-1">
-                <button className={`group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md bg-primary/10 text-primary w-full text-left`}>
-                  <Home className={`flex-shrink-0 h-5 w-5 text-primary ${sidebarCollapsed ? "" : "mr-3"}`} />
-                  {!sidebarCollapsed && "Department Overview"}
-                </button>
+                {[
+                  { id: "overview", label: "Department Overview", icon: Home },
+                  { id: "documents", label: "Document Approvals", icon: FileCheck },
+                  { id: "performance", label: "Performance Review", icon: BarChart3 },
+                  { id: "feedback", label: "Faculty Feedback", icon: MessageSquarePlus },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => { setActiveTab(tab.id); setSidebarOpen(false); }}
+                    className={`group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md w-full text-left transition-colors ${
+                      activeTab === tab.id
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }`}
+                  >
+                    <tab.icon className={`flex-shrink-0 h-5 w-5 ${activeTab === tab.id ? "text-primary" : ""} ${sidebarCollapsed ? "" : "mr-3"}`} />
+                    {!sidebarCollapsed && tab.label}
+                  </button>
+                ))}
               </nav>
               <div className="px-2 pt-4 pb-2 border-t border-border">
                 {isAdmin && (
@@ -350,7 +369,12 @@ const HodDashboard = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Department Overview</h1>
+                <h1 className="text-2xl font-bold text-foreground">
+                  {activeTab === "overview" && "Department Overview"}
+                  {activeTab === "documents" && "Document Approvals"}
+                  {activeTab === "performance" && "Faculty Performance Review"}
+                  {activeTab === "feedback" && "Faculty Feedback"}
+                </h1>
                 <p className="text-muted-foreground">
                   {hodDepartment ? `${hodDepartment} Department` : "Loading department..."} · {selectedYear}
                 </p>
@@ -361,15 +385,21 @@ const HodDashboard = () => {
               </Badge>
             </div>
 
-            {loadingData ? (
-              <HodSkeleton />
-            ) : !hodDepartment ? (
+            {!hodDepartment && !loadingData ? (
               <Card>
                 <CardContent className="py-12 text-center">
                   <p className="text-muted-foreground">No department assigned to your profile. Please contact an administrator.</p>
                 </CardContent>
               </Card>
-            ) : (
+            ) : activeTab === "documents" && hodDepartment ? (
+              <HodDocumentApprovals department={hodDepartment} />
+            ) : activeTab === "performance" && hodDepartment ? (
+              <HodPerformanceReview department={hodDepartment} />
+            ) : activeTab === "feedback" && hodDepartment ? (
+              <HodFeedbackSystem department={hodDepartment} />
+            ) : loadingData ? (
+              <HodSkeleton />
+            ) : hodDepartment ? (
               <>
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -577,7 +607,7 @@ const HodDashboard = () => {
                   </Card>
                 </motion.div>
               </>
-            )}
+            ) : null}
           </main>
         </div>
       </div>

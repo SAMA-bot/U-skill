@@ -967,6 +967,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_hod_of_user: { Args: { _target_user_id: string }; Returns: boolean }
       log_audit_event: {
         Args: {
           p_action_type: string
