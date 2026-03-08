@@ -113,9 +113,16 @@ const AchievementManagement = () => {
   // Delete
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  const refetchCb = useCallback(() => { if (user) fetchData(); }, [user]);
+
   useEffect(() => {
     if (user) fetchData();
   }, [user]);
+
+  useMultipleRealtimeData([
+    { table: "achievement_badges", onChange: refetchCb },
+    { table: "performance_metrics", onChange: refetchCb },
+  ]);
 
   const fetchData = async () => {
     setLoading(true);
