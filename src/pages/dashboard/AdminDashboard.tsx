@@ -571,6 +571,9 @@ const AdminDashboard = () => {
             ))}
           </div>
 
+          {/* Institutional Overview */}
+          <InstitutionalOverview />
+
           {/* Quick Actions */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
