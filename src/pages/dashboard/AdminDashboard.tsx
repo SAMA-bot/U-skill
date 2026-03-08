@@ -832,19 +832,31 @@ const AdminDashboard = () => {
                             </Badge>
                           </div>
                         </TableCell>
-                        <TableCell className="text-center">
-                          <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold">
-                            <span className={`${(faculty.avgCapacity || 0) >= 80 ? 'text-[#3b82f6]' : (faculty.avgCapacity || 0) >= 70 ? 'text-[#22c55e]' : (faculty.avgCapacity || 0) >= 60 ? 'text-[#f59e0b]' : 'text-[#ef4444]'}`}>
+                        <TableCell>
+                          <div className="flex items-center gap-2 min-w-[100px]">
+                            <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all ${(faculty.avgCapacity || 0) >= 80 ? 'bg-[#3b82f6]' : (faculty.avgCapacity || 0) >= 70 ? 'bg-[#22c55e]' : (faculty.avgCapacity || 0) >= 60 ? 'bg-[#f59e0b]' : 'bg-[#ef4444]'}`}
+                                style={{ width: `${faculty.avgCapacity || 0}%` }}
+                              />
+                            </div>
+                            <span className={`text-xs font-semibold tabular-nums w-8 text-right ${(faculty.avgCapacity || 0) >= 80 ? 'text-[#3b82f6]' : (faculty.avgCapacity || 0) >= 70 ? 'text-[#22c55e]' : (faculty.avgCapacity || 0) >= 60 ? 'text-[#f59e0b]' : 'text-[#ef4444]'}`}>
                               {faculty.avgCapacity || 0}%
                             </span>
-                          </span>
+                          </div>
                         </TableCell>
-                        <TableCell className="text-center">
-                          <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold">
-                            <span className={`${(faculty.latestMotivation || 0) >= 80 ? 'text-[#3b82f6]' : (faculty.latestMotivation || 0) >= 70 ? 'text-[#22c55e]' : (faculty.latestMotivation || 0) >= 60 ? 'text-[#f59e0b]' : 'text-[#ef4444]'}`}>
+                        <TableCell>
+                          <div className="flex items-center gap-2 min-w-[100px]">
+                            <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all ${(faculty.latestMotivation || 0) >= 80 ? 'bg-[#3b82f6]' : (faculty.latestMotivation || 0) >= 70 ? 'bg-[#22c55e]' : (faculty.latestMotivation || 0) >= 60 ? 'bg-[#f59e0b]' : 'bg-[#ef4444]'}`}
+                                style={{ width: `${faculty.latestMotivation || 0}%` }}
+                              />
+                            </div>
+                            <span className={`text-xs font-semibold tabular-nums w-8 text-right ${(faculty.latestMotivation || 0) >= 80 ? 'text-[#3b82f6]' : (faculty.latestMotivation || 0) >= 70 ? 'text-[#22c55e]' : (faculty.latestMotivation || 0) >= 60 ? 'text-[#f59e0b]' : 'text-[#ef4444]'}`}>
                               {faculty.latestMotivation || 0}%
                             </span>
-                          </span>
+                          </div>
                         </TableCell>
                         <TableCell className="text-center">
                           <Button
