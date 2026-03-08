@@ -616,9 +616,12 @@ const AdminDashboard = () => {
                           <p className="text-xs text-muted-foreground">{dept.facultyCount} faculty</p>
                         </div>
                       </div>
-                      <Badge className={getPerformanceColor(dept.avgPerformance)}>
-                        {dept.avgPerformance}%
-                      </Badge>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-medium text-foreground">{dept.avgPerformance}%</span>
+                        <Badge className={`text-[10px] px-1.5 py-0 ${getPerformanceColor(dept.avgPerformance)}`}>
+                          {getPerformanceBadgeLabel(dept.avgPerformance)}
+                        </Badge>
+                      </div>
                     </div>
                   ))}
                   {departmentStats.length === 0 && (
