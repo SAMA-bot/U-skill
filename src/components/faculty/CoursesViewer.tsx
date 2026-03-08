@@ -58,6 +58,63 @@ import { useRealtimeData } from "@/hooks/useRealtimeData";
 import { useCourseEnrollments } from "@/hooks/useCourseEnrollments";
 import { getVideoSignedUrl, getDocumentSignedUrl } from "@/lib/storageUtils";
 import { getDifficultyFromDuration } from "@/components/faculty/LearningTracks";
+import { ExternalLink } from "lucide-react";
+
+// Domains known to block iframe embedding
+const BLOCKED_EMBED_DOMAINS = [
+  "udemy.com",
+  "coursera.org",
+  "edx.org",
+  "linkedin.com",
+  "skillshare.com",
+  "pluralsight.com",
+  "udacity.com",
+  "codecademy.com",
+  "khanacademy.org",
+  "masterclass.com",
+];
+
+const isEmbeddableUrl = (url: string | null): boolean => {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    const hostname = parsed.hostname.toLowerCase();
+    // YouTube embed links are safe
+    if (hostname.includes("youtube.com") || hostname.includes("youtu.be") || hostname.includes("youtube-nocookie.com")) {
+      return true;
+    }
+    // Check against blocked domains
+    if (BLOCKED_EMBED_DOMAINS.some((d) => hostname.includes(d))) {
+      return false;
+    }
+    // Default: assume external URLs are not embeddable
+    return false;
+  } catch {
+    // Not a valid URL (likely a storage path) — embeddable via signed URL
+    return true;
+  }
+};
+
+const getYouTubeEmbedUrl = (url: string): string | null => {
+  try {
+    const parsed = new URL(url);
+    const hostname = parsed.hostname.toLowerCase();
+    if (hostname.includes("youtube.com") && parsed.pathname === "/watch") {
+      const videoId = parsed.searchParams.get("v");
+      return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : null;
+    }
+    if (hostname.includes("youtu.be")) {
+      const videoId = parsed.pathname.slice(1);
+      return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : null;
+    }
+    if (hostname.includes("youtube.com") && parsed.pathname.startsWith("/embed/")) {
+      return url;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
 
 // Course interface without sensitive created_by field (using public view)
 interface Course {
