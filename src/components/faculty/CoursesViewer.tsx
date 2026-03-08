@@ -248,7 +248,7 @@ const CoursesViewer = () => {
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.instructor_name?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = typeFilter === "all" || course.course_type === typeFilter;
+    const matchesType = typeFilter === "all" || course.content_type === typeFilter;
     return matchesSearch && matchesType;
   });
 
@@ -257,8 +257,9 @@ const CoursesViewer = () => {
     return categoryFilter === "all" || course.category === categoryFilter;
   });
 
-  const videoCourses = filteredCourses.filter(c => c.course_type === 'video');
-  const regularCourses = filteredCourses.filter(c => c.course_type === 'regular');
+  const videoCourses = filteredCourses.filter(c => c.content_type === 'platform_video');
+  const regularCourses = filteredCourses.filter(c => c.content_type === 'pdf_course');
+  const externalCourses = filteredCourses.filter(c => c.content_type === 'external_url');
 
   // My Learning: courses the user is enrolled in
   const myLearningCourses = courses.filter((c) => isEnrolled(c.id));
