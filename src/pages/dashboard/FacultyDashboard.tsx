@@ -10,7 +10,7 @@ import AcademicYearSelector from "@/components/AcademicYearSelector";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
 import PerformanceScoreCard from "@/components/dashboard/PerformanceScoreCard";
 import { usePerformanceScore } from "@/hooks/usePerformanceScore";
-import CapacityRadarChart from "@/components/dashboard/CapacityRadarChart";
+import SkillGrowthChart from "@/components/dashboard/SkillGrowthChart";
 import MotivationTrendChart from "@/components/dashboard/MotivationTrendChart";
 import CoursesViewer from "@/components/faculty/CoursesViewer";
 import PerformanceAssessment from "@/components/faculty/PerformanceAssessment";
