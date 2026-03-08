@@ -13,6 +13,9 @@ import {
   BookOpen,
   Award,
   PlayCircle,
+  FileText,
+  FileX,
+  FileCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +35,7 @@ const TABS: { key: TabKey; label: string; icon: typeof Bell }[] = [
   { key: "alert", label: "Alerts", icon: AlertTriangle },
   { key: "course", label: "Courses", icon: GraduationCap },
   { key: "achievement", label: "Badges", icon: Award },
+  { key: "document", label: "Docs", icon: FileText },
 ];
 
 const HeaderNotifications = () => {
@@ -74,6 +78,10 @@ const HeaderNotifications = () => {
         return <BookOpen className="h-4 w-4 text-info" />;
       case "achievement_earned":
         return <Award className="h-4 w-4 text-accent" />;
+      case "document_approved":
+        return <FileCheck className="h-4 w-4 text-success" />;
+      case "document_rejected":
+        return <FileX className="h-4 w-4 text-destructive" />;
       default:
         return <Bell className="h-4 w-4 text-muted-foreground" />;
     }

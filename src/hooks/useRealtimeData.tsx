@@ -12,7 +12,8 @@ type TableName =
   | "profiles"
   | "calendar_events"
   | "achievement_badges"
-  | "faculty_feedback";
+  | "faculty_feedback"
+  | "faculty_documents";
 
 interface UseRealtimeDataOptions {
   table: TableName;

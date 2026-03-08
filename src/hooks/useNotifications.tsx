@@ -12,9 +12,12 @@ export type NotificationType =
   | "course_completed"
   | "course_started"
   | "achievement_earned"
+  | "document_approved"
+  | "document_rejected"
+  | "document_pending"
   | "system";
 
-export type NotificationCategory = "alert" | "course" | "achievement";
+export type NotificationCategory = "alert" | "course" | "achievement" | "document";
 
 export interface Notification {
   id: string;
@@ -92,6 +95,8 @@ const groupSimilarNotifications = (items: Notification[]): Notification[] => {
       goal_at_risk: "goal alert",
       achievement_earned: "badge",
       performance_change: "score change",
+      document_approved: "document approval",
+      document_rejected: "document rejection",
     };
 
     const label = typeLabels[latest.type] || "notification";
@@ -106,6 +111,8 @@ const groupSimilarNotifications = (items: Notification[]): Notification[] => {
       goal_at_risk: `${count} Goals At Risk`,
       achievement_earned: `${count} Badges Earned 🏆`,
       performance_change: `${count} Score Changes`,
+      document_approved: `${count} Documents Approved ✅`,
+      document_rejected: `${count} Documents Rejected`,
     };
 
     result.push({
@@ -333,6 +340,51 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
         });
       }
 
+      // === DOCUMENT APPROVAL NOTIFICATIONS ===
+      const { data: documents } = await supabase
+        .from("faculty_documents")
+        .select("id, title, status, reviewed_at, rejection_reason, updated_at")
+        .eq("user_id", user.id)
+        .in("status", ["approved", "rejected", "pending"])
+        .order("updated_at", { ascending: false })
+        .limit(10);
+
+      if (documents) {
+        const now = new Date();
+        documents.forEach((doc) => {
+          const updatedAt = new Date(doc.updated_at);
+          const daysSinceUpdate = Math.floor((now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60 * 24));
+
+          if (doc.status === "approved" && doc.reviewed_at && daysSinceUpdate <= 14) {
+            newNotifications.push({
+              id: `doc_approved_${doc.id}`,
+              type: "document_approved",
+              category: "document",
+              title: "Document Approved ✅",
+              message: `Your document "${doc.title}" has been approved.`,
+              severity: "success",
+              timestamp: new Date(doc.reviewed_at),
+              read: daysSinceUpdate > 1,
+              data: { documentId: doc.id },
+            });
+          } else if (doc.status === "rejected" && doc.reviewed_at && daysSinceUpdate <= 14) {
+            newNotifications.push({
+              id: `doc_rejected_${doc.id}`,
+              type: "document_rejected",
+              category: "document",
+              title: "Document Rejected",
+              message: doc.rejection_reason
+                ? `"${doc.title}" was rejected: ${doc.rejection_reason}`
+                : `Your document "${doc.title}" was rejected.`,
+              severity: "error",
+              timestamp: new Date(doc.reviewed_at),
+              read: daysSinceUpdate > 1,
+              data: { documentId: doc.id },
+            });
+          }
+        });
+      }
+
       // === GROUP SIMILAR NOTIFICATIONS ===
       const grouped = groupSimilarNotifications(newNotifications);
 
@@ -377,6 +429,14 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
 
   useRealtimeData({
     table: "achievement_badges",
+    userId: user?.id,
+    onChange: () => {
+      if (user) generateNotifications();
+    },
+  });
+
+  useRealtimeData({
+    table: "faculty_documents",
     userId: user?.id,
     onChange: () => {
       if (user) generateNotifications();
