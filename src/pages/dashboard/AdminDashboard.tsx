@@ -546,6 +546,63 @@ const AdminDashboard = () => {
             ))}
           </div>
 
+          {/* Quick Actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            whileHover={{ y: -2, transition: { duration: 0.2 } }}
+            className="bg-card shadow-sm rounded-lg overflow-hidden border border-border hover:shadow-lg transition-all duration-300 mb-8"
+          >
+            <div className="px-4 py-4 sm:px-6 border-b border-border">
+              <h3 className="text-lg font-medium text-foreground flex items-center gap-2">
+                <ChevronRight className="h-5 w-5 text-primary" />
+                Quick Actions
+              </h3>
+            </div>
+            <div className="p-4 sm:p-6 grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <motion.div whileHover={{ y: -3, transition: { duration: 0.2 } }}>
+                <Button
+                  variant="outline"
+                  className="w-full h-auto py-4 flex flex-col gap-2 hover:border-primary/50 hover:shadow-md transition-all duration-300"
+                  onClick={() => setActiveSection("faculty")}
+                >
+                  <Users className="h-6 w-6 text-primary" />
+                  <span className="text-sm font-medium">Add Faculty</span>
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ y: -3, transition: { duration: 0.2 } }}>
+                <Button
+                  variant="outline"
+                  className="w-full h-auto py-4 flex flex-col gap-2 hover:border-primary/50 hover:shadow-md transition-all duration-300"
+                  onClick={() => setActiveSection("courses")}
+                >
+                  <GraduationCap className="h-6 w-6 text-primary" />
+                  <span className="text-sm font-medium">Create Training</span>
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ y: -3, transition: { duration: 0.2 } }}>
+                <Button
+                  variant="outline"
+                  className="w-full h-auto py-4 flex flex-col gap-2 hover:border-primary/50 hover:shadow-md transition-all duration-300"
+                  onClick={() => setActiveSection("documents")}
+                >
+                  <FolderCheck className="h-6 w-6 text-primary" />
+                  <span className="text-sm font-medium">Review Documents</span>
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ y: -3, transition: { duration: 0.2 } }}>
+                <Button
+                  variant="outline"
+                  className="w-full h-auto py-4 flex flex-col gap-2 hover:border-primary/50 hover:shadow-md transition-all duration-300"
+                  onClick={() => setActiveSection("reports")}
+                >
+                  <FileText className="h-6 w-6 text-primary" />
+                  <span className="text-sm font-medium">Performance Report</span>
+                </Button>
+              </motion.div>
+            </div>
+          </motion.div>
           {/* Approval Panel & Action Items */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <motion.div
