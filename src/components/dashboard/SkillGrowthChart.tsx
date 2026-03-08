@@ -251,7 +251,7 @@ const SkillGrowthChart = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge
-                            className={`text-[9px] px-1.5 py-0 ${growth.style}`}
+                            style={growth.inlineStyle} className="text-[9px] px-1.5 py-0 border-0"
                           >
                             {growth.text}
                           </Badge>
