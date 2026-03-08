@@ -267,15 +267,18 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
         });
       }
 
+      // === GROUP SIMILAR NOTIFICATIONS ===
+      const grouped = groupSimilarNotifications(newNotifications);
+
       // Sort by severity then timestamp
       const severityOrder = { error: 0, warning: 1, success: 2, info: 3 };
-      newNotifications.sort((a, b) => {
+      grouped.sort((a, b) => {
         const severityDiff = severityOrder[a.severity] - severityOrder[b.severity];
         if (severityDiff !== 0) return severityDiff;
         return b.timestamp.getTime() - a.timestamp.getTime();
       });
 
-      setNotifications(newNotifications);
+      setNotifications(grouped);
     } catch (error) {
       console.error("Error generating notifications:", error);
     } finally {
