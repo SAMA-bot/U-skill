@@ -209,49 +209,34 @@ const HeaderNotifications = () => {
                   exit={{ opacity: 0, x: -40, transition: { duration: 0.2 } }}
                   transition={{ delay: index * 0.025 }}
                   className={`
-                    relative px-4 py-3 border-l-[3px] border-b border-border/40 cursor-pointer transition-all hover:bg-muted/40
-                    ${getSeverityStyles(notification.severity)}
+                    group flex items-start gap-3 px-4 py-3 border-b border-border/40 cursor-pointer transition-all hover:bg-muted/40
                     ${notification.read ? "opacity-55" : ""}
                   `}
                   onClick={() => markAsRead(notification.id)}
                 >
+                  <div className="flex-shrink-0 mt-0.5 p-1.5 rounded-lg bg-muted/60">
+                    {getIcon(notification.type, notification.severity)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm text-foreground truncate">
+                      {notification.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+                      {notification.message}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground/60 mt-1">
+                      {formatTimestamp(notification.timestamp)}
+                    </p>
+                  </div>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       dismissNotification(notification.id);
                     }}
-                    className="absolute top-2 right-2 p-1 rounded-full hover:bg-muted transition-colors opacity-0 group-hover:opacity-100"
-                    style={{ opacity: undefined }}
-                    onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-                    onMouseLeave={(e) => (e.currentTarget.style.opacity = "0")}
+                    className="flex-shrink-0 p-1 rounded-full hover:bg-muted transition-colors opacity-0 group-hover:opacity-100"
                   >
                     <X className="h-3 w-3 text-muted-foreground" />
                   </button>
-                  <div className="flex items-start gap-2.5 pr-6">
-                    <div className="flex-shrink-0 mt-0.5 p-1 rounded-md bg-background/60">
-                      {getIcon(notification.type, notification.severity)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <p className="font-medium text-sm text-foreground truncate">
-                          {notification.title}
-                        </p>
-                        {!notification.read && (
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"
-                          />
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
-                        {notification.message}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground/60 mt-1">
-                        {formatTimestamp(notification.timestamp)}
-                      </p>
-                    </div>
-                  </div>
                 </motion.div>
               ))}
             </AnimatePresence>
