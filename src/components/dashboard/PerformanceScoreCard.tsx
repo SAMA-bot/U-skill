@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Award, BookOpen, MessageSquare, FileText, Loader2 } from "lucide-react";
+import { Award, BookOpen, MessageSquare, FileText, Loader2, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { PerformanceScoreData } from "@/hooks/usePerformanceScore";
@@ -16,7 +16,7 @@ const badgeInlineStyle = (badge: PerformanceScoreData["badge"]): React.CSSProper
     case "Good":
       return { background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.4)" };
     default: // Needs Improvement
-      return { background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.4)" };
+      return { background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.4)", boxShadow: "0 0 12px rgba(239,68,68,0.25)" };
   }
 };
 
@@ -43,7 +43,10 @@ const PerformanceScoreCard = ({ data, compact = false }: PerformanceScoreCardPro
           {data.compositeScore}
         </div>
         <div className="text-sm text-muted-foreground">/100</div>
-        <Badge style={badgeInlineStyle(data.badge)} className="border-0">{data.badge}</Badge>
+        <Badge style={badgeInlineStyle(data.badge)} className="border-0 gap-1">
+          {data.badge === "Needs Improvement" && <AlertTriangle className="h-3 w-3" />}
+          {data.badge}
+        </Badge>
       </div>
     );
   }
@@ -86,7 +89,10 @@ const PerformanceScoreCard = ({ data, compact = false }: PerformanceScoreCardPro
               Faculty Performance Score
             </h3>
           </div>
-          <Badge style={badgeInlineStyle(data.badge)} className="text-sm border-0">{data.badge}</Badge>
+          <Badge style={badgeInlineStyle(data.badge)} className="text-sm border-0 gap-1">
+            {data.badge === "Needs Improvement" && <AlertTriangle className="h-3.5 w-3.5" />}
+            {data.badge}
+          </Badge>
         </div>
       </div>
 
