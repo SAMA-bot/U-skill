@@ -13,6 +13,9 @@ import {
   BookOpen,
   Award,
   PlayCircle,
+  FileText,
+  FileX,
+  FileCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
