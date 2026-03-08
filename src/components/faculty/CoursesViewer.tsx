@@ -325,13 +325,13 @@ const CoursesViewer = () => {
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      teaching: "bg-primary/15 text-primary border-primary/25",
-      research: "bg-info/15 text-info border-info/25",
-      technology: "bg-success/15 text-success border-success/25",
-      leadership: "bg-accent/15 text-accent border-accent/25",
-      communication: "bg-destructive/15 text-destructive border-destructive/25",
-      general: "bg-muted text-muted-foreground border-border",
-      "professional-development": "bg-primary/15 text-primary border-primary/25",
+      teaching: "bg-primary/12 text-primary ring-1 ring-primary/20",
+      research: "bg-info/12 text-info ring-1 ring-info/20",
+      technology: "bg-success/12 text-success ring-1 ring-success/20",
+      leadership: "bg-accent/12 text-accent ring-1 ring-accent/20",
+      communication: "bg-destructive/12 text-destructive ring-1 ring-destructive/20",
+      general: "bg-muted text-muted-foreground ring-1 ring-border",
+      "professional-development": "bg-primary/12 text-primary ring-1 ring-primary/20",
     };
     return colors[category] || colors.general;
   };
@@ -350,9 +350,9 @@ const CoursesViewer = () => {
   };
 
   const getDifficultyColor = (hours: number | null) => {
-    if (!hours || hours <= 2) return "bg-success/10 text-success border-success/20";
-    if (hours <= 5) return "bg-accent/10 text-accent border-accent/20";
-    return "bg-destructive/10 text-destructive border-destructive/20";
+    if (!hours || hours <= 2) return "bg-success/10 text-success ring-1 ring-success/20";
+    if (hours <= 5) return "bg-accent/10 text-accent-foreground ring-1 ring-accent/20";
+    return "bg-destructive/10 text-destructive ring-1 ring-destructive/20";
   };
 
   if (loading) {
