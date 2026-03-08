@@ -15,6 +15,7 @@ export type NotificationType =
   | "document_approved"
   | "document_rejected"
   | "document_pending"
+  | "training_reminder"
   | "system";
 
 export type NotificationCategory = "alert" | "course" | "achievement" | "document";
