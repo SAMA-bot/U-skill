@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Home, BarChart3, Users, GraduationCap, Star, Settings, LogOut, Menu, X,
   Loader2, TrendingUp, Award, Clock, Shield, PanelLeftClose, PanelLeft,
-  Calendar, Activity, FolderUp, ClipboardList,
+  Calendar, Activity, FolderUp, ClipboardList, FileCheck, MessageSquarePlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +29,9 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
 } from "recharts";
 import DepartmentAlerts from "@/components/hod/DepartmentAlerts";
+import HodDocumentApprovals from "@/components/hod/HodDocumentApprovals";
+import HodPerformanceReview from "@/components/hod/HodPerformanceReview";
+import HodFeedbackSystem from "@/components/hod/HodFeedbackSystem";
 
 interface FacultyRanking {
   user_id: string;
