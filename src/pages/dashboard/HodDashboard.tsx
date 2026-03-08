@@ -385,15 +385,21 @@ const HodDashboard = () => {
               </Badge>
             </div>
 
-            {loadingData ? (
-              <HodSkeleton />
-            ) : !hodDepartment ? (
+            {!hodDepartment && !loadingData ? (
               <Card>
                 <CardContent className="py-12 text-center">
                   <p className="text-muted-foreground">No department assigned to your profile. Please contact an administrator.</p>
                 </CardContent>
               </Card>
-            ) : (
+            ) : activeTab === "documents" && hodDepartment ? (
+              <HodDocumentApprovals department={hodDepartment} />
+            ) : activeTab === "performance" && hodDepartment ? (
+              <HodPerformanceReview department={hodDepartment} />
+            ) : activeTab === "feedback" && hodDepartment ? (
+              <HodFeedbackSystem department={hodDepartment} />
+            ) : loadingData ? (
+              <HodSkeleton />
+            ) : hodDepartment ? (
               <>
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -601,7 +607,7 @@ const HodDashboard = () => {
                   </Card>
                 </motion.div>
               </>
-            )}
+            ) : null}
           </main>
         </div>
       </div>
