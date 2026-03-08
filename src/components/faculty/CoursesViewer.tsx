@@ -795,23 +795,14 @@ const CoursesViewer = () => {
           />
         </div>
         <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-full sm:w-[150px]">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="regular">
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Regular
-              </div>
-            </SelectItem>
-            <SelectItem value="video">
-              <div className="flex items-center gap-2">
-                <Video className="h-4 w-4" />
-                Video
-              </div>
-            </SelectItem>
+            <SelectItem value="platform_video">🎥 Platform Video</SelectItem>
+            <SelectItem value="external_url">🔗 External URL</SelectItem>
+            <SelectItem value="pdf_course">📄 PDF Course</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -841,26 +832,26 @@ const CoursesViewer = () => {
 
       {/* Courses Tabs */}
       <Tabs defaultValue="tracks" className="w-full">
-        <TabsList className="grid w-full max-w-2xl grid-cols-5">
-          <TabsTrigger value="tracks" className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
+        <TabsList className="grid w-full max-w-3xl grid-cols-6">
+          <TabsTrigger value="tracks" className="flex items-center gap-1 text-xs">
+            <BookOpen className="h-3.5 w-3.5" />
             Tracks
           </TabsTrigger>
-          <TabsTrigger value="all" className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
+          <TabsTrigger value="all" className="flex items-center gap-1 text-xs">
             All ({filteredCourses.length})
           </TabsTrigger>
-          <TabsTrigger value="my-learning" className="flex items-center gap-2">
-            <GraduationCap className="h-4 w-4" />
-            My Learning ({myLearningCourses.length})
+          <TabsTrigger value="my-learning" className="flex items-center gap-1 text-xs">
+            <GraduationCap className="h-3.5 w-3.5" />
+            My Learning
           </TabsTrigger>
-          <TabsTrigger value="video" className="flex items-center gap-2">
-            <Video className="h-4 w-4" />
-            Videos ({videoCourses.length})
+          <TabsTrigger value="platform_video" className="flex items-center gap-1 text-xs">
+            🎥 Videos ({videoCourses.length})
           </TabsTrigger>
-          <TabsTrigger value="regular" className="flex items-center gap-2">
-            <FileText className="h-4 w-4" />
-            Courses ({regularCourses.length})
+          <TabsTrigger value="external_url" className="flex items-center gap-1 text-xs">
+            🔗 External ({externalCourses.length})
+          </TabsTrigger>
+          <TabsTrigger value="pdf_course" className="flex items-center gap-1 text-xs">
+            📄 PDFs ({regularCourses.length})
           </TabsTrigger>
         </TabsList>
 
