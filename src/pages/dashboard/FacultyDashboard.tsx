@@ -767,6 +767,7 @@ const FacultyDashboard = () => {
         </main>
       </div>
     </div>
+    <PerformanceReportModal open={reportModalOpen} onOpenChange={setReportModalOpen} data={reportData} />
     </NotificationsProvider>;
 };
 export default FacultyDashboard;
