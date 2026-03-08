@@ -29,10 +29,12 @@ import {
   PanelLeft,
   Trophy,
   Sparkles,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeletons";
+import MetricDetailSheet from "@/components/dashboard/MetricDetailSheet";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
