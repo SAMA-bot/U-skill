@@ -75,6 +75,8 @@ const CoursesViewer = () => {
   const [lessonContent, setLessonContent] = useState<LessonContentItem[]>([]);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const [loadingMedia, setLoadingMedia] = useState(false);
+  const [viewedContentIds, setViewedContentIds] = useState<Set<string>>(new Set());
+  const [autoCompleting, setAutoCompleting] = useState(false);
 
   const { toast } = useToast();
   const {
