@@ -517,15 +517,15 @@ const CoursesViewer = () => {
 
         <TabsContent value="all" className="mt-6">
           {filteredCourses.length === 0 ? (
-            <div className="text-center py-12">
-              <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground">No courses found</h3>
-              <p className="text-muted-foreground mt-1">
-                {searchQuery || categoryFilter !== "all" || typeFilter !== "all"
-                  ? "Try adjusting your search or filter criteria"
-                  : "No courses are available at the moment"}
-              </p>
-            </div>
+            <SmartEmptyState
+              icon={BookOpen}
+              title={searchQuery || categoryFilter !== "all" || typeFilter !== "all" ? "No matching courses" : "No courses available yet"}
+              description={searchQuery || categoryFilter !== "all" || typeFilter !== "all"
+                ? "Try adjusting your search or filter criteria to find what you're looking for."
+                : "Courses will appear here once your admin creates training programs. Check back soon!"}
+              actionLabel={searchQuery || categoryFilter !== "all" ? "Clear Filters" : undefined}
+              onAction={searchQuery || categoryFilter !== "all" ? () => { setSearchQuery(""); setCategoryFilter("all"); setTypeFilter("all"); } : undefined}
+            />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredCourses.map((course, index) => renderCourseCard(course, index))}
