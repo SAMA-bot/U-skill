@@ -65,6 +65,7 @@ import DepartmentManagement from "@/components/admin/DepartmentManagement";
 import DepartmentLeaderboard from "@/components/admin/DepartmentLeaderboard";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
 import InstitutionalOverview from "@/components/admin/InstitutionalOverview";
+import FacultyComparison from "@/components/admin/FacultyComparison";
 interface FacultyMember {
   user_id: string;
   full_name: string;
