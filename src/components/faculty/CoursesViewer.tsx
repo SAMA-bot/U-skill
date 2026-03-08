@@ -166,19 +166,19 @@ const CoursesViewer = () => {
     }
   };
 
-  const filteredCourses = courses.filter((course) => {
+  // Filter by search and type only (used for category tab counts)
+  const filteredByTypeAndSearch = courses.filter((course) => {
     const matchesSearch =
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.instructor_name?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = typeFilter === "all" || course.course_type === typeFilter;
+    return matchesSearch && matchesType;
+  });
 
-    const matchesCategory =
-      categoryFilter === "all" || course.category === categoryFilter;
-
-    const matchesType =
-      typeFilter === "all" || course.course_type === typeFilter;
-
-    return matchesSearch && matchesCategory && matchesType;
+  // Full filter including category
+  const filteredCourses = filteredByTypeAndSearch.filter((course) => {
+    return categoryFilter === "all" || course.category === categoryFilter;
   });
 
   const videoCourses = filteredCourses.filter(c => c.course_type === 'video');
