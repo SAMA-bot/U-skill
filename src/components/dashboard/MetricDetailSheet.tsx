@@ -187,30 +187,35 @@ const MetricDetailSheet = ({
             for (const p of profiles.slice(0, 10)) {
               if (metricType === "total_faculty") {
                 items.push({ label: p.full_name, value: 0, sublabel: p.department || "Unassigned" });
-              } else {
+              } else if (metricType === "avg_performance") {
                 const { data: perf } = await supabase
-                  .from(metricType === "avg_motivation" ? "motivation_scores" : "performance_metrics")
-                  .select("*")
+                  .from("performance_metrics")
+                  .select("teaching_score, research_score, service_score")
                   .eq("user_id", p.user_id)
-                  .order(metricType === "avg_motivation" ? "year" : "year", { ascending: false })
+                  .order("year", { ascending: false })
                   .limit(1)
                   .maybeSingle();
-                let score = 0;
-                if (perf) {
-                  if (metricType === "avg_performance") {
-                    score = Math.round(((perf.teaching_score || 0) + (perf.research_score || 0) + (perf.service_score || 0)) / 3);
-                  } else if (metricType === "avg_motivation") {
-                    score = perf.motivation_index || 0;
-                  } else if (metricType === "avg_capacity") {
-                    const { data: skills } = await supabase
-                      .from("capacity_skills")
-                      .select("current_level")
-                      .eq("user_id", p.user_id);
-                    score = skills && skills.length > 0
-                      ? Math.round(skills.reduce((s, sk) => s + (sk.current_level || 0), 0) / skills.length)
-                      : 0;
-                  }
-                }
+                const score = perf
+                  ? Math.round(((perf.teaching_score || 0) + (perf.research_score || 0) + (perf.service_score || 0)) / 3)
+                  : 0;
+                items.push({ label: p.full_name, value: score, max: 100, sublabel: p.department || "Unassigned" });
+              } else if (metricType === "avg_motivation") {
+                const { data: mot } = await supabase
+                  .from("motivation_scores")
+                  .select("motivation_index")
+                  .eq("user_id", p.user_id)
+                  .order("year", { ascending: false })
+                  .limit(1)
+                  .maybeSingle();
+                items.push({ label: p.full_name, value: mot?.motivation_index || 0, max: 100, sublabel: p.department || "Unassigned" });
+              } else if (metricType === "avg_capacity") {
+                const { data: skills } = await supabase
+                  .from("capacity_skills")
+                  .select("current_level")
+                  .eq("user_id", p.user_id);
+                const score = skills && skills.length > 0
+                  ? Math.round(skills.reduce((s, sk) => s + (sk.current_level || 0), 0) / skills.length)
+                  : 0;
                 items.push({ label: p.full_name, value: score, max: 100, sublabel: p.department || "Unassigned" });
               }
             }
