@@ -55,6 +55,7 @@ interface DeptMetrics {
 const HodDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
   const [hodDepartment, setHodDepartment] = useState<string | null>(null);
   const [metrics, setMetrics] = useState<DeptMetrics>({
     avgPerformance: 0, avgFeedback: 0, trainingParticipation: 0,
