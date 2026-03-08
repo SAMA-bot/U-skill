@@ -44,7 +44,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RoleManagement } from "@/components/admin/RoleManagement";
+import RoleAccessMatrix from "@/components/admin/RoleAccessMatrix";
+import RoleSummaryCards from "@/components/admin/RoleSummaryCards";
 import { CourseManagement } from "@/components/admin/CourseManagement";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AuditLogViewer from "@/components/admin/AuditLogViewer";
 import PerformanceScoreCard from "@/components/dashboard/PerformanceScoreCard";
 import { usePerformanceScore } from "@/hooks/usePerformanceScore";
