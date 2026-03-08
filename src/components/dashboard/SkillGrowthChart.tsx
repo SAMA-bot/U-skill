@@ -32,11 +32,11 @@ const skillColors: Record<string, string> = {
   Mentoring: "bg-green-500",
 };
 
-const getGrowthLabel = (level: number) => {
-  if (level >= 80) return { text: "Expert", style: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800" };
-  if (level >= 60) return { text: "Advanced", style: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800" };
-  if (level >= 30) return { text: "Intermediate", style: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800" };
-  return { text: "Beginner", style: "bg-muted text-muted-foreground border-border" };
+const getGrowthLabel = (level: number): { text: string; inlineStyle: React.CSSProperties } => {
+  if (level >= 80) return { text: "Expert", inlineStyle: { background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.4)" } };
+  if (level >= 60) return { text: "Advanced", inlineStyle: { background: "rgba(59,130,246,0.15)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.4)" } };
+  if (level >= 30) return { text: "Intermediate", inlineStyle: { background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.4)" } };
+  return { text: "Beginner", inlineStyle: { background: "rgba(161,161,170,0.15)", color: "#a1a1aa", border: "1px solid rgba(161,161,170,0.4)" } };
 };
 
 const SkillGrowthChart = () => {
@@ -156,7 +156,7 @@ const SkillGrowthChart = () => {
                         <span className="text-sm font-medium text-foreground">{sk.skill}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge className={`text-[9px] px-1.5 py-0 ${growth.style}`}>{growth.text}</Badge>
+                        <Badge style={growth.inlineStyle} className="text-[9px] px-1.5 py-0 border-0">{growth.text}</Badge>
                         <span className="text-xs text-muted-foreground w-8 text-right">{sk.current}%</span>
                       </div>
                     </div>
@@ -251,7 +251,7 @@ const SkillGrowthChart = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge
-                            className={`text-[9px] px-1.5 py-0 ${growth.style}`}
+                            style={growth.inlineStyle} className="text-[9px] px-1.5 py-0 border-0"
                           >
                             {growth.text}
                           </Badge>
