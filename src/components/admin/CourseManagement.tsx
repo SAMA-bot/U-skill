@@ -157,6 +157,9 @@ export function CourseManagement() {
         duration_hours: course.duration_hours?.toString() || '',
         instructor_name: course.instructor_name || '',
         is_published: course.is_published,
+        is_mandatory: course.is_mandatory || false,
+        department: course.department || '',
+        training_date: course.training_date || '',
       });
     } else {
       resetForm();
