@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
-import { useAcademicYear } from "@/contexts/AcademicYearContext";
 
 type EnrollmentStatus = "enrolled" | "in_progress" | "completed";
 
@@ -22,26 +21,18 @@ export const useCourseEnrollments = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
-  const { selectedYear, getDateRangeForYear } = useAcademicYear();
+  
 
   const fetchEnrollments = useCallback(async () => {
     if (!user) return;
 
-    const dateRange = getDateRangeForYear(selectedYear);
-    const startDate = dateRange?.start.toISOString();
-    const endDate = dateRange?.end.toISOString();
-
     try {
-      let query = supabase
+      // Fetch ALL enrollments (no date filter) so enrollment status checks work correctly
+      const { data, error } = await supabase
         .from("course_enrollments")
         .select("*")
-        .eq("user_id", user.id);
-
-      if (startDate && endDate) {
-        query = query.gte("enrolled_at", startDate).lte("enrolled_at", endDate);
-      }
-
-      const { data, error } = await query.order("enrolled_at", { ascending: false });
+        .eq("user_id", user.id)
+        .order("enrolled_at", { ascending: false });
 
       if (error) throw error;
       setEnrollments((data || []) as CourseEnrollment[]);
@@ -50,7 +41,7 @@ export const useCourseEnrollments = () => {
     } finally {
       setLoading(false);
     }
-  }, [user, selectedYear, getDateRangeForYear]);
+  }, [user]);
 
   useEffect(() => {
     fetchEnrollments();
