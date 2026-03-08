@@ -79,7 +79,7 @@ const PendingApprovals = () => {
       {items.map((item) => (
         <div
           key={item.label}
-          className={`flex flex-col items-center gap-2 p-4 rounded-xl border ${item.bg} ${item.border}`}
+          className={`flex flex-col items-center gap-2 p-4 rounded-xl border ${item.bg} ${item.border} transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg cursor-default`}
         >
           <item.Icon className={`h-5 w-5 ${item.iconColor}`} />
           <span className={`text-3xl font-extrabold ${item.textColor}`}>{item.value}</span>
