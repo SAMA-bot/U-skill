@@ -480,11 +480,22 @@ const AdminDashboard = () => {
                 <div>
                   <h1 className="text-2xl font-bold text-foreground">Capacity Building</h1>
                   <p className="text-muted-foreground">
-                    Manage courses and training programs for faculty development
+                    Manage learning paths, courses, and training programs
                   </p>
                 </div>
               </div>
-              <CourseManagement />
+              <Tabs defaultValue="paths" className="space-y-6">
+                <TabsList>
+                  <TabsTrigger value="paths">Learning Paths</TabsTrigger>
+                  <TabsTrigger value="courses">Legacy Courses</TabsTrigger>
+                </TabsList>
+                <TabsContent value="paths">
+                  <LearningPathManagement />
+                </TabsContent>
+                <TabsContent value="courses">
+                  <CourseManagement />
+                </TabsContent>
+              </Tabs>
             </>
           ) : activeSection === "audit" ? (
             <AuditLogViewer />
