@@ -369,7 +369,12 @@ const HodDashboard = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Department Overview</h1>
+                <h1 className="text-2xl font-bold text-foreground">
+                  {activeTab === "overview" && "Department Overview"}
+                  {activeTab === "documents" && "Document Approvals"}
+                  {activeTab === "performance" && "Faculty Performance Review"}
+                  {activeTab === "feedback" && "Faculty Feedback"}
+                </h1>
                 <p className="text-muted-foreground">
                   {hodDepartment ? `${hodDepartment} Department` : "Loading department..."} · {selectedYear}
                 </p>
