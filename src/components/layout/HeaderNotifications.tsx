@@ -160,7 +160,7 @@ const HeaderNotifications = () => {
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
                   className={`
-                    flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all
+                    flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all
                     ${isActive
                       ? "bg-primary/10 text-primary border border-primary/20"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted border border-transparent"
@@ -169,11 +169,15 @@ const HeaderNotifications = () => {
                 >
                   <tab.icon className="h-3 w-3" />
                   {tab.label}
-                  {count > 0 && (
-                    <span className={`ml-0.5 text-[10px] ${isActive ? "text-primary" : "text-muted-foreground"}`}>
-                      {count}
-                    </span>
-                  )}
+                  <span className={`
+                    inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-semibold
+                    ${isActive
+                      ? "bg-primary/15 text-primary"
+                      : "bg-muted text-muted-foreground"
+                    }
+                  `}>
+                    {count}
+                  </span>
                 </button>
               );
             })}
