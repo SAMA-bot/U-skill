@@ -89,7 +89,10 @@ const PerformanceScoreCard = ({ data, compact = false }: PerformanceScoreCardPro
               Faculty Performance Score
             </h3>
           </div>
-          <Badge style={badgeInlineStyle(data.badge)} className="text-sm border-0">{data.badge}</Badge>
+          <Badge style={badgeInlineStyle(data.badge)} className="text-sm border-0 gap-1">
+            {data.badge === "Needs Improvement" && <AlertTriangle className="h-3.5 w-3.5" />}
+            {data.badge}
+          </Badge>
         </div>
       </div>
 
