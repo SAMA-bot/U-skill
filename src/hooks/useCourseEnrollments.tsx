@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
-import { useAcademicYear } from "@/contexts/AcademicYearContext";
 
 type EnrollmentStatus = "enrolled" | "in_progress" | "completed";
 
