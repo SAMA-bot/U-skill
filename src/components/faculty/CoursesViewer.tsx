@@ -447,17 +447,29 @@ const CoursesViewer = () => {
           {/* Progress indicator for enrolled courses */}
           {enrollment && enrollment.status === "in_progress" && (
             <div className="space-y-1.5">
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span className="font-medium">Progress</span>
-                <span>{enrollment.progress_percentage}%</span>
+              <div className="flex justify-between text-xs">
+                <span className="font-medium text-foreground">Progress</span>
+                <span className="font-semibold text-primary">{enrollment.progress_percentage}%</span>
               </div>
-              <Progress value={enrollment.progress_percentage} className="h-2" />
+              <Progress value={enrollment.progress_percentage} className="h-2.5" showGlow />
+            </div>
+          )}
+          {enrollment && enrollment.status === "completed" && (
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-xs">
+                <span className="font-medium text-success">Completed</span>
+                <span className="font-semibold text-success">100%</span>
+              </div>
+              <Progress value={100} animated={false} className="h-2 [&>div:first-child]:bg-gradient-to-r [&>div:first-child]:from-success [&>div:first-child]:to-success/70" />
             </div>
           )}
           {enrollment && enrollment.status === "enrolled" && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <BookOpen className="h-3.5 w-3.5" />
-              <span>Enrolled — not started</span>
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span className="font-medium flex items-center gap-1"><BookOpen className="h-3 w-3" /> Not started</span>
+                <span>0%</span>
+              </div>
+              <Progress value={0} animated={false} className="h-2" />
             </div>
           )}
 
