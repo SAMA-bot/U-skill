@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeletons";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
