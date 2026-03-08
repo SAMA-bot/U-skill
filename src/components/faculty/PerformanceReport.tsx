@@ -11,6 +11,7 @@ import {
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -49,6 +50,7 @@ const PerformanceReport = ({
 }: PerformanceReportProps) => {
   const [generating, setGenerating] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   const latestMetrics = performanceMetrics[performanceMetrics.length - 1];
 
@@ -98,8 +100,18 @@ const PerformanceReport = ({
 
       const date = new Date().toISOString().split("T")[0];
       pdf.save(`performance-report-${date}.pdf`);
+
+      toast({
+        title: "📄 Report Generated",
+        description: `Performance report saved as performance-report-${date}.pdf`,
+      });
     } catch (error) {
       console.error("Error generating PDF:", error);
+      toast({
+        title: "Report generation failed",
+        description: "Could not generate the PDF. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setGenerating(false);
     }

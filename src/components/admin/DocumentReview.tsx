@@ -185,8 +185,8 @@ export default function DocumentReview() {
       );
 
       toast({
-        title: "Document approved",
-        description: `"${doc.title}" has been verified.`,
+        title: "✅ Document Approved",
+        description: `"${doc.title}" has been verified. The faculty member will be notified.`,
       });
     } catch (error: any) {
       console.error("Error approving document:", error);

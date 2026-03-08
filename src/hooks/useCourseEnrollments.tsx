@@ -194,8 +194,8 @@ export const useCourseEnrollments = () => {
         );
 
         toast({
-          title: "🎉 Course completed!",
-          description: "Congratulations! Your skill points have been updated.",
+          title: "🎉 Training Completed!",
+          description: "Congratulations! Your skill points and capacity score have been updated.",
         });
       }
 

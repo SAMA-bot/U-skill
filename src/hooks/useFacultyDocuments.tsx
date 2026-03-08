@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { getUserFriendlyError } from "@/lib/errorMessages";
+import { useRealtimeData } from "@/hooks/useRealtimeData";
 
 export type DocumentStatus = "pending" | "verified" | "rejected";
 export type DocumentType = "certificate" | "publication" | "qualification" | "training" | "other";
@@ -56,6 +57,26 @@ export const useFacultyDocuments = (allUsers?: boolean) => {
   useEffect(() => {
     fetchDocuments();
   }, [fetchDocuments]);
+
+  // Realtime subscription for document updates (e.g., admin approvals)
+  useRealtimeData({
+    table: "faculty_documents" as any,
+    userId: user?.id,
+    onUpdate: (updated) => {
+      setDocuments((prev) =>
+        prev.map((d) => (d.id === updated.id ? { ...d, ...updated } as FacultyDocument : d))
+      );
+    },
+    onInsert: (inserted) => {
+      setDocuments((prev) => {
+        if (prev.some((d) => d.id === inserted.id)) return prev;
+        return [inserted as unknown as FacultyDocument, ...prev];
+      });
+    },
+    onDelete: (deleted) => {
+      setDocuments((prev) => prev.filter((d) => d.id !== deleted.id));
+    },
+  });
 
   const uploadDocument = async (
     file: File,
