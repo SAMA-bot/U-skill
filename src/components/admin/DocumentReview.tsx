@@ -73,17 +73,17 @@ const statusConfig: Record<
   pending: {
     icon: Clock,
     label: "Pending",
-    className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+    className: "bg-[rgba(245,158,11,0.15)] text-[#f59e0b] border-[rgba(245,158,11,0.4)] dark:bg-[rgba(245,158,11,0.2)] dark:text-[#fbbf24]",
   },
   verified: {
     icon: CheckCircle2,
     label: "Verified",
-    className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+    className: "bg-[rgba(34,197,94,0.15)] text-[#22c55e] border-[rgba(34,197,94,0.4)] dark:bg-[rgba(34,197,94,0.2)] dark:text-[#4ade80]",
   },
   rejected: {
     icon: XCircle,
     label: "Rejected",
-    className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+    className: "bg-[rgba(239,68,68,0.15)] text-[#ef4444] border-[rgba(239,68,68,0.4)] dark:bg-[rgba(239,68,68,0.2)] dark:text-[#f87171]",
   },
 };
 
