@@ -91,7 +91,8 @@ const FacultyDashboard = () => {
     signOut
   } = useAuth();
   const {
-    isAdmin
+    isAdmin,
+    isHod
   } = useUserRole();
   const {
     toast
