@@ -8,6 +8,7 @@
 const ALLOWED_ORIGINS = [
   'https://faculty-spark-boost.lovable.app',
   'https://id-preview--a38a92b7-1e4f-46c5-8f7e-8a0544f61dd7.lovable.app',
+  'https://a38a92b7-1e4f-46c5-8f7e-8a0544f61dd7.lovableproject.com',
   'http://localhost:5173',
   'http://localhost:3000',
   'http://localhost:8080',
