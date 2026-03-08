@@ -516,6 +516,11 @@ const FacultyDashboard = () => {
                   </motion.div>)}
               </div>
 
+              {/* AI Insights */}
+              <div className="mb-8">
+                <AIInsightsPanel />
+              </div>
+
               {/* Performance Score */}
               <div className="mb-8">
                 <PerformanceScoreCard data={performanceScoreData} />
