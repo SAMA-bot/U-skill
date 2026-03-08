@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Shield, Check, X, Info } from "lucide-react";
 import {
@@ -119,16 +119,16 @@ const PermissionCell = ({ allowed }: { allowed: boolean }) => (
   </span>
 );
 
-const getRoleBadgeStyle = (role: string) => {
+const getRoleBadgeStyle = (role: string): React.CSSProperties => {
   switch (role) {
     case "admin":
-      return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+      return { background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.4)" };
     case "hod":
-      return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
+      return { background: "rgba(59,130,246,0.15)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.3)" };
     case "faculty":
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+      return { background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.3)" };
     default:
-      return "bg-muted text-muted-foreground";
+      return { background: "rgba(156,163,175,0.15)", color: "#9ca3af", border: "1px solid rgba(156,163,175,0.3)" };
   }
 };
 
@@ -155,7 +155,7 @@ export default function RoleAccessMatrix() {
                 : "border-border hover:border-primary/50"
             }`}
           >
-            <Badge className={getRoleBadgeStyle(role)}>
+            <Badge style={getRoleBadgeStyle(role)} className="border-0">
               {role === "hod" ? "HOD / Reviewer" : role.charAt(0).toUpperCase() + role.slice(1)}
             </Badge>
             <span className="text-xs text-muted-foreground">
@@ -196,7 +196,7 @@ export default function RoleAccessMatrix() {
                       selectedRole && selectedRole !== role ? "opacity-30" : ""
                     }`}
                   >
-                    <Badge className={getRoleBadgeStyle(role)}>
+                    <Badge style={getRoleBadgeStyle(role)} className="border-0">
                       {role === "hod" ? "HOD / Reviewer" : role.charAt(0).toUpperCase() + role.slice(1)}
                     </Badge>
                   </TableHead>

@@ -272,16 +272,16 @@ export function RoleManagement() {
       .slice(0, 2);
   };
 
-  const getRoleBadgeStyle = (role: AppRole) => {
+  const getRoleBadgeStyle = (role: AppRole): React.CSSProperties => {
     switch (role) {
       case "admin":
-        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+        return { background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.4)" };
       case "hod":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
+        return { background: "rgba(59,130,246,0.15)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.3)" };
       case "faculty":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+        return { background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.3)" };
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400";
+        return { background: "rgba(156,163,175,0.15)", color: "#9ca3af", border: "1px solid rgba(156,163,175,0.3)" };
     }
   };
 
@@ -467,7 +467,7 @@ export function RoleManagement() {
                   {user.department || "Unassigned"}
                 </TableCell>
                 <TableCell>
-                  <Badge className={getRoleBadgeStyle(user.role)}>
+                  <Badge style={getRoleBadgeStyle(user.role)} className="border-0">
                     {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                   </Badge>
                 </TableCell>
