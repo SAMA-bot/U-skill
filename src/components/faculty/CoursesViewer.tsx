@@ -452,71 +452,25 @@ const CoursesViewer = () => {
             <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
           )}
 
-          {/* Skill tags */}
-          {(() => {
-            const difficulty = getDifficultyFromDuration(course.duration_hours);
-            const allTags: { key: string; node: React.ReactNode }[] = [
-              {
-                key: "category",
-                node: (
-                  <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold whitespace-nowrap ${getCategoryColor(course.category)}`}>
-                    <span className="mr-1">{getCategoryIcon(course.category)}</span>
-                    {getCategoryLabel(course.category)}
-                  </span>
-                ),
-              },
-              {
-                key: "difficulty",
-                node: (
-                  <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold whitespace-nowrap ${getDifficultyColor(course.duration_hours)}`}>
-                    {difficulty.label}
-                  </span>
-                ),
-              },
-            ];
-            if (course.duration_hours) {
-              allTags.push({
-                key: "duration",
-                node: (
-                  <span className="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-medium whitespace-nowrap bg-muted text-muted-foreground ring-1 ring-border/60">
-                    <Clock className="h-2.5 w-2.5 mr-1 shrink-0" />
-                    {course.duration_hours}h
-                  </span>
-                ),
-              });
-              allTags.push({
-                key: "points",
-                node: (
-                  <span className="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold whitespace-nowrap bg-primary/8 text-primary ring-1 ring-primary/15">
-                    <Award className="h-2.5 w-2.5 mr-1 shrink-0" />
-                    +{Math.min(course.duration_hours * 5, 25)} pts
-                  </span>
-                ),
-              });
-            }
-            const visible = allTags.slice(0, 2);
-            const hiddenCount = allTags.length - 2;
-            const hiddenLabels = allTags.slice(2).map((t) => {
-              if (t.key === "duration") return `${course.duration_hours}h`;
-              if (t.key === "points") return `+${Math.min((course.duration_hours || 0) * 5, 25)} pts`;
-              return t.key;
-            });
-            return (
-              <div className="flex flex-wrap items-center gap-1.5">
-                {visible.map((t) => (
-                  <span key={t.key}>{t.node}</span>
-                ))}
-                {hiddenCount > 0 && (
-                  <span
-                    className="inline-flex items-center rounded-full px-2 py-1 text-[10px] font-semibold whitespace-nowrap bg-muted text-muted-foreground ring-1 ring-border/60 cursor-default"
-                    title={hiddenLabels.join(", ")}
-                  >
-                    +{hiddenCount}
-                  </span>
-                )}
-              </div>
-            );
-          })()}
+          {/* Tags — category, difficulty, content type */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold whitespace-nowrap ${getCategoryColor(course.category)}`}>
+              <span className="mr-1">{getCategoryIcon(course.category)}</span>
+              {getCategoryLabel(course.category)}
+            </span>
+            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold whitespace-nowrap ${getDifficultyColor(course.duration_hours)}`}>
+              {getDifficultyFromDuration(course.duration_hours).label}
+            </span>
+            <span className="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-medium whitespace-nowrap bg-muted text-muted-foreground ring-1 ring-border/60">
+              {getContentTypeIcon(course.content_type)} {getContentTypeLabel(course.content_type)}
+            </span>
+            {course.duration_hours && (
+              <span className="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-medium whitespace-nowrap bg-muted text-muted-foreground ring-1 ring-border/60">
+                <Clock className="h-2.5 w-2.5 mr-1 shrink-0" />
+                {course.duration_hours}h
+              </span>
+            )}
+          </div>
 
           {course.instructor_name && (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
