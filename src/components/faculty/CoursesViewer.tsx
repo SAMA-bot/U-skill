@@ -715,36 +715,38 @@ const CoursesViewer = () => {
                 </Button>
               )}
 
-              {/* Media buttons */}
-              {detailCourse.course_type === 'video' && detailCourse.video_url && (
+              {/* Access Course - content_type based */}
+              {detailCourse.content_type === 'platform_video' && detailCourse.video_url && (
                 isEmbeddableUrl(detailCourse.video_url) ? (
                   <Button variant="outline" className="w-full" onClick={() => { handlePlayVideo(detailCourse); setDetailCourse(null); }}>
                     <Play className="h-4 w-4 mr-2" />
-                    Watch Video
+                    🎥 Watch Video
                   </Button>
                 ) : (
                   <div className="bg-muted/50 border border-border rounded-lg p-4 space-y-3">
-                    <p className="text-sm text-muted-foreground">This course is hosted externally. Click below to continue learning.</p>
+                    <p className="text-sm text-muted-foreground">This video is hosted externally.</p>
                     <Button variant="outline" className="w-full" onClick={() => window.open(detailCourse.video_url!, '_blank', 'noopener,noreferrer')}>
                       <ExternalLink className="h-4 w-4 mr-2" />
-                      Open Course
+                      Open Video
                     </Button>
                   </div>
                 )
               )}
-              {detailCourse.course_url && !detailCourse.video_url && (
-                <div className="bg-muted/50 border border-border rounded-lg p-4 space-y-3">
-                  <p className="text-sm text-muted-foreground">This course is hosted externally. Click below to continue learning.</p>
+              {detailCourse.content_type === 'external_url' && detailCourse.course_url && (
+                <div className="bg-info/5 border border-info/20 rounded-lg p-4 space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    🔗 This course is hosted externally. Click below to continue learning.
+                  </p>
                   <Button variant="outline" className="w-full" onClick={() => window.open(detailCourse.course_url!, '_blank', 'noopener,noreferrer')}>
                     <ExternalLink className="h-4 w-4 mr-2" />
-                    Open Course
+                    Access Course
                   </Button>
                 </div>
               )}
-              {detailCourse.course_type === 'regular' && detailCourse.document_url && (
+              {detailCourse.content_type === 'pdf_course' && detailCourse.document_url && (
                 <Button variant="outline" className="w-full" onClick={() => { handleViewDocument(detailCourse); setDetailCourse(null); }}>
                   {getDocumentIcon(detailCourse.document_url)}
-                  <span className="ml-2">View Document</span>
+                  <span className="ml-2">📄 Open PDF Viewer</span>
                 </Button>
               )}
             </div>
