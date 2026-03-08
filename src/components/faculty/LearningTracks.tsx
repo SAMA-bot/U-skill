@@ -162,12 +162,15 @@ const TrackRow = ({ track, courses }: { track: TrackDefinition; courses: Course[
     >
       {/* Track Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
-        <div className="flex items-center gap-3">
+        <div
+          className="flex items-center gap-3 cursor-pointer"
+          onClick={() => navigate(`/learning-track/${track.key}`)}
+        >
           <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${track.iconBgClass}`}>
             <Icon className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="font-semibold text-foreground">{track.label}</h3>
+            <h3 className="font-semibold text-foreground hover:text-primary transition-colors">{track.label}</h3>
             <p className="text-xs text-muted-foreground">{courses.length} course{courses.length !== 1 ? "s" : ""}</p>
           </div>
         </div>
