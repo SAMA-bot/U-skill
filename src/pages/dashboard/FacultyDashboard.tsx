@@ -343,6 +343,7 @@ const FacultyDashboard = () => {
   const [metricSheetOpen, setMetricSheetOpen] = useState(false);
   const [selectedMetric, setSelectedMetric] = useState<typeof statsCards[0] | null>(null);
   const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [generatingReport, setGeneratingReport] = useState(false);
 
   const reportData: ReportData = {
     facultyName: profile?.full_name || user?.email || "Faculty Member",
