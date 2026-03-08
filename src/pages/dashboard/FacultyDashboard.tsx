@@ -522,9 +522,10 @@ const FacultyDashboard = () => {
                 <AIInsightsPanel />
               </div>
 
-              {/* Performance Score */}
-              <div className="mb-8">
+              {/* Performance Score & Progress Tracker */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <PerformanceScoreCard data={performanceScoreData} />
+                <FacultyProgressTracker />
               </div>
 
               {/* Areas to Improve & Suggested Trainings */}
