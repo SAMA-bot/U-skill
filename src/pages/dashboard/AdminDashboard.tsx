@@ -57,6 +57,7 @@ import ActionItems from "@/components/admin/ActionItems";
 import DocumentReview from "@/components/admin/DocumentReview";
 import FeedbackAnalytics from "@/components/admin/FeedbackAnalytics";
 import PendingApprovals from "@/components/admin/PendingApprovals";
+import DepartmentManagement from "@/components/admin/DepartmentManagement";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
 interface FacultyMember {
   user_id: string;
