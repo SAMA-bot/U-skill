@@ -256,6 +256,72 @@ export default function DocumentReview() {
     setRejectDialogOpen(true);
   };
 
+  const openCommentDialog = (doc: DocumentWithProfile) => {
+    setSelectedDoc(doc);
+    setAdminComment("");
+    setCommentDialogOpen(true);
+  };
+
+  const handleApproveWithComment = async () => {
+    if (!selectedDoc) return;
+    setProcessing(true);
+    try {
+      const { error } = await supabase
+        .from("faculty_documents" as any)
+        .update({
+          status: "verified",
+          reviewed_by: user?.id,
+          reviewed_at: new Date().toISOString(),
+          rejection_reason: adminComment.trim() || null,
+        } as any)
+        .eq("id", selectedDoc.id);
+
+      if (error) throw error;
+
+      setDocuments((prev) =>
+        prev.map((d) =>
+          d.id === selectedDoc.id
+            ? { ...d, status: "verified", reviewed_at: new Date().toISOString(), rejection_reason: adminComment.trim() || null }
+            : d
+        )
+      );
+
+      toast({
+        title: "Document approved",
+        description: `"${selectedDoc.title}" has been verified${adminComment ? " with comment" : ""}.`,
+      });
+
+      setCommentDialogOpen(false);
+      setSelectedDoc(null);
+      setAdminComment("");
+    } catch (error: any) {
+      console.error("Error approving document:", error);
+      toast({
+        title: "Error",
+        description: getUserFriendlyError(error, "general"),
+        variant: "destructive",
+      });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handlePreview = async (doc: DocumentWithProfile) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from("faculty-documents")
+        .createSignedUrl(doc.document_url.replace(/.*faculty-documents\//, ""), 300);
+
+      if (error) throw error;
+      if (data?.signedUrl) {
+        window.open(data.signedUrl, "_blank");
+      }
+    } catch {
+      // Fallback: try using URL directly
+      window.open(doc.document_url, "_blank");
+    }
+  };
+
   const getInitials = (name: string) =>
     name
       .split(" ")
@@ -271,14 +337,22 @@ export default function DocumentReview() {
       year: "numeric",
     });
 
+  // Get unique departments for filter
+  const departments = [...new Set(documents.map((d) => d.department).filter(Boolean))] as string[];
+  const documentTypes = [...new Set(documents.map((d) => d.document_type))];
+
   const filteredDocuments = documents.filter((doc) => {
     const matchesStatus =
       statusFilter === "all" || doc.status === statusFilter;
+    const matchesDepartment =
+      departmentFilter === "all" || doc.department === departmentFilter;
+    const matchesType =
+      typeFilter === "all" || doc.document_type === typeFilter;
     const matchesSearch =
       doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       doc.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       doc.department?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesStatus && matchesSearch;
+    return matchesStatus && matchesDepartment && matchesType && matchesSearch;
   });
 
   const pendingCount = documents.filter((d) => d.status === "pending").length;
