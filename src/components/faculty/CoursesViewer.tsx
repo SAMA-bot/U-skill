@@ -535,13 +535,11 @@ const CoursesViewer = () => {
 
         <TabsContent value="video" className="mt-6">
           {videoCourses.length === 0 ? (
-            <div className="text-center py-12">
-              <Video className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground">No video courses found</h3>
-              <p className="text-muted-foreground mt-1">
-                Video courses will appear here when available
-              </p>
-            </div>
+            <SmartEmptyState
+              icon={Video}
+              title="No video courses yet"
+              description="Video-based training courses will appear here once they're published by your admin."
+            />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {videoCourses.map((course, index) => renderCourseCard(course, index))}
