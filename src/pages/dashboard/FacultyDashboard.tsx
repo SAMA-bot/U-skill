@@ -571,39 +571,8 @@ const FacultyDashboard = () => {
                   </div>
                 </motion.div>
 
-                {/* Capacity Building */}
-                <motion.div initial={{
-                opacity: 0,
-                y: 20
-              }} animate={{
-                opacity: 1,
-                y: 0
-              }} transition={{
-                delay: 0.5
-              }} whileHover={{ y: -2, transition: { duration: 0.2 } }}
-              className="bg-card shadow-sm rounded-lg overflow-hidden border border-border hover:shadow-lg transition-all duration-300">
-                  <div className="px-4 py-5 sm:px-6 border-b border-border">
-                    <h3 className="text-lg font-medium text-foreground">Capacity Building Progress</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Skills acquired vs skills to develop
-                    </p>
-                  </div>
-                  <div className="px-4 py-5 sm:p-6">
-                    <div className="flex gap-4 mb-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-primary" />
-                        <span className="text-xs text-muted-foreground">Current</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-muted-foreground" style={{
-                        opacity: 0.5
-                      }} />
-                        <span className="text-xs text-muted-foreground">Target</span>
-                      </div>
-                    </div>
-                    <CapacityRadarChart />
-                  </div>
-                </motion.div>
+                {/* Skill Growth */}
+                <SkillGrowthChart />
               </div>
 
               {/* Motivation Trend Chart */}
