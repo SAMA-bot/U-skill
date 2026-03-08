@@ -20,6 +20,7 @@ import DocumentUpload from "@/components/faculty/DocumentUpload";
 import AreasToImprove from "@/components/faculty/AreasToImprove";
 import AIInsightsPanel from "@/components/dashboard/AIInsightsPanel";
 import ActivityLogTimeline from "@/components/faculty/ActivityLogTimeline";
+import FacultyProgressTracker from "@/components/faculty/FacultyProgressTracker";
 import MotivationTools from "@/components/faculty/MotivationTools";
 import MyCalendar from "@/components/faculty/MyCalendar";
 import { useAuth } from "@/hooks/useAuth";
@@ -521,9 +522,10 @@ const FacultyDashboard = () => {
                 <AIInsightsPanel />
               </div>
 
-              {/* Performance Score */}
-              <div className="mb-8">
+              {/* Performance Score & Progress Tracker */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <PerformanceScoreCard data={performanceScoreData} />
+                <FacultyProgressTracker />
               </div>
 
               {/* Areas to Improve & Suggested Trainings */}

@@ -431,6 +431,33 @@ export type Database = {
         }
         Relationships: []
       }
+      performance_goals: {
+        Row: {
+          academic_year: string
+          created_at: string
+          id: string
+          target_score: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          academic_year: string
+          created_at?: string
+          id?: string
+          target_score?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          academic_year?: string
+          created_at?: string
+          id?: string
+          target_score?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       performance_metrics: {
         Row: {
           created_at: string
