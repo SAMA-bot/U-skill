@@ -214,21 +214,26 @@ const HeaderNotifications = () => {
                   transition={{ delay: index * 0.025 }}
                   className={`
                     group flex items-start gap-3 px-4 py-3 border-b border-border/40 cursor-pointer transition-all hover:bg-muted/40
-                    ${notification.read ? "opacity-55" : ""}
+                    ${notification.read ? "opacity-50" : "bg-primary/[0.03]"}
                   `}
                   onClick={() => markAsRead(notification.id)}
                 >
-                  <div className="flex-shrink-0 mt-0.5 p-1.5 rounded-lg bg-muted/60">
+                  <div className={`flex-shrink-0 mt-0.5 p-1.5 rounded-lg ${notification.read ? "bg-muted/40" : "bg-muted/80"}`}>
                     {getIcon(notification.type, notification.severity)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm text-foreground truncate">
-                      {notification.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+                    <div className="flex items-center gap-2">
+                      <p className={`text-sm truncate ${notification.read ? "font-normal text-muted-foreground" : "font-semibold text-foreground"}`}>
+                        {notification.title}
+                      </p>
+                      {!notification.read && (
+                        <span className="flex-shrink-0 w-2 h-2 rounded-full bg-primary" />
+                      )}
+                    </div>
+                    <p className={`text-xs line-clamp-2 mt-0.5 ${notification.read ? "text-muted-foreground/60" : "text-muted-foreground"}`}>
                       {notification.message}
                     </p>
-                    <p className="text-[10px] text-muted-foreground/60 mt-1">
+                    <p className="text-[10px] text-muted-foreground/50 mt-1">
                       {formatTimestamp(notification.timestamp)}
                     </p>
                   </div>
