@@ -92,6 +92,7 @@ const sidebarItems = [
   { icon: Award, label: "Achievements", id: "achievements" },
   { icon: Activity, label: "Audit Logs", id: "audit" },
   { icon: Star, label: "Feedback Analytics", id: "feedback" },
+  { icon: Trophy, label: "Leaderboards", id: "leaderboards" },
 ];
 
 const AdminDashboard = () => {
