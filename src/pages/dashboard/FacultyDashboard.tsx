@@ -197,61 +197,74 @@ const FacultyDashboard = () => {
         }));
       }
 
-      // Fetch performance metrics filtered by academic year
-      // Academic year spans two calendar years: July 2024 - June 2025 for "2024-25"
-      const { data: perfData } = await supabase
+      // Fetch performance metrics for sparkline (last 6 months)
+      const { data: perfTrend } = await supabase
         .from('performance_metrics')
         .select('teaching_score, research_score, service_score')
         .eq('user_id', user.id)
         .or(`year.eq.${academicStartYear},year.eq.${academicStartYear + 1}`)
-        .order('year', { ascending: false })
-        .order('month', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      
-      if (perfData) {
-        const avgPerf = Math.round(((perfData.teaching_score || 0) + (perfData.research_score || 0) + (perfData.service_score || 0)) / 3);
-        setStatsData(prev => ({
+        .order('year', { ascending: true })
+        .order('month', { ascending: true })
+        .limit(6);
+
+      if (perfTrend && perfTrend.length > 0) {
+        const lastPerf = perfTrend[perfTrend.length - 1];
+        const avgPerf = Math.round(((lastPerf.teaching_score || 0) + (lastPerf.research_score || 0) + (lastPerf.service_score || 0)) / 3);
+        setStatsData(prev => ({ ...prev, performanceScore: avgPerf }));
+        setSparkData(prev => ({
           ...prev,
-          performanceScore: avgPerf
+          performance: perfTrend.map(p => Math.round(((p.teaching_score || 0) + (p.research_score || 0) + (p.service_score || 0)) / 3)),
         }));
       } else {
         setStatsData(prev => ({ ...prev, performanceScore: 0 }));
+        setSparkData(prev => ({ ...prev, performance: [] }));
       }
 
-      // Fetch motivation scores filtered by academic year
-      const { data: motivationData } = await supabase
+      // Fetch motivation scores for sparkline (last 6 weeks)
+      const { data: motivationTrend } = await supabase
         .from('motivation_scores')
         .select('motivation_index')
         .eq('user_id', user.id)
         .or(`year.eq.${academicStartYear},year.eq.${academicStartYear + 1}`)
-        .order('year', { ascending: false })
-        .order('week_number', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      
-      if (motivationData) {
-        setStatsData(prev => ({
+        .order('year', { ascending: true })
+        .order('week_number', { ascending: true })
+        .limit(6);
+
+      if (motivationTrend && motivationTrend.length > 0) {
+        const lastMotivation = motivationTrend[motivationTrend.length - 1];
+        setStatsData(prev => ({ ...prev, motivationIndex: lastMotivation.motivation_index || 0 }));
+        setSparkData(prev => ({
           ...prev,
-          motivationIndex: motivationData.motivation_index || 0
+          motivation: motivationTrend.map(m => m.motivation_index || 0),
         }));
       } else {
         setStatsData(prev => ({ ...prev, motivationIndex: 0 }));
+        setSparkData(prev => ({ ...prev, motivation: [] }));
       }
 
       // Calculate training hours from completed activities in academic year
-      let completedQuery = supabase.from('activities').select('id').eq('user_id', user.id).eq('status', 'completed');
+      let completedQuery = supabase.from('activities').select('id, created_at').eq('user_id', user.id).eq('status', 'completed');
       if (startDate && endDate) {
         completedQuery = completedQuery.gte('created_at', startDate).lte('created_at', endDate);
       }
-      const { data: completedActivities } = await completedQuery;
-      if (completedActivities) {
-        setStatsData(prev => ({
-          ...prev,
-          trainingHours: completedActivities.length * 4
-        }));
+      const { data: completedActivities } = await completedQuery.order('created_at', { ascending: true });
+      if (completedActivities && completedActivities.length > 0) {
+        setStatsData(prev => ({ ...prev, trainingHours: completedActivities.length * 4 }));
+        // Build cumulative training hours sparkline
+        const cumulative = completedActivities.reduce<number[]>((acc, _, i) => {
+          acc.push((i + 1) * 4);
+          return acc;
+        }, []);
+        // Take last 6 points
+        setSparkData(prev => ({ ...prev, training: cumulative.slice(-6) }));
       } else {
         setStatsData(prev => ({ ...prev, trainingHours: 0 }));
+        setSparkData(prev => ({ ...prev, training: [] }));
+      }
+
+      // Build capacity sparkline from skills
+      if (skillsData && skillsData.length > 0) {
+        setSparkData(prev => ({ ...prev, capacity: skillsData.map(s => s.current_level || 0) }));
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
