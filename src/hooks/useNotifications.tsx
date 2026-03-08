@@ -113,8 +113,9 @@ const groupSimilarNotifications = (items: Notification[]): Notification[] => {
       goal_at_risk: `${count} Goals At Risk`,
       achievement_earned: `${count} Badges Earned 🏆`,
       performance_change: `${count} Score Changes`,
-      document_approved: `${count} Documents Approved ✅`,
+      document_approved: `${count} Documents Approved`,
       document_rejected: `${count} Documents Rejected`,
+      training_reminder: `${count} Upcoming Trainings`,
     };
 
     result.push({
