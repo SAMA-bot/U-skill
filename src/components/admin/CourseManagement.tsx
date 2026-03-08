@@ -507,6 +507,32 @@ export function CourseManagement() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="department">Assign to Department</Label>
+                    <Input
+                      id="department"
+                      value={formData.department}
+                      onChange={(e) =>
+                        setFormData({ ...formData, department: e.target.value })
+                      }
+                      placeholder="e.g., Computer Science (leave blank for all)"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="training_date">Training Date</Label>
+                    <Input
+                      id="training_date"
+                      type="date"
+                      value={formData.training_date}
+                      onChange={(e) =>
+                        setFormData({ ...formData, training_date: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+
                 {formData.course_type === 'video' && (
                   <div className="space-y-2">
                     <Label htmlFor="video_file">Video File *</Label>
