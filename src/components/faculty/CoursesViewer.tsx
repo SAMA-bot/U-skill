@@ -406,7 +406,7 @@ const CoursesViewer = () => {
         {/* Subtle top-edge gradient glow */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
-        {/* Thumbnail */}
+        {/* Thumbnail — clean, visual only + status badge */}
         <div className="aspect-video bg-muted/50 relative">
           {course.thumbnail_url ? (
             <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" />
@@ -415,22 +415,27 @@ const CoursesViewer = () => {
               <span className="text-4xl">{getContentTypeIcon(course.content_type)}</span>
             </div>
           )}
-          <div className="absolute top-2 left-2 flex gap-2">
-            <Badge className={`backdrop-blur-sm ${getCategoryColor(course.category)}`}>
-              {getCategoryLabel(course.category)}
-            </Badge>
-            <Badge variant="secondary" className="backdrop-blur-sm border-0 bg-card/70 text-foreground text-[10px]">
-              {getContentTypeIcon(course.content_type)} {getContentTypeLabel(course.content_type)}
-            </Badge>
-          </div>
-          {completed && (
-            <div className="absolute top-2 right-2">
+          {/* Status badges only — top-right */}
+          <div className="absolute top-2 right-2 flex gap-1.5">
+            {completed && (
               <Badge className="bg-success/90 text-success-foreground backdrop-blur-sm border-0 shadow-sm">
                 <CheckCircle2 className="h-3 w-3 mr-1" />
                 Completed
               </Badge>
-            </div>
-          )}
+            )}
+            {enrollment?.status === "in_progress" && !completed && (
+              <Badge className="bg-primary/90 text-primary-foreground backdrop-blur-sm border-0 shadow-sm">
+                <PlayCircle className="h-3 w-3 mr-1" />
+                In Progress
+              </Badge>
+            )}
+            {enrollment?.status === "enrolled" && (
+              <Badge variant="secondary" className="backdrop-blur-sm border-0 bg-card/80 text-foreground shadow-sm">
+                <BookOpen className="h-3 w-3 mr-1" />
+                Enrolled
+              </Badge>
+            )}
+          </div>
           {/* Hover overlay */}
           <div className="absolute inset-0 bg-foreground/5 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
             <div className="bg-card/80 backdrop-blur-md rounded-full px-4 py-2 text-sm font-medium text-foreground shadow-lg border border-border/30 flex items-center gap-1.5">
