@@ -1,47 +1,32 @@
 import { useState, useEffect, useCallback } from "react";
-import LearningTracks from "@/components/faculty/LearningTracks";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Search, 
-  Clock, 
-  User, 
+import { motion } from "framer-motion";
+import {
+  Clock,
+  User,
   Download,
   BookOpen,
-  Filter,
   Video,
   FileText,
   Play,
   CheckCircle2,
-  PlayCircle,
   Award,
-  TrendingUp,
   FileIcon,
-  X,
   Loader2,
-  GraduationCap,
-  ArrowRight,
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
-  SkipBack,
-  SkipForward,
+  Star,
+  Flame,
+  Trophy,
+  Zap,
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
 import { Progress } from "@/components/ui/progress";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
@@ -50,33 +35,22 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
 import { useCourseEnrollments } from "@/hooks/useCourseEnrollments";
 import { getVideoSignedUrl, getDocumentSignedUrl } from "@/lib/storageUtils";
-import { getDifficultyFromDuration } from "@/components/faculty/LearningTracks";
+import { TRACKS, getDifficultyFromDuration } from "@/components/faculty/LearningTracks";
+import LearningPathCard from "@/components/faculty/LearningPathCard";
+import type { NodeState } from "@/components/faculty/LearningPathNode";
 import { ExternalLink } from "lucide-react";
 
 // Domains known to block iframe embedding
 const BLOCKED_EMBED_DOMAINS = [
-  "udemy.com",
-  "coursera.org",
-  "edx.org",
-  "linkedin.com",
-  "skillshare.com",
-  "pluralsight.com",
-  "udacity.com",
-  "codecademy.com",
-  "khanacademy.org",
-  "masterclass.com",
+  "udemy.com", "coursera.org", "edx.org", "linkedin.com",
+  "skillshare.com", "pluralsight.com", "udacity.com",
+  "codecademy.com", "khanacademy.org", "masterclass.com",
 ];
 
 const isEmbeddableUrl = (url: string | null): boolean => {
@@ -84,22 +58,11 @@ const isEmbeddableUrl = (url: string | null): boolean => {
   try {
     const parsed = new URL(url);
     const hostname = parsed.hostname.toLowerCase();
-    // Supabase storage URLs are platform-hosted — always embeddable via signed URL
-    if (hostname.includes("supabase.co") || parsed.pathname.includes("/storage/v1/")) {
-      return true;
-    }
-    // YouTube embed links are safe
-    if (hostname.includes("youtube.com") || hostname.includes("youtu.be") || hostname.includes("youtube-nocookie.com")) {
-      return true;
-    }
-    // Check against blocked domains
-    if (BLOCKED_EMBED_DOMAINS.some((d) => hostname.includes(d))) {
-      return false;
-    }
-    // Default: assume external URLs are not embeddable
+    if (hostname.includes("supabase.co") || parsed.pathname.includes("/storage/v1/")) return true;
+    if (hostname.includes("youtube.com") || hostname.includes("youtu.be") || hostname.includes("youtube-nocookie.com")) return true;
+    if (BLOCKED_EMBED_DOMAINS.some((d) => hostname.includes(d))) return false;
     return false;
   } catch {
-    // Not a valid URL (likely a storage path) — embeddable via signed URL
     return true;
   }
 };
@@ -116,16 +79,11 @@ const getYouTubeEmbedUrl = (url: string): string | null => {
       const videoId = parsed.pathname.slice(1);
       return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : null;
     }
-    if (hostname.includes("youtube.com") && parsed.pathname.startsWith("/embed/")) {
-      return url;
-    }
+    if (hostname.includes("youtube.com") && parsed.pathname.startsWith("/embed/")) return url;
     return null;
-  } catch {
-    return null;
-  }
+  } catch { return null; }
 };
 
-// Course interface without sensitive created_by field (using public view)
 interface Course {
   id: string;
   title: string;
@@ -142,30 +100,9 @@ interface Course {
   is_published: boolean;
 }
 
-const getContentTypeIcon = (contentType: string) => {
-  switch (contentType) {
-    case 'platform_video': return '🎥';
-    case 'external_url': return '🔗';
-    case 'pdf_course': return '📄';
-    default: return '📖';
-  }
-};
-
-const getContentTypeLabel = (contentType: string) => {
-  switch (contentType) {
-    case 'platform_video': return 'Platform Video';
-    case 'external_url': return 'External Link';
-    case 'pdf_course': return 'PDF Course';
-    default: return 'Course';
-  }
-};
-
 const CoursesViewer = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const [typeFilter, setTypeFilter] = useState<string>("all");
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [documentModalOpen, setDocumentModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
@@ -175,54 +112,33 @@ const CoursesViewer = () => {
   const [detailCourse, setDetailCourse] = useState<Course | null>(null);
   const [enrollingId, setEnrollingId] = useState<string | null>(null);
   const { toast } = useToast();
-  const { 
+  const {
     enrollments,
-    enrollInCourse, 
-    startCourse, 
-    completeCourse, 
-    getEnrollment, 
-    isEnrolled, 
+    enrollInCourse,
+    startCourse,
+    completeCourse,
+    getEnrollment,
+    isEnrolled,
     isCompleted,
     getCompletedCount,
-    getInProgressCount
+    getInProgressCount,
   } = useCourseEnrollments();
 
-  const categories = [
-    { value: "all", label: "All Categories" },
-    { value: "teaching", label: "Teaching & Pedagogy" },
-    { value: "research", label: "Research & Publications" },
-    { value: "technology", label: "Technology & Digital Skills" },
-    { value: "leadership", label: "Leadership & Management" },
-    { value: "communication", label: "Communication Skills" },
-    { value: "general", label: "General Development" },
-  ];
+  useEffect(() => { fetchCourses(); }, []);
 
-  // Initial fetch
-  useEffect(() => {
-    fetchCourses();
-  }, []);
-
-  // Realtime subscription for courses
   useRealtimeData({
     table: "courses",
     onInsert: (newCourse) => {
       if (newCourse.is_published) {
         setCourses((prev) => [newCourse, ...prev]);
-        toast({
-          title: "New course available!",
-          description: `"${newCourse.title}" has been added.`,
-        });
+        toast({ title: "New course available!", description: `"${newCourse.title}" has been added.` });
       }
     },
     onUpdate: (updatedCourse) => {
       setCourses((prev) => {
-        if (!updatedCourse.is_published) {
-          return prev.filter((c) => c.id !== updatedCourse.id);
-        }
+        if (!updatedCourse.is_published) return prev.filter((c) => c.id !== updatedCourse.id);
         const exists = prev.find((c) => c.id === updatedCourse.id);
-        if (exists) {
-          return prev.map((c) => (c.id === updatedCourse.id ? updatedCourse : c));
-        }
+        if (exists) return prev.map((c) => (c.id === updatedCourse.id ? updatedCourse : c));
         return [updatedCourse, ...prev];
       });
     },
@@ -236,57 +152,23 @@ const CoursesViewer = () => {
       const { data, error } = await supabase
         .from("courses_public" as any)
         .select("*")
-        .order("created_at", { ascending: false });
-
+        .order("created_at", { ascending: true });
       if (error) throw error;
       setCourses((data || []) as unknown as Course[]);
     } catch (error: any) {
-      toast({
-        title: "Error loading courses",
-        description: error.message,
-        variant: "destructive",
-      });
+      toast({ title: "Error loading courses", description: error.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
-
-  // Filter by search and type only (used for category tab counts)
-  const filteredByTypeAndSearch = courses.filter((course) => {
-    const matchesSearch =
-      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.instructor_name?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = typeFilter === "all" || course.content_type === typeFilter;
-    return matchesSearch && matchesType;
-  });
-
-  // Full filter including category
-  const filteredCourses = filteredByTypeAndSearch.filter((course) => {
-    return categoryFilter === "all" || course.category === categoryFilter;
-  });
-
-  const videoCourses = filteredCourses.filter(c => c.content_type === 'platform_video');
-  const regularCourses = filteredCourses.filter(c => c.content_type === 'pdf_course');
-  const externalCourses = filteredCourses.filter(c => c.content_type === 'external_url');
-
-  // My Learning: courses the user is enrolled in
-  const myLearningCourses = courses.filter((c) => isEnrolled(c.id));
 
   const handlePlayVideo = async (course: Course) => {
     if (!course.video_url) return;
     setSelectedCourse(course);
     setLoadingMedia(true);
     setVideoModalOpen(true);
-
-    // Check if it's a YouTube URL — use embed URL directly
     const ytEmbed = getYouTubeEmbedUrl(course.video_url);
-    if (ytEmbed) {
-      setSignedVideoUrl(ytEmbed);
-      setLoadingMedia(false);
-      return;
-    }
-
+    if (ytEmbed) { setSignedVideoUrl(ytEmbed); setLoadingMedia(false); return; }
     const signedUrl = await getVideoSignedUrl(course.video_url);
     setSignedVideoUrl(signedUrl);
     setLoadingMedia(false);
@@ -294,12 +176,8 @@ const CoursesViewer = () => {
 
   const isYouTubeUrl = (url: string | null): boolean => {
     if (!url) return false;
-    try {
-      const hostname = new URL(url).hostname.toLowerCase();
-      return hostname.includes("youtube") || hostname.includes("youtu.be");
-    } catch {
-      return false;
-    }
+    try { const h = new URL(url).hostname.toLowerCase(); return h.includes("youtube") || h.includes("youtu.be"); }
+    catch { return false; }
   };
 
   const handleViewDocument = async (course: Course) => {
@@ -324,683 +202,212 @@ const CoursesViewer = () => {
 
   const handleEnrollWithLoading = async (courseId: string) => {
     setEnrollingId(courseId);
-    try {
-      await enrollInCourse(courseId);
-    } finally {
-      setEnrollingId(null);
-    }
+    try { await enrollInCourse(courseId); } finally { setEnrollingId(null); }
   };
 
   const getDocumentType = (url: string) => {
-    const extension = url.split('.').pop()?.toLowerCase();
-    if (extension === 'pdf') return 'pdf';
-    if (['doc', 'docx'].includes(extension || '')) return 'word';
-    if (['txt', 'rtf'].includes(extension || '')) return 'text';
+    const ext = url.split('.').pop()?.toLowerCase();
+    if (ext === 'pdf') return 'pdf';
+    if (['doc', 'docx'].includes(ext || '')) return 'word';
     return 'unknown';
   };
 
   const getDocumentIcon = (url: string) => {
     const type = getDocumentType(url);
-    switch (type) {
-      case 'pdf': return <FileIcon className="h-4 w-4 text-destructive" />;
-      case 'word': return <FileIcon className="h-4 w-4 text-info" />;
-      default: return <FileText className="h-4 w-4" />;
+    if (type === 'pdf') return <FileIcon className="h-4 w-4 text-destructive" />;
+    return <FileText className="h-4 w-4" />;
+  };
+
+  // Handle lesson node click from roadmap
+  const handleLessonClick = async (course: Course, state: NodeState) => {
+    if (state === "locked") return;
+
+    // If not enrolled, enroll + start
+    const enrollment = getEnrollment(course.id);
+    if (!enrollment) {
+      await enrollInCourse(course.id);
+      await startCourse(course.id);
+    } else if (enrollment.status === "enrolled") {
+      await startCourse(course.id);
+    }
+
+    // Open content
+    if (course.content_type === "platform_video" && course.video_url) {
+      if (isEmbeddableUrl(course.video_url)) {
+        handlePlayVideo(course);
+      } else {
+        window.open(course.video_url, '_blank', 'noopener,noreferrer');
+      }
+    } else if (course.content_type === "pdf_course" && course.document_url) {
+      handleViewDocument(course);
+    } else if (course.content_type === "external_url" && course.course_url) {
+      window.open(course.course_url, '_blank', 'noopener,noreferrer');
+    } else {
+      // Show detail sheet as fallback
+      setDetailCourse(course);
     }
   };
 
-  const getCategoryLabel = (value: string) => {
-    return categories.find((c) => c.value === value)?.label || value;
-  };
+  // Stats
+  const totalXp = courses.reduce((sum, c) => sum + Math.min((c.duration_hours || 2) * 5, 25), 0);
+  const earnedXp = courses.reduce((sum, c) => {
+    if (isCompleted(c.id)) return sum + Math.min((c.duration_hours || 2) * 5, 25);
+    return sum;
+  }, 0);
 
-  const getCategoryColor = (category: string) => {
-    const colors: Record<string, string> = {
-      teaching: "bg-primary/12 text-primary ring-1 ring-primary/20",
-      research: "bg-info/12 text-info ring-1 ring-info/20",
-      technology: "bg-success/12 text-success ring-1 ring-success/20",
-      leadership: "bg-accent/12 text-accent ring-1 ring-accent/20",
-      communication: "bg-destructive/12 text-destructive ring-1 ring-destructive/20",
-      general: "bg-muted text-muted-foreground ring-1 ring-border",
-      "professional-development": "bg-primary/12 text-primary ring-1 ring-primary/20",
-    };
-    return colors[category] || colors.general;
-  };
-
-  const getCategoryIcon = (category: string) => {
-    const icons: Record<string, string> = {
-      teaching: "📚",
-      research: "🔬",
-      technology: "💻",
-      leadership: "🎯",
-      communication: "💬",
-      general: "📖",
-      "professional-development": "🚀",
-    };
-    return icons[category] || "📖";
-  };
-
-  const getDifficultyColor = (hours: number | null) => {
-    if (!hours || hours <= 2) return "bg-success/10 text-success ring-1 ring-success/20";
-    if (hours <= 5) return "bg-accent/10 text-accent-foreground ring-1 ring-accent/20";
-    return "bg-destructive/10 text-destructive ring-1 ring-destructive/20";
-  };
+  const tracksWithCourses = TRACKS.map((track) => ({
+    track,
+    courses: courses.filter((c) => track.categories.includes(c.category)),
+  })).filter((t) => t.courses.length > 0);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
-  const renderCourseCard = (course: Course, index: number) => {
-    const enrollment = getEnrollment(course.id);
-    const enrolled = isEnrolled(course.id);
-    const completed = isCompleted(course.id);
-    const isEnrolling = enrollingId === course.id;
-
-    return (
-      <motion.div
-        key={course.id}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        whileHover={{ y: -6, scale: 1.02, transition: { type: "spring", stiffness: 300, damping: 20 } }}
-        transition={{ delay: index * 0.05 }}
-        className={`relative overflow-hidden rounded-xl cursor-pointer group transition-colors duration-300 ${
-          completed
-            ? "border border-success/30 bg-card/60 backdrop-blur-md shadow-[0_4px_24px_-6px_hsl(var(--success)/0.15)] hover:shadow-[0_16px_40px_-8px_hsl(var(--success)/0.25)] hover:border-success/50"
-            : "border border-border/40 bg-card/50 backdrop-blur-md shadow-[0_4px_24px_-6px_hsl(var(--foreground)/0.06)] hover:shadow-[0_16px_40px_-8px_hsl(var(--accent)/0.22)] hover:border-accent/40 hover:bg-card/70"
-        }`}
-        onClick={() => setDetailCourse(course)}
-      >
-        {/* Subtle top-edge gradient glow */}
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-
-        {/* Thumbnail — clean, visual only + status badge */}
-        <div className="aspect-video bg-muted/50 relative">
-          {course.thumbnail_url ? (
-            <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted/60 to-muted/30">
-              <span className="text-4xl">{getContentTypeIcon(course.content_type)}</span>
-            </div>
-          )}
-          {/* Status badges only — top-right */}
-          <div className="absolute top-2 right-2 flex gap-1.5">
-            {completed && (
-              <Badge className="bg-success/90 text-success-foreground backdrop-blur-sm border-0 shadow-sm">
-                <CheckCircle2 className="h-3 w-3 mr-1" />
-                Completed
-              </Badge>
-            )}
-            {enrollment?.status === "in_progress" && !completed && (
-              <Badge className="bg-primary/90 text-primary-foreground backdrop-blur-sm border-0 shadow-sm">
-                <PlayCircle className="h-3 w-3 mr-1" />
-                In Progress
-              </Badge>
-            )}
-            {enrollment?.status === "enrolled" && (
-              <Badge variant="secondary" className="backdrop-blur-sm border-0 bg-card/80 text-foreground shadow-sm">
-                <BookOpen className="h-3 w-3 mr-1" />
-                Enrolled
-              </Badge>
-            )}
-          </div>
-          {/* Hover overlay */}
-          <div className="absolute inset-0 bg-foreground/5 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-            <div className="bg-card/80 backdrop-blur-md rounded-full px-4 py-2 text-sm font-medium text-foreground shadow-lg border border-border/30 flex items-center gap-1.5">
-              View Details <ArrowRight className="h-3.5 w-3.5" />
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-4 space-y-3">
-          <h3 className="font-semibold text-foreground line-clamp-2">{course.title}</h3>
-          
-          {course.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
-          )}
-
-          {/* Tags — category, difficulty, content type */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold whitespace-nowrap ${getCategoryColor(course.category)}`}>
-              <span className="mr-1">{getCategoryIcon(course.category)}</span>
-              {getCategoryLabel(course.category)}
-            </span>
-            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold whitespace-nowrap ${getDifficultyColor(course.duration_hours)}`}>
-              {getDifficultyFromDuration(course.duration_hours).label}
-            </span>
-            <span className="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-medium whitespace-nowrap bg-muted text-muted-foreground ring-1 ring-border/60">
-              {getContentTypeIcon(course.content_type)} {getContentTypeLabel(course.content_type)}
-            </span>
-            {course.duration_hours && (
-              <span className="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-medium whitespace-nowrap bg-muted text-muted-foreground ring-1 ring-border/60">
-                <Clock className="h-2.5 w-2.5 mr-1 shrink-0" />
-                {course.duration_hours}h
-              </span>
-            )}
-          </div>
-
-          {course.instructor_name && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <User className="h-3.5 w-3.5" />
-              <span>{course.instructor_name}</span>
-            </div>
-          )}
-
-          {/* Progress indicator for enrolled courses */}
-          {enrollment && enrollment.status === "in_progress" && (
-            <div className="space-y-1.5">
-              <div className="flex justify-between text-xs">
-                <span className="font-medium text-foreground">Progress</span>
-                <span className="font-semibold text-primary">{enrollment.progress_percentage}%</span>
-              </div>
-              <Progress value={enrollment.progress_percentage} className="h-2.5" showGlow />
-            </div>
-          )}
-          {enrollment && enrollment.status === "completed" && (
-            <div className="space-y-1.5">
-              <div className="flex justify-between text-xs">
-                <span className="font-medium text-success">Completed</span>
-                <span className="font-semibold text-success">100%</span>
-              </div>
-              <Progress value={100} animated={false} className="h-2 [&>div:first-child]:bg-gradient-to-r [&>div:first-child]:from-success [&>div:first-child]:to-success/70" />
-            </div>
-          )}
-          {enrollment && enrollment.status === "enrolled" && (
-            <div className="space-y-1.5">
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span className="font-medium flex items-center gap-1"><BookOpen className="h-3 w-3" /> Not started</span>
-                <span>0%</span>
-              </div>
-              <Progress value={0} animated={false} className="h-2" />
-            </div>
-          )}
-
-          {/* Action buttons */}
-          <div className="space-y-2 pt-1">
-            {completed ? (
-              <Button variant="outline" className="w-full" disabled>
-                <CheckCircle2 className="h-4 w-4 mr-2 text-success" />
-                Completed
-              </Button>
-            ) : enrollment?.status === "in_progress" ? (
-              <Button variant="default" className="w-full" onClick={(e) => { e.stopPropagation(); completeCourse(course.id); }}>
-                <CheckCircle2 className="h-4 w-4 mr-2" />
-                Mark as Complete
-              </Button>
-            ) : enrolled ? (
-              <Button variant="default" className="w-full" onClick={(e) => { e.stopPropagation(); startCourse(course.id); }}>
-                <PlayCircle className="h-4 w-4 mr-2" />
-                Continue Learning
-              </Button>
-            ) : (
-              <Button
-                variant="default"
-                className="w-full"
-                disabled={isEnrolling}
-                onClick={(e) => { e.stopPropagation(); handleEnrollWithLoading(course.id); }}
-              >
-                {isEnrolling ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                ) : (
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                )}
-                {isEnrolling ? "Enrolling..." : "Enroll Now"}
-              </Button>
-            )}
-          </div>
-        </div>
-      </motion.div>
-    );
-  };
-
-  // Course Detail Sheet
-  const renderDetailSheet = () => {
-    if (!detailCourse) return null;
-    const enrollment = getEnrollment(detailCourse.id);
-    const enrolled = isEnrolled(detailCourse.id);
-    const completed = isCompleted(detailCourse.id);
-    const difficulty = getDifficultyFromDuration(detailCourse.duration_hours);
-    const isEnrolling = enrollingId === detailCourse.id;
-
-    return (
-      <Sheet open={!!detailCourse} onOpenChange={(open) => { if (!open) setDetailCourse(null); }}>
-        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
-          <SheetHeader className="text-left">
-            <SheetTitle className="text-xl leading-snug pr-6">{detailCourse.title}</SheetTitle>
-          </SheetHeader>
-
-          <div className="mt-4 space-y-5">
-            {/* Thumbnail */}
-            <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
-              {detailCourse.thumbnail_url ? (
-                <img src={detailCourse.thumbnail_url} alt={detailCourse.title} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-5xl">{getContentTypeIcon(detailCourse.content_type)}</span>
-                </div>
-              )}
-              {completed && (
-                <div className="absolute top-3 right-3">
-                  <Badge className="bg-success text-success-foreground"><CheckCircle2 className="h-3 w-3 mr-1" />Completed</Badge>
-                </div>
-              )}
-            </div>
-
-            {/* Badges */}
-            <div className="flex flex-wrap gap-2">
-              <Badge className={getCategoryColor(detailCourse.category)}>
-                {getCategoryLabel(detailCourse.category)}
-              </Badge>
-              <Badge variant="outline" className={difficulty.color}>
-                {difficulty.label}
-              </Badge>
-              <Badge variant="secondary" className="bg-muted text-foreground">
-                {getContentTypeIcon(detailCourse.content_type)} {getContentTypeLabel(detailCourse.content_type)}
-              </Badge>
-            </div>
-
-            {/* Description */}
-            {detailCourse.description && (
-              <p className="text-sm text-muted-foreground leading-relaxed">{detailCourse.description}</p>
-            )}
-
-            <Separator />
-
-            {/* Details grid */}
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              {detailCourse.instructor_name && (
-                <div>
-                  <p className="text-muted-foreground text-xs mb-0.5">Instructor</p>
-                  <p className="font-medium text-foreground flex items-center gap-1.5"><User className="h-3.5 w-3.5" />{detailCourse.instructor_name}</p>
-                </div>
-              )}
-              {detailCourse.duration_hours && (
-                <div>
-                  <p className="text-muted-foreground text-xs mb-0.5">Duration</p>
-                  <p className="font-medium text-foreground flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" />{detailCourse.duration_hours} hours</p>
-                </div>
-              )}
-              {detailCourse.duration_hours && (
-                <div>
-                  <p className="text-muted-foreground text-xs mb-0.5">Skill Points</p>
-                  <p className="font-medium text-primary flex items-center gap-1.5"><Award className="h-3.5 w-3.5" />+{Math.min(detailCourse.duration_hours * 5, 25)} pts</p>
-                </div>
-              )}
-              <div>
-                <p className="text-muted-foreground text-xs mb-0.5">Content Type</p>
-                <p className="font-medium text-foreground">{getContentTypeIcon(detailCourse.content_type)} {getContentTypeLabel(detailCourse.content_type)}</p>
-              </div>
-            </div>
-
-            {/* Progress */}
-            {enrollment?.status === "in_progress" && (
-              <>
-                <Separator />
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Your Progress</span>
-                    <span className="font-medium text-foreground">{enrollment.progress_percentage}%</span>
-                  </div>
-                  <Progress value={enrollment.progress_percentage} className="h-2.5" />
-                </div>
-              </>
-            )}
-
-            <Separator />
-
-            {/* Actions */}
-            <div className="space-y-3">
-              {completed ? (
-                <Button variant="outline" className="w-full" disabled>
-                  <CheckCircle2 className="h-4 w-4 mr-2 text-success" />
-                  Course Completed
-                </Button>
-              ) : enrollment?.status === "in_progress" ? (
-                <Button className="w-full" onClick={() => { completeCourse(detailCourse.id); setDetailCourse(null); }}>
-                  <CheckCircle2 className="h-4 w-4 mr-2" />
-                  Mark as Complete
-                </Button>
-              ) : enrolled ? (
-                <Button className="w-full" onClick={() => { startCourse(detailCourse.id); setDetailCourse(null); }}>
-                  <PlayCircle className="h-4 w-4 mr-2" />
-                  Continue Learning
-                </Button>
-              ) : (
-                <Button
-                  className="w-full"
-                  disabled={isEnrolling}
-                  onClick={async () => {
-                    await handleEnrollWithLoading(detailCourse.id);
-                  }}
-                >
-                  {isEnrolling ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <TrendingUp className="h-4 w-4 mr-2" />
-                  )}
-                  {isEnrolling ? "Enrolling..." : "Enroll in this Course"}
-                </Button>
-              )}
-
-              {/* Access Course - content_type based */}
-              {detailCourse.content_type === 'platform_video' && detailCourse.video_url && (
-                isEmbeddableUrl(detailCourse.video_url) ? (
-                  <Button variant="outline" className="w-full" onClick={() => { handlePlayVideo(detailCourse); setDetailCourse(null); }}>
-                    <Play className="h-4 w-4 mr-2" />
-                    🎥 Watch Video
-                  </Button>
-                ) : (
-                  <div className="bg-muted/50 border border-border rounded-lg p-4 space-y-3">
-                    <p className="text-sm text-muted-foreground">This video is hosted externally.</p>
-                    <Button variant="outline" className="w-full" onClick={() => window.open(detailCourse.video_url!, '_blank', 'noopener,noreferrer')}>
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Open Video
-                    </Button>
-                  </div>
-                )
-              )}
-              {detailCourse.content_type === 'external_url' && detailCourse.course_url && (
-                <div className="bg-info/5 border border-info/20 rounded-lg p-4 space-y-3">
-                  <p className="text-sm text-muted-foreground">
-                    🔗 This course is hosted externally. Click below to continue learning.
-                  </p>
-                  <Button variant="outline" className="w-full" onClick={() => window.open(detailCourse.course_url!, '_blank', 'noopener,noreferrer')}>
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Access Course
-                  </Button>
-                </div>
-              )}
-              {detailCourse.content_type === 'pdf_course' && detailCourse.document_url && (
-                <Button variant="outline" className="w-full" onClick={() => { handleViewDocument(detailCourse); setDetailCourse(null); }}>
-                  {getDocumentIcon(detailCourse.document_url)}
-                  <span className="ml-2">📄 Open PDF Viewer</span>
-                </Button>
-              )}
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-    );
-  };
-
   return (
     <div className="space-y-6">
-      {/* Header with Stats */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Capacity Building Courses</h2>
-          <p className="text-muted-foreground mt-1">
-            Browse and complete courses to earn skill points
-          </p>
+      {/* Gamified Header */}
+      <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-md p-5 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <Zap className="h-6 w-6 text-primary" />
+              Learning Paths
+            </h2>
+            <p className="text-muted-foreground mt-1 text-sm">
+              Complete lessons in order to unlock the next. Earn XP as you go!
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
+              <div className="flex items-center justify-center gap-1">
+                <Star className="h-4 w-4 text-primary" />
+                <span className="text-xl font-bold text-primary">{earnedXp}</span>
+              </div>
+              <div className="text-[10px] text-muted-foreground font-medium">XP Earned</div>
+            </div>
+            <div className="bg-success/10 border border-success/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
+              <div className="flex items-center justify-center gap-1">
+                <Trophy className="h-4 w-4 text-success" />
+                <span className="text-xl font-bold text-success">{getCompletedCount()}</span>
+              </div>
+              <div className="text-[10px] text-muted-foreground font-medium">Completed</div>
+            </div>
+            <div className="bg-accent/10 border border-accent/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
+              <div className="flex items-center justify-center gap-1">
+                <Flame className="h-4 w-4 text-destructive" />
+                <span className="text-xl font-bold text-accent-foreground">{getInProgressCount()}</span>
+              </div>
+              <div className="text-[10px] text-muted-foreground font-medium">In Progress</div>
+            </div>
+          </div>
         </div>
-        <div className="flex gap-4">
-          <div className="bg-primary/10 rounded-lg px-4 py-2 text-center">
-            <div className="text-2xl font-bold text-primary">{getCompletedCount()}</div>
-            <div className="text-xs text-muted-foreground">Completed</div>
+
+        {/* Overall XP bar */}
+        <div className="mt-4">
+          <div className="flex justify-between text-xs mb-1.5">
+            <span className="text-muted-foreground">Total Progress</span>
+            <span className="font-semibold text-primary">{earnedXp} / {totalXp} XP</span>
           </div>
-          <div className="bg-accent/10 rounded-lg px-4 py-2 text-center">
-            <div className="text-2xl font-bold text-accent-foreground">{getInProgressCount()}</div>
-            <div className="text-xs text-muted-foreground">In Progress</div>
-          </div>
-          <div className="bg-secondary rounded-lg px-4 py-2 text-center">
-            <div className="text-2xl font-bold text-secondary-foreground">{myLearningCourses.length}</div>
-            <div className="text-xs text-muted-foreground">Enrolled</div>
-          </div>
+          <Progress value={totalXp > 0 ? (earnedXp / totalXp) * 100 : 0} className="h-3" showGlow />
         </div>
       </div>
 
-      {/* Search + Type filter */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search courses..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-full sm:w-[180px]">
-            <SelectValue placeholder="Type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="platform_video">🎥 Platform Video</SelectItem>
-            <SelectItem value="external_url">🔗 External URL</SelectItem>
-            <SelectItem value="pdf_course">📄 PDF Course</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Category tabs */}
-      <div className="flex flex-wrap gap-2">
-        {categories.map((cat) => {
-          const count = cat.value === "all"
-            ? filteredByTypeAndSearch.length
-            : filteredByTypeAndSearch.filter((c) => c.category === cat.value).length;
-          return (
-            <Button
-              key={cat.value}
-              variant={categoryFilter === cat.value ? "default" : "outline"}
-              size="sm"
-              className="rounded-full text-xs"
-              onClick={() => setCategoryFilter(cat.value)}
+      {/* Learning Path Roadmaps */}
+      {tracksWithCourses.length === 0 ? (
+        <SmartEmptyState
+          icon={BookOpen}
+          title="No learning paths available"
+          description="Courses will be organized into learning paths once your admin publishes training programs."
+        />
+      ) : (
+        <div className="space-y-4">
+          {tracksWithCourses.map(({ track, courses: trackCourses }, i) => (
+            <motion.div
+              key={track.key}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08 }}
             >
-              {cat.label}
-              <Badge variant="secondary" className="ml-1.5 h-5 min-w-[20px] px-1.5 text-[10px] rounded-full">
-                {count}
-              </Badge>
-            </Button>
-          );
-        })}
-      </div>
+              <LearningPathCard
+                track={track}
+                courses={trackCourses}
+                getEnrollment={getEnrollment}
+                isCompleted={isCompleted}
+                onLessonClick={handleLessonClick}
+              />
+            </motion.div>
+          ))}
+        </div>
+      )}
 
-      {/* Courses Tabs */}
-      <Tabs defaultValue="tracks" className="w-full">
-        <TabsList className="grid w-full max-w-3xl grid-cols-6">
-          <TabsTrigger value="tracks" className="flex items-center gap-1 text-xs">
-            <BookOpen className="h-3.5 w-3.5" />
-            Tracks
-          </TabsTrigger>
-          <TabsTrigger value="all" className="flex items-center gap-1 text-xs">
-            All ({filteredCourses.length})
-          </TabsTrigger>
-          <TabsTrigger value="my-learning" className="flex items-center gap-1 text-xs">
-            <GraduationCap className="h-3.5 w-3.5" />
-            My Learning
-          </TabsTrigger>
-          <TabsTrigger value="platform_video" className="flex items-center gap-1 text-xs">
-            🎥 Videos ({videoCourses.length})
-          </TabsTrigger>
-          <TabsTrigger value="external_url" className="flex items-center gap-1 text-xs">
-            🔗 External ({externalCourses.length})
-          </TabsTrigger>
-          <TabsTrigger value="pdf_course" className="flex items-center gap-1 text-xs">
-            📄 PDFs ({regularCourses.length})
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="tracks" className="mt-6">
-          <LearningTracks courses={filteredCourses} />
-        </TabsContent>
-
-        <TabsContent value="all" className="mt-6">
-          {filteredCourses.length === 0 ? (
-            <SmartEmptyState
-              icon={BookOpen}
-              title={searchQuery || categoryFilter !== "all" || typeFilter !== "all" ? "No matching courses" : "No courses available yet"}
-              description={searchQuery || categoryFilter !== "all" || typeFilter !== "all"
-                ? "Try adjusting your search or filter criteria to find what you're looking for."
-                : "Courses will appear here once your admin creates training programs. Check back soon!"}
-              actionLabel={searchQuery || categoryFilter !== "all" ? "Clear Filters" : undefined}
-              onAction={searchQuery || categoryFilter !== "all" ? () => { setSearchQuery(""); setCategoryFilter("all"); setTypeFilter("all"); } : undefined}
-            />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCourses.map((course, index) => renderCourseCard(course, index))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="my-learning" className="mt-6">
-          {myLearningCourses.length === 0 ? (
-            <SmartEmptyState
-              icon={GraduationCap}
-              title="No courses enrolled yet"
-              description="Browse available courses and enroll to start your learning journey. Your enrolled courses will appear here."
-              actionLabel="Browse Courses"
-              onAction={() => {}}
-            />
-          ) : (
-            <div className="space-y-6">
-              {/* Overall progress summary */}
-              {(() => {
-                const total = myLearningCourses.length;
-                const completedCount = myLearningCourses.filter(c => isCompleted(c.id)).length;
-                const inProgressCount = myLearningCourses.filter(c => getEnrollment(c.id)?.status === "in_progress").length;
-                const overallPercent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
-                const avgProgress = total > 0
-                  ? Math.round(myLearningCourses.reduce((sum, c) => sum + (getEnrollment(c.id)?.progress_percentage || 0), 0) / total)
-                  : 0;
-                return (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-md p-5 space-y-4"
-                  >
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold text-foreground">Overall Learning Progress</h3>
-                      <span className="text-xs text-muted-foreground">{completedCount}/{total} courses completed</span>
-                    </div>
-                    <Progress value={avgProgress} className="h-3" showGlow />
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div className="space-y-1">
-                        <p className="text-2xl font-bold text-primary">{inProgressCount}</p>
-                        <p className="text-[11px] text-muted-foreground">In Progress</p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-2xl font-bold text-success">{completedCount}</p>
-                        <p className="text-[11px] text-muted-foreground">Completed</p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-2xl font-bold text-accent">{overallPercent}%</p>
-                        <p className="text-[11px] text-muted-foreground">Completion Rate</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })()}
-
-              {/* In Progress section */}
-              {(() => {
-                const inProgress = myLearningCourses.filter(c => getEnrollment(c.id)?.status === "in_progress");
-                if (inProgress.length === 0) return null;
-                return (
-                  <div>
-                    <h3 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <PlayCircle className="h-4 w-4 text-primary" />
-                      In Progress ({inProgress.length})
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {inProgress.map((course, index) => renderCourseCard(course, index))}
-                    </div>
-                  </div>
-                );
-              })()}
-              {/* Enrolled (not started) */}
-              {(() => {
-                const justEnrolled = myLearningCourses.filter(c => getEnrollment(c.id)?.status === "enrolled");
-                if (justEnrolled.length === 0) return null;
-                return (
-                  <div>
-                    <h3 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <BookOpen className="h-4 w-4 text-muted-foreground" />
-                      Not Started ({justEnrolled.length})
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {justEnrolled.map((course, index) => renderCourseCard(course, index))}
-                    </div>
-                  </div>
-                );
-              })()}
-              {/* Completed */}
-              {(() => {
-                const done = myLearningCourses.filter(c => isCompleted(c.id));
-                if (done.length === 0) return null;
-                return (
-                  <div>
-                    <h3 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-success" />
-                      Completed ({done.length})
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {done.map((course, index) => renderCourseCard(course, index))}
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="platform_video" className="mt-6">
-          {videoCourses.length === 0 ? (
-            <SmartEmptyState icon={Video} title="No video courses yet" description="Platform video courses will appear here once published." />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {videoCourses.map((course, index) => renderCourseCard(course, index))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="external_url" className="mt-6">
-          {externalCourses.length === 0 ? (
-            <SmartEmptyState icon={ExternalLink} title="No external courses yet" description="Courses linked to external platforms will appear here." />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {externalCourses.map((course, index) => renderCourseCard(course, index))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="pdf_course" className="mt-6">
-          {regularCourses.length === 0 ? (
-            <SmartEmptyState icon={FileText} title="No PDF courses yet" description="PDF-based training materials will appear here when available." />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {regularCourses.map((course, index) => renderCourseCard(course, index))}
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
-
-      {/* Course Detail Sheet */}
-      {renderDetailSheet()}
+      {/* Course Detail Sheet (fallback) */}
+      {detailCourse && (() => {
+        const enrollment = getEnrollment(detailCourse.id);
+        const enrolled = isEnrolled(detailCourse.id);
+        const completed = isCompleted(detailCourse.id);
+        const difficulty = getDifficultyFromDuration(detailCourse.duration_hours);
+        const isEnrollingThis = enrollingId === detailCourse.id;
+        return (
+          <Sheet open={!!detailCourse} onOpenChange={(open) => { if (!open) setDetailCourse(null); }}>
+            <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+              <SheetHeader className="text-left">
+                <SheetTitle className="text-xl leading-snug pr-6">{detailCourse.title}</SheetTitle>
+              </SheetHeader>
+              <div className="mt-4 space-y-5">
+                {detailCourse.description && (
+                  <p className="text-sm text-muted-foreground leading-relaxed">{detailCourse.description}</p>
+                )}
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="outline" className={difficulty.color}>{difficulty.label}</Badge>
+                  {detailCourse.duration_hours && (
+                    <Badge variant="outline" className="text-muted-foreground">
+                      <Clock className="h-3 w-3 mr-1" />{detailCourse.duration_hours}h
+                    </Badge>
+                  )}
+                  <Badge variant="outline" className="text-primary border-primary/30">
+                    <Star className="h-3 w-3 mr-1" />+{Math.min((detailCourse.duration_hours || 2) * 5, 25)} XP
+                  </Badge>
+                </div>
+                <Separator />
+                <div className="space-y-3">
+                  {completed ? (
+                    <Button variant="outline" className="w-full" disabled>
+                      <CheckCircle2 className="h-4 w-4 mr-2 text-success" /> Completed
+                    </Button>
+                  ) : enrollment?.status === "in_progress" ? (
+                    <Button className="w-full" onClick={() => { completeCourse(detailCourse.id); setDetailCourse(null); }}>
+                      <CheckCircle2 className="h-4 w-4 mr-2" /> Mark as Complete
+                    </Button>
+                  ) : (
+                    <Button className="w-full" disabled={isEnrollingThis} onClick={() => handleEnrollWithLoading(detailCourse.id)}>
+                      {isEnrollingThis ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Play className="h-4 w-4 mr-2" />}
+                      {isEnrollingThis ? "Enrolling..." : "Start Lesson"}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+        );
+      })()}
 
       {/* Video Modal */}
       <Dialog open={videoModalOpen} onOpenChange={handleVideoModalClose}>
         <DialogContent className="max-w-5xl h-[90vh] p-0 overflow-hidden flex flex-col">
-          {/* Sticky back button header */}
           <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-md border-b border-border/40 px-4 py-3 flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-2 text-muted-foreground hover:text-foreground transition-colors group"
-              onClick={() => handleVideoModalClose(false)}
-            >
-              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-              Back to Courses
+            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground transition-colors group" onClick={() => handleVideoModalClose(false)}>
+              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" /> Back to Courses
             </Button>
             <DialogTitle className="text-sm font-medium text-foreground truncate max-w-[50%] flex items-center gap-2">
-              <Video className="h-4 w-4 shrink-0" />
-              {selectedCourse?.title}
+              <Video className="h-4 w-4 shrink-0" />{selectedCourse?.title}
             </DialogTitle>
             <div className="w-[120px]" />
           </div>
-
           <div className="flex-1 p-4 overflow-y-auto space-y-4">
             {loadingMedia ? (
               <div className="aspect-video flex items-center justify-center bg-muted rounded-lg">
@@ -1008,13 +415,7 @@ const CoursesViewer = () => {
               </div>
             ) : signedVideoUrl && isYouTubeUrl(selectedCourse?.video_url ?? null) ? (
               <div className="aspect-video">
-                <iframe
-                  src={signedVideoUrl}
-                  className="w-full h-full rounded-lg"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  title={selectedCourse?.title}
-                />
+                <iframe src={signedVideoUrl} className="w-full h-full rounded-lg" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title={selectedCourse?.title} />
               </div>
             ) : signedVideoUrl ? (
               <div className="aspect-video">
@@ -1022,23 +423,17 @@ const CoursesViewer = () => {
               </div>
             ) : (
               <div className="aspect-video flex items-center justify-center bg-muted rounded-lg">
-                <p className="text-muted-foreground">Unable to load video. Please enroll in this course first.</p>
+                <p className="text-muted-foreground">Unable to load video.</p>
               </div>
             )}
-            {selectedCourse?.description && (
-              <p className="text-sm text-muted-foreground">{selectedCourse.description}</p>
+            {selectedCourse?.description && <p className="text-sm text-muted-foreground">{selectedCourse.description}</p>}
+            {/* Mark complete button inside video modal */}
+            {selectedCourse && !isCompleted(selectedCourse.id) && getEnrollment(selectedCourse.id) && (
+              <Button className="w-full" onClick={() => { completeCourse(selectedCourse.id); handleVideoModalClose(false); }}>
+                <CheckCircle2 className="h-4 w-4 mr-2" /> Mark Lesson Complete
+              </Button>
             )}
-            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-              {selectedCourse?.instructor_name && (
-                <div className="flex items-center gap-1"><User className="h-4 w-4" /><span>{selectedCourse.instructor_name}</span></div>
-              )}
-              {selectedCourse?.duration_hours && (
-                <div className="flex items-center gap-1"><Clock className="h-4 w-4" /><span>{selectedCourse.duration_hours} hours</span></div>
-              )}
-            </div>
           </div>
-
-          {/* Lesson navigation footer */}
           {selectedCourse && (() => {
             const sameCourses = courses.filter(c => c.content_type === selectedCourse.content_type && c.video_url);
             const currentIdx = sameCourses.findIndex(c => c.id === selectedCourse.id);
@@ -1048,11 +443,11 @@ const CoursesViewer = () => {
             return (
               <div className="border-t border-border/40 bg-card/95 backdrop-blur-md px-4 py-3 flex items-center justify-between">
                 <Button variant="outline" size="sm" disabled={!prevCourse} className="gap-2" onClick={() => prevCourse && handlePlayVideo(prevCourse)}>
-                  <ChevronLeft className="h-4 w-4" /> Previous Lesson
+                  <ChevronLeft className="h-4 w-4" /> Previous
                 </Button>
                 <span className="text-xs text-muted-foreground">{currentIdx + 1} / {sameCourses.length}</span>
                 <Button variant="outline" size="sm" disabled={!nextCourse} className="gap-2" onClick={() => nextCourse && handlePlayVideo(nextCourse)}>
-                  Next Lesson <ChevronRight className="h-4 w-4" />
+                  Next <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
             );
@@ -1064,73 +459,45 @@ const CoursesViewer = () => {
       <Dialog open={documentModalOpen} onOpenChange={handleDocumentModalClose}>
         <DialogContent className="max-w-5xl h-[90vh] p-0 overflow-hidden flex flex-col">
           <div className="sticky top-0 z-10 bg-card/95 backdrop-blur-md border-b border-border/40 px-4 py-3 flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-2 text-muted-foreground hover:text-foreground transition-colors group"
-              onClick={() => handleDocumentModalClose(false)}
-            >
-              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-              Back to Courses
+            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground transition-colors group" onClick={() => handleDocumentModalClose(false)}>
+              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" /> Back to Courses
             </Button>
             <DialogTitle className="text-sm font-medium text-foreground truncate max-w-[50%] flex items-center gap-2">
-              <FileText className="h-4 w-4 shrink-0" />
-              {selectedCourse?.title}
+              <FileText className="h-4 w-4 shrink-0" />{selectedCourse?.title}
             </DialogTitle>
             <div className="w-[120px]" />
           </div>
-
           <div className="flex-1 p-4 overflow-hidden">
             {loadingMedia ? (
-              <div className="flex items-center justify-center h-full">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
+              <div className="flex items-center justify-center h-full"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
             ) : signedDocumentUrl && selectedCourse?.document_url ? (
-              <>
-                {getDocumentType(selectedCourse.document_url) === 'pdf' ? (
-                  <iframe src={signedDocumentUrl} className="w-full h-full rounded-lg border" title={selectedCourse.title} />
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full gap-6 text-center">
-                    <div className="bg-muted rounded-full p-8">
-                      {getDocumentIcon(selectedCourse.document_url)}
-                      <FileIcon className="h-16 w-16 text-muted-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2">Document Preview</h3>
-                      <p className="text-muted-foreground mb-4">This document type cannot be previewed in the browser.</p>
-                      <Button onClick={() => window.open(signedDocumentUrl, '_blank')}>
-                        <Download className="h-4 w-4 mr-2" />
-                        Download Document
-                      </Button>
-                    </div>
+              getDocumentType(selectedCourse.document_url) === 'pdf' ? (
+                <iframe src={signedDocumentUrl} className="w-full h-full rounded-lg border" title={selectedCourse.title} />
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full gap-6 text-center">
+                  <div className="bg-muted rounded-full p-8">
+                    {getDocumentIcon(selectedCourse.document_url)}
+                    <FileIcon className="h-16 w-16 text-muted-foreground" />
                   </div>
-                )}
-              </>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Document Preview</h3>
+                    <p className="text-muted-foreground mb-4">This document type cannot be previewed in the browser.</p>
+                    <Button onClick={() => window.open(signedDocumentUrl, '_blank')}><Download className="h-4 w-4 mr-2" /> Download Document</Button>
+                  </div>
+                </div>
+              )
             ) : (
-              <div className="flex items-center justify-center h-full">
-                <p className="text-muted-foreground">Unable to load document. Please enroll in this course first.</p>
-              </div>
+              <div className="flex items-center justify-center h-full"><p className="text-muted-foreground">Unable to load document.</p></div>
             )}
           </div>
-
-          {selectedCourse && (() => {
-            const sameCourses = courses.filter(c => c.content_type === selectedCourse.content_type && c.document_url);
-            const currentIdx = sameCourses.findIndex(c => c.id === selectedCourse.id);
-            const prevCourse = currentIdx > 0 ? sameCourses[currentIdx - 1] : null;
-            const nextCourse = currentIdx < sameCourses.length - 1 ? sameCourses[currentIdx + 1] : null;
-            if (!prevCourse && !nextCourse) return null;
-            return (
-              <div className="border-t border-border/40 bg-card/95 backdrop-blur-md px-4 py-3 flex items-center justify-between">
-                <Button variant="outline" size="sm" disabled={!prevCourse} className="gap-2" onClick={() => prevCourse && handleViewDocument(prevCourse)}>
-                  <ChevronLeft className="h-4 w-4" /> Previous Lesson
-                </Button>
-                <span className="text-xs text-muted-foreground">{currentIdx + 1} / {sameCourses.length}</span>
-                <Button variant="outline" size="sm" disabled={!nextCourse} className="gap-2" onClick={() => nextCourse && handleViewDocument(nextCourse)}>
-                  Next Lesson <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            );
-          })()}
+          {/* Mark complete inside doc modal */}
+          {selectedCourse && !isCompleted(selectedCourse.id) && getEnrollment(selectedCourse.id) && (
+            <div className="border-t border-border/40 bg-card/95 backdrop-blur-md px-4 py-3">
+              <Button className="w-full" onClick={() => { completeCourse(selectedCourse.id); handleDocumentModalClose(false); }}>
+                <CheckCircle2 className="h-4 w-4 mr-2" /> Mark Lesson Complete
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
