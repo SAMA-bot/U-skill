@@ -27,6 +27,7 @@ import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
 } from "recharts";
+import DepartmentAlerts from "@/components/hod/DepartmentAlerts";
 
 interface FacultyRanking {
   user_id: string;
