@@ -289,7 +289,8 @@ export function RoleManagement() {
     (user) =>
       user.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (user.department?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+      (user.department?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+      user.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
