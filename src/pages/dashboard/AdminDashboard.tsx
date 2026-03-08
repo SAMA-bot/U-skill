@@ -304,7 +304,7 @@ const AdminDashboard = () => {
     { label: "Completed Trainings", numValue: institutionStats.completedTrainings, suffix: "", icon: GraduationCap, color: "from-teal-500 to-teal-600" },
   ];
 
-  if (authLoading || roleLoading || loadingData) {
+  if (authLoading || roleLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
