@@ -355,30 +355,35 @@ const CoursesViewer = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05 }}
-        className={`bg-card border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group ${
-          completed ? "border-success/50" : "border-border"
+        className={`relative overflow-hidden rounded-xl cursor-pointer group transition-all duration-300 hover:-translate-y-1 ${
+          completed
+            ? "border border-success/30 bg-card/60 backdrop-blur-md shadow-[0_4px_24px_-6px_hsl(var(--success)/0.15)]"
+            : "border border-border/40 bg-card/50 backdrop-blur-md shadow-[0_4px_24px_-6px_hsl(var(--foreground)/0.06)] hover:shadow-[0_12px_32px_-8px_hsl(var(--accent)/0.18)] hover:border-accent/30"
         }`}
         onClick={() => setDetailCourse(course)}
       >
+        {/* Subtle top-edge gradient glow */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+
         {/* Thumbnail */}
-        <div className="aspect-video bg-muted relative">
+        <div className="aspect-video bg-muted/50 relative">
           {course.thumbnail_url ? (
             <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted/60 to-muted/30">
               {course.course_type === 'video' ? (
-                <Video className="h-12 w-12 text-muted-foreground" />
+                <Video className="h-12 w-12 text-muted-foreground/60" />
               ) : (
-                <BookOpen className="h-12 w-12 text-muted-foreground" />
+                <BookOpen className="h-12 w-12 text-muted-foreground/60" />
               )}
             </div>
           )}
           <div className="absolute top-2 left-2 flex gap-2">
-            <Badge className={getCategoryColor(course.category)}>
+            <Badge className={`backdrop-blur-sm ${getCategoryColor(course.category)}`}>
               {getCategoryLabel(course.category)}
             </Badge>
             {course.course_type === 'video' && (
-              <Badge variant="secondary" className="bg-destructive/10 text-destructive">
+              <Badge variant="secondary" className="bg-destructive/15 text-destructive backdrop-blur-sm border-0">
                 <Video className="h-3 w-3 mr-1" />
                 Video
               </Badge>
@@ -386,15 +391,15 @@ const CoursesViewer = () => {
           </div>
           {completed && (
             <div className="absolute top-2 right-2">
-              <Badge className="bg-success text-success-foreground">
+              <Badge className="bg-success/90 text-success-foreground backdrop-blur-sm border-0 shadow-sm">
                 <CheckCircle2 className="h-3 w-3 mr-1" />
                 Completed
               </Badge>
             </div>
           )}
-          {/* Hover overlay prompting detail view */}
-          <div className="absolute inset-0 bg-foreground/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <div className="bg-card/90 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium text-foreground shadow-sm flex items-center gap-1.5">
+          {/* Hover overlay */}
+          <div className="absolute inset-0 bg-foreground/5 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+            <div className="bg-card/80 backdrop-blur-md rounded-full px-4 py-2 text-sm font-medium text-foreground shadow-lg border border-border/30 flex items-center gap-1.5">
               View Details <ArrowRight className="h-3.5 w-3.5" />
             </div>
           </div>
