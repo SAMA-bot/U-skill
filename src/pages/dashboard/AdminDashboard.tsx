@@ -827,7 +827,7 @@ const AdminDashboard = () => {
                         <TableCell className="text-center">
                           <div className="flex items-center gap-1.5 justify-center">
                             <span className="font-medium text-foreground">{faculty.avgPerformance || 0}%</span>
-                            <Badge className={`text-[10px] px-1.5 py-0 ${getPerformanceColor(faculty.avgPerformance || 0)}`}>
+                            <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${getPerformanceColor(faculty.avgPerformance || 0)}`}>
                               {getPerformanceBadgeLabel(faculty.avgPerformance || 0)}
                             </Badge>
                           </div>
