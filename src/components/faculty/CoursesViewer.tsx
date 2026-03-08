@@ -552,12 +552,26 @@ const CoursesViewer = () => {
             )}
           </div>
 
-          {/* Complete button */}
+          {/* Footer: progress + auto-complete status */}
           {viewingLesson && !isLessonCompleted(viewingLesson.id) && (
-            <div className="border-t border-border/40 bg-card/95 backdrop-blur-md px-4 py-3">
-              <Button className="w-full" onClick={handleCompleteLesson}>
-                <CheckCircle2 className="h-4 w-4 mr-2" /> Complete Lesson (+{viewingLesson.xp_reward} XP)
-              </Button>
+            <div className="border-t border-border/40 bg-card/95 backdrop-blur-md px-4 py-3 space-y-2">
+              {lessonContent.length > 0 && (
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">
+                    {viewedContentIds.size}/{lessonContent.length} content items viewed
+                  </span>
+                  <Progress value={lessonContent.length > 0 ? (viewedContentIds.size / lessonContent.length) * 100 : 0} className="h-1.5 w-24" />
+                </div>
+              )}
+              {autoCompleting ? (
+                <div className="flex items-center justify-center gap-2 text-sm text-primary font-medium py-1">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Completing lesson...
+                </div>
+              ) : (
+                <Button className="w-full" variant="outline" onClick={handleCompleteLesson}>
+                  <CheckCircle2 className="h-4 w-4 mr-2" /> Mark Complete (+{viewingLesson.xp_reward} XP)
+                </Button>
+              )}
             </div>
           )}
           {viewingLesson && isLessonCompleted(viewingLesson.id) && (
