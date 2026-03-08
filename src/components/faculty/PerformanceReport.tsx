@@ -100,8 +100,18 @@ const PerformanceReport = ({
 
       const date = new Date().toISOString().split("T")[0];
       pdf.save(`performance-report-${date}.pdf`);
+
+      toast({
+        title: "📄 Report Generated",
+        description: `Performance report saved as performance-report-${date}.pdf`,
+      });
     } catch (error) {
       console.error("Error generating PDF:", error);
+      toast({
+        title: "Report generation failed",
+        description: "Could not generate the PDF. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setGenerating(false);
     }
