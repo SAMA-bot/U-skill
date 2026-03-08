@@ -502,7 +502,7 @@ export default function DocumentReview() {
                         {formatDate(doc.created_at)}
                       </TableCell>
                       <TableCell className="text-center">
-                        <Badge variant="secondary" className={statusInfo.className}>
+                        <Badge variant="outline" className={statusInfo.className}>
                           <StatusIcon className="h-3 w-3 mr-1" />
                           {statusInfo.label}
                         </Badge>
