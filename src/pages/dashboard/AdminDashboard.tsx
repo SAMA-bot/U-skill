@@ -283,11 +283,7 @@ const AdminDashboard = () => {
       .slice(0, 2);
   };
 
-  const getPerformanceColor = (score: number) => {
-    if (score >= 80) return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-    if (score >= 60) return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-    return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-  };
+  const getPerformanceColor = (score: number) => getPerformanceBadgeColor(score);
 
   const statsCards = [
     { label: "Total Faculty", value: institutionStats.totalFaculty, icon: Users, color: "from-blue-500 to-blue-600" },
