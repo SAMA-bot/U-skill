@@ -372,9 +372,9 @@ export default function DocumentReview() {
         <p className="text-muted-foreground">
           Review and verify faculty-uploaded documents
           {pendingCount > 0 && (
-            <Badge variant="secondary" className="ml-2 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+            <span className="ml-2 inline-flex items-center rounded-full border border-[rgba(245,158,11,0.4)] bg-[rgba(245,158,11,0.15)] px-2 py-0.5 text-xs font-semibold text-[#f59e0b] dark:bg-[rgba(245,158,11,0.2)] dark:text-[#fbbf24]">
               {pendingCount} pending
-            </Badge>
+            </span>
           )}
         </p>
       </div>
