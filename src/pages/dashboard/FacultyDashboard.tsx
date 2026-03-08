@@ -514,7 +514,7 @@ const FacultyDashboard = () => {
                     <Download className="mr-2 h-4 w-4" />
                     Export
                   </Button>
-                  <Button size="sm">
+                  <Button size="sm" onClick={() => setReportModalOpen(true)}>
                     <FileText className="mr-2 h-4 w-4" />
                     Generate Report
                   </Button>
