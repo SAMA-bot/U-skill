@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useMultipleRealtimeData } from "@/hooks/useRealtimeData";
 import { useToast } from "@/hooks/use-toast";
 import { useAcademicYear } from "@/contexts/AcademicYearContext";
 import { Button } from "@/components/ui/button";
@@ -69,9 +70,19 @@ export default function PerformanceReports() {
   const { toast } = useToast();
   const reportRef = useRef<HTMLDivElement>(null);
 
+  const fetchAllCb = useCallback(() => { fetchAll(); }, [selectedYear]);
+
   useEffect(() => {
     fetchAll();
   }, [selectedYear]);
+
+  // Realtime subscriptions for live updates
+  useMultipleRealtimeData([
+    { table: "performance_metrics", onChange: fetchAllCb },
+    { table: "activities", onChange: fetchAllCb },
+    { table: "course_enrollments", onChange: fetchAllCb },
+    { table: "profiles", onChange: fetchAllCb },
+  ]);
 
   const fetchAll = async () => {
     setLoading(true);

@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useMultipleRealtimeData } from "@/hooks/useRealtimeData";
 import { motion } from "framer-motion";
 import { Trophy, Medal, Loader2, ChevronDown, ChevronUp, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -29,9 +30,16 @@ const DepartmentLeaderboard = () => {
   const [expandedDepts, setExpandedDepts] = useState<Set<string>>(new Set());
   const { selectedYear } = useAcademicYear();
 
+  const refetchCb = useCallback(() => { fetchLeaderboardData(); }, [selectedYear]);
+
   useEffect(() => {
     fetchLeaderboardData();
   }, [selectedYear]);
+
+  useMultipleRealtimeData([
+    { table: "performance_metrics", onChange: refetchCb },
+    { table: "profiles", onChange: refetchCb },
+  ]);
 
   const fetchLeaderboardData = async () => {
     setLoading(true);

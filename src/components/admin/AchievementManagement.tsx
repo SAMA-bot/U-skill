@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useMultipleRealtimeData } from "@/hooks/useRealtimeData";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -112,9 +113,16 @@ const AchievementManagement = () => {
   // Delete
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
+  const refetchCb = useCallback(() => { if (user) fetchData(); }, [user]);
+
   useEffect(() => {
     if (user) fetchData();
   }, [user]);
+
+  useMultipleRealtimeData([
+    { table: "achievement_badges", onChange: refetchCb },
+    { table: "performance_metrics", onChange: refetchCb },
+  ]);
 
   const fetchData = async () => {
     setLoading(true);
