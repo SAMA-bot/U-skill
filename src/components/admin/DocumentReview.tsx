@@ -602,6 +602,46 @@ export default function DocumentReview() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Approve with Comment Dialog */}
+      <Dialog open={commentDialogOpen} onOpenChange={setCommentDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Approve Document</DialogTitle>
+            <DialogDescription>
+              Approve "{selectedDoc?.title}". You can optionally add a comment for the faculty member.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="admin-comment">Admin Comment (optional)</Label>
+              <Textarea
+                id="admin-comment"
+                placeholder="e.g., Verified and looks good. Please submit the original copy as well."
+                value={adminComment}
+                onChange={(e) => setAdminComment(e.target.value)}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setCommentDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleApproveWithComment}
+              disabled={processing}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white"
+            >
+              {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Approve Document
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
