@@ -681,9 +681,12 @@ const AdminDashboard = () => {
                           {faculty.department || 'Unassigned'}
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge className={getPerformanceColor(faculty.avgPerformance || 0)}>
-                            {faculty.avgPerformance || 0}%
-                          </Badge>
+                          <div className="flex items-center gap-1.5 justify-center">
+                            <span className="font-medium text-foreground">{faculty.avgPerformance || 0}%</span>
+                            <Badge className={`text-[10px] px-1.5 py-0 ${getPerformanceColor(faculty.avgPerformance || 0)}`}>
+                              {getPerformanceBadgeLabel(faculty.avgPerformance || 0)}
+                            </Badge>
+                          </div>
                         </TableCell>
                         <TableCell className="text-center">
                           <Badge className={getPerformanceColor(faculty.avgCapacity || 0)}>
