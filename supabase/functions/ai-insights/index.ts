@@ -130,7 +130,8 @@ If data is sparse, provide encouraging or general advisory insights based on wha
         ],
         temperature: 0.7,
         max_tokens: 500,
-      });
+      }),
+    });
     } catch (fetchErr) {
       clearTimeout(timeoutId);
       const isTimeout = fetchErr instanceof DOMException && fetchErr.name === "AbortError";
