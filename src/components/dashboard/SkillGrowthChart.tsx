@@ -166,10 +166,10 @@ const SkillGrowthChart = () => {
               })}
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" style={{ minHeight: 300 }}>
-            {/* Radar Chart */}
-            <div className="flex flex-col items-center justify-center">
-              <div className="flex gap-3 mb-3">
+          <div className="space-y-4">
+            {/* Radar Chart - centered, compact */}
+            <div className="flex flex-col items-center">
+              <div className="flex gap-3 mb-1">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-primary" />
                   <span className="text-[11px] text-muted-foreground">Current</span>
@@ -179,8 +179,8 @@ const SkillGrowthChart = () => {
                   <span className="text-[11px] text-muted-foreground">Target</span>
                 </div>
               </div>
-              <ResponsiveContainer width="100%" height={300}>
-                <RadarChart data={skills} cx="50%" cy="50%" outerRadius="70%">
+              <ResponsiveContainer width="100%" height={240}>
+                <RadarChart data={skills} cx="50%" cy="50%" outerRadius="75%">
                   <PolarGrid stroke="hsl(var(--border))" />
                   <PolarAngleAxis
                     dataKey="skill"
@@ -189,8 +189,8 @@ const SkillGrowthChart = () => {
                   <PolarRadiusAxis
                     angle={30}
                     domain={[0, 100]}
-                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 9 }}
-                    axisLine={{ stroke: "hsl(var(--border))" }}
+                    tick={false}
+                    axisLine={false}
                   />
                   <Tooltip
                     contentStyle={{
@@ -227,8 +227,8 @@ const SkillGrowthChart = () => {
               </ResponsiveContainer>
             </div>
 
-            {/* Skill Breakdown */}
-            <div className="space-y-3">
+            {/* Skill Breakdown - directly below chart */}
+            <div className="space-y-2.5">
               {skills
                 .sort((a, b) => b.current - a.current)
                 .map((sk, i) => {
@@ -239,25 +239,17 @@ const SkillGrowthChart = () => {
                       key={sk.skill}
                       initial={{ opacity: 0, x: 10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.08 }}
+                      transition={{ delay: i * 0.05 }}
                       className="space-y-1"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <div className={`w-2 h-2 rounded-full ${color}`} />
-                          <span className="text-sm font-medium text-foreground">
-                            {sk.skill}
-                          </span>
+                          <span className="text-xs font-medium text-foreground">{sk.skill}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge
-                            style={growth.inlineStyle} className="text-[9px] px-1.5 py-0 border-0"
-                          >
-                            {growth.text}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground w-8 text-right">
-                            {sk.current}%
-                          </span>
+                          <Badge style={growth.inlineStyle} className="text-[9px] px-1.5 py-0 border-0">{growth.text}</Badge>
+                          <span className="text-xs text-muted-foreground w-8 text-right">{sk.current}%</span>
                         </div>
                       </div>
                       <Progress value={sk.current} className="h-1.5" />
@@ -266,12 +258,10 @@ const SkillGrowthChart = () => {
                 })}
 
               {/* Total summary */}
-              <div className="pt-3 mt-2 border-t border-border flex items-center justify-between">
+              <div className="pt-2 mt-1 border-t border-border flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <TrendingUp className="h-3.5 w-3.5" />
-                  <span>
-                    {totalPoints} / {maxPoints} total skill points
-                  </span>
+                  <span>{totalPoints} / {maxPoints} total skill points</span>
                 </div>
               </div>
             </div>
