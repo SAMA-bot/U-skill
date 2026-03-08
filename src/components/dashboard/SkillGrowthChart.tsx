@@ -156,7 +156,7 @@ const SkillGrowthChart = () => {
                         <span className="text-sm font-medium text-foreground">{sk.skill}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge className={`text-[9px] px-1.5 py-0 ${growth.style}`}>{growth.text}</Badge>
+                        <Badge style={growth.inlineStyle} className="text-[9px] px-1.5 py-0 border-0">{growth.text}</Badge>
                         <span className="text-xs text-muted-foreground w-8 text-right">{sk.current}%</span>
                       </div>
                     </div>
