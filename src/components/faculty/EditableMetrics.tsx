@@ -90,7 +90,7 @@ const EditableMetrics = () => {
           .eq("id", metric.id);
         if (error) throw error;
       }
-      toast({ title: "Metric updated", description: `${metric.month} ${metric.year} scores saved.` });
+      toast({ title: "📊 Performance Updated", description: `${metric.month} ${metric.year} scores saved — Teaching: ${metric.teaching_score}, Research: ${metric.research_score}, Service: ${metric.service_score}` });
       setEditingIndex(null);
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
