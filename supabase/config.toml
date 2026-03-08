@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.ai-insights]
 verify_jwt = false
+
+[functions.predictive-analytics]
+verify_jwt = false
