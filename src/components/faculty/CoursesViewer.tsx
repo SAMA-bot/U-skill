@@ -129,8 +129,27 @@ interface Course {
   video_url: string | null;
   document_url: string | null;
   course_type: string;
+  content_type: string;
   is_published: boolean;
 }
+
+const getContentTypeIcon = (contentType: string) => {
+  switch (contentType) {
+    case 'platform_video': return '🎥';
+    case 'external_url': return '🔗';
+    case 'pdf_course': return '📄';
+    default: return '📖';
+  }
+};
+
+const getContentTypeLabel = (contentType: string) => {
+  switch (contentType) {
+    case 'platform_video': return 'Platform Video';
+    case 'external_url': return 'External Link';
+    case 'pdf_course': return 'PDF Course';
+    default: return 'Course';
+  }
+};
 
 const CoursesViewer = () => {
   const [courses, setCourses] = useState<Course[]>([]);
