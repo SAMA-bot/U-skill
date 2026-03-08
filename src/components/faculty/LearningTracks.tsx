@@ -131,6 +131,7 @@ interface LearningTracksProps {
 const TrackRow = ({ track, courses }: { track: TrackDefinition; courses: Course[] }) => {
   const [expanded, setExpanded] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const {
     enrollInCourse,
     startCourse,
