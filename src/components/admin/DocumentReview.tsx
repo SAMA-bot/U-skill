@@ -513,34 +513,45 @@ export default function DocumentReview() {
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        {doc.status === "pending" ? (
-                          <div className="flex items-center justify-end gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
-                              onClick={() => handleApprove(doc)}
-                              disabled={processing}
-                            >
-                              <CheckCircle2 className="h-4 w-4 mr-1" />
-                              Approve
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                              onClick={() => openRejectDialog(doc)}
-                              disabled={processing}
-                            >
-                              <XCircle className="h-4 w-4 mr-1" />
-                              Reject
-                            </Button>
-                          </div>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">
-                            {doc.reviewed_at && `Reviewed ${formatDate(doc.reviewed_at)}`}
-                          </span>
-                        )}
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                            onClick={() => handlePreview(doc)}
+                            title="Preview document"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          {doc.status === "pending" ? (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                                onClick={() => openCommentDialog(doc)}
+                                disabled={processing}
+                              >
+                                <CheckCircle2 className="h-4 w-4 mr-1" />
+                                Approve
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-destructive hover:bg-destructive/10"
+                                onClick={() => openRejectDialog(doc)}
+                                disabled={processing}
+                              >
+                                <XCircle className="h-4 w-4 mr-1" />
+                                Reject
+                              </Button>
+                            </>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">
+                              {doc.reviewed_at && `Reviewed ${formatDate(doc.reviewed_at)}`}
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
