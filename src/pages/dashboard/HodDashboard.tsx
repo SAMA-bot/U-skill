@@ -494,6 +494,11 @@ const HodDashboard = () => {
                   </Card>
                 </motion.div>
 
+                {/* Department Alerts */}
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.57 }} className="mb-8">
+                  <DepartmentAlerts department={hodDepartment} />
+                </motion.div>
+
                 {/* Faculty Rankings */}
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
                   <Card>
