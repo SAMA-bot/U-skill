@@ -43,7 +43,7 @@ const PerformanceScoreCard = ({ data, compact = false }: PerformanceScoreCardPro
           {data.compositeScore}
         </div>
         <div className="text-sm text-muted-foreground">/100</div>
-        <Badge className={getBadgeStyle(data.badge)}>{data.badge}</Badge>
+        <Badge style={badgeInlineStyle(data.badge)} className="border-0">{data.badge}</Badge>
       </div>
     );
   }
