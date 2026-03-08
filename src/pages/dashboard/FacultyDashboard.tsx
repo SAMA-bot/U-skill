@@ -18,6 +18,7 @@ import ActivityLogger from "@/components/faculty/ActivityLogger";
 import HeaderNotifications from "@/components/layout/HeaderNotifications";
 import DocumentUpload from "@/components/faculty/DocumentUpload";
 import AreasToImprove from "@/components/faculty/AreasToImprove";
+import AIInsightsPanel from "@/components/dashboard/AIInsightsPanel";
 import ActivityLogTimeline from "@/components/faculty/ActivityLogTimeline";
 import MotivationTools from "@/components/faculty/MotivationTools";
 import MyCalendar from "@/components/faculty/MyCalendar";
