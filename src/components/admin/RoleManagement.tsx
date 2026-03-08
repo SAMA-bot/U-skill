@@ -272,6 +272,19 @@ export function RoleManagement() {
       .slice(0, 2);
   };
 
+  const getRoleIcon = (role: AppRole) => {
+    switch (role) {
+      case "admin":
+        return <Crown className="h-3.5 w-3.5" />;
+      case "hod":
+        return <GraduationCap className="h-3.5 w-3.5" />;
+      case "faculty":
+        return <User className="h-3.5 w-3.5" />;
+      default:
+        return <User className="h-3.5 w-3.5" />;
+    }
+  };
+
   const getRoleBadgeStyle = (role: AppRole): React.CSSProperties => {
     switch (role) {
       case "admin":
@@ -292,6 +305,20 @@ export function RoleManagement() {
       (user.department?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
       user.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Pagination
+  const ITEMS_PER_PAGE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / ITEMS_PER_PAGE));
+  const paginatedUsers = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredUsers.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredUsers, currentPage]);
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   if (loading) {
     return (
