@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { getUserFriendlyError } from "@/lib/errorMessages";
+import { useRealtimeData } from "@/hooks/useRealtimeData";
 
 export type DocumentStatus = "pending" | "verified" | "rejected";
 export type DocumentType = "certificate" | "publication" | "qualification" | "training" | "other";
