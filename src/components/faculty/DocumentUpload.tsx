@@ -89,6 +89,33 @@ export default function DocumentUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [documentType, setDocumentType] = useState<DocumentType>("certificate");
+  const prevDocsRef = useRef<typeof documents>([]);
+
+  // Realtime toast when document status changes (approved/rejected by admin)
+  useEffect(() => {
+    if (prevDocsRef.current.length === 0) {
+      prevDocsRef.current = documents;
+      return;
+    }
+
+    for (const doc of documents) {
+      const prev = prevDocsRef.current.find((d) => d.id === doc.id);
+      if (prev && prev.status === "pending" && doc.status !== "pending") {
+        const isApproved = doc.status === "verified";
+        // Use dynamic import to avoid circular dependency
+        import("@/hooks/use-toast").then(({ toast }) => {
+          toast({
+            title: isApproved ? "✅ Document Approved" : "❌ Document Rejected",
+            description: isApproved
+              ? `"${doc.title}" has been verified by admin.`
+              : `"${doc.title}" was rejected${doc.rejection_reason ? `: ${doc.rejection_reason}` : "."}`,
+            variant: isApproved ? "default" : "destructive",
+          });
+        });
+      }
+    }
+    prevDocsRef.current = documents;
+  }, [documents]);
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
