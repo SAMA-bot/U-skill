@@ -298,13 +298,16 @@ const AdminDashboard = () => {
   const getPerformanceColor = (score: number) => getPerformanceBadgeColor(score);
 
   const statsCards = [
-    { label: "Total Faculty", numValue: institutionStats.totalFaculty, suffix: "", icon: Users, color: "from-blue-500 to-blue-600" },
-    { label: "Avg Performance", numValue: institutionStats.avgPerformance, suffix: "%", icon: BarChart3, color: "from-green-500 to-green-600" },
-    { label: "Avg Capacity", numValue: institutionStats.avgCapacity, suffix: "%", icon: TrendingUp, color: "from-purple-500 to-purple-600" },
-    { label: "Avg Motivation", numValue: institutionStats.avgMotivation, suffix: "%", icon: Award, color: "from-orange-500 to-orange-600" },
-    { label: "Departments", numValue: institutionStats.totalDepartments, suffix: "", icon: Building2, color: "from-pink-500 to-pink-600" },
-    { label: "Completed Trainings", numValue: institutionStats.completedTrainings, suffix: "", icon: GraduationCap, color: "from-teal-500 to-teal-600" },
+    { label: "Total Faculty", numValue: institutionStats.totalFaculty, suffix: "", icon: Users, color: "from-blue-500 to-blue-600", metricType: "total_faculty" as const },
+    { label: "Avg Performance", numValue: institutionStats.avgPerformance, suffix: "%", icon: BarChart3, color: "from-green-500 to-green-600", metricType: "avg_performance" as const },
+    { label: "Avg Capacity", numValue: institutionStats.avgCapacity, suffix: "%", icon: TrendingUp, color: "from-purple-500 to-purple-600", metricType: "avg_capacity" as const },
+    { label: "Avg Motivation", numValue: institutionStats.avgMotivation, suffix: "%", icon: Award, color: "from-orange-500 to-orange-600", metricType: "avg_motivation" as const },
+    { label: "Departments", numValue: institutionStats.totalDepartments, suffix: "", icon: Building2, color: "from-pink-500 to-pink-600", metricType: "departments" as const },
+    { label: "Completed Trainings", numValue: institutionStats.completedTrainings, suffix: "", icon: GraduationCap, color: "from-teal-500 to-teal-600", metricType: "completed_trainings" as const },
   ];
+
+  const [adminMetricSheetOpen, setAdminMetricSheetOpen] = useState(false);
+  const [selectedAdminMetric, setSelectedAdminMetric] = useState<typeof statsCards[0] | null>(null);
 
   if (authLoading || roleLoading) {
     return (
