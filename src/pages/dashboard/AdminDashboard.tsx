@@ -28,6 +28,7 @@ import {
   PanelLeftClose,
   PanelLeft,
   Trophy,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
