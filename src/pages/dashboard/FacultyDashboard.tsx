@@ -19,6 +19,7 @@ import HeaderNotifications from "@/components/layout/HeaderNotifications";
 import DocumentUpload from "@/components/faculty/DocumentUpload";
 import AreasToImprove from "@/components/faculty/AreasToImprove";
 import AIInsightsPanel from "@/components/dashboard/AIInsightsPanel";
+import RecommendationPanel from "@/components/faculty/RecommendationPanel";
 import ActivityLogTimeline from "@/components/faculty/ActivityLogTimeline";
 import FacultyProgressTracker from "@/components/faculty/FacultyProgressTracker";
 import MotivationTools from "@/components/faculty/MotivationTools";
@@ -69,19 +70,6 @@ const sidebarItems: {
   icon: Calendar,
   label: "My Calendar",
   section: "calendar"
-}];
-const resources = [{
-  title: "Effective Teaching Strategies for Higher Education",
-  subtitle: "John E. Smith, 2022"
-}, {
-  title: "Digital Transformation in Education - Online Course",
-  subtitle: "Coursera, 12 hours"
-}, {
-  title: "Research Publication Toolkit",
-  subtitle: "University Research Center"
-}, {
-  title: "Faculty Development Network Membership",
-  subtitle: "Annual Subscription"
 }];
 const FacultyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -668,7 +656,7 @@ const FacultyDashboard = () => {
                   </div>
                 </motion.div>
 
-                {/* Recommended Resources */}
+                {/* Smart Recommendations */}
                 <motion.div initial={{
                 opacity: 0,
                 y: 20
@@ -677,33 +665,8 @@ const FacultyDashboard = () => {
                 y: 0
               }} transition={{
                 delay: 0.7
-              }} className="bg-card shadow-sm rounded-lg overflow-hidden border border-border">
-                  <div className="px-4 py-5 sm:px-6 border-b border-border">
-                    <h3 className="text-lg font-medium text-foreground">Recommended Resources</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Based on your development goals
-                    </p>
-                  </div>
-                  <div className="p-4">
-                    <div className="space-y-4">
-                      {resources.map((resource, index) => <div key={index} className="flex items-start">
-                          <div className="flex-shrink-0">
-                            <div className="h-12 w-12 rounded-md bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
-                              <FileText className="h-6 w-6 text-accent" />
-                            </div>
-                          </div>
-                          <div className="ml-4">
-                            <h4 className="text-sm font-medium text-foreground">{resource.title}</h4>
-                            <p className="mt-1 text-xs text-muted-foreground">{resource.subtitle}</p>
-                            <div className="mt-2">
-                              <a href="#" className="text-xs text-primary hover:underline">
-                                View Resource →
-                              </a>
-                            </div>
-                          </div>
-                        </div>)}
-                    </div>
-                  </div>
+              }}>
+                  <RecommendationPanel onNavigate={(section) => setActiveSection(section as ActiveSection)} />
                 </motion.div>
               </div>
             </> : <div className="flex items-center justify-center h-64">
