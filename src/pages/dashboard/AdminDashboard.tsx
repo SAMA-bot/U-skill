@@ -477,6 +477,8 @@ const AdminDashboard = () => {
             <DocumentReview />
           ) : activeSection === "feedback" ? (
             <FeedbackAnalytics />
+          ) : activeSection === "faculty" ? (
+            <FacultyManagement />
           ) : (
             <>
           {/* Page Header */}
