@@ -287,12 +287,12 @@ const AdminDashboard = () => {
   const getPerformanceColor = (score: number) => getPerformanceBadgeColor(score);
 
   const statsCards = [
-    { label: "Total Faculty", value: institutionStats.totalFaculty, icon: Users, color: "from-blue-500 to-blue-600" },
-    { label: "Avg Performance", value: `${institutionStats.avgPerformance}%`, icon: BarChart3, color: "from-green-500 to-green-600" },
-    { label: "Avg Capacity", value: `${institutionStats.avgCapacity}%`, icon: TrendingUp, color: "from-purple-500 to-purple-600" },
-    { label: "Avg Motivation", value: `${institutionStats.avgMotivation}%`, icon: Award, color: "from-orange-500 to-orange-600" },
-    { label: "Departments", value: institutionStats.totalDepartments, icon: Building2, color: "from-pink-500 to-pink-600" },
-    { label: "Completed Trainings", value: institutionStats.completedTrainings, icon: GraduationCap, color: "from-teal-500 to-teal-600" },
+    { label: "Total Faculty", numValue: institutionStats.totalFaculty, suffix: "", icon: Users, color: "from-blue-500 to-blue-600" },
+    { label: "Avg Performance", numValue: institutionStats.avgPerformance, suffix: "%", icon: BarChart3, color: "from-green-500 to-green-600" },
+    { label: "Avg Capacity", numValue: institutionStats.avgCapacity, suffix: "%", icon: TrendingUp, color: "from-purple-500 to-purple-600" },
+    { label: "Avg Motivation", numValue: institutionStats.avgMotivation, suffix: "%", icon: Award, color: "from-orange-500 to-orange-600" },
+    { label: "Departments", numValue: institutionStats.totalDepartments, suffix: "", icon: Building2, color: "from-pink-500 to-pink-600" },
+    { label: "Completed Trainings", numValue: institutionStats.completedTrainings, suffix: "", icon: GraduationCap, color: "from-teal-500 to-teal-600" },
   ];
 
   if (authLoading || roleLoading || loadingData) {
