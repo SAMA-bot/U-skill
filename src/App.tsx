@@ -15,6 +15,7 @@ import FacultyDashboard from "./pages/dashboard/FacultyDashboard";
 import ProfileSettings from "./pages/dashboard/ProfileSettings";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import HodDashboard from "./pages/dashboard/HodDashboard";
+import LearningTrackPage from "./pages/dashboard/LearningTrackPage";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
                 <Route path="/dashboard/settings" element={<ProfileSettings />} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/hod" element={<HodDashboard />} />
+                <Route path="/learning-track/:trackKey" element={<LearningTrackPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

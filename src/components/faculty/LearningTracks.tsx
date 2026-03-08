@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Shield,
@@ -26,7 +27,7 @@ import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
 import { useCourseEnrollments } from "@/hooks/useCourseEnrollments";
 import { LucideIcon } from "lucide-react";
 
-interface Course {
+export interface Course {
   id: string;
   title: string;
   description: string | null;
@@ -41,7 +42,7 @@ interface Course {
   is_published: boolean;
 }
 
-interface TrackDefinition {
+export interface TrackDefinition {
   key: string;
   label: string;
   icon: LucideIcon;
@@ -50,7 +51,7 @@ interface TrackDefinition {
   iconBgClass: string;
 }
 
-const TRACKS: TrackDefinition[] = [
+export const TRACKS: TrackDefinition[] = [
   {
     key: "cyber-security",
     label: "Cyber Security",
@@ -117,7 +118,7 @@ const TRACKS: TrackDefinition[] = [
   },
 ];
 
-const getDifficultyFromDuration = (hours: number | null): { label: string; color: string } => {
+export const getDifficultyFromDuration = (hours: number | null): { label: string; color: string } => {
   if (!hours || hours <= 2) return { label: "Beginner", color: "bg-success/15 text-success border-success/30" };
   if (hours <= 5) return { label: "Intermediate", color: "bg-accent/15 text-accent-foreground border-accent/30" };
   return { label: "Advanced", color: "bg-destructive/15 text-destructive border-destructive/30" };
@@ -130,6 +131,7 @@ interface LearningTracksProps {
 const TrackRow = ({ track, courses }: { track: TrackDefinition; courses: Course[] }) => {
   const [expanded, setExpanded] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const {
     enrollInCourse,
     startCourse,
@@ -160,12 +162,15 @@ const TrackRow = ({ track, courses }: { track: TrackDefinition; courses: Course[
     >
       {/* Track Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
-        <div className="flex items-center gap-3">
+        <div
+          className="flex items-center gap-3 cursor-pointer"
+          onClick={() => navigate(`/learning-track/${track.key}`)}
+        >
           <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${track.iconBgClass}`}>
             <Icon className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="font-semibold text-foreground">{track.label}</h3>
+            <h3 className="font-semibold text-foreground hover:text-primary transition-colors">{track.label}</h3>
             <p className="text-xs text-muted-foreground">{courses.length} course{courses.length !== 1 ? "s" : ""}</p>
           </div>
         </div>
