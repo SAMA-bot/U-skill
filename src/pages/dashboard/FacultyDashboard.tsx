@@ -28,6 +28,7 @@ import FacultyProgressTracker from "@/components/faculty/FacultyProgressTracker"
 import MotivationTools from "@/components/faculty/MotivationTools";
 import MyCalendar from "@/components/faculty/MyCalendar";
 import PerformanceReportModal, { ReportData } from "@/components/faculty/PerformanceReportModal";
+import jsPDF from "jspdf";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
@@ -357,6 +358,82 @@ const FacultyDashboard = () => {
     compositeScore: performanceScoreData.compositeScore,
     badge: performanceScoreData.badge,
   };
+
+  const handleExportCSV = () => {
+    const rows = [
+      ["Faculty Performance Export"],
+      ["Generated", new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })],
+      [],
+      ["Faculty Name", reportData.facultyName],
+      ["Department", reportData.department || "Not specified"],
+      ["Academic Year", reportData.academicYear],
+      [],
+      ["Metric", "Value"],
+      ["Capacity Score", `${reportData.capacityScore}/100`],
+      ["Performance Score", `${reportData.performanceScore}/100`],
+      ["Motivation Index", `${reportData.motivationIndex}/100`],
+      ["Training Hours", `${reportData.trainingHours}h`],
+      ["Trainings Attended", String(reportData.trainingsAttended)],
+      ["Student Feedback", `${reportData.studentFeedback}/100`],
+      ["Publications", String(reportData.publications)],
+      ["Composite Score", `${reportData.compositeScore}/100`],
+      ["Performance Badge", reportData.badge],
+    ];
+    const csv = rows.map(r => r.map(c => `"${c}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Performance_Export_${reportData.facultyName.replace(/\s+/g, "_")}_${reportData.academicYear}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "Export Complete", description: "CSV file downloaded successfully." });
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    const pw = doc.internal.pageSize.getWidth();
+    let y = 20;
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("Faculty Performance Export", pw / 2, y, { align: "center" });
+    y += 8;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Generated: ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}`, pw / 2, y, { align: "center" });
+    y += 14;
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.text("Faculty Information", 14, y); y += 7;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(`Name: ${reportData.facultyName}`, 14, y); y += 6;
+    doc.text(`Department: ${reportData.department || "Not specified"}`, 14, y); y += 6;
+    doc.text(`Academic Year: ${reportData.academicYear}`, 14, y); y += 12;
+
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.text("Performance Metrics", 14, y); y += 7;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    const metrics = [
+      ["Capacity Score", `${reportData.capacityScore}/100`],
+      ["Performance Score", `${reportData.performanceScore}/100`],
+      ["Motivation Index", `${reportData.motivationIndex}/100`],
+      ["Training Hours", `${reportData.trainingHours}h`],
+      ["Trainings Attended", String(reportData.trainingsAttended)],
+      ["Student Feedback", `${reportData.studentFeedback}/100`],
+      ["Publications", String(reportData.publications)],
+      ["Composite Score", `${reportData.compositeScore}/100`],
+      ["Performance Badge", reportData.badge],
+    ];
+    metrics.forEach(([label, value]) => {
+      doc.text(`${label}: ${value}`, 14, y); y += 6;
+    });
+
+    doc.save(`Performance_Export_${reportData.facultyName.replace(/\s+/g, "_")}_${reportData.academicYear}.pdf`);
+    toast({ title: "Export Complete", description: "PDF file downloaded successfully." });
+  };
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -510,10 +587,26 @@ const FacultyDashboard = () => {
                   </p>
                 </div>
                 <div className="flex space-x-3">
-                  <Button variant="outline" size="sm">
-                    <Download className="mr-2 h-4 w-4" />
-                    Export
-                  </Button>
+                  <div className="relative group">
+                    <Button variant="outline" size="sm" className="peer">
+                      <Download className="mr-2 h-4 w-4" />
+                      Export
+                    </Button>
+                    <div className="absolute right-0 top-full mt-1 w-36 bg-card border border-border rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                      <button
+                        onClick={() => handleExportCSV()}
+                        className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted rounded-t-md"
+                      >
+                        Export as CSV
+                      </button>
+                      <button
+                        onClick={() => handleExportPDF()}
+                        className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted rounded-b-md"
+                      >
+                        Export as PDF
+                      </button>
+                    </div>
+                  </div>
                   <Button size="sm" onClick={() => setReportModalOpen(true)}>
                     <FileText className="mr-2 h-4 w-4" />
                     Generate Report
