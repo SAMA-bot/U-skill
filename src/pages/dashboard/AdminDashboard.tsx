@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { getPerformanceBadgeColor, getPerformanceBadgeLabel } from "@/lib/performanceUtils";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -283,11 +284,7 @@ const AdminDashboard = () => {
       .slice(0, 2);
   };
 
-  const getPerformanceColor = (score: number) => {
-    if (score >= 80) return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-    if (score >= 60) return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-    return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-  };
+  const getPerformanceColor = (score: number) => getPerformanceBadgeColor(score);
 
   const statsCards = [
     { label: "Total Faculty", value: institutionStats.totalFaculty, icon: Users, color: "from-blue-500 to-blue-600" },
@@ -619,9 +616,12 @@ const AdminDashboard = () => {
                           <p className="text-xs text-muted-foreground">{dept.facultyCount} faculty</p>
                         </div>
                       </div>
-                      <Badge className={getPerformanceColor(dept.avgPerformance)}>
-                        {dept.avgPerformance}%
-                      </Badge>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-medium text-foreground">{dept.avgPerformance}%</span>
+                        <Badge className={`text-[10px] px-1.5 py-0 ${getPerformanceColor(dept.avgPerformance)}`}>
+                          {getPerformanceBadgeLabel(dept.avgPerformance)}
+                        </Badge>
+                      </div>
                     </div>
                   ))}
                   {departmentStats.length === 0 && (
@@ -684,9 +684,12 @@ const AdminDashboard = () => {
                           {faculty.department || 'Unassigned'}
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge className={getPerformanceColor(faculty.avgPerformance || 0)}>
-                            {faculty.avgPerformance || 0}%
-                          </Badge>
+                          <div className="flex items-center gap-1.5 justify-center">
+                            <span className="font-medium text-foreground">{faculty.avgPerformance || 0}%</span>
+                            <Badge className={`text-[10px] px-1.5 py-0 ${getPerformanceColor(faculty.avgPerformance || 0)}`}>
+                              {getPerformanceBadgeLabel(faculty.avgPerformance || 0)}
+                            </Badge>
+                          </div>
                         </TableCell>
                         <TableCell className="text-center">
                           <Badge className={getPerformanceColor(faculty.avgCapacity || 0)}>

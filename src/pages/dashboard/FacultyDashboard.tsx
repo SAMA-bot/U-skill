@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { getPerformanceBadgeColor, getPerformanceBadgeLabel } from "@/lib/performanceUtils";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, Activity, FolderUp, PanelLeftClose, PanelLeft } from "lucide-react";
@@ -487,8 +488,13 @@ const FacultyDashboard = () => {
                           <dt className="text-sm font-medium text-muted-foreground truncate">
                             {stat.label}
                           </dt>
-                          <dd className="text-lg font-semibold text-foreground">
-                            {stat.value}
+                          <dd className="flex items-center gap-2">
+                            <span className="text-lg font-semibold text-foreground">{stat.value}</span>
+                            {stat.label === "Performance Score" && (
+                              <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${getPerformanceBadgeColor(statsData.performanceScore)}`}>
+                                {getPerformanceBadgeLabel(statsData.performanceScore)}
+                              </span>
+                            )}
                           </dd>
                         </div>
                       </div>
