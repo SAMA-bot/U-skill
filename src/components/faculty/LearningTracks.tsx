@@ -26,7 +26,7 @@ import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
 import { useCourseEnrollments } from "@/hooks/useCourseEnrollments";
 import { LucideIcon } from "lucide-react";
 
-interface Course {
+export interface Course {
   id: string;
   title: string;
   description: string | null;
@@ -41,7 +41,7 @@ interface Course {
   is_published: boolean;
 }
 
-interface TrackDefinition {
+export interface TrackDefinition {
   key: string;
   label: string;
   icon: LucideIcon;
