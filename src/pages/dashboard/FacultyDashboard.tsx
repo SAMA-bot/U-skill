@@ -28,6 +28,7 @@ import FacultyProgressTracker from "@/components/faculty/FacultyProgressTracker"
 import MotivationTools from "@/components/faculty/MotivationTools";
 import MyCalendar from "@/components/faculty/MyCalendar";
 import PerformanceReportModal, { ReportData } from "@/components/faculty/PerformanceReportModal";
+import jsPDF from "jspdf";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { supabase } from "@/integrations/supabase/client";
