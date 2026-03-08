@@ -57,6 +57,72 @@ export const useNotifications = () => {
   }
   return context;
 };
+// Group notifications of the same type that occur on the same day
+const groupSimilarNotifications = (items: Notification[]): Notification[] => {
+  const groupKeys: Record<string, Notification[]> = {};
+
+  items.forEach((n) => {
+    const dayKey = n.timestamp.toISOString().slice(0, 10);
+    const key = `${n.type}_${n.category}_${dayKey}`;
+
+    if (!groupKeys[key]) {
+      groupKeys[key] = [];
+    }
+    groupKeys[key].push(n);
+  });
+
+  const result: Notification[] = [];
+
+  Object.values(groupKeys).forEach((group) => {
+    if (group.length <= 1) {
+      result.push(...group);
+      return;
+    }
+
+    const latest = group.reduce((a, b) =>
+      a.timestamp.getTime() > b.timestamp.getTime() ? a : b
+    );
+
+    const typeLabels: Record<string, string> = {
+      course_completed: "course",
+      course_started: "course",
+      course_enrolled: "course",
+      goal_achieved: "goal",
+      goal_deadline: "goal deadline",
+      goal_at_risk: "goal alert",
+      achievement_earned: "badge",
+      performance_change: "score change",
+    };
+
+    const label = typeLabels[latest.type] || "notification";
+    const count = group.length;
+
+    const titleMap: Record<string, string> = {
+      course_completed: `${count} Courses Completed 🎓`,
+      course_started: `${count} Courses In Progress`,
+      course_enrolled: `${count} New Courses Enrolled`,
+      goal_achieved: `${count} Goals Achieved! 🎉`,
+      goal_deadline: `${count} Goal Deadlines Approaching`,
+      goal_at_risk: `${count} Goals At Risk`,
+      achievement_earned: `${count} Badges Earned 🏆`,
+      performance_change: `${count} Score Changes`,
+    };
+
+    result.push({
+      id: `grouped_${latest.type}_${latest.timestamp.getTime()}`,
+      type: latest.type,
+      category: latest.category,
+      title: titleMap[latest.type] || `${count} ${label}s`,
+      message: `You have ${count} ${label}${count !== 1 ? "s" : ""} today.`,
+      severity: latest.severity,
+      timestamp: latest.timestamp,
+      read: group.every((n) => n.read),
+      data: { grouped: true, count, items: group.map((n) => n.data) },
+    });
+  });
+
+  return result;
+};
 
 export const NotificationsProvider = ({ children }: { children: ReactNode }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
