@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, Activity, FolderUp, PanelLeftClose, PanelLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
@@ -292,19 +293,23 @@ const FacultyDashboard = () => {
   };
   const statsCards = [{
     label: "Capacity Score",
-    value: `${statsData.capacityScore}/100`,
+    value: statsData.capacityScore,
+    suffix: "/100",
     icon: ClipboardList
   }, {
     label: "Performance Score",
-    value: `${statsData.performanceScore}/100`,
+    value: statsData.performanceScore,
+    suffix: "/100",
     icon: BarChart3
   }, {
     label: "Motivation Index",
-    value: `${statsData.motivationIndex}/100`,
+    value: statsData.motivationIndex,
+    suffix: "/100",
     icon: Star
   }, {
     label: "Training Hours",
-    value: `${statsData.trainingHours}h`,
+    value: statsData.trainingHours,
+    suffix: "h",
     icon: Clock
   }];
   if (loading || loadingProfile) {
@@ -476,20 +481,28 @@ const FacultyDashboard = () => {
                 y: 0
               }} transition={{
                 delay: index * 0.1
-              }} className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-md transition-shadow">
+              }} whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg transition-all duration-300 cursor-default">
                     <div className="p-5">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
-                          <div className="bg-gradient-to-br from-primary to-accent rounded-md p-3">
+                          <motion.div
+                            className="bg-gradient-to-br from-primary to-accent rounded-md p-3"
+                            whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
+                          >
                             <stat.icon className="h-6 w-6 text-white" />
-                          </div>
+                          </motion.div>
                         </div>
                         <div className="ml-5 w-0 flex-1">
                           <dt className="text-sm font-medium text-muted-foreground truncate">
                             {stat.label}
                           </dt>
                           <dd className="flex items-center gap-2">
-                            <span className="text-lg font-semibold text-foreground">{stat.value}</span>
+                            <AnimatedCounter
+                              value={stat.value}
+                              suffix={stat.suffix}
+                              className="text-lg font-semibold text-foreground"
+                            />
                             {stat.label === "Performance Score" && (
                               <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${getPerformanceBadgeColor(statsData.performanceScore)}`}>
                                 {getPerformanceBadgeLabel(statsData.performanceScore)}
@@ -523,7 +536,8 @@ const FacultyDashboard = () => {
                 y: 0
               }} transition={{
                 delay: 0.4
-              }} className="bg-card shadow-sm rounded-lg overflow-hidden border border-border">
+              }} whileHover={{ y: -2, transition: { duration: 0.2 } }}
+              className="bg-card shadow-sm rounded-lg overflow-hidden border border-border hover:shadow-lg transition-all duration-300">
                   <div className="px-4 py-5 sm:px-6 border-b border-border">
                     <h3 className="text-lg font-medium text-foreground">Performance Assessment</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
@@ -558,7 +572,8 @@ const FacultyDashboard = () => {
                 y: 0
               }} transition={{
                 delay: 0.5
-              }} className="bg-card shadow-sm rounded-lg overflow-hidden border border-border">
+              }} whileHover={{ y: -2, transition: { duration: 0.2 } }}
+              className="bg-card shadow-sm rounded-lg overflow-hidden border border-border hover:shadow-lg transition-all duration-300">
                   <div className="px-4 py-5 sm:px-6 border-b border-border">
                     <h3 className="text-lg font-medium text-foreground">Capacity Building Progress</h3>
                     <p className="mt-1 text-sm text-muted-foreground">

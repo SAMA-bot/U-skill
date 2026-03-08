@@ -136,6 +136,8 @@ const PerformanceChart = () => {
           fill="url(#colorTeaching)"
           strokeWidth={2}
           name="Teaching"
+          animationDuration={1200}
+          animationEasing="ease-out"
         />
         <Area
           type="monotone"
@@ -145,6 +147,8 @@ const PerformanceChart = () => {
           fill="url(#colorResearch)"
           strokeWidth={2}
           name="Research"
+          animationDuration={1400}
+          animationEasing="ease-out"
         />
         <Area
           type="monotone"
@@ -154,6 +158,8 @@ const PerformanceChart = () => {
           fill="url(#colorService)"
           strokeWidth={2}
           name="Service"
+          animationDuration={1600}
+          animationEasing="ease-out"
         />
       </AreaChart>
     </ResponsiveContainer>
