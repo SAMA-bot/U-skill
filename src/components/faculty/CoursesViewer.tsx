@@ -79,6 +79,10 @@ const isEmbeddableUrl = (url: string | null): boolean => {
   try {
     const parsed = new URL(url);
     const hostname = parsed.hostname.toLowerCase();
+    // Supabase storage URLs are platform-hosted — always embeddable via signed URL
+    if (hostname.includes("supabase.co") || parsed.pathname.includes("/storage/v1/")) {
+      return true;
+    }
     // YouTube embed links are safe
     if (hostname.includes("youtube.com") || hostname.includes("youtu.be") || hostname.includes("youtube-nocookie.com")) {
       return true;
