@@ -374,11 +374,12 @@ const CoursesViewer = () => {
         key={course.id}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        whileHover={{ y: -6, scale: 1.02, transition: { type: "spring", stiffness: 300, damping: 20 } }}
         transition={{ delay: index * 0.05 }}
-        className={`relative overflow-hidden rounded-xl cursor-pointer group transition-all duration-300 hover:-translate-y-1 ${
+        className={`relative overflow-hidden rounded-xl cursor-pointer group transition-colors duration-300 ${
           completed
-            ? "border border-success/30 bg-card/60 backdrop-blur-md shadow-[0_4px_24px_-6px_hsl(var(--success)/0.15)]"
-            : "border border-border/40 bg-card/50 backdrop-blur-md shadow-[0_4px_24px_-6px_hsl(var(--foreground)/0.06)] hover:shadow-[0_12px_32px_-8px_hsl(var(--accent)/0.18)] hover:border-accent/30"
+            ? "border border-success/30 bg-card/60 backdrop-blur-md shadow-[0_4px_24px_-6px_hsl(var(--success)/0.15)] hover:shadow-[0_16px_40px_-8px_hsl(var(--success)/0.25)] hover:border-success/50"
+            : "border border-border/40 bg-card/50 backdrop-blur-md shadow-[0_4px_24px_-6px_hsl(var(--foreground)/0.06)] hover:shadow-[0_16px_40px_-8px_hsl(var(--accent)/0.22)] hover:border-accent/40 hover:bg-card/70"
         }`}
         onClick={() => setDetailCourse(course)}
       >
