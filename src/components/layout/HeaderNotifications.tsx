@@ -23,6 +23,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useNotifications, Notification, NotificationCategory } from "@/hooks/useNotifications";
+import { toast } from "sonner";
 
 type TabKey = "all" | NotificationCategory;
 
