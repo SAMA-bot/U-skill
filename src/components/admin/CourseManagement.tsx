@@ -595,15 +595,31 @@ export function CourseManagement() {
                   </div>
                 )}
 
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="published"
-                    checked={formData.is_published}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, is_published: checked })
-                    }
-                  />
-                  <Label htmlFor="published">Publish course immediately</Label>
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="published"
+                      checked={formData.is_published}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, is_published: checked })
+                      }
+                    />
+                    <Label htmlFor="published">Publish course immediately</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="mandatory"
+                      checked={formData.is_mandatory}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, is_mandatory: checked })
+                      }
+                    />
+                    <Label htmlFor="mandatory" className="flex items-center gap-1.5">
+                      <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+                      Mark as mandatory training
+                    </Label>
+                  </div>
+                </div>
                 </div>
 
                 <DialogFooter>
