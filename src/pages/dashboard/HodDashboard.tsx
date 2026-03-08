@@ -27,6 +27,7 @@ import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
 } from "recharts";
+import DepartmentAlerts from "@/components/hod/DepartmentAlerts";
 
 interface FacultyRanking {
   user_id: string;
@@ -491,6 +492,11 @@ const HodDashboard = () => {
                       </div>
                     </CardContent>
                   </Card>
+                </motion.div>
+
+                {/* Department Alerts */}
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.57 }} className="mb-8">
+                  <DepartmentAlerts department={hodDepartment} />
                 </motion.div>
 
                 {/* Faculty Rankings */}
