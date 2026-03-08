@@ -49,6 +49,7 @@ import RoleSummaryCards from "@/components/admin/RoleSummaryCards";
 import { CourseManagement } from "@/components/admin/CourseManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FacultyManagement from "@/components/admin/FacultyManagement";
+import AchievementManagement from "@/components/admin/AchievementManagement";
 import PerformanceReports from "@/components/admin/PerformanceReports";
 import AuditLogViewer from "@/components/admin/AuditLogViewer";
 import PerformanceScoreCard from "@/components/dashboard/PerformanceScoreCard";
@@ -485,6 +486,8 @@ const AdminDashboard = () => {
             <PerformanceReports />
           ) : activeSection === "departments" ? (
             <DepartmentManagement />
+          ) : activeSection === "achievements" ? (
+            <AchievementManagement />
           ) : (
             <>
           {/* Page Header */}
