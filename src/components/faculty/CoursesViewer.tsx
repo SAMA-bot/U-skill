@@ -395,7 +395,7 @@ const CoursesViewer = () => {
             ) : enrolled ? (
               <Button variant="default" className="w-full" onClick={(e) => { e.stopPropagation(); startCourse(course.id); }}>
                 <PlayCircle className="h-4 w-4 mr-2" />
-                Start Learning
+                Continue Learning
               </Button>
             ) : (
               <Button
