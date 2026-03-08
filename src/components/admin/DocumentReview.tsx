@@ -92,11 +92,16 @@ export default function DocumentReview() {
   const [profiles, setProfiles] = useState<Map<string, any>>(new Map());
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [departmentFilter, setDepartmentFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [commentDialogOpen, setCommentDialogOpen] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState<DocumentWithProfile | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [adminComment, setAdminComment] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -251,6 +256,72 @@ export default function DocumentReview() {
     setRejectDialogOpen(true);
   };
 
+  const openCommentDialog = (doc: DocumentWithProfile) => {
+    setSelectedDoc(doc);
+    setAdminComment("");
+    setCommentDialogOpen(true);
+  };
+
+  const handleApproveWithComment = async () => {
+    if (!selectedDoc) return;
+    setProcessing(true);
+    try {
+      const { error } = await supabase
+        .from("faculty_documents" as any)
+        .update({
+          status: "verified",
+          reviewed_by: user?.id,
+          reviewed_at: new Date().toISOString(),
+          rejection_reason: adminComment.trim() || null,
+        } as any)
+        .eq("id", selectedDoc.id);
+
+      if (error) throw error;
+
+      setDocuments((prev) =>
+        prev.map((d) =>
+          d.id === selectedDoc.id
+            ? { ...d, status: "verified", reviewed_at: new Date().toISOString(), rejection_reason: adminComment.trim() || null }
+            : d
+        )
+      );
+
+      toast({
+        title: "Document approved",
+        description: `"${selectedDoc.title}" has been verified${adminComment ? " with comment" : ""}.`,
+      });
+
+      setCommentDialogOpen(false);
+      setSelectedDoc(null);
+      setAdminComment("");
+    } catch (error: any) {
+      console.error("Error approving document:", error);
+      toast({
+        title: "Error",
+        description: getUserFriendlyError(error, "general"),
+        variant: "destructive",
+      });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handlePreview = async (doc: DocumentWithProfile) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from("faculty-documents")
+        .createSignedUrl(doc.document_url.replace(/.*faculty-documents\//, ""), 300);
+
+      if (error) throw error;
+      if (data?.signedUrl) {
+        window.open(data.signedUrl, "_blank");
+      }
+    } catch {
+      // Fallback: try using URL directly
+      window.open(doc.document_url, "_blank");
+    }
+  };
+
   const getInitials = (name: string) =>
     name
       .split(" ")
@@ -266,14 +337,22 @@ export default function DocumentReview() {
       year: "numeric",
     });
 
+  // Get unique departments for filter
+  const departments = [...new Set(documents.map((d) => d.department).filter(Boolean))] as string[];
+  const documentTypes = [...new Set(documents.map((d) => d.document_type))];
+
   const filteredDocuments = documents.filter((doc) => {
     const matchesStatus =
       statusFilter === "all" || doc.status === statusFilter;
+    const matchesDepartment =
+      departmentFilter === "all" || doc.department === departmentFilter;
+    const matchesType =
+      typeFilter === "all" || doc.document_type === typeFilter;
     const matchesSearch =
       doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       doc.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       doc.department?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesStatus && matchesSearch;
+    return matchesStatus && matchesDepartment && matchesType && matchesSearch;
   });
 
   const pendingCount = documents.filter((d) => d.status === "pending").length;
@@ -301,7 +380,7 @@ export default function DocumentReview() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -312,15 +391,41 @@ export default function DocumentReview() {
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-full sm:w-[180px]">
+          <SelectTrigger className="w-full sm:w-[160px]">
             <Filter className="h-4 w-4 mr-2" />
-            <SelectValue placeholder="Filter by status" />
+            <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
             <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="verified">Verified</SelectItem>
+            <SelectItem value="verified">Approved</SelectItem>
             <SelectItem value="rejected">Rejected</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+          <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectValue placeholder="Department" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Departments</SelectItem>
+            {departments.map((dept) => (
+              <SelectItem key={dept} value={dept}>
+                {dept}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <SelectTrigger className="w-full sm:w-[170px]">
+            <SelectValue placeholder="Doc Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            {DOCUMENT_TYPES.map((t) => (
+              <SelectItem key={t.value} value={t.value}>
+                {t.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -408,34 +513,45 @@ export default function DocumentReview() {
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        {doc.status === "pending" ? (
-                          <div className="flex items-center justify-end gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
-                              onClick={() => handleApprove(doc)}
-                              disabled={processing}
-                            >
-                              <CheckCircle2 className="h-4 w-4 mr-1" />
-                              Approve
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                              onClick={() => openRejectDialog(doc)}
-                              disabled={processing}
-                            >
-                              <XCircle className="h-4 w-4 mr-1" />
-                              Reject
-                            </Button>
-                          </div>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">
-                            {doc.reviewed_at && `Reviewed ${formatDate(doc.reviewed_at)}`}
-                          </span>
-                        )}
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                            onClick={() => handlePreview(doc)}
+                            title="Preview document"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          {doc.status === "pending" ? (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                                onClick={() => openCommentDialog(doc)}
+                                disabled={processing}
+                              >
+                                <CheckCircle2 className="h-4 w-4 mr-1" />
+                                Approve
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-destructive hover:bg-destructive/10"
+                                onClick={() => openRejectDialog(doc)}
+                                disabled={processing}
+                              >
+                                <XCircle className="h-4 w-4 mr-1" />
+                                Reject
+                              </Button>
+                            </>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">
+                              {doc.reviewed_at && `Reviewed ${formatDate(doc.reviewed_at)}`}
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
@@ -482,6 +598,46 @@ export default function DocumentReview() {
             >
               {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Reject Document
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Approve with Comment Dialog */}
+      <Dialog open={commentDialogOpen} onOpenChange={setCommentDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Approve Document</DialogTitle>
+            <DialogDescription>
+              Approve "{selectedDoc?.title}". You can optionally add a comment for the faculty member.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="admin-comment">Admin Comment (optional)</Label>
+              <Textarea
+                id="admin-comment"
+                placeholder="e.g., Verified and looks good. Please submit the original copy as well."
+                value={adminComment}
+                onChange={(e) => setAdminComment(e.target.value)}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setCommentDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleApproveWithComment}
+              disabled={processing}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white"
+            >
+              {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Approve Document
             </Button>
           </DialogFooter>
         </DialogContent>
