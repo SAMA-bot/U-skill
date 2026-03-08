@@ -49,6 +49,9 @@ interface Course {
   document_url: string | null;
   course_type: string;
   is_published: boolean;
+  is_mandatory: boolean;
+  department: string | null;
+  training_date: string | null;
   created_by: string;
   created_at: string;
   updated_at: string;
