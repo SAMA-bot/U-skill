@@ -33,7 +33,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Pencil, Trash2, Loader2, BookOpen, Clock, User, ExternalLink, Video, FileText } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, BookOpen, Clock, User, ExternalLink, Video, FileText, AlertTriangle, Building2, CalendarDays } from 'lucide-react';
+import CourseEnrollmentStats from '@/components/admin/CourseEnrollmentStats';
 
 interface Course {
   id: string;
