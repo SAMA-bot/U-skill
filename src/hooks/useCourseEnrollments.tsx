@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
-import { getUserFriendlyError } from "@/lib/errorMessages";
 import { useAcademicYear } from "@/contexts/AcademicYearContext";
 
 type EnrollmentStatus = "enrolled" | "in_progress" | "completed";
@@ -14,16 +13,8 @@ interface CourseEnrollment {
   course_id: string;
   enrolled_at: string;
   completed_at: string | null;
-  status: EnrollmentStatus;
+  status: string;
   progress_percentage: number;
-}
-
-interface CourseActionResponse {
-  success?: boolean;
-  data?: CourseEnrollment;
-  error?: string;
-  message?: string;
-  retryAfter?: number;
 }
 
 export const useCourseEnrollments = () => {
@@ -36,7 +27,6 @@ export const useCourseEnrollments = () => {
   const fetchEnrollments = useCallback(async () => {
     if (!user) return;
 
-    // Get date range for selected academic year
     const dateRange = getDateRangeForYear(selectedYear);
     const startDate = dateRange?.start.toISOString();
     const endDate = dateRange?.end.toISOString();
@@ -46,12 +36,11 @@ export const useCourseEnrollments = () => {
         .from("course_enrollments")
         .select("*")
         .eq("user_id", user.id);
-      
-      // Filter by academic year date range
+
       if (startDate && endDate) {
         query = query.gte("enrolled_at", startDate).lte("enrolled_at", endDate);
       }
-      
+
       const { data, error } = await query.order("enrolled_at", { ascending: false });
 
       if (error) throw error;
@@ -67,87 +56,91 @@ export const useCourseEnrollments = () => {
     fetchEnrollments();
   }, [fetchEnrollments]);
 
-  // Realtime subscription
+  // Realtime subscription for enrollment changes
   useRealtimeData({
-    table: "courses" as any,
+    table: "course_enrollments" as any,
     userId: user?.id,
     onChange: fetchEnrollments,
   });
-
-  const callCourseAction = async (
-    action: string,
-    courseId: string,
-    progressPercentage?: number
-  ): Promise<CourseEnrollment | null> => {
-    try {
-      const { data, error } = await supabase.functions.invoke<CourseActionResponse>(
-        "course-actions",
-        {
-          body: { action, courseId, progressPercentage },
-        }
-      );
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (data?.error) {
-        // Handle rate limit
-        if (data.error === "Rate Limit Exceeded") {
-          const retryMinutes = Math.ceil((data.retryAfter || 3600) / 60);
-          toast({
-            title: "Too many requests",
-            description: `Please wait ${retryMinutes} minutes before trying again.`,
-            variant: "destructive",
-          });
-          return null;
-        }
-
-        throw new Error(data.message || "Action failed");
-      }
-
-      return data?.data || null;
-    } catch (error: any) {
-      console.error(`Course action ${action} failed:`, error);
-      throw error;
-    }
-  };
 
   const enrollInCourse = async (courseId: string) => {
     if (!user) {
       toast({
         title: "Authentication required",
-        description: "Please log in to enroll in courses",
+        description: "Please log in to enroll in courses.",
         variant: "destructive",
       });
       return null;
     }
 
+    // Check locally first for duplicate
+    const existing = enrollments.find((e) => e.course_id === courseId);
+    if (existing) {
+      toast({
+        title: "Already enrolled",
+        description: "You are already enrolled in this course.",
+      });
+      return existing;
+    }
+
     try {
-      const result = await callCourseAction("enroll", courseId);
+      // Double-check in DB to prevent race conditions
+      const { data: dbExisting } = await supabase
+        .from("course_enrollments")
+        .select("id, course_id, user_id, enrolled_at, completed_at, status, progress_percentage")
+        .eq("user_id", user.id)
+        .eq("course_id", courseId)
+        .maybeSingle();
 
-      if (result) {
-        setEnrollments((prev) => [result, ...prev]);
-        toast({
-          title: "Enrolled successfully!",
-          description: "You have been enrolled in this course",
-        });
-      }
-
-      return result;
-    } catch (error: any) {
-      if (error.message?.includes("already enrolled")) {
+      if (dbExisting) {
+        // Already exists in DB — sync local state
+        setEnrollments((prev) =>
+          prev.some((e) => e.course_id === courseId) ? prev : [dbExisting as CourseEnrollment, ...prev]
+        );
         toast({
           title: "Already enrolled",
-          description: "You are already enrolled in this course",
+          description: "You are already enrolled in this course.",
         });
-      } else {
-        toast({
-          title: "Enrollment failed",
-          description: getUserFriendlyError(error, "general"),
-          variant: "destructive",
-        });
+        return dbExisting as CourseEnrollment;
       }
+
+      const { data, error } = await supabase
+        .from("course_enrollments")
+        .insert({
+          user_id: user.id,
+          course_id: courseId,
+          status: "enrolled",
+          progress_percentage: 0,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        // Handle unique constraint violation (duplicate)
+        if (error.code === "23505") {
+          toast({
+            title: "Already enrolled",
+            description: "You are already enrolled in this course.",
+          });
+          return null;
+        }
+        throw error;
+      }
+
+      const enrollment = data as CourseEnrollment;
+      setEnrollments((prev) => [enrollment, ...prev]);
+      toast({
+        title: "✅ Successfully enrolled!",
+        description: "This course has been added to your My Learning tab.",
+      });
+      return enrollment;
+    } catch (error: any) {
+      console.error("Enrollment failed:", error);
+      toast({
+        title: "Enrollment failed",
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
       return null;
     }
   };
@@ -156,26 +149,57 @@ export const useCourseEnrollments = () => {
     if (!user) return null;
 
     try {
-      const result = await callCourseAction("start", courseId);
+      const existing = enrollments.find((e) => e.course_id === courseId);
 
-      if (result) {
-        setEnrollments((prev) =>
-          prev.some((e) => e.course_id === courseId)
-            ? prev.map((e) => (e.course_id === courseId ? result : e))
-            : [result, ...prev]
-        );
+      if (!existing) {
+        // Auto-enroll and start
+        const { data, error } = await supabase
+          .from("course_enrollments")
+          .insert({
+            user_id: user.id,
+            course_id: courseId,
+            status: "in_progress",
+            progress_percentage: 10,
+          })
+          .select()
+          .single();
 
+        if (error) throw error;
+        const enrollment = data as CourseEnrollment;
+        setEnrollments((prev) => [enrollment, ...prev]);
         toast({
-          title: "Course started!",
-          description: "Good luck with your learning journey",
+          title: "🚀 Course started!",
+          description: "Good luck with your learning journey.",
         });
+        return enrollment;
       }
 
-      return result;
+      const { data, error } = await supabase
+        .from("course_enrollments")
+        .update({
+          status: "in_progress",
+          progress_percentage: Math.max(existing.progress_percentage || 0, 10),
+        })
+        .eq("user_id", user.id)
+        .eq("course_id", courseId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      const enrollment = data as CourseEnrollment;
+      setEnrollments((prev) =>
+        prev.map((e) => (e.course_id === courseId ? enrollment : e))
+      );
+      toast({
+        title: "🚀 Course started!",
+        description: "Good luck with your learning journey.",
+      });
+      return enrollment;
     } catch (error: any) {
+      console.error("Failed to start course:", error);
       toast({
         title: "Failed to start course",
-        description: getUserFriendlyError(error, "general"),
+        description: error.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
       return null;
@@ -186,24 +210,43 @@ export const useCourseEnrollments = () => {
     if (!user) return null;
 
     try {
-      const result = await callCourseAction("complete", courseId);
+      const { data, error } = await supabase
+        .from("course_enrollments")
+        .update({
+          status: "completed",
+          progress_percentage: 100,
+          completed_at: new Date().toISOString(),
+        })
+        .eq("user_id", user.id)
+        .eq("course_id", courseId)
+        .select()
+        .single();
 
-      if (result) {
-        setEnrollments((prev) =>
-          prev.map((e) => (e.course_id === courseId ? result : e))
-        );
+      if (error) throw error;
 
+      if (!data) {
         toast({
-          title: "🎉 Training Completed!",
-          description: "Congratulations! Your skill points and capacity score have been updated.",
+          title: "Not enrolled",
+          description: "You need to enroll in this course first.",
+          variant: "destructive",
         });
+        return null;
       }
 
-      return result;
+      const enrollment = data as CourseEnrollment;
+      setEnrollments((prev) =>
+        prev.map((e) => (e.course_id === courseId ? enrollment : e))
+      );
+      toast({
+        title: "🎉 Training Completed!",
+        description: "Congratulations! Your skill points and capacity score have been updated.",
+      });
+      return enrollment;
     } catch (error: any) {
+      console.error("Failed to complete course:", error);
       toast({
         title: "Failed to complete course",
-        description: getUserFriendlyError(error, "general"),
+        description: error.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
       return null;
@@ -214,22 +257,35 @@ export const useCourseEnrollments = () => {
     if (!user) return null;
 
     try {
-      const result = await callCourseAction("progress", courseId, percentage);
+      const safePercentage = Math.min(100, Math.max(0, percentage));
+      const isComplete = safePercentage >= 100;
 
-      if (result) {
-        setEnrollments((prev) =>
-          prev.map((e) => (e.course_id === courseId ? result : e))
-        );
+      const { data, error } = await supabase
+        .from("course_enrollments")
+        .update({
+          progress_percentage: safePercentage,
+          status: isComplete ? "completed" : "in_progress",
+          completed_at: isComplete ? new Date().toISOString() : null,
+        })
+        .eq("user_id", user.id)
+        .eq("course_id", courseId)
+        .select()
+        .single();
 
-        if (percentage >= 100) {
-          toast({
-            title: "🎉 Course completed!",
-            description: "Congratulations! Your skill points have been updated.",
-          });
-        }
+      if (error) throw error;
+
+      const enrollment = data as CourseEnrollment;
+      setEnrollments((prev) =>
+        prev.map((e) => (e.course_id === courseId ? enrollment : e))
+      );
+
+      if (isComplete) {
+        toast({
+          title: "🎉 Course completed!",
+          description: "Congratulations! Your skill points have been updated.",
+        });
       }
-
-      return result;
+      return enrollment;
     } catch (error: any) {
       console.error("Failed to update progress:", error);
       return null;
