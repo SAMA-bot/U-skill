@@ -489,6 +489,8 @@ const AdminDashboard = () => {
             <DepartmentManagement />
           ) : activeSection === "achievements" ? (
             <AchievementManagement />
+          ) : activeSection === "leaderboards" ? (
+            <DepartmentLeaderboard />
           ) : (
             <>
           {/* Page Header */}
