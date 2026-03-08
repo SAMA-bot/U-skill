@@ -833,7 +833,7 @@ const AdminDashboard = () => {
                           </div>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge className={getPerformanceColor(faculty.avgCapacity || 0)}>
+                          <Badge variant="outline" className={getPerformanceColor(faculty.avgCapacity || 0)}>
                             {faculty.avgCapacity || 0}%
                           </Badge>
                         </TableCell>
