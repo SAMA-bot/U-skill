@@ -13,9 +13,9 @@ import {
   BookOpen,
   Award,
   PlayCircle,
-  FileText,
   FileX,
   FileCheck,
+  ClipboardList,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -36,33 +36,41 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: "document", label: "Docs" },
 ];
 
-const getIcon = (type: Notification["type"], severity: Notification["severity"]) => {
+interface IconConfig {
+  icon: React.ReactNode;
+  bg: string;
+  text: string;
+}
+
+const getIconConfig = (type: Notification["type"], severity: Notification["severity"]): IconConfig => {
   const cls = "h-3.5 w-3.5";
   switch (type) {
     case "goal_achieved":
-      return <CheckCircle2 className={`${cls} text-success`} />;
+      return { icon: <CheckCircle2 className={cls} />, bg: "bg-emerald-500/15", text: "text-emerald-600 dark:text-emerald-400" };
     case "goal_deadline":
-      return <Calendar className={`${cls} text-accent`} />;
+      return { icon: <Calendar className={cls} />, bg: "bg-amber-500/15", text: "text-amber-600 dark:text-amber-400" };
     case "goal_at_risk":
-      return <AlertTriangle className={`${cls} text-destructive`} />;
+      return { icon: <AlertTriangle className={cls} />, bg: "bg-red-500/15", text: "text-red-600 dark:text-red-400" };
     case "performance_change":
       return severity === "success"
-        ? <TrendingUp className={`${cls} text-success`} />
-        : <TrendingDown className={`${cls} text-destructive`} />;
+        ? { icon: <TrendingUp className={cls} />, bg: "bg-emerald-500/15", text: "text-emerald-600 dark:text-emerald-400" }
+        : { icon: <TrendingDown className={cls} />, bg: "bg-red-500/15", text: "text-red-600 dark:text-red-400" };
     case "course_completed":
-      return <CheckCircle2 className={`${cls} text-success`} />;
+      return { icon: <GraduationCap className={cls} />, bg: "bg-emerald-500/15", text: "text-emerald-600 dark:text-emerald-400" };
     case "course_started":
-      return <PlayCircle className={`${cls} text-primary`} />;
+      return { icon: <PlayCircle className={cls} />, bg: "bg-blue-500/15", text: "text-blue-600 dark:text-blue-400" };
     case "course_enrolled":
-      return <BookOpen className={`${cls} text-primary`} />;
+      return { icon: <BookOpen className={cls} />, bg: "bg-indigo-500/15", text: "text-indigo-600 dark:text-indigo-400" };
+    case "training_reminder":
+      return { icon: <ClipboardList className={cls} />, bg: "bg-orange-500/15", text: "text-orange-600 dark:text-orange-400" };
     case "achievement_earned":
-      return <Award className={`${cls} text-accent`} />;
+      return { icon: <Award className={cls} />, bg: "bg-yellow-500/15", text: "text-yellow-600 dark:text-yellow-400" };
     case "document_approved":
-      return <FileCheck className={`${cls} text-success`} />;
+      return { icon: <FileCheck className={cls} />, bg: "bg-emerald-500/15", text: "text-emerald-600 dark:text-emerald-400" };
     case "document_rejected":
-      return <FileX className={`${cls} text-destructive`} />;
+      return { icon: <FileX className={cls} />, bg: "bg-red-500/15", text: "text-red-600 dark:text-red-400" };
     default:
-      return <Bell className={`${cls} text-muted-foreground`} />;
+      return { icon: <Bell className={cls} />, bg: "bg-muted", text: "text-muted-foreground" };
   }
 };
 
