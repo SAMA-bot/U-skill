@@ -95,6 +95,8 @@ const groupSimilarNotifications = (items: Notification[]): Notification[] => {
       goal_at_risk: "goal alert",
       achievement_earned: "badge",
       performance_change: "score change",
+      document_approved: "document approval",
+      document_rejected: "document rejection",
     };
 
     const label = typeLabels[latest.type] || "notification";
@@ -109,6 +111,8 @@ const groupSimilarNotifications = (items: Notification[]): Notification[] => {
       goal_at_risk: `${count} Goals At Risk`,
       achievement_earned: `${count} Badges Earned 🏆`,
       performance_change: `${count} Score Changes`,
+      document_approved: `${count} Documents Approved ✅`,
+      document_rejected: `${count} Documents Rejected`,
     };
 
     result.push({
