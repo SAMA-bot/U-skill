@@ -358,6 +358,82 @@ const FacultyDashboard = () => {
     compositeScore: performanceScoreData.compositeScore,
     badge: performanceScoreData.badge,
   };
+
+  const handleExportCSV = () => {
+    const rows = [
+      ["Faculty Performance Export"],
+      ["Generated", new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })],
+      [],
+      ["Faculty Name", reportData.facultyName],
+      ["Department", reportData.department || "Not specified"],
+      ["Academic Year", reportData.academicYear],
+      [],
+      ["Metric", "Value"],
+      ["Capacity Score", `${reportData.capacityScore}/100`],
+      ["Performance Score", `${reportData.performanceScore}/100`],
+      ["Motivation Index", `${reportData.motivationIndex}/100`],
+      ["Training Hours", `${reportData.trainingHours}h`],
+      ["Trainings Attended", String(reportData.trainingsAttended)],
+      ["Student Feedback", `${reportData.studentFeedback}/100`],
+      ["Publications", String(reportData.publications)],
+      ["Composite Score", `${reportData.compositeScore}/100`],
+      ["Performance Badge", reportData.badge],
+    ];
+    const csv = rows.map(r => r.map(c => `"${c}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Performance_Export_${reportData.facultyName.replace(/\s+/g, "_")}_${reportData.academicYear}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "Export Complete", description: "CSV file downloaded successfully." });
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    const pw = doc.internal.pageSize.getWidth();
+    let y = 20;
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("Faculty Performance Export", pw / 2, y, { align: "center" });
+    y += 8;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Generated: ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}`, pw / 2, y, { align: "center" });
+    y += 14;
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.text("Faculty Information", 14, y); y += 7;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(`Name: ${reportData.facultyName}`, 14, y); y += 6;
+    doc.text(`Department: ${reportData.department || "Not specified"}`, 14, y); y += 6;
+    doc.text(`Academic Year: ${reportData.academicYear}`, 14, y); y += 12;
+
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.text("Performance Metrics", 14, y); y += 7;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    const metrics = [
+      ["Capacity Score", `${reportData.capacityScore}/100`],
+      ["Performance Score", `${reportData.performanceScore}/100`],
+      ["Motivation Index", `${reportData.motivationIndex}/100`],
+      ["Training Hours", `${reportData.trainingHours}h`],
+      ["Trainings Attended", String(reportData.trainingsAttended)],
+      ["Student Feedback", `${reportData.studentFeedback}/100`],
+      ["Publications", String(reportData.publications)],
+      ["Composite Score", `${reportData.compositeScore}/100`],
+      ["Performance Badge", reportData.badge],
+    ];
+    metrics.forEach(([label, value]) => {
+      doc.text(`${label}: ${value}`, 14, y); y += 6;
+    });
+
+    doc.save(`Performance_Export_${reportData.facultyName.replace(/\s+/g, "_")}_${reportData.academicYear}.pdf`);
+    toast({ title: "Export Complete", description: "PDF file downloaded successfully." });
+  };
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
