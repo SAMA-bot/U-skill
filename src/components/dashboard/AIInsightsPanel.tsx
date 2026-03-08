@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -10,6 +10,7 @@ import {
   RefreshCw,
   Loader2,
   AlertCircle,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,57 +47,104 @@ const typeIconStyles = {
   neutral: "text-muted-foreground",
 };
 
+const fallbackInsights: Insight[] = [
+  { icon: "trend", title: "Keep Going!", description: "Continue logging activities to build a detailed performance profile.", type: "neutral" },
+  { icon: "training", title: "Explore Courses", description: "Enroll in available training programs to boost your skills.", type: "neutral" },
+  { icon: "performance", title: "Track Progress", description: "Regularly update your metrics to see growth trends.", type: "neutral" },
+  { icon: "motivation", title: "Stay Consistent", description: "Daily engagement helps build momentum and improve scores.", type: "positive" },
+];
+
+const MAX_RETRIES = 2;
+const RETRY_DELAY_MS = 2000;
+
 const AIInsightsPanel = () => {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [isFallback, setIsFallback] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const fetchInsights = async () => {
+  const fetchInsights = useCallback(async (retryCount = 0) => {
     if (!user) return;
-    setLoading(true);
-    setError(null);
+    if (retryCount === 0) {
+      setLoading(true);
+      setError(null);
+      setIsFallback(false);
+    }
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("Not authenticated");
+      if (!session) {
+        throw new Error("Please log in to view AI insights.");
+      }
+
+      console.log("Calling ai-insights function (attempt", retryCount + 1, ")");
 
       const { data, error: fnError } = await supabase.functions.invoke(
         "ai-insights",
-        {
-          body: {},
-        }
+        { body: {} }
       );
 
-      if (fnError) throw fnError;
+      if (fnError) {
+        console.error("Edge function invocation error:", fnError);
+        // Check if it's a network error worth retrying
+        if (retryCount < MAX_RETRIES) {
+          console.log(`Retrying in ${RETRY_DELAY_MS}ms... (attempt ${retryCount + 2}/${MAX_RETRIES + 1})`);
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+          return fetchInsights(retryCount + 1);
+        }
+        throw new Error("Unable to reach the AI service. Showing general tips instead.");
+      }
 
       if (data?.error) {
+        console.error("AI insights returned error:", data.error);
+        // Auth errors shouldn't retry
+        if (data.error.includes("Unauthorized") || data.error.includes("Session expired")) {
+          throw new Error("Session expired. Please refresh the page.");
+        }
+        // Retry transient errors
+        if (retryCount < MAX_RETRIES) {
+          console.log(`Retrying due to error response... (attempt ${retryCount + 2}/${MAX_RETRIES + 1})`);
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+          return fetchInsights(retryCount + 1);
+        }
         throw new Error(data.error);
       }
 
-      setInsights(data?.insights || []);
+      if (data?.fallback) {
+        setIsFallback(true);
+      }
+
+      setInsights(data?.insights || fallbackInsights);
       setHasLoaded(true);
     } catch (err: any) {
       console.error("Error fetching AI insights:", err);
-      const message = err?.message || "Failed to generate insights";
-      setError(message);
-      toast({
-        title: "AI Insights Error",
-        description: message,
-        variant: "destructive",
-      });
+      // Show fallback insights instead of error state
+      setInsights(fallbackInsights);
+      setIsFallback(true);
+      setHasLoaded(true);
+      setError(null); // Clear error since we're showing fallback
+
+      if (retryCount === 0 || retryCount >= MAX_RETRIES) {
+        toast({
+          title: "AI Insights",
+          description: "Showing general tips. Personalized insights will be available shortly.",
+        });
+      }
     } finally {
-      setLoading(false);
+      if (retryCount === 0 || retryCount >= MAX_RETRIES) {
+        setLoading(false);
+      }
     }
-  };
+  }, [user, toast]);
 
   useEffect(() => {
     if (user && !hasLoaded) {
       fetchInsights();
     }
-  }, [user]);
+  }, [user, hasLoaded, fetchInsights]);
 
   return (
     <motion.div
@@ -116,14 +164,19 @@ const AIInsightsPanel = () => {
                 AI Insights
               </h3>
               <p className="text-xs text-muted-foreground">
-                Personalized analysis of your performance data
+                {isFallback
+                  ? "General tips — click refresh for personalized insights"
+                  : "Personalized analysis of your performance data"}
               </p>
             </div>
           </div>
           <Button
             variant="ghost"
             size="sm"
-            onClick={fetchInsights}
+            onClick={() => {
+              setHasLoaded(false);
+              fetchInsights();
+            }}
             disabled={loading}
             className="text-muted-foreground hover:text-foreground"
           >
@@ -153,48 +206,56 @@ const AIInsightsPanel = () => {
             <p className="text-sm text-muted-foreground text-center">
               {error}
             </p>
-            <Button variant="outline" size="sm" onClick={fetchInsights}>
+            <Button variant="outline" size="sm" onClick={() => fetchInsights()}>
               Try Again
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <AnimatePresence mode="wait">
-              {insights.map((insight, index) => {
-                const Icon = iconMap[insight.icon] || TrendingUp;
-                return (
-                  <motion.div
-                    key={`${insight.title}-${index}`}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{
-                      y: -2,
-                      transition: { duration: 0.2 },
-                    }}
-                    className={`rounded-lg border p-3.5 transition-all duration-300 hover:shadow-md cursor-default ${typeStyles[insight.type]}`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={`mt-0.5 flex-shrink-0 ${typeIconStyles[insight.type]}`}
-                      >
-                        <Icon className="h-4 w-4" />
+          <>
+            {isFallback && (
+              <div className="flex items-center gap-2 mb-3 px-2 py-1.5 rounded-md bg-muted/50 text-xs text-muted-foreground">
+                <Info className="h-3.5 w-3.5 flex-shrink-0" />
+                <span>Showing general tips. Refresh for AI-powered insights.</span>
+              </div>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <AnimatePresence mode="wait">
+                {insights.map((insight, index) => {
+                  const Icon = iconMap[insight.icon] || TrendingUp;
+                  return (
+                    <motion.div
+                      key={`${insight.title}-${index}`}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ delay: index * 0.1 }}
+                      whileHover={{
+                        y: -2,
+                        transition: { duration: 0.2 },
+                      }}
+                      className={`rounded-lg border p-3.5 transition-all duration-300 hover:shadow-md cursor-default ${typeStyles[insight.type]}`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div
+                          className={`mt-0.5 flex-shrink-0 ${typeIconStyles[insight.type]}`}
+                        >
+                          <Icon className="h-4 w-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <h4 className="text-sm font-semibold text-foreground leading-tight">
+                            {insight.title}
+                          </h4>
+                          <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                            {insight.description}
+                          </p>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <h4 className="text-sm font-semibold text-foreground leading-tight">
-                          {insight.title}
-                        </h4>
-                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                          {insight.description}
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+          </>
         )}
 
         {loading && hasLoaded && (
