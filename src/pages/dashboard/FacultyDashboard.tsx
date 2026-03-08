@@ -544,7 +544,12 @@ const FacultyDashboard = () => {
                             )}
                           </dd>
                         </div>
-                        <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="flex flex-col items-end gap-1">
+                          {stat.sparkline.length >= 2 && (
+                            <SparklineChart data={stat.sparkline} color={stat.sparkColor} />
+                          )}
+                          <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
                       </div>
                     </div>
                   </motion.div>)}
