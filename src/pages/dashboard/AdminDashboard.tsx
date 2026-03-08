@@ -482,14 +482,33 @@ const AdminDashboard = () => {
           ) : activeSection === "faculty" ? (
             <FacultyManagement />
           ) : activeSection === "reports" ? (
-            <PerformanceReports />
+            <>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground">Performance Reports</h1>
+                  <p className="text-muted-foreground">
+                    Reports, achievements, and department leaderboards
+                  </p>
+                </div>
+              </div>
+              <Tabs defaultValue="reports" className="space-y-6">
+                <TabsList className="bg-muted/50">
+                  <TabsTrigger value="reports">Reports</TabsTrigger>
+                  <TabsTrigger value="achievements">Achievements</TabsTrigger>
+                  <TabsTrigger value="leaderboards">Leaderboards</TabsTrigger>
+                </TabsList>
+                <TabsContent value="reports">
+                  <PerformanceReports />
+                </TabsContent>
+                <TabsContent value="achievements">
+                  <AchievementManagement />
+                </TabsContent>
+                <TabsContent value="leaderboards">
+                  <DepartmentLeaderboard />
+                </TabsContent>
+              </Tabs>
+            </>
           ) : activeSection === "departments" ? (
-            <DepartmentManagement />
-          ) : activeSection === "achievements" ? (
-            <AchievementManagement />
-          ) : activeSection === "leaderboards" ? (
-            <DepartmentLeaderboard />
-          ) : (
             <>
           {/* Page Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
