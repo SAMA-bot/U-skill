@@ -16,7 +16,7 @@ const badgeInlineStyle = (badge: PerformanceScoreData["badge"]): React.CSSProper
     case "Good":
       return { background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.4)" };
     default: // Needs Improvement
-      return { background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.4)" };
+      return { background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.4)", boxShadow: "0 0 12px rgba(239,68,68,0.25)" };
   }
 };
 
