@@ -78,6 +78,10 @@ const HeaderNotifications = () => {
         return <BookOpen className="h-4 w-4 text-info" />;
       case "achievement_earned":
         return <Award className="h-4 w-4 text-accent" />;
+      case "document_approved":
+        return <FileCheck className="h-4 w-4 text-success" />;
+      case "document_rejected":
+        return <FileX className="h-4 w-4 text-destructive" />;
       default:
         return <Bell className="h-4 w-4 text-muted-foreground" />;
     }
