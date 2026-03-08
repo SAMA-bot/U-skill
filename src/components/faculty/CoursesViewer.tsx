@@ -325,14 +325,34 @@ const CoursesViewer = () => {
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      teaching: "bg-primary/10 text-primary",
-      research: "bg-info/10 text-info",
-      technology: "bg-success/10 text-success",
-      leadership: "bg-accent/15 text-accent-foreground",
-      communication: "bg-destructive/10 text-destructive",
-      general: "bg-muted text-muted-foreground",
+      teaching: "bg-primary/15 text-primary border-primary/25",
+      research: "bg-info/15 text-info border-info/25",
+      technology: "bg-success/15 text-success border-success/25",
+      leadership: "bg-accent/15 text-accent border-accent/25",
+      communication: "bg-destructive/15 text-destructive border-destructive/25",
+      general: "bg-muted text-muted-foreground border-border",
+      "professional-development": "bg-primary/15 text-primary border-primary/25",
     };
     return colors[category] || colors.general;
+  };
+
+  const getCategoryIcon = (category: string) => {
+    const icons: Record<string, string> = {
+      teaching: "📚",
+      research: "🔬",
+      technology: "💻",
+      leadership: "🎯",
+      communication: "💬",
+      general: "📖",
+      "professional-development": "🚀",
+    };
+    return icons[category] || "📖";
+  };
+
+  const getDifficultyColor = (hours: number | null) => {
+    if (!hours || hours <= 2) return "bg-success/10 text-success border-success/20";
+    if (hours <= 5) return "bg-accent/10 text-accent border-accent/20";
+    return "bg-destructive/10 text-destructive border-destructive/20";
   };
 
   if (loading) {
