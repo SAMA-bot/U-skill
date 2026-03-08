@@ -336,6 +336,51 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
         });
       }
 
+      // === DOCUMENT APPROVAL NOTIFICATIONS ===
+      const { data: documents } = await supabase
+        .from("faculty_documents")
+        .select("id, title, status, reviewed_at, rejection_reason, updated_at")
+        .eq("user_id", user.id)
+        .in("status", ["approved", "rejected", "pending"])
+        .order("updated_at", { ascending: false })
+        .limit(10);
+
+      if (documents) {
+        const now = new Date();
+        documents.forEach((doc) => {
+          const updatedAt = new Date(doc.updated_at);
+          const daysSinceUpdate = Math.floor((now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60 * 24));
+
+          if (doc.status === "approved" && doc.reviewed_at && daysSinceUpdate <= 14) {
+            newNotifications.push({
+              id: `doc_approved_${doc.id}`,
+              type: "document_approved",
+              category: "document",
+              title: "Document Approved ✅",
+              message: `Your document "${doc.title}" has been approved.`,
+              severity: "success",
+              timestamp: new Date(doc.reviewed_at),
+              read: daysSinceUpdate > 1,
+              data: { documentId: doc.id },
+            });
+          } else if (doc.status === "rejected" && doc.reviewed_at && daysSinceUpdate <= 14) {
+            newNotifications.push({
+              id: `doc_rejected_${doc.id}`,
+              type: "document_rejected",
+              category: "document",
+              title: "Document Rejected",
+              message: doc.rejection_reason
+                ? `"${doc.title}" was rejected: ${doc.rejection_reason}`
+                : `Your document "${doc.title}" was rejected.`,
+              severity: "error",
+              timestamp: new Date(doc.reviewed_at),
+              read: daysSinceUpdate > 1,
+              data: { documentId: doc.id },
+            });
+          }
+        });
+      }
+
       // === GROUP SIMILAR NOTIFICATIONS ===
       const grouped = groupSimilarNotifications(newNotifications);
 
