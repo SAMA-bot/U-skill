@@ -55,6 +55,7 @@ import {
   DocumentType,
   DocumentStatus,
 } from "@/hooks/useFacultyDocuments";
+import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
 
 const statusConfig: Record<
   DocumentStatus,
@@ -259,26 +260,15 @@ export default function DocumentUpload() {
       <div className="space-y-3">
         <AnimatePresence mode="popLayout">
           {documents.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="bg-card border border-border rounded-lg p-8 text-center"
-            >
-              <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
-                <FileText className="h-6 w-6 text-muted-foreground" />
-              </div>
-              <h4 className="font-medium text-foreground mb-2">
-                No documents uploaded
-              </h4>
-              <p className="text-sm text-muted-foreground mb-4">
-                Upload certificates, publications, or other documents for
-                verification.
-              </p>
-              <Button variant="outline" onClick={() => setIsOpen(true)}>
-                <Upload className="mr-2 h-4 w-4" />
-                Upload Your First Document
-              </Button>
-            </motion.div>
+            <div className="bg-card border border-border rounded-lg">
+              <SmartEmptyState
+                icon={Upload}
+                title="No documents uploaded yet"
+                description="Upload certificates, publications, research papers, or other documents for admin verification and performance tracking."
+                actionLabel="Upload Document"
+                onAction={() => setIsOpen(true)}
+              />
+            </div>
           ) : (
             documents.map((doc, index) => {
               const status = statusConfig[doc.status as DocumentStatus] || statusConfig.pending;

@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
 import { Progress } from "@/components/ui/progress";
 import {
   Select,
@@ -516,15 +517,15 @@ const CoursesViewer = () => {
 
         <TabsContent value="all" className="mt-6">
           {filteredCourses.length === 0 ? (
-            <div className="text-center py-12">
-              <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground">No courses found</h3>
-              <p className="text-muted-foreground mt-1">
-                {searchQuery || categoryFilter !== "all" || typeFilter !== "all"
-                  ? "Try adjusting your search or filter criteria"
-                  : "No courses are available at the moment"}
-              </p>
-            </div>
+            <SmartEmptyState
+              icon={BookOpen}
+              title={searchQuery || categoryFilter !== "all" || typeFilter !== "all" ? "No matching courses" : "No courses available yet"}
+              description={searchQuery || categoryFilter !== "all" || typeFilter !== "all"
+                ? "Try adjusting your search or filter criteria to find what you're looking for."
+                : "Courses will appear here once your admin creates training programs. Check back soon!"}
+              actionLabel={searchQuery || categoryFilter !== "all" ? "Clear Filters" : undefined}
+              onAction={searchQuery || categoryFilter !== "all" ? () => { setSearchQuery(""); setCategoryFilter("all"); setTypeFilter("all"); } : undefined}
+            />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredCourses.map((course, index) => renderCourseCard(course, index))}
@@ -534,13 +535,11 @@ const CoursesViewer = () => {
 
         <TabsContent value="video" className="mt-6">
           {videoCourses.length === 0 ? (
-            <div className="text-center py-12">
-              <Video className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground">No video courses found</h3>
-              <p className="text-muted-foreground mt-1">
-                Video courses will appear here when available
-              </p>
-            </div>
+            <SmartEmptyState
+              icon={Video}
+              title="No video courses yet"
+              description="Video-based training courses will appear here once they're published by your admin."
+            />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {videoCourses.map((course, index) => renderCourseCard(course, index))}
@@ -550,13 +549,11 @@ const CoursesViewer = () => {
 
         <TabsContent value="regular" className="mt-6">
           {regularCourses.length === 0 ? (
-            <div className="text-center py-12">
-              <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground">No regular courses found</h3>
-              <p className="text-muted-foreground mt-1">
-                Regular courses will appear here when available
-              </p>
-            </div>
+            <SmartEmptyState
+              icon={FileText}
+              title="No regular courses yet"
+              description="Document-based courses and training materials will appear here when available."
+            />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {regularCourses.map((course, index) => renderCourseCard(course, index))}
