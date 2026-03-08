@@ -620,7 +620,6 @@ export function CourseManagement() {
                     </Label>
                   </div>
                 </div>
-                </div>
 
                 <DialogFooter>
                   <Button type="button" variant="outline" onClick={handleCloseDialog}>
