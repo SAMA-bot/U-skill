@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import LearningTracks from "@/components/faculty/LearningTracks";
 import { motion } from "framer-motion";
 import { 
   Search, 
@@ -499,8 +500,12 @@ const CoursesViewer = () => {
       </div>
 
       {/* Courses Tabs */}
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
+      <Tabs defaultValue="tracks" className="w-full">
+        <TabsList className="grid w-full max-w-lg grid-cols-4">
+          <TabsTrigger value="tracks" className="flex items-center gap-2">
+            <BookOpen className="h-4 w-4" />
+            Tracks
+          </TabsTrigger>
           <TabsTrigger value="all" className="flex items-center gap-2">
             <BookOpen className="h-4 w-4" />
             All ({filteredCourses.length})
@@ -514,6 +519,10 @@ const CoursesViewer = () => {
             Courses ({regularCourses.length})
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="tracks" className="mt-6">
+          <LearningTracks courses={filteredCourses} />
+        </TabsContent>
 
         <TabsContent value="all" className="mt-6">
           {filteredCourses.length === 0 ? (
