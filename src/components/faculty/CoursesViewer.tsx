@@ -332,40 +332,56 @@ const CoursesViewer = () => {
             <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
           )}
 
-          <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-            {course.instructor_name && (
-              <div className="flex items-center gap-1">
-                <User className="h-4 w-4" />
-                <span>{course.instructor_name}</span>
+          {/* Difficulty + Duration + Points row */}
+          {(() => {
+            const difficulty = getDifficultyFromDuration(course.duration_hours);
+            return (
+              <div className="flex flex-wrap gap-1.5">
+                <Badge variant="outline" className={`text-[10px] px-2 py-0.5 h-5 font-medium ${difficulty.color}`}>
+                  {difficulty.label}
+                </Badge>
+                {course.duration_hours && (
+                  <Badge variant="outline" className="text-[10px] px-2 py-0.5 h-5 text-muted-foreground">
+                    <Clock className="h-2.5 w-2.5 mr-1" />
+                    {course.duration_hours}h
+                  </Badge>
+                )}
+                {course.duration_hours && (
+                  <Badge variant="outline" className="text-[10px] px-2 py-0.5 h-5 text-primary border-primary/30">
+                    <Award className="h-2.5 w-2.5 mr-1" />
+                    +{Math.min(course.duration_hours * 5, 25)} pts
+                  </Badge>
+                )}
               </div>
-            )}
-            {course.duration_hours && (
-              <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
-                <span>{course.duration_hours}h</span>
-              </div>
-            )}
-            {course.duration_hours && (
-              <div className="flex items-center gap-1">
-                <Award className="h-4 w-4 text-primary" />
-                <span className="text-primary font-medium">+{Math.min(course.duration_hours * 5, 25)} pts</span>
-              </div>
-            )}
-          </div>
+            );
+          })()}
 
-          {/* Progress bar for in-progress courses */}
+          {course.instructor_name && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <User className="h-3.5 w-3.5" />
+              <span>{course.instructor_name}</span>
+            </div>
+          )}
+
+          {/* Progress indicator for enrolled courses */}
           {enrollment && enrollment.status === "in_progress" && (
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>Progress</span>
+                <span className="font-medium">Progress</span>
                 <span>{enrollment.progress_percentage}%</span>
               </div>
               <Progress value={enrollment.progress_percentage} className="h-2" />
             </div>
           )}
+          {enrollment && enrollment.status === "enrolled" && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <BookOpen className="h-3.5 w-3.5" />
+              <span>Enrolled — not started</span>
+            </div>
+          )}
 
           {/* Action buttons */}
-          <div className="space-y-2 pt-2">
+          <div className="space-y-2 pt-1">
             {completed ? (
               <Button variant="outline" className="w-full" disabled>
                 <CheckCircle2 className="h-4 w-4 mr-2 text-success" />
