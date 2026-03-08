@@ -536,7 +536,8 @@ const FacultyDashboard = () => {
                 y: 0
               }} transition={{
                 delay: 0.4
-              }} className="bg-card shadow-sm rounded-lg overflow-hidden border border-border">
+              }} whileHover={{ y: -2, transition: { duration: 0.2 } }}
+              className="bg-card shadow-sm rounded-lg overflow-hidden border border-border hover:shadow-lg transition-all duration-300">
                   <div className="px-4 py-5 sm:px-6 border-b border-border">
                     <h3 className="text-lg font-medium text-foreground">Performance Assessment</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
