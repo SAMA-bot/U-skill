@@ -90,10 +90,8 @@ const sidebarItems = [
   { icon: Users, label: "Faculty Management", id: "faculty" },
   { icon: BarChart3, label: "Performance Reports", id: "reports" },
   { icon: Building2, label: "Departments", id: "departments" },
-  { icon: Award, label: "Achievements", id: "achievements" },
   { icon: Activity, label: "Audit Logs", id: "audit" },
   { icon: Star, label: "Feedback Analytics", id: "feedback" },
-  { icon: Trophy, label: "Leaderboards", id: "leaderboards" },
 ];
 
 const AdminDashboard = () => {
