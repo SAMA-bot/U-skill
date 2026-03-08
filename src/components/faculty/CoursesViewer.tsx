@@ -906,6 +906,16 @@ const CoursesViewer = () => {
               <div className="aspect-video flex items-center justify-center bg-muted rounded-lg">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
+            ) : signedVideoUrl && isYouTubeUrl(selectedCourse?.video_url ?? null) ? (
+              <div className="aspect-video">
+                <iframe
+                  src={signedVideoUrl}
+                  className="w-full h-full rounded-lg"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title={selectedCourse?.title}
+                />
+              </div>
             ) : signedVideoUrl ? (
               <div className="aspect-video">
                 <video src={signedVideoUrl} controls className="w-full h-full rounded-lg" autoPlay />
