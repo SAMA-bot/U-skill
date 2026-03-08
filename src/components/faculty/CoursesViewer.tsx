@@ -75,6 +75,8 @@ const CoursesViewer = () => {
   const [lessonContent, setLessonContent] = useState<LessonContentItem[]>([]);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const [loadingMedia, setLoadingMedia] = useState(false);
+  const [viewedContentIds, setViewedContentIds] = useState<Set<string>>(new Set());
+  const [autoCompleting, setAutoCompleting] = useState(false);
 
   const { toast } = useToast();
   const {
@@ -150,19 +152,44 @@ const CoursesViewer = () => {
     return "locked";
   };
 
+  const markContentViewed = (contentId: string) => {
+    setViewedContentIds(prev => {
+      const next = new Set(prev);
+      next.add(contentId);
+      return next;
+    });
+  };
+
+  // Auto-complete when all content items are viewed
+  useEffect(() => {
+    if (!viewingLesson || lessonContent.length === 0 || loadingMedia || autoCompleting) return;
+    if (isLessonCompleted(viewingLesson.id)) return;
+    const allViewed = lessonContent.every(item => viewedContentIds.has(item.id));
+    if (allViewed) {
+      setAutoCompleting(true);
+      completeLesson(viewingLesson.id, viewingLesson.xp_reward).then(() => {
+        setAutoCompleting(false);
+      });
+    }
+  }, [viewedContentIds, lessonContent, viewingLesson, loadingMedia]);
+
   const handleLessonClick = async (lesson: Lesson, state: NodeState) => {
     if (state === "locked") return;
-    // Mark as started if not yet
     await startLesson(lesson.id);
-    // Load content
     setViewingLesson(lesson);
+    setViewedContentIds(new Set());
     setLoadingMedia(true);
     const content = await fetchContentForLesson(lesson.id);
     setLessonContent(content);
 
-    // Pre-sign URLs for videos/docs
+    // Auto-mark text content as viewed immediately (no interaction needed beyond reading)
+    const autoViewedIds = new Set<string>();
+    
     const urls: Record<string, string> = {};
     for (const item of content) {
+      if (item.content_type === "text") {
+        autoViewedIds.add(item.id);
+      }
       if (item.content_type === "platform_video" && item.video_url) {
         const ytEmbed = getYouTubeEmbedUrl(item.video_url);
         if (ytEmbed) { urls[item.id] = ytEmbed; }
@@ -177,6 +204,7 @@ const CoursesViewer = () => {
       }
     }
     setSignedUrls(urls);
+    setViewedContentIds(autoViewedIds);
     setLoadingMedia(false);
   };
 
@@ -474,11 +502,11 @@ const CoursesViewer = () => {
                     signedUrls[item.id] ? (
                       getYouTubeEmbedUrl(item.video_url || "") ? (
                         <div className="aspect-video rounded-lg overflow-hidden border">
-                          <iframe src={signedUrls[item.id]} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title={item.title} />
+                          <iframe src={signedUrls[item.id]} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title={item.title} onLoad={() => markContentViewed(item.id)} />
                         </div>
                       ) : (
                         <div className="aspect-video rounded-lg overflow-hidden border">
-                          <video src={signedUrls[item.id]} controls className="w-full h-full" />
+                          <video src={signedUrls[item.id]} controls className="w-full h-full" onPlay={() => markContentViewed(item.id)} />
                         </div>
                       )
                     ) : (
@@ -490,7 +518,7 @@ const CoursesViewer = () => {
 
                   {item.content_type === "pdf" && (
                     signedUrls[item.id] ? (
-                      <iframe src={signedUrls[item.id]} className="w-full h-[500px] rounded-lg border" title={item.title} />
+                      <iframe src={signedUrls[item.id]} className="w-full h-[500px] rounded-lg border" title={item.title} onLoad={() => markContentViewed(item.id)} />
                     ) : (
                       <div className="h-[200px] rounded-lg bg-muted flex items-center justify-center">
                         <p className="text-muted-foreground text-sm">Unable to load document</p>
@@ -501,9 +529,20 @@ const CoursesViewer = () => {
                   {item.content_type === "external_url" && item.external_url && (
                     <div className="bg-info/5 border border-info/20 rounded-lg p-4 flex items-center justify-between">
                       <p className="text-sm text-muted-foreground truncate flex-1 mr-3">{item.external_url}</p>
-                      <Button variant="outline" size="sm" onClick={() => window.open(item.external_url!, "_blank", "noopener,noreferrer")}>
+                      <Button variant="outline" size="sm" onClick={() => { markContentViewed(item.id); window.open(item.external_url!, "_blank", "noopener,noreferrer"); }}>
                         <ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Open Link
                       </Button>
+                    </div>
+                  )}
+
+                  {/* Progress indicator per content item */}
+                  {!isLessonCompleted(viewingLesson!.id) && (
+                    <div className="flex items-center gap-1.5 mt-1">
+                      {viewedContentIds.has(item.id) ? (
+                        <span className="text-[10px] text-success flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Viewed</span>
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground">Not viewed yet</span>
+                      )}
                     </div>
                   )}
 
@@ -513,12 +552,26 @@ const CoursesViewer = () => {
             )}
           </div>
 
-          {/* Complete button */}
+          {/* Footer: progress + auto-complete status */}
           {viewingLesson && !isLessonCompleted(viewingLesson.id) && (
-            <div className="border-t border-border/40 bg-card/95 backdrop-blur-md px-4 py-3">
-              <Button className="w-full" onClick={handleCompleteLesson}>
-                <CheckCircle2 className="h-4 w-4 mr-2" /> Complete Lesson (+{viewingLesson.xp_reward} XP)
-              </Button>
+            <div className="border-t border-border/40 bg-card/95 backdrop-blur-md px-4 py-3 space-y-2">
+              {lessonContent.length > 0 && (
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">
+                    {viewedContentIds.size}/{lessonContent.length} content items viewed
+                  </span>
+                  <Progress value={lessonContent.length > 0 ? (viewedContentIds.size / lessonContent.length) * 100 : 0} className="h-1.5 w-24" />
+                </div>
+              )}
+              {autoCompleting ? (
+                <div className="flex items-center justify-center gap-2 text-sm text-primary font-medium py-1">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Completing lesson...
+                </div>
+              ) : (
+                <Button className="w-full" variant="outline" onClick={handleCompleteLesson}>
+                  <CheckCircle2 className="h-4 w-4 mr-2" /> Mark Complete (+{viewingLesson.xp_reward} XP)
+                </Button>
+              )}
             </div>
           )}
           {viewingLesson && isLessonCompleted(viewingLesson.id) && (
