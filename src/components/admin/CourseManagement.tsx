@@ -135,6 +135,9 @@ export function CourseManagement() {
       duration_hours: '',
       instructor_name: '',
       is_published: false,
+      is_mandatory: false,
+      department: '',
+      training_date: '',
     });
     setThumbnailFile(null);
     setDocumentFile(null);
