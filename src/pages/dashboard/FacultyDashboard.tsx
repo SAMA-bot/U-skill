@@ -293,19 +293,23 @@ const FacultyDashboard = () => {
   };
   const statsCards = [{
     label: "Capacity Score",
-    value: `${statsData.capacityScore}/100`,
+    value: statsData.capacityScore,
+    suffix: "/100",
     icon: ClipboardList
   }, {
     label: "Performance Score",
-    value: `${statsData.performanceScore}/100`,
+    value: statsData.performanceScore,
+    suffix: "/100",
     icon: BarChart3
   }, {
     label: "Motivation Index",
-    value: `${statsData.motivationIndex}/100`,
+    value: statsData.motivationIndex,
+    suffix: "/100",
     icon: Star
   }, {
     label: "Training Hours",
-    value: `${statsData.trainingHours}h`,
+    value: statsData.trainingHours,
+    suffix: "h",
     icon: Clock
   }];
   if (loading || loadingProfile) {
