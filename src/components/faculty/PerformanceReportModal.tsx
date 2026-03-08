@@ -1,7 +1,6 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
-  X,
   Download,
   Award,
   BookOpen,
@@ -14,6 +13,9 @@ import {
   AlertTriangle,
   CheckCircle,
   Lightbulb,
+  Sparkles,
+  Loader2,
+  GraduationCap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
 import jsPDF from "jspdf";
 
 export interface ReportData {
@@ -42,45 +45,49 @@ export interface ReportData {
   badge: string;
 }
 
+interface AIInsights {
+  summary: string;
+  strengths: string[];
+  improvements: string[];
+  trainingPaths: { title: string; reason: string }[];
+}
+
 interface PerformanceReportModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   data: ReportData;
 }
 
-const getStrengths = (data: ReportData): string[] => {
-  const strengths: string[] = [];
-  if (data.capacityScore >= 70) strengths.push("Strong skill development with consistent capacity building efforts.");
-  if (data.performanceScore >= 70) strengths.push("Excellent performance metrics across teaching, research, and service.");
-  if (data.motivationIndex >= 70) strengths.push("High engagement and motivation levels showing dedication.");
-  if (data.trainingsAttended >= 5) strengths.push(`Completed ${data.trainingsAttended} trainings, demonstrating commitment to professional growth.`);
-  if (data.publications >= 3) strengths.push(`Published ${data.publications} research works, contributing to academic knowledge.`);
-  if (data.studentFeedback >= 70) strengths.push("Positive student feedback reflecting effective teaching methods.");
-  if (strengths.length === 0) strengths.push("Building foundational skills with room for significant growth.");
-  return strengths;
+// Static fallbacks
+const getFallbackStrengths = (data: ReportData): string[] => {
+  const s: string[] = [];
+  if (data.capacityScore >= 70) s.push("Strong skill development with consistent capacity building efforts.");
+  if (data.performanceScore >= 70) s.push("Excellent performance metrics across teaching, research, and service.");
+  if (data.motivationIndex >= 70) s.push("High engagement and motivation levels showing dedication.");
+  if (data.trainingsAttended >= 5) s.push(`Completed ${data.trainingsAttended} trainings, demonstrating commitment to growth.`);
+  if (data.studentFeedback >= 70) s.push("Positive student feedback reflecting effective teaching methods.");
+  if (s.length === 0) s.push("Building foundational skills with room for significant growth.");
+  return s;
 };
 
-const getImprovements = (data: ReportData): string[] => {
-  const areas: string[] = [];
-  if (data.capacityScore < 60) areas.push("Increase skill development through targeted capacity building programs.");
-  if (data.performanceScore < 60) areas.push("Focus on improving teaching, research, or service scores.");
-  if (data.motivationIndex < 60) areas.push("Boost engagement by maintaining daily activity streaks and journal reflections.");
-  if (data.trainingsAttended < 3) areas.push("Attend more training programs and workshops to enhance competencies.");
-  if (data.publications < 2) areas.push("Increase research output and aim for more publications.");
-  if (data.studentFeedback < 60) areas.push("Seek student feedback to identify and improve teaching methodologies.");
-  if (areas.length === 0) areas.push("Continue maintaining current performance levels and explore advanced opportunities.");
-  return areas;
+const getFallbackImprovements = (data: ReportData): string[] => {
+  const a: string[] = [];
+  if (data.capacityScore < 60) a.push("Increase skill development through targeted capacity building programs.");
+  if (data.performanceScore < 60) a.push("Focus on improving teaching, research, or service scores.");
+  if (data.motivationIndex < 60) a.push("Boost engagement by maintaining daily activity streaks.");
+  if (data.trainingsAttended < 3) a.push("Attend more training programs and workshops.");
+  if (data.publications < 2) a.push("Increase research output and aim for more publications.");
+  if (a.length === 0) a.push("Continue maintaining current performance levels.");
+  return a;
 };
 
-const getRecommendations = (data: ReportData): string[] => {
-  const recs: string[] = [];
-  if (data.trainingsAttended < 5) recs.push("Enroll in at least 2 additional training programs this semester.");
-  if (data.publications < 3) recs.push("Collaborate with peers on research projects to increase publication output.");
-  if (data.motivationIndex < 70) recs.push("Use the daily checklist and reflection journal to build consistent habits.");
-  if (data.capacityScore < 70) recs.push("Focus on weaker skill areas identified in the Skill Growth chart.");
-  if (data.studentFeedback < 70) recs.push("Adopt innovative teaching methods and gather mid-semester feedback.");
-  recs.push("Set specific, measurable goals for the next academic quarter.");
-  return recs.slice(0, 4);
+const getFallbackTrainingPaths = (data: ReportData): { title: string; reason: string }[] => {
+  const paths: { title: string; reason: string }[] = [];
+  if (data.capacityScore < 70) paths.push({ title: "Advanced Teaching Methods", reason: "Strengthen foundational teaching skills." });
+  if (data.publications < 3) paths.push({ title: "Research Methodology Workshop", reason: "Boost research output and publication quality." });
+  if (data.motivationIndex < 70) paths.push({ title: "Faculty Engagement Program", reason: "Improve daily engagement and consistency." });
+  paths.push({ title: "Leadership & Mentoring", reason: "Develop leadership skills for career advancement." });
+  return paths.slice(0, 4);
 };
 
 const getBadgeStyle = (badge: string): React.CSSProperties => {
@@ -96,10 +103,57 @@ const getBadgeStyle = (badge: string): React.CSSProperties => {
 
 const PerformanceReportModal = ({ open, onOpenChange, data }: PerformanceReportModalProps) => {
   const reportRef = useRef<HTMLDivElement>(null);
+  const [aiInsights, setAiInsights] = useState<AIInsights | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [isAI, setIsAI] = useState(false);
 
-  const strengths = getStrengths(data);
-  const improvements = getImprovements(data);
-  const recommendations = getRecommendations(data);
+  const strengths = isAI && aiInsights ? aiInsights.strengths : getFallbackStrengths(data);
+  const improvements = isAI && aiInsights ? aiInsights.improvements : getFallbackImprovements(data);
+  const trainingPaths = isAI && aiInsights ? aiInsights.trainingPaths : getFallbackTrainingPaths(data);
+  const summary = isAI && aiInsights ? aiInsights.summary : null;
+
+  const fetchAIInsights = useCallback(async () => {
+    setAiLoading(true);
+    try {
+      const { data: result, error } = await supabase.functions.invoke("ai-report-insights", {
+        body: {
+          metrics: {
+            facultyName: data.facultyName,
+            department: data.department,
+            academicYear: data.academicYear,
+            capacityScore: data.capacityScore,
+            performanceScore: data.performanceScore,
+            motivationIndex: data.motivationIndex,
+            trainingHours: data.trainingHours,
+            trainingsAttended: data.trainingsAttended,
+            studentFeedback: data.studentFeedback,
+            publications: data.publications,
+            compositeScore: data.compositeScore,
+            badge: data.badge,
+          },
+        },
+      });
+
+      if (error || result?.fallback || !result?.insights) {
+        setIsAI(false);
+      } else {
+        setAiInsights(result.insights);
+        setIsAI(true);
+      }
+    } catch {
+      setIsAI(false);
+    } finally {
+      setAiLoading(false);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (open) {
+      setAiInsights(null);
+      setIsAI(false);
+      fetchAIInsights();
+    }
+  }, [open, fetchAIInsights]);
 
   const metrics = [
     { label: "Capacity Score", value: data.capacityScore, icon: BarChart3 },
@@ -116,23 +170,18 @@ const PerformanceReportModal = ({ open, onOpenChange, data }: PerformanceReportM
     const pageWidth = doc.internal.pageSize.getWidth();
     let y = 20;
 
-    // Title
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
     doc.text("Faculty Performance Report", pageWidth / 2, y, { align: "center" });
     y += 10;
-
-    // Subtitle
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     doc.text(`Generated on ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}`, pageWidth / 2, y, { align: "center" });
     y += 12;
 
-    // Faculty info
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("Faculty Information", 14, y);
-    y += 7;
+    doc.text("Faculty Information", 14, y); y += 7;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.text(`Name: ${data.facultyName}`, 14, y); y += 6;
@@ -140,60 +189,45 @@ const PerformanceReportModal = ({ open, onOpenChange, data }: PerformanceReportM
     doc.text(`Academic Year: ${data.academicYear}`, 14, y); y += 6;
     doc.text(`Overall Score: ${data.compositeScore}/100 (${data.badge})`, 14, y); y += 12;
 
-    // Metrics
     doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
     doc.text("Performance Metrics", 14, y); y += 7;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     metrics.forEach((m) => {
-      const val = m.suffix ? `${m.value}${m.suffix}` : `${m.value}/100`;
-      doc.text(`${m.label}: ${val}`, 14, y); y += 6;
+      doc.text(`${m.label}: ${m.value}${m.suffix || "/100"}`, 14, y); y += 6;
     });
     y += 6;
 
-    // Strengths
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "bold");
-    doc.text("Strengths", 14, y); y += 7;
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    strengths.forEach((s) => {
-      const lines = doc.splitTextToSize(`• ${s}`, pageWidth - 28);
-      doc.text(lines, 14, y);
-      y += lines.length * 5 + 2;
-    });
-    y += 4;
+    if (summary) {
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.text("AI Performance Summary", 14, y); y += 7;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      const sumLines = doc.splitTextToSize(summary, pageWidth - 28);
+      doc.text(sumLines, 14, y);
+      y += sumLines.length * 5 + 6;
+    }
 
-    // Check page break
-    if (y > 240) { doc.addPage(); y = 20; }
+    const addSection = (title: string, items: string[]) => {
+      if (y > 240) { doc.addPage(); y = 20; }
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.text(title, 14, y); y += 7;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      items.forEach((s) => {
+        const lines = doc.splitTextToSize(`• ${s}`, pageWidth - 28);
+        doc.text(lines, 14, y);
+        y += lines.length * 5 + 2;
+      });
+      y += 4;
+    };
 
-    // Areas for Improvement
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "bold");
-    doc.text("Areas for Improvement", 14, y); y += 7;
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    improvements.forEach((s) => {
-      const lines = doc.splitTextToSize(`• ${s}`, pageWidth - 28);
-      doc.text(lines, 14, y);
-      y += lines.length * 5 + 2;
-    });
-    y += 4;
-
-    if (y > 240) { doc.addPage(); y = 20; }
-
-    // Recommendations
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "bold");
-    doc.text("Recommendations", 14, y); y += 7;
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    recommendations.forEach((s) => {
-      const lines = doc.splitTextToSize(`• ${s}`, pageWidth - 28);
-      doc.text(lines, 14, y);
-      y += lines.length * 5 + 2;
-    });
+    addSection("Strengths", strengths);
+    addSection("Areas for Improvement", improvements);
+    addSection("Suggested Training Paths", trainingPaths.map(t => `${t.title} — ${t.reason}`));
 
     doc.save(`Performance_Report_${data.facultyName.replace(/\s+/g, "_")}_${data.academicYear}.pdf`);
   };
@@ -266,21 +300,35 @@ const PerformanceReportModal = ({ open, onOpenChange, data }: PerformanceReportM
 
           <Separator />
 
+          {/* AI Summary */}
+          {aiLoading ? (
+            <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30 border border-border">
+              <Loader2 className="h-5 w-5 animate-spin text-primary" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Generating AI insights…</p>
+                <p className="text-xs text-muted-foreground">Analyzing your performance data</p>
+              </div>
+            </div>
+          ) : summary ? (
+            <div className="p-4 rounded-lg border border-border" style={{ background: "rgba(59,130,246,0.05)" }}>
+              <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                AI Performance Summary
+              </h4>
+              <p className="text-sm text-foreground leading-relaxed">{summary}</p>
+            </div>
+          ) : null}
+
           {/* Strengths */}
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
               <CheckCircle className="h-4 w-4" style={{ color: "#22c55e" }} />
               Strengths
+              {isAI && <Badge variant="outline" className="text-[9px] px-1.5 py-0 ml-1"><Sparkles className="h-2.5 w-2.5 mr-0.5" />AI</Badge>}
             </h4>
             <ul className="space-y-2">
               {strengths.map((s, i) => (
-                <motion.li
-                  key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  className="flex items-start gap-2 text-sm text-foreground"
-                >
+                <motion.li key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} className="flex items-start gap-2 text-sm text-foreground">
                   <div className="mt-1 h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ background: "#22c55e" }} />
                   {s}
                 </motion.li>
@@ -293,16 +341,11 @@ const PerformanceReportModal = ({ open, onOpenChange, data }: PerformanceReportM
             <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" style={{ color: "#f59e0b" }} />
               Areas for Improvement
+              {isAI && <Badge variant="outline" className="text-[9px] px-1.5 py-0 ml-1"><Sparkles className="h-2.5 w-2.5 mr-0.5" />AI</Badge>}
             </h4>
             <ul className="space-y-2">
               {improvements.map((s, i) => (
-                <motion.li
-                  key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  className="flex items-start gap-2 text-sm text-foreground"
-                >
+                <motion.li key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} className="flex items-start gap-2 text-sm text-foreground">
                   <div className="mt-1 h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ background: "#f59e0b" }} />
                   {s}
                 </motion.li>
@@ -310,32 +353,36 @@ const PerformanceReportModal = ({ open, onOpenChange, data }: PerformanceReportM
             </ul>
           </div>
 
-          {/* Recommendations */}
+          {/* Training Paths */}
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <Lightbulb className="h-4 w-4" style={{ color: "#3b82f6" }} />
-              Recommended Actions
+              <GraduationCap className="h-4 w-4" style={{ color: "#8b5cf6" }} />
+              Suggested Training Paths
+              {isAI && <Badge variant="outline" className="text-[9px] px-1.5 py-0 ml-1"><Sparkles className="h-2.5 w-2.5 mr-0.5" />AI</Badge>}
             </h4>
-            <ul className="space-y-2">
-              {recommendations.map((s, i) => (
-                <motion.li
+            <div className="space-y-2">
+              {trainingPaths.map((t, i) => (
+                <motion.div
                   key={i}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="flex items-start gap-2 text-sm text-foreground"
+                  className="flex items-start gap-3 p-3 rounded-lg border border-border bg-card"
                 >
-                  <div className="mt-1 h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ background: "#3b82f6" }} />
-                  {s}
-                </motion.li>
+                  <div className="mt-0.5 h-2 w-2 rounded-full flex-shrink-0" style={{ background: "#8b5cf6" }} />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{t.title}</p>
+                    <p className="text-xs text-muted-foreground">{t.reason}</p>
+                  </div>
+                </motion.div>
               ))}
-            </ul>
+            </div>
           </div>
 
           {/* Footer */}
           <div className="text-center pt-2">
             <p className="text-xs text-muted-foreground">
-              Report generated on {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} • USKILL Faculty Performance System
+              Report generated on {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} • {isAI ? "Enhanced with AI" : "USKILL"} Faculty Performance System
             </p>
           </div>
         </div>
