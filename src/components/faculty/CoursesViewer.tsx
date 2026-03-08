@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLessonProgress } from "@/hooks/useLessonProgress";
 import { getVideoSignedUrl, getDocumentSignedUrl } from "@/lib/storageUtils";
 import { cn } from "@/lib/utils";
+import LearningTracks, { type Course } from "@/components/faculty/LearningTracks";
 
 // Types
 interface LearningPath {
@@ -69,6 +70,7 @@ const CoursesViewer = () => {
   const [contentItems, setContentItems] = useState<Record<string, LessonContentItem[]>>({});
   const [loading, setLoading] = useState(true);
   const [expandedPaths, setExpandedPaths] = useState<string[]>([]);
+  const [fallbackCourses, setFallbackCourses] = useState<Course[]>([]);
 
   // Lesson viewer state
   const [viewingLesson, setViewingLesson] = useState<Lesson | null>(null);
@@ -98,6 +100,22 @@ const CoursesViewer = () => {
       setPaths(pathList);
       // Pre-fetch modules for all paths
       for (const p of pathList) fetchModules(p.id);
+
+      // If no learning paths, fetch published courses as fallback
+      if (pathList.length === 0) {
+        console.log("[CoursesViewer] No learning paths found, fetching published courses as fallback...");
+        const { data: coursesData, error: coursesError } = await supabase
+          .from("courses")
+          .select("id, title, description, category, duration_hours, instructor_name, thumbnail_url, course_url, video_url, document_url, course_type, is_published")
+          .eq("is_published", true)
+          .order("created_at", { ascending: false });
+        if (coursesError) {
+          console.error("[CoursesViewer] Error fetching fallback courses:", coursesError);
+        } else {
+          console.log(`[CoursesViewer] Found ${coursesData?.length || 0} published courses as fallback`);
+          setFallbackCourses((coursesData || []) as Course[]);
+        }
+      }
     } catch (error: any) {
       toast({ title: "Error loading paths", description: error.message, variant: "destructive" });
     } finally {
@@ -265,13 +283,25 @@ const CoursesViewer = () => {
         )}
       </div>
 
-      {/* Learning Paths */}
+      {/* Learning Paths or Fallback Courses */}
       {paths.length === 0 ? (
-        <SmartEmptyState
-          icon={BookOpen}
-          title="No learning paths available"
-          description="Learning paths will appear here once your admin publishes them."
-        />
+        fallbackCourses.length > 0 ? (
+          <div className="space-y-4">
+            <div className="rounded-xl border border-border/40 bg-muted/30 p-4">
+              <p className="text-sm text-muted-foreground">
+                <BookOpen className="h-4 w-4 inline mr-1.5 -mt-0.5" />
+                Showing available training courses. Structured learning paths will appear once your admin configures them.
+              </p>
+            </div>
+            <LearningTracks courses={fallbackCourses} />
+          </div>
+        ) : (
+          <SmartEmptyState
+            icon={BookOpen}
+            title="No learning paths available"
+            description="Learning paths will appear here once your admin publishes them."
+          />
+        )
       ) : (
         <div className="space-y-4">
           {paths.map((path, pi) => {
