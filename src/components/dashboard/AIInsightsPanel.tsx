@@ -9,7 +9,6 @@ import {
   Heart,
   RefreshCw,
   Loader2,
-  AlertCircle,
   Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +23,15 @@ interface Insight {
   type: "positive" | "warning" | "neutral";
 }
 
+interface CachedInsights {
+  insights: Insight[];
+  timestamp: number;
+  isFallback: boolean;
+}
+
+const CACHE_KEY = "ai-insights-cache";
+const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
+
 const iconMap = {
   training: BookOpen,
   performance: BarChart3,
@@ -33,12 +41,9 @@ const iconMap = {
 };
 
 const typeStyles = {
-  positive:
-    "border-green-200 bg-green-50/50 dark:border-green-800/50 dark:bg-green-900/10",
-  warning:
-    "border-yellow-200 bg-yellow-50/50 dark:border-yellow-800/50 dark:bg-yellow-900/10",
-  neutral:
-    "border-border bg-muted/30",
+  positive: "border-green-200 bg-green-50/50 dark:border-green-800/50 dark:bg-green-900/10",
+  warning: "border-yellow-200 bg-yellow-50/50 dark:border-yellow-800/50 dark:bg-yellow-900/10",
+  neutral: "border-border bg-muted/30",
 };
 
 const typeIconStyles = {
@@ -47,22 +52,37 @@ const typeIconStyles = {
   neutral: "text-muted-foreground",
 };
 
-const fallbackInsights: Insight[] = [
-  { icon: "trend", title: "Keep Going!", description: "Continue logging activities to build a detailed performance profile.", type: "neutral" },
-  { icon: "training", title: "Explore Courses", description: "Enroll in available training programs to boost your skills.", type: "neutral" },
-  { icon: "performance", title: "Track Progress", description: "Regularly update your metrics to see growth trends.", type: "neutral" },
-  { icon: "motivation", title: "Stay Consistent", description: "Daily engagement helps build momentum and improve scores.", type: "positive" },
-];
-
 const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = 2000;
 
+function loadCache(): CachedInsights | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const cached: CachedInsights = JSON.parse(raw);
+    if (Date.now() - cached.timestamp > CACHE_TTL_MS) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+    return cached;
+  } catch {
+    return null;
+  }
+}
+
+function saveCache(insights: Insight[], isFallback: boolean) {
+  try {
+    const data: CachedInsights = { insights, timestamp: Date.now(), isFallback };
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  } catch { /* ignore */ }
+}
+
 const AIInsightsPanel = () => {
-  const [insights, setInsights] = useState<Insight[]>([]);
+  const cached = loadCache();
+  const [insights, setInsights] = useState<Insight[]>(cached?.insights || []);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [hasLoaded, setHasLoaded] = useState(false);
-  const [isFallback, setIsFallback] = useState(false);
+  const [isFallback, setIsFallback] = useState(cached?.isFallback ?? false);
+  const [hasGenerated, setHasGenerated] = useState(!!cached);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -70,77 +90,51 @@ const AIInsightsPanel = () => {
     if (!user) return;
     if (retryCount === 0) {
       setLoading(true);
-      setError(null);
       setIsFallback(false);
     }
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        throw new Error("Please log in to view AI insights.");
-      }
+      if (!session) throw new Error("Please log in to view AI insights.");
 
-      console.log("Calling ai-insights function (attempt", retryCount + 1, ")");
-
-      const { data, error: fnError } = await supabase.functions.invoke(
-        "ai-insights",
-        { body: {} }
-      );
+      const { data, error: fnError } = await supabase.functions.invoke("ai-insights", { body: {} });
 
       if (fnError) {
-        console.error("Edge function invocation error:", fnError);
         if (retryCount < MAX_RETRIES) {
-          console.log(`Retrying in ${RETRY_DELAY_MS}ms... (attempt ${retryCount + 2}/${MAX_RETRIES + 1})`);
-          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+          await new Promise(r => setTimeout(r, RETRY_DELAY_MS));
           return fetchInsights(retryCount + 1);
         }
         throw new Error("AI insights temporarily unavailable. Please try again later.");
       }
 
-      if (data?.fallback) {
-        setIsFallback(true);
-      }
-
       if (data?.error && !data?.insights) {
         if (retryCount < MAX_RETRIES) {
-          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+          await new Promise(r => setTimeout(r, RETRY_DELAY_MS));
           return fetchInsights(retryCount + 1);
         }
         throw new Error(data.error);
       }
 
-      if (data?.fallback) {
-        setIsFallback(true);
-      }
-
-      setInsights(data?.insights || fallbackInsights);
-      setHasLoaded(true);
+      const fb = !!data?.fallback;
+      const result = data?.insights || [];
+      setInsights(result);
+      setIsFallback(fb);
+      setHasGenerated(true);
+      saveCache(result, fb);
     } catch (err: any) {
       console.error("Error fetching AI insights:", err);
-      // Show fallback insights instead of error state
-      setInsights(fallbackInsights);
-      setIsFallback(true);
-      setHasLoaded(true);
-      setError(null); // Clear error since we're showing fallback
-
-      if (retryCount === 0 || retryCount >= MAX_RETRIES) {
-        toast({
-          title: "AI Insights",
-          description: "Showing general tips. Personalized insights will be available shortly.",
-        });
-      }
+      setHasGenerated(true);
+      toast({
+        title: "AI Insights",
+        description: "AI insights temporarily unavailable. Please try again later.",
+        variant: "destructive",
+      });
     } finally {
       if (retryCount === 0 || retryCount >= MAX_RETRIES) {
         setLoading(false);
       }
     }
   }, [user, toast]);
-
-  useEffect(() => {
-    if (user && !hasLoaded) {
-      fetchInsights();
-    }
-  }, [user, hasLoaded, fetchInsights]);
 
   return (
     <motion.div
@@ -156,55 +150,49 @@ const AIInsightsPanel = () => {
               <Sparkles className="h-4 w-4 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-medium text-foreground">
-                AI Insights
-              </h3>
+              <h3 className="text-lg font-medium text-foreground">AI Insights</h3>
               <p className="text-xs text-muted-foreground">
-                {isFallback
-                  ? "General tips — click refresh for personalized insights"
-                  : "Personalized analysis of your performance data"}
+                {!hasGenerated
+                  ? "Click generate to get personalized insights"
+                  : isFallback
+                    ? "General tips — click refresh for personalized insights"
+                    : "Personalized analysis of your performance data"}
               </p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setHasLoaded(false);
-              fetchInsights();
-            }}
-            disabled={loading}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="h-4 w-4" />
-            )}
-          </Button>
+          {hasGenerated && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => fetchInsights()}
+              disabled={loading}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+            </Button>
+          )}
         </div>
       </div>
 
       <div className="p-4 sm:p-6">
-        {loading && !hasLoaded ? (
+        {!hasGenerated && !loading ? (
+          <div className="flex flex-col items-center justify-center py-8 gap-4">
+            <Sparkles className="h-10 w-10 text-muted-foreground/50" />
+            <p className="text-sm text-muted-foreground text-center">
+              Get AI-powered insights based on your performance data.
+            </p>
+            <Button onClick={() => fetchInsights()} disabled={!user}>
+              <Sparkles className="h-4 w-4 mr-2" />
+              Generate AI Insights
+            </Button>
+          </div>
+        ) : loading && insights.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 gap-3">
             <div className="relative">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <Sparkles className="h-3 w-3 text-accent absolute -top-1 -right-1 animate-pulse" />
             </div>
-            <p className="text-sm text-muted-foreground">
-              Analyzing your performance data…
-            </p>
-          </div>
-        ) : error && !hasLoaded ? (
-          <div className="flex flex-col items-center justify-center py-8 gap-3">
-            <AlertCircle className="h-8 w-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground text-center">
-              {error}
-            </p>
-            <Button variant="outline" size="sm" onClick={() => fetchInsights()}>
-              Try Again
-            </Button>
+            <p className="text-sm text-muted-foreground">Analyzing your performance data…</p>
           </div>
         ) : (
           <>
@@ -225,25 +213,16 @@ const AIInsightsPanel = () => {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       transition={{ delay: index * 0.1 }}
-                      whileHover={{
-                        y: -2,
-                        transition: { duration: 0.2 },
-                      }}
+                      whileHover={{ y: -2, transition: { duration: 0.2 } }}
                       className={`rounded-lg border p-3.5 transition-all duration-300 hover:shadow-md cursor-default ${typeStyles[insight.type]}`}
                     >
                       <div className="flex items-start gap-3">
-                        <div
-                          className={`mt-0.5 flex-shrink-0 ${typeIconStyles[insight.type]}`}
-                        >
+                        <div className={`mt-0.5 flex-shrink-0 ${typeIconStyles[insight.type]}`}>
                           <Icon className="h-4 w-4" />
                         </div>
                         <div className="min-w-0">
-                          <h4 className="text-sm font-semibold text-foreground leading-tight">
-                            {insight.title}
-                          </h4>
-                          <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                            {insight.description}
-                          </p>
+                          <h4 className="text-sm font-semibold text-foreground leading-tight">{insight.title}</h4>
+                          <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{insight.description}</p>
                         </div>
                       </div>
                     </motion.div>
@@ -254,7 +233,7 @@ const AIInsightsPanel = () => {
           </>
         )}
 
-        {loading && hasLoaded && (
+        {loading && insights.length > 0 && (
           <div className="flex items-center justify-center pt-3">
             <p className="text-xs text-muted-foreground flex items-center gap-1.5">
               <Loader2 className="h-3 w-3 animate-spin" />
