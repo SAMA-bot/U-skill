@@ -37,6 +37,7 @@ const App = () => (
                 <Route path="/dashboard/settings" element={<ProfileSettings />} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/hod" element={<HodDashboard />} />
+                <Route path="/learning-track/:trackKey" element={<LearningTrackPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
