@@ -134,10 +134,41 @@ const SkillGrowthChart = () => {
               Complete trainings and activities to see your skill growth visualized here.
             </p>
           </div>
+        ) : skills.length < 3 ? (
+          /* Fallback: progress bars only when radar can't render properly */
+          <div className="space-y-3" style={{ minHeight: 300 }}>
+            {skills
+              .sort((a, b) => b.current - a.current)
+              .map((sk, i) => {
+                const growth = getGrowthLabel(sk.current);
+                const color = skillColors[sk.skill] || "bg-primary";
+                return (
+                  <motion.div
+                    key={sk.skill}
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.08 }}
+                    className="space-y-1"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${color}`} />
+                        <span className="text-sm font-medium text-foreground">{sk.skill}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge className={`text-[9px] px-1.5 py-0 ${growth.style}`}>{growth.text}</Badge>
+                        <span className="text-xs text-muted-foreground w-8 text-right">{sk.current}%</span>
+                      </div>
+                    </div>
+                    <Progress value={sk.current} className="h-1.5" />
+                  </motion.div>
+                );
+              })}
+          </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" style={{ minHeight: 300 }}>
             {/* Radar Chart */}
-            <div>
+            <div className="flex flex-col items-center justify-center">
               <div className="flex gap-3 mb-3">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-primary" />
@@ -148,8 +179,8 @@ const SkillGrowthChart = () => {
                   <span className="text-[11px] text-muted-foreground">Target</span>
                 </div>
               </div>
-              <ResponsiveContainer width="100%" height={220}>
-                <RadarChart data={skills} margin={{ top: 5, right: 25, left: 25, bottom: 5 }}>
+              <ResponsiveContainer width="100%" height={300}>
+                <RadarChart data={skills} cx="50%" cy="50%" outerRadius="70%">
                   <PolarGrid stroke="hsl(var(--border))" />
                   <PolarAngleAxis
                     dataKey="skill"
