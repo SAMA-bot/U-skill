@@ -50,6 +50,7 @@ const PerformanceReport = ({
 }: PerformanceReportProps) => {
   const [generating, setGenerating] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   const latestMetrics = performanceMetrics[performanceMetrics.length - 1];
 
