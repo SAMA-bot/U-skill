@@ -50,7 +50,7 @@ export interface TrackDefinition {
   iconBgClass: string;
 }
 
-const TRACKS: TrackDefinition[] = [
+export const TRACKS: TrackDefinition[] = [
   {
     key: "cyber-security",
     label: "Cyber Security",
