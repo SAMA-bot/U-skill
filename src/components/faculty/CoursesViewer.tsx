@@ -978,13 +978,9 @@ const CoursesViewer = () => {
           )}
         </TabsContent>
 
-        <TabsContent value="video" className="mt-6">
+        <TabsContent value="platform_video" className="mt-6">
           {videoCourses.length === 0 ? (
-            <SmartEmptyState
-              icon={Video}
-              title="No video courses yet"
-              description="Video-based training courses will appear here once they're published by your admin."
-            />
+            <SmartEmptyState icon={Video} title="No video courses yet" description="Platform video courses will appear here once published." />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {videoCourses.map((course, index) => renderCourseCard(course, index))}
@@ -992,13 +988,19 @@ const CoursesViewer = () => {
           )}
         </TabsContent>
 
-        <TabsContent value="regular" className="mt-6">
+        <TabsContent value="external_url" className="mt-6">
+          {externalCourses.length === 0 ? (
+            <SmartEmptyState icon={ExternalLink} title="No external courses yet" description="Courses linked to external platforms will appear here." />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {externalCourses.map((course, index) => renderCourseCard(course, index))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="pdf_course" className="mt-6">
           {regularCourses.length === 0 ? (
-            <SmartEmptyState
-              icon={FileText}
-              title="No regular courses yet"
-              description="Document-based courses and training materials will appear here when available."
-            />
+            <SmartEmptyState icon={FileText} title="No PDF courses yet" description="PDF-based training materials will appear here when available." />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {regularCourses.map((course, index) => renderCourseCard(course, index))}
