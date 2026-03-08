@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell,
@@ -23,6 +23,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useNotifications, Notification, NotificationCategory } from "@/hooks/useNotifications";
+import { toast } from "sonner";
 
 type TabKey = "all" | NotificationCategory;
 
@@ -137,10 +138,28 @@ const HeaderNotifications = () => {
             </div>
             {notifications.length > 0 && (
               <div className="flex gap-1">
-                <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground hover:text-foreground" onClick={markAllAsRead}>
-                  Mark all read
-                </Button>
-                <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground hover:text-foreground" onClick={clearAll}>
+                {unreadCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs text-muted-foreground hover:text-foreground"
+                    onClick={() => {
+                      markAllAsRead();
+                      toast.success("All notifications marked as read");
+                    }}
+                  >
+                    Mark all read
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs text-muted-foreground hover:text-destructive"
+                  onClick={() => {
+                    clearAll();
+                    toast("Notifications cleared");
+                  }}
+                >
                   Clear
                 </Button>
               </div>
