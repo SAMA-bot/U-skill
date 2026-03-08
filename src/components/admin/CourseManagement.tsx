@@ -256,6 +256,9 @@ export function CourseManagement() {
         video_url: videoUrl,
         thumbnail_url: thumbnailUrl,
         is_published: formData.is_published,
+        is_mandatory: formData.is_mandatory,
+        department: formData.department || null,
+        training_date: formData.training_date || null,
         created_by: user.id,
       };
 
