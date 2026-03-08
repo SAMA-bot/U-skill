@@ -15,6 +15,7 @@ export type NotificationType =
   | "document_approved"
   | "document_rejected"
   | "document_pending"
+  | "training_reminder"
   | "system";
 
 export type NotificationCategory = "alert" | "course" | "achievement" | "document";
@@ -97,6 +98,7 @@ const groupSimilarNotifications = (items: Notification[]): Notification[] => {
       performance_change: "score change",
       document_approved: "document approval",
       document_rejected: "document rejection",
+      training_reminder: "training reminder",
     };
 
     const label = typeLabels[latest.type] || "notification";
@@ -111,8 +113,9 @@ const groupSimilarNotifications = (items: Notification[]): Notification[] => {
       goal_at_risk: `${count} Goals At Risk`,
       achievement_earned: `${count} Badges Earned 🏆`,
       performance_change: `${count} Score Changes`,
-      document_approved: `${count} Documents Approved ✅`,
+      document_approved: `${count} Documents Approved`,
       document_rejected: `${count} Documents Rejected`,
+      training_reminder: `${count} Upcoming Trainings`,
     };
 
     result.push({
@@ -380,6 +383,36 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
               timestamp: new Date(doc.reviewed_at),
               read: daysSinceUpdate > 1,
               data: { documentId: doc.id },
+            });
+          }
+        });
+      }
+
+      // === TRAINING REMINDER NOTIFICATIONS ===
+      const { data: upcomingCourses } = await supabase
+        .from("courses")
+        .select("id, title, training_date")
+        .eq("is_published", true)
+        .not("training_date", "is", null);
+
+      if (upcomingCourses) {
+        const now = new Date();
+        upcomingCourses.forEach((course) => {
+          if (!course.training_date) return;
+          const trainingDate = new Date(course.training_date);
+          const daysUntil = Math.ceil((trainingDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+          if (daysUntil > 0 && daysUntil <= 7) {
+            newNotifications.push({
+              id: `training_reminder_${course.id}`,
+              type: "training_reminder",
+              category: "course",
+              title: "Upcoming Training",
+              message: `"${course.title}" starts in ${daysUntil} day${daysUntil !== 1 ? "s" : ""}.`,
+              severity: daysUntil <= 2 ? "warning" : "info",
+              timestamp: now,
+              read: false,
+              data: { courseId: course.id },
             });
           }
         });
