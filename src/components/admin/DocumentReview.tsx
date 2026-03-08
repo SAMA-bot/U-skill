@@ -73,17 +73,17 @@ const statusConfig: Record<
   pending: {
     icon: Clock,
     label: "Pending",
-    className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+    className: "bg-[rgba(245,158,11,0.15)] text-[#f59e0b] border-[rgba(245,158,11,0.4)] dark:bg-[rgba(245,158,11,0.2)] dark:text-[#fbbf24]",
   },
   verified: {
     icon: CheckCircle2,
     label: "Verified",
-    className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+    className: "bg-[rgba(34,197,94,0.15)] text-[#22c55e] border-[rgba(34,197,94,0.4)] dark:bg-[rgba(34,197,94,0.2)] dark:text-[#4ade80]",
   },
   rejected: {
     icon: XCircle,
     label: "Rejected",
-    className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+    className: "bg-[rgba(239,68,68,0.15)] text-[#ef4444] border-[rgba(239,68,68,0.4)] dark:bg-[rgba(239,68,68,0.2)] dark:text-[#f87171]",
   },
 };
 
@@ -372,9 +372,9 @@ export default function DocumentReview() {
         <p className="text-muted-foreground">
           Review and verify faculty-uploaded documents
           {pendingCount > 0 && (
-            <Badge variant="secondary" className="ml-2 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+            <span className="ml-2 inline-flex items-center rounded-full border border-[rgba(245,158,11,0.4)] bg-[rgba(245,158,11,0.15)] px-2 py-0.5 text-xs font-semibold text-[#f59e0b] dark:bg-[rgba(245,158,11,0.2)] dark:text-[#fbbf24]">
               {pendingCount} pending
-            </Badge>
+            </span>
           )}
         </p>
       </div>
@@ -502,7 +502,7 @@ export default function DocumentReview() {
                         {formatDate(doc.created_at)}
                       </TableCell>
                       <TableCell className="text-center">
-                        <Badge variant="secondary" className={statusInfo.className}>
+                        <Badge variant="outline" className={statusInfo.className}>
                           <StatusIcon className="h-3 w-3 mr-1" />
                           {statusInfo.label}
                         </Badge>
