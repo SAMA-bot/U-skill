@@ -96,6 +96,7 @@ const sidebarItems = [
   { icon: Building2, label: "Departments", id: "departments" },
   { icon: Activity, label: "Audit Logs", id: "audit" },
   { icon: Star, label: "Feedback Analytics", id: "feedback" },
+  { icon: Sparkles, label: "Predictive Analytics", id: "predictions" },
 ];
 
 const AdminDashboard = () => {
