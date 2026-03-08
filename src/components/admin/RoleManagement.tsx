@@ -520,10 +520,68 @@ export function RoleManagement() {
           </div>
         </div>
       </div>
+
+      {/* Bulk Action Bar */}
+      <AnimatePresence>
+        {selectedUsers.size > 0 && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="px-4 py-3 bg-primary/10 border-b border-border flex items-center gap-3 flex-wrap"
+          >
+            <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+              <Users className="h-4 w-4 text-primary" />
+              {selectedUsers.size} user{selectedUsers.size > 1 ? "s" : ""} selected
+            </div>
+            <Select
+              value={bulkRole}
+              onValueChange={(value: AppRole) => setBulkRole(value)}
+            >
+              <SelectTrigger className="w-36 h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="faculty">Faculty</SelectItem>
+                <SelectItem value="hod">HOD</SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              size="sm"
+              onClick={handleBulkRoleChange}
+              disabled={isBulkUpdating}
+            >
+              {isBulkUpdating ? (
+                <>
+                  <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                "Assign Role"
+              )}
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setSelectedUsers(new Set())}
+            >
+              Clear
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="overflow-x-auto max-h-[600px] overflow-y-auto relative">
         <Table>
           <TableHeader className="sticky top-0 z-10 bg-card shadow-sm">
             <TableRow>
+              <TableHead className="w-10">
+                <Checkbox
+                  checked={paginatedUsers.length > 0 && paginatedUsers.every((u) => selectedUsers.has(u.user_id))}
+                  onCheckedChange={toggleAllOnPage}
+                />
+              </TableHead>
               <TableHead>User</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Department</TableHead>
@@ -534,7 +592,13 @@ export function RoleManagement() {
           </TableHeader>
           <TableBody>
             {paginatedUsers.map((user) => (
-              <TableRow key={user.user_id} className="transition-colors hover:bg-muted/50">
+              <TableRow key={user.user_id} className={`transition-colors hover:bg-muted/50 ${selectedUsers.has(user.user_id) ? "bg-primary/5" : ""}`}>
+                <TableCell>
+                  <Checkbox
+                    checked={selectedUsers.has(user.user_id)}
+                    onCheckedChange={() => toggleUserSelection(user.user_id)}
+                  />
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
