@@ -480,6 +480,8 @@ const AdminDashboard = () => {
             <FeedbackAnalytics />
           ) : activeSection === "faculty" ? (
             <FacultyManagement />
+          ) : activeSection === "reports" ? (
+            <PerformanceReports />
           ) : (
             <>
           {/* Page Header */}
