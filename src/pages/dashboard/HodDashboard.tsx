@@ -321,10 +321,25 @@ const HodDashboard = () => {
                 </button>
               </div>
               <nav className="mt-2 flex-1 flex flex-col px-2 space-y-1">
-                <button className={`group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md bg-primary/10 text-primary w-full text-left`}>
-                  <Home className={`flex-shrink-0 h-5 w-5 text-primary ${sidebarCollapsed ? "" : "mr-3"}`} />
-                  {!sidebarCollapsed && "Department Overview"}
-                </button>
+                {[
+                  { id: "overview", label: "Department Overview", icon: Home },
+                  { id: "documents", label: "Document Approvals", icon: FileCheck },
+                  { id: "performance", label: "Performance Review", icon: BarChart3 },
+                  { id: "feedback", label: "Faculty Feedback", icon: MessageSquarePlus },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => { setActiveTab(tab.id); setSidebarOpen(false); }}
+                    className={`group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md w-full text-left transition-colors ${
+                      activeTab === tab.id
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }`}
+                  >
+                    <tab.icon className={`flex-shrink-0 h-5 w-5 ${activeTab === tab.id ? "text-primary" : ""} ${sidebarCollapsed ? "" : "mr-3"}`} />
+                    {!sidebarCollapsed && tab.label}
+                  </button>
+                ))}
               </nav>
               <div className="px-2 pt-4 pb-2 border-t border-border">
                 {isAdmin && (
