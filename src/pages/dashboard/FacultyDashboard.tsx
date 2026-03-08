@@ -510,10 +510,26 @@ const FacultyDashboard = () => {
                   </p>
                 </div>
                 <div className="flex space-x-3">
-                  <Button variant="outline" size="sm">
-                    <Download className="mr-2 h-4 w-4" />
-                    Export
-                  </Button>
+                  <div className="relative group">
+                    <Button variant="outline" size="sm" className="peer">
+                      <Download className="mr-2 h-4 w-4" />
+                      Export
+                    </Button>
+                    <div className="absolute right-0 top-full mt-1 w-36 bg-card border border-border rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                      <button
+                        onClick={() => handleExportCSV()}
+                        className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted rounded-t-md"
+                      >
+                        Export as CSV
+                      </button>
+                      <button
+                        onClick={() => handleExportPDF()}
+                        className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted rounded-b-md"
+                      >
+                        Export as PDF
+                      </button>
+                    </div>
+                  </div>
                   <Button size="sm" onClick={() => setReportModalOpen(true)}>
                     <FileText className="mr-2 h-4 w-4" />
                     Generate Report
