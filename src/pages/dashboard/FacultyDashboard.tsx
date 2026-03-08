@@ -19,6 +19,7 @@ import HeaderNotifications from "@/components/layout/HeaderNotifications";
 import DocumentUpload from "@/components/faculty/DocumentUpload";
 import AreasToImprove from "@/components/faculty/AreasToImprove";
 import AIInsightsPanel from "@/components/dashboard/AIInsightsPanel";
+import RecommendationPanel from "@/components/faculty/RecommendationPanel";
 import ActivityLogTimeline from "@/components/faculty/ActivityLogTimeline";
 import FacultyProgressTracker from "@/components/faculty/FacultyProgressTracker";
 import MotivationTools from "@/components/faculty/MotivationTools";
