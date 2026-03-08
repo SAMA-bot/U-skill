@@ -431,6 +431,14 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
     },
   });
 
+  useRealtimeData({
+    table: "faculty_documents",
+    userId: user?.id,
+    onChange: () => {
+      if (user) generateNotifications();
+    },
+  });
+
   const markAsRead = useCallback((id: string) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
