@@ -68,6 +68,7 @@ import AcademicYearSelector from "@/components/AcademicYearSelector";
 import InstitutionalOverview from "@/components/admin/InstitutionalOverview";
 import FacultyComparison from "@/components/admin/FacultyComparison";
 import PredictiveAnalytics from "@/components/admin/PredictiveAnalytics";
+import PerformanceHeatmap from "@/components/admin/PerformanceHeatmap";
 interface FacultyMember {
   user_id: string;
   full_name: string;
