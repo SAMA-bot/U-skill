@@ -92,11 +92,16 @@ export default function DocumentReview() {
   const [profiles, setProfiles] = useState<Map<string, any>>(new Map());
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [departmentFilter, setDepartmentFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [commentDialogOpen, setCommentDialogOpen] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState<DocumentWithProfile | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [adminComment, setAdminComment] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
