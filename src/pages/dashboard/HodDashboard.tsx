@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
+import { HodSkeleton } from "@/components/dashboard/DashboardSkeletons";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
 import HeaderNotifications from "@/components/layout/HeaderNotifications";
@@ -361,9 +362,7 @@ const HodDashboard = () => {
             </div>
 
             {loadingData ? (
-              <div className="flex items-center justify-center py-24">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
+              <HodSkeleton />
             ) : !hodDepartment ? (
               <Card>
                 <CardContent className="py-12 text-center">

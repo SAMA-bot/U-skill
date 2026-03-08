@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeletons";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -303,7 +304,7 @@ const AdminDashboard = () => {
     { label: "Completed Trainings", numValue: institutionStats.completedTrainings, suffix: "", icon: GraduationCap, color: "from-teal-500 to-teal-600" },
   ];
 
-  if (authLoading || roleLoading || loadingData) {
+  if (authLoading || roleLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -528,6 +529,7 @@ const AdminDashboard = () => {
             <DepartmentManagement />
           ) : (
             <>
+          {loadingData ? <DashboardSkeleton statCount={6} /> : (<>
           {/* Page Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
@@ -843,9 +845,7 @@ const AdminDashboard = () => {
               )}
             </motion.div>
           </div>
-
-
-
+            </>)}
             </>
           )}
         </main>

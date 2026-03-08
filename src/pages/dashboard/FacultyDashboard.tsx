@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, Activity, FolderUp, PanelLeftClose, PanelLeft, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
+import { FacultySkeleton } from "@/components/dashboard/DashboardSkeletons";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
@@ -303,7 +304,7 @@ const FacultyDashboard = () => {
     suffix: "h",
     icon: Clock
   }];
-  if (loading || loadingProfile) {
+  if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>;
@@ -446,6 +447,7 @@ const FacultyDashboard = () => {
               <DocumentUpload />
             </motion.div>
           ) : activeSection === "dashboard" ? <>
+              {loadingProfile ? <FacultySkeleton /> : (<>
               {/* Page Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div>
@@ -674,7 +676,7 @@ const FacultyDashboard = () => {
                   <RecommendationPanel onNavigate={(section) => setActiveSection(section as ActiveSection)} />
                 </motion.div>
               </div>
-            </> : <div className="flex items-center justify-center h-64">
+            </>)} </> : <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <h2 className="text-xl font-semibold text-foreground mb-2">
                   {sidebarItems.find(item => item.section === activeSection)?.label}
