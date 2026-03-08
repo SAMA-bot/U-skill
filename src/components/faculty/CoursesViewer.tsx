@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import LearningTracks from "@/components/faculty/LearningTracks";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Search, 
   Clock, 
@@ -17,7 +17,9 @@ import {
   TrendingUp,
   FileIcon,
   X,
-  Loader2
+  Loader2,
+  GraduationCap,
+  ArrowRight,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -38,16 +40,24 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
 import { useCourseEnrollments } from "@/hooks/useCourseEnrollments";
 import { getVideoSignedUrl, getDocumentSignedUrl } from "@/lib/storageUtils";
+import { getDifficultyFromDuration } from "@/components/faculty/LearningTracks";
 
 // Course interface without sensitive created_by field (using public view)
 interface Course {
@@ -77,8 +87,11 @@ const CoursesViewer = () => {
   const [signedVideoUrl, setSignedVideoUrl] = useState<string | null>(null);
   const [signedDocumentUrl, setSignedDocumentUrl] = useState<string | null>(null);
   const [loadingMedia, setLoadingMedia] = useState(false);
+  const [detailCourse, setDetailCourse] = useState<Course | null>(null);
+  const [enrollingId, setEnrollingId] = useState<string | null>(null);
   const { toast } = useToast();
   const { 
+    enrollments,
     enrollInCourse, 
     startCourse, 
     completeCourse, 
@@ -118,16 +131,13 @@ const CoursesViewer = () => {
     },
     onUpdate: (updatedCourse) => {
       setCourses((prev) => {
-        // If course is now unpublished, remove it
         if (!updatedCourse.is_published) {
           return prev.filter((c) => c.id !== updatedCourse.id);
         }
-        // If course exists, update it
         const exists = prev.find((c) => c.id === updatedCourse.id);
         if (exists) {
           return prev.map((c) => (c.id === updatedCourse.id ? updatedCourse : c));
         }
-        // If course is newly published, add it
         return [updatedCourse, ...prev];
       });
     },
@@ -138,7 +148,6 @@ const CoursesViewer = () => {
 
   const fetchCourses = async () => {
     try {
-      // Use the public view that excludes sensitive created_by field
       const { data, error } = await supabase
         .from("courses_public" as any)
         .select("*")
@@ -175,14 +184,14 @@ const CoursesViewer = () => {
   const videoCourses = filteredCourses.filter(c => c.course_type === 'video');
   const regularCourses = filteredCourses.filter(c => c.course_type === 'regular');
 
+  // My Learning: courses the user is enrolled in
+  const myLearningCourses = courses.filter((c) => isEnrolled(c.id));
+
   const handlePlayVideo = async (course: Course) => {
     if (!course.video_url) return;
-    
     setSelectedCourse(course);
     setLoadingMedia(true);
     setVideoModalOpen(true);
-    
-    // Get signed URL for private video content
     const signedUrl = await getVideoSignedUrl(course.video_url);
     setSignedVideoUrl(signedUrl);
     setLoadingMedia(false);
@@ -190,31 +199,30 @@ const CoursesViewer = () => {
 
   const handleViewDocument = async (course: Course) => {
     if (!course.document_url) return;
-    
     setSelectedCourse(course);
     setLoadingMedia(true);
     setDocumentModalOpen(true);
-    
-    // Get signed URL for private document content
     const signedUrl = await getDocumentSignedUrl(course.document_url);
     setSignedDocumentUrl(signedUrl);
     setLoadingMedia(false);
   };
 
-  // Reset signed URLs when modals close
   const handleVideoModalClose = (open: boolean) => {
     setVideoModalOpen(open);
-    if (!open) {
-      setSignedVideoUrl(null);
-      setSelectedCourse(null);
-    }
+    if (!open) { setSignedVideoUrl(null); setSelectedCourse(null); }
   };
 
   const handleDocumentModalClose = (open: boolean) => {
     setDocumentModalOpen(open);
-    if (!open) {
-      setSignedDocumentUrl(null);
-      setSelectedCourse(null);
+    if (!open) { setSignedDocumentUrl(null); setSelectedCourse(null); }
+  };
+
+  const handleEnrollWithLoading = async (courseId: string) => {
+    setEnrollingId(courseId);
+    try {
+      await enrollInCourse(courseId);
+    } finally {
+      setEnrollingId(null);
     }
   };
 
@@ -229,12 +237,9 @@ const CoursesViewer = () => {
   const getDocumentIcon = (url: string) => {
     const type = getDocumentType(url);
     switch (type) {
-      case 'pdf':
-        return <FileIcon className="h-4 w-4 text-red-500" />;
-      case 'word':
-        return <FileIcon className="h-4 w-4 text-blue-500" />;
-      default:
-        return <FileText className="h-4 w-4" />;
+      case 'pdf': return <FileIcon className="h-4 w-4 text-destructive" />;
+      case 'word': return <FileIcon className="h-4 w-4 text-info" />;
+      default: return <FileText className="h-4 w-4" />;
     }
   };
 
@@ -244,12 +249,12 @@ const CoursesViewer = () => {
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      teaching: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-      research: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-      technology: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-      leadership: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
-      communication: "bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400",
-      general: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400",
+      teaching: "bg-primary/10 text-primary",
+      research: "bg-info/10 text-info",
+      technology: "bg-success/10 text-success",
+      leadership: "bg-accent/15 text-accent-foreground",
+      communication: "bg-destructive/10 text-destructive",
+      general: "bg-muted text-muted-foreground",
     };
     return colors[category] || colors.general;
   };
@@ -266,6 +271,7 @@ const CoursesViewer = () => {
     const enrollment = getEnrollment(course.id);
     const enrolled = isEnrolled(course.id);
     const completed = isCompleted(course.id);
+    const isEnrolling = enrollingId === course.id;
 
     return (
       <motion.div
@@ -273,18 +279,15 @@ const CoursesViewer = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05 }}
-        className={`bg-card border rounded-lg overflow-hidden hover:shadow-lg transition-shadow ${
-          completed ? "border-green-500/50" : "border-border"
+        className={`bg-card border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group ${
+          completed ? "border-success/50" : "border-border"
         }`}
+        onClick={() => setDetailCourse(course)}
       >
         {/* Thumbnail */}
-        <div className="aspect-video bg-muted relative group">
+        <div className="aspect-video bg-muted relative">
           {course.thumbnail_url ? (
-            <img
-              src={course.thumbnail_url}
-              alt={course.title}
-              className="w-full h-full object-cover"
-            />
+            <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               {course.course_type === 'video' ? (
@@ -299,7 +302,7 @@ const CoursesViewer = () => {
               {getCategoryLabel(course.category)}
             </Badge>
             {course.course_type === 'video' && (
-              <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+              <Badge variant="secondary" className="bg-destructive/10 text-destructive">
                 <Video className="h-3 w-3 mr-1" />
                 Video
               </Badge>
@@ -307,34 +310,26 @@ const CoursesViewer = () => {
           </div>
           {completed && (
             <div className="absolute top-2 right-2">
-              <Badge className="bg-green-500 text-white">
+              <Badge className="bg-success text-success-foreground">
                 <CheckCircle2 className="h-3 w-3 mr-1" />
                 Completed
               </Badge>
             </div>
           )}
-          {course.course_type === 'video' && course.video_url && (
-            <div 
-              className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
-              onClick={() => handlePlayVideo(course)}
-            >
-              <div className="bg-white/90 rounded-full p-4">
-                <Play className="h-8 w-8 text-primary fill-primary" />
-              </div>
+          {/* Hover overlay prompting detail view */}
+          <div className="absolute inset-0 bg-foreground/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <div className="bg-card/90 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium text-foreground shadow-sm flex items-center gap-1.5">
+              View Details <ArrowRight className="h-3.5 w-3.5" />
             </div>
-          )}
+          </div>
         </div>
 
         {/* Content */}
         <div className="p-4 space-y-3">
-          <h3 className="font-semibold text-foreground line-clamp-2">
-            {course.title}
-          </h3>
+          <h3 className="font-semibold text-foreground line-clamp-2">{course.title}</h3>
           
           {course.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {course.description}
-            </p>
+            <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
           )}
 
           <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
@@ -369,28 +364,20 @@ const CoursesViewer = () => {
             </div>
           )}
 
-          {/* Action buttons based on enrollment status */}
+          {/* Action buttons */}
           <div className="space-y-2 pt-2">
             {completed ? (
               <Button variant="outline" className="w-full" disabled>
-                <CheckCircle2 className="h-4 w-4 mr-2 text-green-500" />
+                <CheckCircle2 className="h-4 w-4 mr-2 text-success" />
                 Completed
               </Button>
             ) : enrollment?.status === "in_progress" ? (
-              <Button
-                variant="default"
-                className="w-full"
-                onClick={() => completeCourse(course.id)}
-              >
+              <Button variant="default" className="w-full" onClick={(e) => { e.stopPropagation(); completeCourse(course.id); }}>
                 <CheckCircle2 className="h-4 w-4 mr-2" />
                 Mark as Complete
               </Button>
             ) : enrolled ? (
-              <Button
-                variant="default"
-                className="w-full"
-                onClick={() => startCourse(course.id)}
-              >
+              <Button variant="default" className="w-full" onClick={(e) => { e.stopPropagation(); startCourse(course.id); }}>
                 <PlayCircle className="h-4 w-4 mr-2" />
                 Start Learning
               </Button>
@@ -398,36 +385,175 @@ const CoursesViewer = () => {
               <Button
                 variant="default"
                 className="w-full"
-                onClick={() => enrollInCourse(course.id)}
+                disabled={isEnrolling}
+                onClick={(e) => { e.stopPropagation(); handleEnrollWithLoading(course.id); }}
               >
-                <TrendingUp className="h-4 w-4 mr-2" />
-                Enroll Now
+                {isEnrolling ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                )}
+                {isEnrolling ? "Enrolling..." : "Enroll Now"}
               </Button>
             )}
-
-            {/* Secondary action for video/document */}
-            {course.course_type === 'video' && course.video_url ? (
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => handlePlayVideo(course)}
-              >
-                <Play className="h-4 w-4 mr-2" />
-                Watch Video
-              </Button>
-            ) : course.course_type === 'regular' && course.document_url ? (
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => handleViewDocument(course)}
-              >
-                {getDocumentIcon(course.document_url)}
-                <span className="ml-2">View Document</span>
-              </Button>
-            ) : null}
           </div>
         </div>
       </motion.div>
+    );
+  };
+
+  // Course Detail Sheet
+  const renderDetailSheet = () => {
+    if (!detailCourse) return null;
+    const enrollment = getEnrollment(detailCourse.id);
+    const enrolled = isEnrolled(detailCourse.id);
+    const completed = isCompleted(detailCourse.id);
+    const difficulty = getDifficultyFromDuration(detailCourse.duration_hours);
+    const isEnrolling = enrollingId === detailCourse.id;
+
+    return (
+      <Sheet open={!!detailCourse} onOpenChange={(open) => { if (!open) setDetailCourse(null); }}>
+        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+          <SheetHeader className="text-left">
+            <SheetTitle className="text-xl leading-snug pr-6">{detailCourse.title}</SheetTitle>
+          </SheetHeader>
+
+          <div className="mt-4 space-y-5">
+            {/* Thumbnail */}
+            <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
+              {detailCourse.thumbnail_url ? (
+                <img src={detailCourse.thumbnail_url} alt={detailCourse.title} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  {detailCourse.course_type === 'video' ? (
+                    <Video className="h-16 w-16 text-muted-foreground" />
+                  ) : (
+                    <BookOpen className="h-16 w-16 text-muted-foreground" />
+                  )}
+                </div>
+              )}
+              {completed && (
+                <div className="absolute top-3 right-3">
+                  <Badge className="bg-success text-success-foreground"><CheckCircle2 className="h-3 w-3 mr-1" />Completed</Badge>
+                </div>
+              )}
+            </div>
+
+            {/* Badges */}
+            <div className="flex flex-wrap gap-2">
+              <Badge className={getCategoryColor(detailCourse.category)}>
+                {getCategoryLabel(detailCourse.category)}
+              </Badge>
+              <Badge variant="outline" className={difficulty.color}>
+                {difficulty.label}
+              </Badge>
+              {detailCourse.course_type === 'video' && (
+                <Badge variant="secondary" className="bg-destructive/10 text-destructive">
+                  <Video className="h-3 w-3 mr-1" />Video
+                </Badge>
+              )}
+            </div>
+
+            {/* Description */}
+            {detailCourse.description && (
+              <p className="text-sm text-muted-foreground leading-relaxed">{detailCourse.description}</p>
+            )}
+
+            <Separator />
+
+            {/* Details grid */}
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              {detailCourse.instructor_name && (
+                <div>
+                  <p className="text-muted-foreground text-xs mb-0.5">Instructor</p>
+                  <p className="font-medium text-foreground flex items-center gap-1.5"><User className="h-3.5 w-3.5" />{detailCourse.instructor_name}</p>
+                </div>
+              )}
+              {detailCourse.duration_hours && (
+                <div>
+                  <p className="text-muted-foreground text-xs mb-0.5">Duration</p>
+                  <p className="font-medium text-foreground flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" />{detailCourse.duration_hours} hours</p>
+                </div>
+              )}
+              {detailCourse.duration_hours && (
+                <div>
+                  <p className="text-muted-foreground text-xs mb-0.5">Skill Points</p>
+                  <p className="font-medium text-primary flex items-center gap-1.5"><Award className="h-3.5 w-3.5" />+{Math.min(detailCourse.duration_hours * 5, 25)} pts</p>
+                </div>
+              )}
+              <div>
+                <p className="text-muted-foreground text-xs mb-0.5">Type</p>
+                <p className="font-medium text-foreground capitalize">{detailCourse.course_type}</p>
+              </div>
+            </div>
+
+            {/* Progress */}
+            {enrollment?.status === "in_progress" && (
+              <>
+                <Separator />
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Your Progress</span>
+                    <span className="font-medium text-foreground">{enrollment.progress_percentage}%</span>
+                  </div>
+                  <Progress value={enrollment.progress_percentage} className="h-2.5" />
+                </div>
+              </>
+            )}
+
+            <Separator />
+
+            {/* Actions */}
+            <div className="space-y-3">
+              {completed ? (
+                <Button variant="outline" className="w-full" disabled>
+                  <CheckCircle2 className="h-4 w-4 mr-2 text-success" />
+                  Course Completed
+                </Button>
+              ) : enrollment?.status === "in_progress" ? (
+                <Button className="w-full" onClick={() => { completeCourse(detailCourse.id); setDetailCourse(null); }}>
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  Mark as Complete
+                </Button>
+              ) : enrolled ? (
+                <Button className="w-full" onClick={() => { startCourse(detailCourse.id); setDetailCourse(null); }}>
+                  <PlayCircle className="h-4 w-4 mr-2" />
+                  Start Learning
+                </Button>
+              ) : (
+                <Button
+                  className="w-full"
+                  disabled={isEnrolling}
+                  onClick={async () => {
+                    await handleEnrollWithLoading(detailCourse.id);
+                  }}
+                >
+                  {isEnrolling ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                  )}
+                  {isEnrolling ? "Enrolling..." : "Enroll in this Course"}
+                </Button>
+              )}
+
+              {/* Media buttons */}
+              {detailCourse.course_type === 'video' && detailCourse.video_url && (
+                <Button variant="outline" className="w-full" onClick={() => { handlePlayVideo(detailCourse); setDetailCourse(null); }}>
+                  <Play className="h-4 w-4 mr-2" />
+                  Watch Video
+                </Button>
+              )}
+              {detailCourse.course_type === 'regular' && detailCourse.document_url && (
+                <Button variant="outline" className="w-full" onClick={() => { handleViewDocument(detailCourse); setDetailCourse(null); }}>
+                  {getDocumentIcon(detailCourse.document_url)}
+                  <span className="ml-2">View Document</span>
+                </Button>
+              )}
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     );
   };
 
@@ -446,9 +572,13 @@ const CoursesViewer = () => {
             <div className="text-2xl font-bold text-primary">{getCompletedCount()}</div>
             <div className="text-xs text-muted-foreground">Completed</div>
           </div>
-          <div className="bg-orange-500/10 rounded-lg px-4 py-2 text-center">
-            <div className="text-2xl font-bold text-orange-500">{getInProgressCount()}</div>
+          <div className="bg-accent/10 rounded-lg px-4 py-2 text-center">
+            <div className="text-2xl font-bold text-accent-foreground">{getInProgressCount()}</div>
             <div className="text-xs text-muted-foreground">In Progress</div>
+          </div>
+          <div className="bg-secondary rounded-lg px-4 py-2 text-center">
+            <div className="text-2xl font-bold text-secondary-foreground">{myLearningCourses.length}</div>
+            <div className="text-xs text-muted-foreground">Enrolled</div>
           </div>
         </div>
       </div>
@@ -501,7 +631,7 @@ const CoursesViewer = () => {
 
       {/* Courses Tabs */}
       <Tabs defaultValue="tracks" className="w-full">
-        <TabsList className="grid w-full max-w-lg grid-cols-4">
+        <TabsList className="grid w-full max-w-2xl grid-cols-5">
           <TabsTrigger value="tracks" className="flex items-center gap-2">
             <BookOpen className="h-4 w-4" />
             Tracks
@@ -509,6 +639,10 @@ const CoursesViewer = () => {
           <TabsTrigger value="all" className="flex items-center gap-2">
             <BookOpen className="h-4 w-4" />
             All ({filteredCourses.length})
+          </TabsTrigger>
+          <TabsTrigger value="my-learning" className="flex items-center gap-2">
+            <GraduationCap className="h-4 w-4" />
+            My Learning ({myLearningCourses.length})
           </TabsTrigger>
           <TabsTrigger value="video" className="flex items-center gap-2">
             <Video className="h-4 w-4" />
@@ -542,6 +676,69 @@ const CoursesViewer = () => {
           )}
         </TabsContent>
 
+        <TabsContent value="my-learning" className="mt-6">
+          {myLearningCourses.length === 0 ? (
+            <SmartEmptyState
+              icon={GraduationCap}
+              title="No courses enrolled yet"
+              description="Browse available courses and enroll to start your learning journey. Your enrolled courses will appear here."
+              actionLabel="Browse Courses"
+              onAction={() => {}}
+            />
+          ) : (
+            <div className="space-y-6">
+              {/* In Progress section */}
+              {(() => {
+                const inProgress = myLearningCourses.filter(c => getEnrollment(c.id)?.status === "in_progress");
+                if (inProgress.length === 0) return null;
+                return (
+                  <div>
+                    <h3 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
+                      <PlayCircle className="h-4 w-4 text-primary" />
+                      In Progress ({inProgress.length})
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {inProgress.map((course, index) => renderCourseCard(course, index))}
+                    </div>
+                  </div>
+                );
+              })()}
+              {/* Enrolled (not started) */}
+              {(() => {
+                const justEnrolled = myLearningCourses.filter(c => getEnrollment(c.id)?.status === "enrolled");
+                if (justEnrolled.length === 0) return null;
+                return (
+                  <div>
+                    <h3 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
+                      <BookOpen className="h-4 w-4 text-muted-foreground" />
+                      Not Started ({justEnrolled.length})
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {justEnrolled.map((course, index) => renderCourseCard(course, index))}
+                    </div>
+                  </div>
+                );
+              })()}
+              {/* Completed */}
+              {(() => {
+                const done = myLearningCourses.filter(c => isCompleted(c.id));
+                if (done.length === 0) return null;
+                return (
+                  <div>
+                    <h3 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-success" />
+                      Completed ({done.length})
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {done.map((course, index) => renderCourseCard(course, index))}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+        </TabsContent>
+
         <TabsContent value="video" className="mt-6">
           {videoCourses.length === 0 ? (
             <SmartEmptyState
@@ -571,6 +768,9 @@ const CoursesViewer = () => {
         </TabsContent>
       </Tabs>
 
+      {/* Course Detail Sheet */}
+      {renderDetailSheet()}
+
       {/* Video Modal */}
       <Dialog open={videoModalOpen} onOpenChange={handleVideoModalClose}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden">
@@ -587,12 +787,7 @@ const CoursesViewer = () => {
               </div>
             ) : signedVideoUrl ? (
               <div className="aspect-video">
-                <video
-                  src={signedVideoUrl}
-                  controls
-                  className="w-full h-full rounded-lg"
-                  autoPlay
-                />
+                <video src={signedVideoUrl} controls className="w-full h-full rounded-lg" autoPlay />
               </div>
             ) : (
               <div className="aspect-video flex items-center justify-center bg-muted rounded-lg">
@@ -600,22 +795,14 @@ const CoursesViewer = () => {
               </div>
             )}
             {selectedCourse?.description && (
-              <p className="mt-4 text-muted-foreground">
-                {selectedCourse.description}
-              </p>
+              <p className="mt-4 text-muted-foreground">{selectedCourse.description}</p>
             )}
             <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
               {selectedCourse?.instructor_name && (
-                <div className="flex items-center gap-1">
-                  <User className="h-4 w-4" />
-                  <span>{selectedCourse.instructor_name}</span>
-                </div>
+                <div className="flex items-center gap-1"><User className="h-4 w-4" /><span>{selectedCourse.instructor_name}</span></div>
               )}
               {selectedCourse?.duration_hours && (
-                <div className="flex items-center gap-1">
-                  <Clock className="h-4 w-4" />
-                  <span>{selectedCourse.duration_hours} hours</span>
-                </div>
+                <div className="flex items-center gap-1"><Clock className="h-4 w-4" /><span>{selectedCourse.duration_hours} hours</span></div>
               )}
             </div>
           </div>
@@ -641,11 +828,7 @@ const CoursesViewer = () => {
             ) : signedDocumentUrl && selectedCourse?.document_url ? (
               <>
                 {getDocumentType(selectedCourse.document_url) === 'pdf' ? (
-                  <iframe
-                    src={signedDocumentUrl}
-                    className="w-full h-full rounded-lg border"
-                    title={selectedCourse.title}
-                  />
+                  <iframe src={signedDocumentUrl} className="w-full h-full rounded-lg border" title={selectedCourse.title} />
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full gap-6 text-center">
                     <div className="bg-muted rounded-full p-8">
@@ -654,12 +837,8 @@ const CoursesViewer = () => {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold mb-2">Document Preview</h3>
-                      <p className="text-muted-foreground mb-4">
-                        This document type cannot be previewed in the browser.
-                      </p>
-                      <Button
-                        onClick={() => window.open(signedDocumentUrl, '_blank')}
-                      >
+                      <p className="text-muted-foreground mb-4">This document type cannot be previewed in the browser.</p>
+                      <Button onClick={() => window.open(signedDocumentUrl, '_blank')}>
                         <Download className="h-4 w-4 mr-2" />
                         Download Document
                       </Button>
@@ -673,9 +852,7 @@ const CoursesViewer = () => {
               </div>
             )}
             {selectedCourse?.description && (
-              <p className="mt-4 text-muted-foreground">
-                {selectedCourse.description}
-              </p>
+              <p className="mt-4 text-muted-foreground">{selectedCourse.description}</p>
             )}
           </div>
         </DialogContent>
