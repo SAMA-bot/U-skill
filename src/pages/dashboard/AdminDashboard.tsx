@@ -627,47 +627,35 @@ const AdminDashboard = () => {
                 Quick Actions
               </h3>
             </div>
-            <div className="p-4 sm:p-6 grid grid-cols-2 lg:grid-cols-4 gap-3">
-              <motion.div whileHover={{ y: -3, transition: { duration: 0.2 } }}>
-                <Button
-                  variant="outline"
-                  className="w-full h-auto py-4 flex flex-col gap-2 hover:border-primary/50 hover:shadow-md transition-all duration-300"
-                  onClick={() => setActiveSection("faculty")}
+            <div className="p-4 sm:p-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { icon: Users, label: "Add Faculty", desc: "Onboard new members", section: "faculty" as const, accent: "bg-primary/10 group-hover:bg-primary/20" },
+                { icon: GraduationCap, label: "Create Training", desc: "Design new courses", section: "courses" as const, accent: "bg-info/10 group-hover:bg-info/20" },
+                { icon: FolderCheck, label: "Review Documents", desc: "Pending approvals", section: "documents" as const, accent: "bg-success/10 group-hover:bg-success/20" },
+                { icon: FileText, label: "Performance Report", desc: "Generate reports", section: "reports" as const, accent: "bg-accent/10 group-hover:bg-accent/20" },
+              ].map((item, i) => (
+                <motion.button
+                  key={item.label}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + i * 0.05 }}
+                  whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.25, ease: "easeOut" } }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => setActiveSection(item.section)}
+                  className="group relative flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-5 text-left shadow-sm transition-all duration-300 hover:border-primary/40 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
                 >
-                  <Users className="h-6 w-6 text-primary" />
-                  <span className="text-sm font-medium">Add Faculty</span>
-                </Button>
-              </motion.div>
-              <motion.div whileHover={{ y: -3, transition: { duration: 0.2 } }}>
-                <Button
-                  variant="outline"
-                  className="w-full h-auto py-4 flex flex-col gap-2 hover:border-primary/50 hover:shadow-md transition-all duration-300"
-                  onClick={() => setActiveSection("courses")}
-                >
-                  <GraduationCap className="h-6 w-6 text-primary" />
-                  <span className="text-sm font-medium">Create Training</span>
-                </Button>
-              </motion.div>
-              <motion.div whileHover={{ y: -3, transition: { duration: 0.2 } }}>
-                <Button
-                  variant="outline"
-                  className="w-full h-auto py-4 flex flex-col gap-2 hover:border-primary/50 hover:shadow-md transition-all duration-300"
-                  onClick={() => setActiveSection("documents")}
-                >
-                  <FolderCheck className="h-6 w-6 text-primary" />
-                  <span className="text-sm font-medium">Review Documents</span>
-                </Button>
-              </motion.div>
-              <motion.div whileHover={{ y: -3, transition: { duration: 0.2 } }}>
-                <Button
-                  variant="outline"
-                  className="w-full h-auto py-4 flex flex-col gap-2 hover:border-primary/50 hover:shadow-md transition-all duration-300"
-                  onClick={() => setActiveSection("reports")}
-                >
-                  <FileText className="h-6 w-6 text-primary" />
-                  <span className="text-sm font-medium">Performance Report</span>
-                </Button>
-              </motion.div>
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${item.accent} transition-colors duration-300`}>
+                    <item.icon className="h-6 w-6 text-primary transition-transform duration-300 group-hover:scale-110" />
+                  </div>
+                  <div className="text-center">
+                    <span className="text-sm font-semibold text-foreground">{item.label}</span>
+                    <p className="mt-0.5 text-xs text-muted-foreground">{item.desc}</p>
+                  </div>
+                  <span className="absolute bottom-2 right-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <ArrowRight className="h-3.5 w-3.5 text-primary" />
+                  </span>
+                </motion.button>
+              ))}
             </div>
           </motion.div>
           {/* Approval Panel & Action Items */}
