@@ -15,6 +15,7 @@ import FacultyDashboard from "./pages/dashboard/FacultyDashboard";
 import ProfileSettings from "./pages/dashboard/ProfileSettings";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import HodDashboard from "./pages/dashboard/HodDashboard";
+import LearningTrackPage from "./pages/dashboard/LearningTrackPage";
 
 const queryClient = new QueryClient();
 
