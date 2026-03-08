@@ -341,6 +341,22 @@ const FacultyDashboard = () => {
 
   const [metricSheetOpen, setMetricSheetOpen] = useState(false);
   const [selectedMetric, setSelectedMetric] = useState<typeof statsCards[0] | null>(null);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+
+  const reportData: ReportData = {
+    facultyName: profile?.full_name || user?.email || "Faculty Member",
+    department: profile?.department || null,
+    academicYear: selectedYear,
+    capacityScore: statsData.capacityScore,
+    performanceScore: statsData.performanceScore,
+    motivationIndex: statsData.motivationIndex,
+    trainingHours: statsData.trainingHours,
+    trainingsAttended: performanceScoreData.trainingsCount,
+    studentFeedback: performanceScoreData.avgFeedback,
+    publications: performanceScoreData.publicationsCount,
+    compositeScore: performanceScoreData.compositeScore,
+    badge: performanceScoreData.badge,
+  };
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
