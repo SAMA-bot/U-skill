@@ -55,6 +55,7 @@ import {
   DocumentType,
   DocumentStatus,
 } from "@/hooks/useFacultyDocuments";
+import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
 
 const statusConfig: Record<
   DocumentStatus,
