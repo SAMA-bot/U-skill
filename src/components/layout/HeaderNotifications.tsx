@@ -138,10 +138,28 @@ const HeaderNotifications = () => {
             </div>
             {notifications.length > 0 && (
               <div className="flex gap-1">
-                <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground hover:text-foreground" onClick={markAllAsRead}>
-                  Mark all read
-                </Button>
-                <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground hover:text-foreground" onClick={clearAll}>
+                {unreadCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs text-muted-foreground hover:text-foreground"
+                    onClick={() => {
+                      markAllAsRead();
+                      toast.success("All notifications marked as read");
+                    }}
+                  >
+                    Mark all read
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs text-muted-foreground hover:text-destructive"
+                  onClick={() => {
+                    clearAll();
+                    toast("Notifications cleared");
+                  }}
+                >
                   Clear
                 </Button>
               </div>
