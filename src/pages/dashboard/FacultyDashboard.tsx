@@ -86,6 +86,12 @@ const FacultyDashboard = () => {
     motivationIndex: 0,
     trainingHours: 0
   });
+  const [sparkData, setSparkData] = useState<Record<string, number[]>>({
+    capacity: [],
+    performance: [],
+    motivation: [],
+    training: [],
+  });
   const [loadingProfile, setLoadingProfile] = useState(true);
   const navigate = useNavigate();
   const {
