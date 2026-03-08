@@ -460,9 +460,9 @@ export function RoleManagement() {
           </div>
         </div>
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto max-h-[600px] overflow-y-auto relative">
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-10 bg-card shadow-sm">
             <TableRow>
               <TableHead>User</TableHead>
               <TableHead>Email</TableHead>
@@ -473,13 +473,13 @@ export function RoleManagement() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredUsers.map((user) => (
-              <TableRow key={user.user_id}>
+            {paginatedUsers.map((user) => (
+              <TableRow key={user.user_id} className="transition-colors hover:bg-muted/50">
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={user.avatar_url || undefined} />
-                      <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-xs">
+                      <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-primary-foreground text-xs">
                         {getInitials(user.full_name)}
                       </AvatarFallback>
                     </Avatar>
@@ -495,7 +495,8 @@ export function RoleManagement() {
                   {user.department || "Unassigned"}
                 </TableCell>
                 <TableCell>
-                  <Badge style={getRoleBadgeStyle(user.role)} className="border-0">
+                  <Badge style={getRoleBadgeStyle(user.role)} className="border-0 inline-flex items-center gap-1.5">
+                    {getRoleIcon(user.role)}
                     {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                   </Badge>
                 </TableCell>
@@ -582,6 +583,38 @@ export function RoleManagement() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination */}
+      {filteredUsers.length > ITEMS_PER_PAGE && (
+        <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+          <p className="text-sm text-muted-foreground">
+            Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredUsers.length)} of {filteredUsers.length} users
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </Button>
+            <span className="text-sm text-muted-foreground px-2">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage((p) => p + 1)}
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }
