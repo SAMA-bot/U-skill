@@ -249,9 +249,28 @@ const CoursesViewer = () => {
     setSelectedCourse(course);
     setLoadingMedia(true);
     setVideoModalOpen(true);
+
+    // Check if it's a YouTube URL — use embed URL directly
+    const ytEmbed = getYouTubeEmbedUrl(course.video_url);
+    if (ytEmbed) {
+      setSignedVideoUrl(ytEmbed);
+      setLoadingMedia(false);
+      return;
+    }
+
     const signedUrl = await getVideoSignedUrl(course.video_url);
     setSignedVideoUrl(signedUrl);
     setLoadingMedia(false);
+  };
+
+  const isYouTubeUrl = (url: string | null): boolean => {
+    if (!url) return false;
+    try {
+      const hostname = new URL(url).hostname.toLowerCase();
+      return hostname.includes("youtube") || hostname.includes("youtu.be");
+    } catch {
+      return false;
+    }
   };
 
   const handleViewDocument = async (course: Course) => {
