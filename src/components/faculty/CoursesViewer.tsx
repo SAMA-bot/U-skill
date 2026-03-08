@@ -534,7 +534,7 @@ const CoursesViewer = () => {
               ) : enrolled ? (
                 <Button className="w-full" onClick={() => { startCourse(detailCourse.id); setDetailCourse(null); }}>
                   <PlayCircle className="h-4 w-4 mr-2" />
-                  Start Learning
+                  Continue Learning
                 </Button>
               ) : (
                 <Button
