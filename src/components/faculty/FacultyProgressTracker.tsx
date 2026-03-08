@@ -211,7 +211,7 @@ const FacultyProgressTracker = () => {
             {/* Performance Badge */}
             <div className="flex items-center justify-between pt-2 border-t border-border">
               <span className="text-xs text-muted-foreground">Current standing</span>
-              <Badge className={`text-xs ${getPerformanceBadgeColor(currentScore)}`}>
+              <Badge variant="outline" className={`text-xs ${getPerformanceBadgeColor(currentScore)}`}>
                 {getPerformanceBadgeLabel(currentScore)}
               </Badge>
             </div>

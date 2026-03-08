@@ -752,7 +752,7 @@ const AdminDashboard = () => {
                       </div>
                       <div className="flex items-center gap-1.5">
                         <span className="text-sm font-medium text-foreground">{dept.avgPerformance}%</span>
-                        <Badge className={`text-[10px] px-1.5 py-0 ${getPerformanceColor(dept.avgPerformance)}`}>
+                        <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${getPerformanceColor(dept.avgPerformance)}`}>
                           {getPerformanceBadgeLabel(dept.avgPerformance)}
                         </Badge>
                       </div>
@@ -827,18 +827,18 @@ const AdminDashboard = () => {
                         <TableCell className="text-center">
                           <div className="flex items-center gap-1.5 justify-center">
                             <span className="font-medium text-foreground">{faculty.avgPerformance || 0}%</span>
-                            <Badge className={`text-[10px] px-1.5 py-0 ${getPerformanceColor(faculty.avgPerformance || 0)}`}>
+                            <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${getPerformanceColor(faculty.avgPerformance || 0)}`}>
                               {getPerformanceBadgeLabel(faculty.avgPerformance || 0)}
                             </Badge>
                           </div>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge className={getPerformanceColor(faculty.avgCapacity || 0)}>
+                          <Badge variant="outline" className={getPerformanceColor(faculty.avgCapacity || 0)}>
                             {faculty.avgCapacity || 0}%
                           </Badge>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Badge className={getPerformanceColor(faculty.latestMotivation || 0)}>
+                          <Badge variant="outline" className={getPerformanceColor(faculty.latestMotivation || 0)}>
                             {faculty.latestMotivation || 0}%
                           </Badge>
                         </TableCell>

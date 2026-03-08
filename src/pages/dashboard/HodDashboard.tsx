@@ -564,7 +564,7 @@ const HodDashboard = () => {
                                   <span className="text-sm font-semibold text-foreground">{faculty.compositeScore}</span>
                                 </TableCell>
                                 <TableCell className="text-right">
-                                  <Badge className={`text-xs ${getPerformanceBadgeColor(faculty.compositeScore)}`}>
+                                  <Badge variant="outline" className={`text-xs ${getPerformanceBadgeColor(faculty.compositeScore)}`}>
                                     {getPerformanceBadgeLabel(faculty.compositeScore)}
                                   </Badge>
                                 </TableCell>
