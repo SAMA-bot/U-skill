@@ -155,7 +155,7 @@ export default function RoleAccessMatrix() {
                 : "border-border hover:border-primary/50"
             }`}
           >
-            <Badge className={getRoleBadgeStyle(role)}>
+            <Badge style={getRoleBadgeStyle(role)} className="border-0">
               {role === "hod" ? "HOD / Reviewer" : role.charAt(0).toUpperCase() + role.slice(1)}
             </Badge>
             <span className="text-xs text-muted-foreground">
