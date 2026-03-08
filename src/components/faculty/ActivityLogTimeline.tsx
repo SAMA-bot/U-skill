@@ -44,6 +44,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
 
 interface LogEntry {
   id: string;
