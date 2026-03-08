@@ -564,13 +564,14 @@ const AdminDashboard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg transition-all duration-300 cursor-default"
+                onClick={() => { setSelectedAdminMetric(stat); setAdminMetricSheetOpen(true); }}
+                className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group"
               >
                 <div className="p-4">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <motion.div
-                        className={`bg-gradient-to-br ${stat.color} rounded-md p-2`}
+                        className={`bg-gradient-to-br ${stat.color} rounded-md p-2 group-hover:scale-110 transition-transform`}
                         whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
                       >
                         <stat.icon className="h-5 w-5 text-white" />
@@ -587,14 +588,27 @@ const AdminDashboard = () => {
                         />
                       </dd>
                     </div>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          {/* Institutional Overview */}
-          <InstitutionalOverview />
+          {/* Admin Metric Detail Sheet */}
+          {selectedAdminMetric && (
+            <MetricDetailSheet
+              open={adminMetricSheetOpen}
+              onOpenChange={setAdminMetricSheetOpen}
+              metricType={selectedAdminMetric.metricType}
+              metricLabel={selectedAdminMetric.label}
+              metricValue={selectedAdminMetric.numValue}
+              metricSuffix={selectedAdminMetric.suffix}
+              metricIcon={selectedAdminMetric.icon}
+              userId={user?.id}
+              onNavigate={(section) => setActiveSection(section)}
+            />
+          )}
 
           {/* Quick Actions */}
           <motion.div
