@@ -502,11 +502,11 @@ const CoursesViewer = () => {
                     signedUrls[item.id] ? (
                       getYouTubeEmbedUrl(item.video_url || "") ? (
                         <div className="aspect-video rounded-lg overflow-hidden border">
-                          <iframe src={signedUrls[item.id]} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title={item.title} />
+                          <iframe src={signedUrls[item.id]} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title={item.title} onLoad={() => markContentViewed(item.id)} />
                         </div>
                       ) : (
                         <div className="aspect-video rounded-lg overflow-hidden border">
-                          <video src={signedUrls[item.id]} controls className="w-full h-full" />
+                          <video src={signedUrls[item.id]} controls className="w-full h-full" onPlay={() => markContentViewed(item.id)} />
                         </div>
                       )
                     ) : (
@@ -518,7 +518,7 @@ const CoursesViewer = () => {
 
                   {item.content_type === "pdf" && (
                     signedUrls[item.id] ? (
-                      <iframe src={signedUrls[item.id]} className="w-full h-[500px] rounded-lg border" title={item.title} />
+                      <iframe src={signedUrls[item.id]} className="w-full h-[500px] rounded-lg border" title={item.title} onLoad={() => markContentViewed(item.id)} />
                     ) : (
                       <div className="h-[200px] rounded-lg bg-muted flex items-center justify-center">
                         <p className="text-muted-foreground text-sm">Unable to load document</p>
@@ -529,9 +529,20 @@ const CoursesViewer = () => {
                   {item.content_type === "external_url" && item.external_url && (
                     <div className="bg-info/5 border border-info/20 rounded-lg p-4 flex items-center justify-between">
                       <p className="text-sm text-muted-foreground truncate flex-1 mr-3">{item.external_url}</p>
-                      <Button variant="outline" size="sm" onClick={() => window.open(item.external_url!, "_blank", "noopener,noreferrer")}>
+                      <Button variant="outline" size="sm" onClick={() => { markContentViewed(item.id); window.open(item.external_url!, "_blank", "noopener,noreferrer"); }}>
                         <ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Open Link
                       </Button>
+                    </div>
+                  )}
+
+                  {/* Progress indicator per content item */}
+                  {!isLessonCompleted(viewingLesson!.id) && (
+                    <div className="flex items-center gap-1.5 mt-1">
+                      {viewedContentIds.has(item.id) ? (
+                        <span className="text-[10px] text-success flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Viewed</span>
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground">Not viewed yet</span>
+                      )}
                     </div>
                   )}
 
