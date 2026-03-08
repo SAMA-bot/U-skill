@@ -581,7 +581,8 @@ const AdminDashboard = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-card shadow-sm rounded-lg overflow-hidden border border-border"
+              whileHover={{ y: -2, transition: { duration: 0.2 } }}
+              className="bg-card shadow-sm rounded-lg overflow-hidden border border-border hover:shadow-lg transition-all duration-300"
             >
               <div className="px-4 py-5 sm:px-6 border-b border-border">
                 <h3 className="text-lg font-medium text-foreground flex items-center gap-2">
