@@ -660,8 +660,8 @@ const CoursesViewer = () => {
                 </div>
               )}
               <div>
-                <p className="text-muted-foreground text-xs mb-0.5">Type</p>
-                <p className="font-medium text-foreground capitalize">{detailCourse.course_type}</p>
+                <p className="text-muted-foreground text-xs mb-0.5">Content Type</p>
+                <p className="font-medium text-foreground">{getContentTypeIcon(detailCourse.content_type)} {getContentTypeLabel(detailCourse.content_type)}</p>
               </div>
             </div>
 
