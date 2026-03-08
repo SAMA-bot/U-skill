@@ -54,12 +54,20 @@ interface NotificationsContextType {
 
 const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
 
+const defaultContext: NotificationsContextType = {
+  notifications: [],
+  unreadCount: 0,
+  loading: false,
+  markAsRead: () => {},
+  markAllAsRead: () => {},
+  dismissNotification: () => {},
+  clearAll: () => {},
+  refreshNotifications: () => {},
+};
+
 export const useNotifications = () => {
   const context = useContext(NotificationsContext);
-  if (!context) {
-    throw new Error("useNotifications must be used within a NotificationsProvider");
-  }
-  return context;
+  return context ?? defaultContext;
 };
 // Group notifications of the same type that occur on the same day
 const groupSimilarNotifications = (items: Notification[]): Notification[] => {
