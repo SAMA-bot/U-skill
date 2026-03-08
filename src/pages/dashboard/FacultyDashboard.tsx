@@ -343,6 +343,7 @@ const FacultyDashboard = () => {
   const [metricSheetOpen, setMetricSheetOpen] = useState(false);
   const [selectedMetric, setSelectedMetric] = useState<typeof statsCards[0] | null>(null);
   const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [generatingReport, setGeneratingReport] = useState(false);
 
   const reportData: ReportData = {
     facultyName: profile?.full_name || user?.email || "Faculty Member",
@@ -607,9 +608,22 @@ const FacultyDashboard = () => {
                       </button>
                     </div>
                   </div>
-                  <Button size="sm" onClick={() => setReportModalOpen(true)}>
-                    <FileText className="mr-2 h-4 w-4" />
-                    Generate Report
+                  <Button
+                    size="sm"
+                    disabled={generatingReport}
+                    onClick={async () => {
+                      setGeneratingReport(true);
+                      await new Promise(r => setTimeout(r, 600));
+                      setReportModalOpen(true);
+                      setGeneratingReport(false);
+                    }}
+                  >
+                    {generatingReport ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <FileText className="mr-2 h-4 w-4" />
+                    )}
+                    {generatingReport ? "Generating…" : "Generate Report"}
                   </Button>
                 </div>
               </div>
