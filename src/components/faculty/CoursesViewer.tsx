@@ -411,23 +411,16 @@ const CoursesViewer = () => {
             <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted/60 to-muted/30">
-              {course.course_type === 'video' ? (
-                <Video className="h-12 w-12 text-muted-foreground/60" />
-              ) : (
-                <BookOpen className="h-12 w-12 text-muted-foreground/60" />
-              )}
+              <span className="text-4xl">{getContentTypeIcon(course.content_type)}</span>
             </div>
           )}
           <div className="absolute top-2 left-2 flex gap-2">
             <Badge className={`backdrop-blur-sm ${getCategoryColor(course.category)}`}>
               {getCategoryLabel(course.category)}
             </Badge>
-            {course.course_type === 'video' && (
-              <Badge variant="secondary" className="bg-destructive/15 text-destructive backdrop-blur-sm border-0">
-                <Video className="h-3 w-3 mr-1" />
-                Video
-              </Badge>
-            )}
+            <Badge variant="secondary" className="backdrop-blur-sm border-0 bg-card/70 text-foreground text-[10px]">
+              {getContentTypeIcon(course.content_type)} {getContentTypeLabel(course.content_type)}
+            </Badge>
           </div>
           {completed && (
             <div className="absolute top-2 right-2">
