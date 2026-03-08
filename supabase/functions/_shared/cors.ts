@@ -4,7 +4,6 @@
  */
 
 // Allowed origins for CORS requests
-// Add your production and development domains here
 const ALLOWED_ORIGINS = [
   'https://faculty-spark-boost.lovable.app',
   'https://id-preview--a38a92b7-1e4f-46c5-8f7e-8a0544f61dd7.lovable.app',
@@ -16,7 +15,6 @@ const ALLOWED_ORIGINS = [
 
 /**
  * Validates the origin and returns appropriate CORS headers
- * Falls back to the first allowed origin if the request origin is not allowed
  */
 export function getCorsHeaders(requestOrigin: string | null): Record<string, string> {
   const origin = requestOrigin && ALLOWED_ORIGINS.includes(requestOrigin) 
@@ -25,7 +23,7 @@ export function getCorsHeaders(requestOrigin: string | null): Record<string, str
 
   return {
     'Access-Control-Allow-Origin': origin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   };
 }

@@ -5,52 +5,45 @@ Deno.serve(async (req) => {
   const origin = req.headers.get("origin");
   const corsHeaders = getCorsHeaders(origin);
 
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Get authorization header
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
+    if (!authHeader?.startsWith("Bearer ")) {
       return new Response(
         JSON.stringify({ error: "No authorization header" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Create Supabase client with user's JWT
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    
-    // Create client with user token to verify they're authenticated
-    const supabaseUser = createClient(
-      supabaseUrl,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      {
-        global: { headers: { Authorization: authHeader } },
-      }
-    );
 
-    // Get the current user
-    const { data: { user }, error: userError } = await supabaseUser.auth.getUser();
-    
-    if (userError || !user) {
+    // Validate user via getClaims
+    const token = authHeader.replace("Bearer ", "");
+    const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: claimsData, error: claimsError } = await supabaseUser.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
       return new Response(
         JSON.stringify({ error: "Unauthorized" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Create service role client to check if user is admin and update roles
+    const currentUserId = claimsData.claims.sub as string;
+
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
     // Check if the requesting user is an admin
     const { data: requesterRole, error: roleError } = await supabaseAdmin
       .from("user_roles")
       .select("role")
-      .eq("user_id", user.id)
+      .eq("user_id", currentUserId)
       .single();
 
     if (roleError || requesterRole?.role !== "admin") {
@@ -60,7 +53,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Parse and validate request body
     const { userId, newRole } = await req.json();
 
     if (!userId || !newRole) {
@@ -70,7 +62,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate userId is a valid UUID
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (typeof userId !== "string" || !uuidRegex.test(userId)) {
       return new Response(
@@ -79,7 +70,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate role
     const validRoles = ["admin", "hod", "faculty"];
     if (typeof newRole !== "string" || !validRoles.includes(newRole)) {
       return new Response(
@@ -88,7 +78,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Update the user's role using service role (bypasses RLS)
     const { error: updateError } = await supabaseAdmin
       .from("user_roles")
       .update({ role: newRole })

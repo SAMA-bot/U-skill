@@ -1,7 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getCorsHeaders } from "../_shared/cors.ts";
 
-// Allowed image MIME types
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
   'image/png',
@@ -9,40 +8,16 @@ const ALLOWED_MIME_TYPES = [
   'image/webp',
 ];
 
-// Maximum file size: 2MB
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
-
-// Magic bytes for file type detection
-const MAGIC_BYTES: Record<string, number[]> = {
-  'image/jpeg': [0xFF, 0xD8, 0xFF],
-  'image/png': [0x89, 0x50, 0x4E, 0x47],
-  'image/gif': [0x47, 0x49, 0x46],
-  'image/webp': [0x52, 0x49, 0x46, 0x46], // RIFF header, followed by WEBP at bytes 8-11
-};
 
 function detectMimeType(buffer: ArrayBuffer): string | null {
   const bytes = new Uint8Array(buffer);
   
-  // Check JPEG
-  if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) {
-    return 'image/jpeg';
-  }
-  
-  // Check PNG
-  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
-    return 'image/png';
-  }
-  
-  // Check GIF
-  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
-    return 'image/gif';
-  }
-  
-  // Check WebP (RIFF....WEBP)
+  if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) return 'image/jpeg';
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) return 'image/png';
+  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return 'image/gif';
   if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
-      bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) {
-    return 'image/webp';
-  }
+      bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50) return 'image/webp';
   
   return null;
 }
@@ -61,13 +36,11 @@ Deno.serve(async (req) => {
   const origin = req.headers.get("origin");
   const corsHeaders = getCorsHeaders(origin);
 
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Only allow POST
     if (req.method !== 'POST') {
       return new Response(
         JSON.stringify({ error: 'Method not allowed' }),
@@ -75,34 +48,33 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Verify authentication
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
+    if (!authHeader?.startsWith('Bearer ')) {
       return new Response(
         JSON.stringify({ error: 'Missing authorization header' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Create Supabase client with user token
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
+    // Validate user via getClaims
+    const token = authHeader.replace('Bearer ', '');
     const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
-
-    // Get the authenticated user
-    const { data: { user }, error: userError } = await supabaseUser.auth.getUser();
-    if (userError || !user) {
+    const { data: claimsData, error: claimsError } = await supabaseUser.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Parse the multipart form data
+    const userId = claimsData.claims.sub as string;
+
     const formData = await req.formData();
     const file = formData.get('file');
 
@@ -113,7 +85,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate file size
     if (file.size > MAX_FILE_SIZE) {
       return new Response(
         JSON.stringify({ error: 'File too large. Maximum size is 2MB.' }),
@@ -121,10 +92,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Read file buffer
     const buffer = await file.arrayBuffer();
-
-    // Detect actual MIME type from file content (magic bytes)
     const detectedMimeType = detectMimeType(buffer);
 
     if (!detectedMimeType) {
@@ -134,7 +102,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate MIME type
     if (!ALLOWED_MIME_TYPES.includes(detectedMimeType)) {
       return new Response(
         JSON.stringify({ error: 'Invalid file type. Allowed types: JPEG, PNG, GIF, WebP.' }),
@@ -142,23 +109,13 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Double-check: Compare detected type with claimed type
-    const claimedType = file.type;
-    if (claimedType && claimedType !== detectedMimeType) {
-      console.log(`MIME type mismatch: claimed ${claimedType}, detected ${detectedMimeType}`);
-      // We trust the detected type, not the claimed one
-    }
-
-    // Create admin client for storage operations
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
       auth: { persistSession: false },
     });
 
-    // Generate file path
     const extension = getExtensionFromMime(detectedMimeType);
-    const filePath = `${user.id}/avatar.${extension}`;
+    const filePath = `${userId}/avatar.${extension}`;
 
-    // Upload to storage with correct content type
     const { error: uploadError } = await supabaseAdmin.storage
       .from('avatars')
       .upload(filePath, buffer, {
@@ -174,19 +131,16 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Get public URL
     const { data: urlData } = supabaseAdmin.storage
       .from('avatars')
       .getPublicUrl(filePath);
 
-    // Add cache-busting parameter
     const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
 
-    // Update profile with new avatar URL
     const { error: updateError } = await supabaseAdmin
       .from('profiles')
       .update({ avatar_url: avatarUrl })
-      .eq('user_id', user.id);
+      .eq('user_id', userId);
 
     if (updateError) {
       console.error('Profile update error:', updateError);

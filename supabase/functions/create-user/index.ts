@@ -5,37 +5,37 @@ Deno.serve(async (req) => {
   const origin = req.headers.get("origin");
   const corsHeaders = getCorsHeaders(origin);
 
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
+    if (!authHeader?.startsWith("Bearer ")) {
       return new Response(
         JSON.stringify({ error: "No authorization header" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Create a Supabase client with the user's token to verify their identity
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
+    // Validate user via getClaims
+    const token = authHeader.replace("Bearer ", "");
     const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
-
-    // Get the current user
-    const { data: { user }, error: userError } = await supabaseUser.auth.getUser();
-    if (userError || !user) {
+    const { data: claimsData, error: claimsError } = await supabaseUser.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
       return new Response(
         JSON.stringify({ error: "Invalid user token" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    const userId = claimsData.claims.sub as string;
 
     // Create a service role client to check admin status and create users
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
     const { data: roleData, error: roleError } = await supabaseAdmin
       .from("user_roles")
       .select("role")
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .single();
 
     if (roleError || roleData?.role !== "admin") {
@@ -64,7 +64,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (typeof email !== "string" || !emailRegex.test(email) || email.length > 255) {
       return new Response(
@@ -73,7 +72,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate password length
     if (typeof password !== "string" || password.length < 6 || password.length > 72) {
       return new Response(
         JSON.stringify({ error: "Password must be between 6 and 72 characters" }),
@@ -81,7 +79,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate fullName length
     if (typeof fullName !== "string" || fullName.trim().length < 2 || fullName.trim().length > 100) {
       return new Response(
         JSON.stringify({ error: "Full name must be between 2 and 100 characters" }),
@@ -89,7 +86,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate department if provided
     if (department !== undefined && (typeof department !== "string" || department.trim().length > 100)) {
       return new Response(
         JSON.stringify({ error: "Department must be less than 100 characters" }),
@@ -97,7 +93,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate role
     const validRoles = ["admin", "faculty", "hod"];
     if (role && !validRoles.includes(role)) {
       return new Response(
@@ -106,7 +101,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Create the user using admin API
     const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
@@ -121,7 +115,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Update the profile with department if provided
     if (department && newUser.user) {
       await supabaseAdmin
         .from("profiles")
@@ -129,7 +122,6 @@ Deno.serve(async (req) => {
         .eq("user_id", newUser.user.id);
     }
 
-    // Update role if different from default (faculty)
     if (role && role !== "faculty" && newUser.user) {
       await supabaseAdmin
         .from("user_roles")
