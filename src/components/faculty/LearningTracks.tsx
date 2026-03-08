@@ -117,7 +117,7 @@ export const TRACKS: TrackDefinition[] = [
   },
 ];
 
-const getDifficultyFromDuration = (hours: number | null): { label: string; color: string } => {
+export const getDifficultyFromDuration = (hours: number | null): { label: string; color: string } => {
   if (!hours || hours <= 2) return { label: "Beginner", color: "bg-success/15 text-success border-success/30" };
   if (hours <= 5) return { label: "Intermediate", color: "bg-accent/15 text-accent-foreground border-accent/30" };
   return { label: "Advanced", color: "bg-destructive/15 text-destructive border-destructive/30" };
