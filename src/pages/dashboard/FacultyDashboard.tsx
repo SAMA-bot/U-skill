@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, Activity, FolderUp, PanelLeftClose, PanelLeft, Building2, ArrowRight } from "lucide-react";
 import SparklineChart from "@/components/dashboard/SparklineChart";
+import MetricProgressIndicator from "@/components/dashboard/MetricProgressIndicator";
 import { Button } from "@/components/ui/button";
 import MetricDetailSheet from "@/components/dashboard/MetricDetailSheet";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
@@ -672,6 +673,11 @@ const FacultyDashboard = () => {
                         <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${badgeColor}`}>
                           {badgeLabel}
                         </span>
+
+                        {/* Animated Progress Indicator */}
+                        <div className="w-full px-2">
+                          <MetricProgressIndicator type={stat.metricType} value={stat.value} />
+                        </div>
 
                         {/* Sparkline & arrow */}
                         <div className="flex items-center justify-between w-full mt-auto pt-2">
