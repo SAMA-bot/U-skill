@@ -674,6 +674,11 @@ const FacultyDashboard = () => {
                           {badgeLabel}
                         </span>
 
+                        {/* Animated Progress Indicator */}
+                        <div className="w-full px-2">
+                          <MetricProgressIndicator type={stat.metricType} value={stat.value} />
+                        </div>
+
                         {/* Sparkline & arrow */}
                         <div className="flex items-center justify-between w-full mt-auto pt-2">
                           <div className="flex-1">
