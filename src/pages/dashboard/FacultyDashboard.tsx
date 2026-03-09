@@ -630,58 +630,62 @@ const FacultyDashboard = () => {
 
               {/* Stats Cards */}
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-                {statsCards.map((stat, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                    onClick={() => { setSelectedMetric(stat); setMetricSheetOpen(true); }}
-                    className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg hover:border-primary/30 hover:shadow-primary/5 transition-all duration-300 cursor-pointer group flex flex-col"
-                  >
-                    <div className="p-5 flex-1 flex flex-col">
-                      <div className="flex items-start gap-4">
+                {statsCards.map((stat, index) => {
+                  const score = stat.suffix === "h" ? stat.value : stat.value;
+                  const badgeLabel = stat.suffix === "/100" ? getPerformanceBadgeLabel(score) : (stat.value > 0 ? "On Track" : "Not Started");
+                  const badgeColor = stat.suffix === "/100" ? getPerformanceBadgeColor(score) : (stat.value > 0
+                    ? "bg-[rgba(34,197,94,0.15)] text-[#22c55e] border-[rgba(34,197,94,0.3)] dark:bg-[rgba(34,197,94,0.2)] dark:text-[#4ade80] dark:border-[rgba(34,197,94,0.4)]"
+                    : "bg-muted text-muted-foreground border-border");
+
+                  return (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                      onClick={() => { setSelectedMetric(stat); setMetricSheetOpen(true); }}
+                      className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg hover:border-primary/30 hover:shadow-primary/5 transition-all duration-300 cursor-pointer group flex flex-col"
+                    >
+                      <div className="p-5 flex-1 flex flex-col items-center text-center gap-3">
                         {/* Icon */}
                         <motion.div
-                          className="bg-gradient-to-br from-primary to-accent rounded-md p-3 flex-shrink-0 group-hover:scale-110 transition-transform"
+                          className="bg-gradient-to-br from-primary to-accent rounded-xl p-3 group-hover:scale-110 transition-transform"
                           whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
                         >
                           <stat.icon className="h-6 w-6 text-white" />
                         </motion.div>
 
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-muted-foreground leading-snug">
-                            {stat.label}
-                          </p>
-                          <div className="mt-1">
-                            <AnimatedCounter
-                              value={stat.value}
-                              suffix={stat.suffix}
-                              className="text-2xl font-bold text-foreground"
-                            />
-                          </div>
-                          {stat.label === "Performance Score" && (
-                            <span className={`mt-1.5 inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${getPerformanceBadgeColor(statsData.performanceScore)}`}>
-                              {getPerformanceBadgeLabel(statsData.performanceScore)}
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                        {/* Title */}
+                        <p className="text-sm font-medium text-muted-foreground leading-snug">
+                          {stat.label}
+                        </p>
 
-                      {/* Sparkline & arrow */}
-                      <div className="flex items-center justify-between mt-auto pt-3">
-                        <div className="flex-1">
-                          {stat.sparkline.length >= 2 && (
-                            <SparklineChart data={stat.sparkline} color={stat.sparkColor} />
-                          )}
+                        {/* Score — primary visual element */}
+                        <AnimatedCounter
+                          value={stat.value}
+                          suffix={stat.suffix}
+                          className="text-3xl font-bold text-foreground"
+                        />
+
+                        {/* Status Badge */}
+                        <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${badgeColor}`}>
+                          {badgeLabel}
+                        </span>
+
+                        {/* Sparkline & arrow */}
+                        <div className="flex items-center justify-between w-full mt-auto pt-2">
+                          <div className="flex-1">
+                            {stat.sparkline.length >= 2 && (
+                              <SparklineChart data={stat.sparkline} color={stat.sparkColor} />
+                            )}
+                          </div>
+                          <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-2" />
                         </div>
-                        <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-2" />
                       </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  );
+                })}
               </div>
 
               {/* Metric Detail Sheet */}
