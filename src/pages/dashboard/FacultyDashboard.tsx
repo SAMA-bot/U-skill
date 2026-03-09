@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, Activity, FolderUp, PanelLeftClose, PanelLeft, Building2, ArrowRight } from "lucide-react";
 import SparklineChart from "@/components/dashboard/SparklineChart";
+import MetricProgressIndicator from "@/components/dashboard/MetricProgressIndicator";
 import { Button } from "@/components/ui/button";
 import MetricDetailSheet from "@/components/dashboard/MetricDetailSheet";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
