@@ -629,54 +629,59 @@ const FacultyDashboard = () => {
               </div>
 
               {/* Stats Cards */}
-               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-                {statsCards.map((stat, index) => <motion.div key={index} initial={{
-                opacity: 0,
-                y: 20
-              }} animate={{
-                opacity: 1,
-                y: 0
-              }} transition={{
-                delay: index * 0.1
-              }} whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              onClick={() => { setSelectedMetric(stat); setMetricSheetOpen(true); }}
-              className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group">
-                    <div className="p-5">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                          <motion.div
-                            className="bg-gradient-to-br from-primary to-accent rounded-md p-3 group-hover:scale-110 transition-transform"
-                            whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
-                          >
-                            <stat.icon className="h-6 w-6 text-white" />
-                          </motion.div>
-                        </div>
-                        <div className="ml-5 w-0 flex-1">
-                          <dt className="text-sm font-medium text-muted-foreground truncate">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+                {statsCards.map((stat, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                    onClick={() => { setSelectedMetric(stat); setMetricSheetOpen(true); }}
+                    className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg hover:border-primary/30 hover:shadow-primary/5 transition-all duration-300 cursor-pointer group flex flex-col"
+                  >
+                    <div className="p-5 flex-1 flex flex-col">
+                      <div className="flex items-start gap-4">
+                        {/* Icon */}
+                        <motion.div
+                          className="bg-gradient-to-br from-primary to-accent rounded-md p-3 flex-shrink-0 group-hover:scale-110 transition-transform"
+                          whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
+                        >
+                          <stat.icon className="h-6 w-6 text-white" />
+                        </motion.div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-muted-foreground leading-snug">
                             {stat.label}
-                          </dt>
-                          <dd className="flex items-center gap-2">
+                          </p>
+                          <div className="mt-1">
                             <AnimatedCounter
                               value={stat.value}
                               suffix={stat.suffix}
-                              className="text-lg font-semibold text-foreground"
+                              className="text-2xl font-bold text-foreground"
                             />
-                            {stat.label === "Performance Score" && (
-                              <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${getPerformanceBadgeColor(statsData.performanceScore)}`}>
-                                {getPerformanceBadgeLabel(statsData.performanceScore)}
-                              </span>
-                            )}
-                          </dd>
+                          </div>
+                          {stat.label === "Performance Score" && (
+                            <span className={`mt-1.5 inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${getPerformanceBadgeColor(statsData.performanceScore)}`}>
+                              {getPerformanceBadgeLabel(statsData.performanceScore)}
+                            </span>
+                          )}
                         </div>
-                        <div className="flex flex-col items-end gap-1">
+                      </div>
+
+                      {/* Sparkline & arrow */}
+                      <div className="flex items-center justify-between mt-auto pt-3">
+                        <div className="flex-1">
                           {stat.sparkline.length >= 2 && (
                             <SparklineChart data={stat.sparkline} color={stat.sparkColor} />
                           )}
-                          <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
+                        <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-2" />
                       </div>
                     </div>
-                  </motion.div>)}
+                  </motion.div>
+                ))}
               </div>
 
               {/* Metric Detail Sheet */}
