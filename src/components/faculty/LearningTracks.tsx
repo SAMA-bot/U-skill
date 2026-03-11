@@ -270,10 +270,25 @@ const TrackCourseCard = ({
   isEnrolled,
   isCompleted,
 }: TrackCourseCardProps) => {
+  const navigate = useNavigate();
   const enrollment = getEnrollment(course.id);
   const enrolled = isEnrolled(course.id);
   const completed = isCompleted(course.id);
   const difficulty = getDifficultyFromDuration(course.duration_hours);
+
+  const handleCardClick = () => {
+    navigate(`/courses/${course.id}`);
+  };
+
+  const handleEnroll = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await enrollInCourse(course.id);
+  };
+
+  const handleAction = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/courses/${course.id}`);
+  };
 
   return (
     <motion.div
@@ -281,7 +296,8 @@ const TrackCourseCard = ({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.04 }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className={`group flex flex-col rounded-lg border bg-card shadow-sm transition-all duration-300 hover:shadow-lg ${
+      onClick={handleCardClick}
+      className={`group flex flex-col rounded-lg border bg-card shadow-sm transition-all duration-300 hover:shadow-lg cursor-pointer ${
         completed ? "border-success/50" : "border-border hover:border-primary/30"
       }`}
     >
@@ -321,22 +337,22 @@ const TrackCourseCard = ({
       {/* Card Action */}
       <div className="px-4 pb-4">
         {completed ? (
-          <Button variant="outline" size="sm" className="w-full text-xs" disabled>
-            <CheckCircle2 className="h-3.5 w-3.5 mr-1.5 text-success" />
-            Completed
+          <Button variant="outline" size="sm" className="w-full text-xs" onClick={handleAction}>
+            <PlayCircle className="h-3.5 w-3.5 mr-1.5 text-success" />
+            View Again
           </Button>
         ) : enrollment?.status === "in_progress" ? (
-          <Button size="sm" className="w-full text-xs" onClick={() => completeCourse(course.id)}>
-            <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
-            Mark Complete
+          <Button size="sm" className="w-full text-xs" onClick={handleAction}>
+            <PlayCircle className="h-3.5 w-3.5 mr-1.5" />
+            Continue Learning
           </Button>
         ) : enrolled ? (
-          <Button size="sm" className="w-full text-xs" onClick={() => startCourse(course.id)}>
+          <Button size="sm" className="w-full text-xs" onClick={handleAction}>
             <PlayCircle className="h-3.5 w-3.5 mr-1.5" />
             Start Learning
           </Button>
         ) : (
-          <Button size="sm" className="w-full text-xs" onClick={() => enrollInCourse(course.id)}>
+          <Button size="sm" className="w-full text-xs" onClick={handleEnroll}>
             <TrendingUp className="h-3.5 w-3.5 mr-1.5" />
             Enroll Now
           </Button>
