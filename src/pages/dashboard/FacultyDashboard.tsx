@@ -630,7 +630,7 @@ const FacultyDashboard = () => {
               </div>
 
               {/* Stats Cards */}
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
                 {statsCards.map((stat, index) => {
                   const score = stat.suffix === "h" ? stat.value : stat.value;
                   const badgeLabel = stat.suffix === "/100" ? getPerformanceBadgeLabel(score) : (stat.value > 0 ? "On Track" : "Not Started");
@@ -646,42 +646,42 @@ const FacultyDashboard = () => {
                       transition={{ delay: index * 0.1 }}
                       whileHover={{ y: -4, transition: { duration: 0.2 } }}
                       onClick={() => { setSelectedMetric(stat); setMetricSheetOpen(true); }}
-                      className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg hover:border-primary/30 hover:shadow-primary/5 transition-all duration-300 cursor-pointer group flex flex-col"
+                      className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg hover:border-primary/30 hover:shadow-primary/5 transition-all duration-300 cursor-pointer group flex flex-col min-h-[200px]"
                     >
-                      <div className="p-5 flex-1 flex flex-col items-center text-center gap-3">
-                        {/* Icon */}
-                        <motion.div
-                          className="bg-gradient-to-br from-primary to-accent rounded-xl p-3 group-hover:scale-110 transition-transform"
-                          whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
-                        >
-                          <stat.icon className="h-6 w-6 text-white" />
-                        </motion.div>
-
-                        {/* Title */}
-                        <p className="text-sm font-medium text-muted-foreground leading-snug">
-                          {stat.label}
-                        </p>
+                      <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3">
+                        {/* Icon + Title row */}
+                        <div className="flex items-start gap-3">
+                          <motion.div
+                            className="bg-gradient-to-br from-primary to-accent rounded-xl p-2.5 flex-shrink-0 group-hover:scale-110 transition-transform"
+                            whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
+                          >
+                            <stat.icon className="h-5 w-5 text-white" />
+                          </motion.div>
+                          <p className="text-sm font-medium text-muted-foreground leading-snug pt-1 break-words min-w-0">
+                            {stat.label}
+                          </p>
+                        </div>
 
                         {/* Score — primary visual element */}
                         <AnimatedCounter
                           value={stat.value}
                           suffix={stat.suffix}
-                          className="text-3xl font-bold text-foreground"
+                          className="text-3xl sm:text-4xl font-bold text-foreground"
                         />
 
                         {/* Status Badge */}
-                        <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${badgeColor}`}>
+                        <span className={`inline-flex items-center self-start rounded-full border px-2.5 py-0.5 text-[11px] font-semibold whitespace-nowrap ${badgeColor}`}>
                           {badgeLabel}
                         </span>
 
                         {/* Animated Progress Indicator */}
-                        <div className="w-full px-2">
+                        <div className="w-full">
                           <MetricProgressIndicator type={stat.metricType} value={stat.value} />
                         </div>
 
                         {/* Sparkline & arrow */}
-                        <div className="flex items-center justify-between w-full mt-auto pt-2">
-                          <div className="flex-1">
+                        <div className="flex items-center justify-between w-full mt-auto pt-1">
+                          <div className="flex-1 min-w-0">
                             {stat.sparkline.length >= 2 && (
                               <SparklineChart data={stat.sparkline} color={stat.sparkColor} />
                             )}
