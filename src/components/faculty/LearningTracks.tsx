@@ -39,6 +39,7 @@ export interface Course {
   video_url: string | null;
   document_url: string | null;
   course_type: string;
+  content_type?: string;
   is_published: boolean;
 }
 

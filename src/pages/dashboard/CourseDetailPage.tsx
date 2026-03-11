@@ -81,11 +81,17 @@ const CourseDetailPage = () => {
         .from("courses")
         .select("id, title, description, category, duration_hours, instructor_name, thumbnail_url, course_url, video_url, document_url, course_type, content_type, is_published")
         .eq("id", courseId)
-        .single();
+        .maybeSingle();
       if (error) throw error;
+      if (!data) {
+        toast({ title: "Course not found", description: "This course may have been removed.", variant: "destructive" });
+        navigate("/dashboard");
+        return;
+      }
       setCourse(data as CourseData);
     } catch (err: any) {
-      toast({ title: "Course not found", description: err.message, variant: "destructive" });
+      console.error("[CourseDetailPage] Error fetching course:", err);
+      toast({ title: "Error loading course", description: err.message, variant: "destructive" });
       navigate("/dashboard");
     } finally {
       setLoading(false);
