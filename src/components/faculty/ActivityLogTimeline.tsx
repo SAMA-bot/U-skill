@@ -336,8 +336,12 @@ const ActivityLogTimeline = () => {
     fetchLogs();
   }, [fetchLogs]);
 
-  // Client-side filters
+  // Client-side filters (role-based + category + search)
   const filteredLogs = logs.filter((log) => {
+    // Role-based action filtering
+    if (allowedActions && !allowedActions.includes(log.action_type)) {
+      return false;
+    }
     if (categoryFilter !== "all" && getCategoryForAction(log.action_type) !== categoryFilter) {
       return false;
     }
