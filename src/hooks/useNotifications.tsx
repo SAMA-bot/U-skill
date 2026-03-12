@@ -581,6 +581,14 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
     },
   });
 
+  useRealtimeData({
+    table: "audit_logs",
+    userId: user?.id,
+    onChange: () => {
+      if (user) generateNotifications();
+    },
+  });
+
   const markAsRead = useCallback((id: string) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
