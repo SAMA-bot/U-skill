@@ -538,7 +538,7 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, role]);
 
   useEffect(() => {
     if (user) {

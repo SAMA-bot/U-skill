@@ -34,6 +34,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: "course", label: "Courses" },
   { key: "achievement", label: "Badges" },
   { key: "document", label: "Docs" },
+  { key: "activity", label: "Activity" },
 ];
 
 interface IconConfig {
