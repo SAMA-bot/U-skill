@@ -127,6 +127,7 @@ const groupSimilarNotifications = (items: Notification[]): Notification[] => {
       document_approved: `${count} Documents Approved`,
       document_rejected: `${count} Documents Rejected`,
       training_reminder: `${count} Upcoming Trainings`,
+      activity_event: `${count} Activity Events`,
     };
 
     result.push({
