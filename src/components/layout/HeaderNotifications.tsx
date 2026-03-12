@@ -72,7 +72,7 @@ const getIconConfig = (type: Notification["type"], severity: Notification["sever
     case "document_rejected":
       return { icon: <FileX className={cls} />, bg: "bg-red-500/15", text: "text-red-600 dark:text-red-400" };
     case "activity_event":
-      return { icon: <History className={cls} />, bg: "bg-violet-500/15", text: "text-violet-600 dark:text-violet-400" };
+      return { icon: <HistoryIcon className={cls} />, bg: "bg-violet-500/15", text: "text-violet-600 dark:text-violet-400" };
     default:
       return { icon: <Bell className={cls} />, bg: "bg-muted", text: "text-muted-foreground" };
   }
