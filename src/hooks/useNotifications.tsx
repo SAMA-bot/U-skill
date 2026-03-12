@@ -109,6 +109,7 @@ const groupSimilarNotifications = (items: Notification[]): Notification[] => {
       document_approved: "document approval",
       document_rejected: "document rejection",
       training_reminder: "training reminder",
+      activity_event: "activity",
     };
 
     const label = typeLabels[latest.type] || "notification";
