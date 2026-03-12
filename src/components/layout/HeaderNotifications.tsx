@@ -16,6 +16,7 @@ import {
   FileX,
   FileCheck,
   ClipboardList,
+  History as HistoryIcon,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -34,6 +35,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: "course", label: "Courses" },
   { key: "achievement", label: "Badges" },
   { key: "document", label: "Docs" },
+  { key: "activity", label: "Activity" },
 ];
 
 interface IconConfig {
@@ -69,6 +71,8 @@ const getIconConfig = (type: Notification["type"], severity: Notification["sever
       return { icon: <FileCheck className={cls} />, bg: "bg-emerald-500/15", text: "text-emerald-600 dark:text-emerald-400" };
     case "document_rejected":
       return { icon: <FileX className={cls} />, bg: "bg-red-500/15", text: "text-red-600 dark:text-red-400" };
+    case "activity_event":
+      return { icon: <HistoryIcon className={cls} />, bg: "bg-violet-500/15", text: "text-violet-600 dark:text-violet-400" };
     default:
       return { icon: <Bell className={cls} />, bg: "bg-muted", text: "text-muted-foreground" };
   }

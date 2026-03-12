@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserRole } from "@/hooks/useUserRole";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
 
 export type NotificationType =
@@ -16,9 +17,10 @@ export type NotificationType =
   | "document_rejected"
   | "document_pending"
   | "training_reminder"
+  | "activity_event"
   | "system";
 
-export type NotificationCategory = "alert" | "course" | "achievement" | "document";
+export type NotificationCategory = "alert" | "course" | "achievement" | "document" | "activity";
 
 export interface Notification {
   id: string;
@@ -107,6 +109,7 @@ const groupSimilarNotifications = (items: Notification[]): Notification[] => {
       document_approved: "document approval",
       document_rejected: "document rejection",
       training_reminder: "training reminder",
+      activity_event: "activity",
     };
 
     const label = typeLabels[latest.type] || "notification";
@@ -124,6 +127,7 @@ const groupSimilarNotifications = (items: Notification[]): Notification[] => {
       document_approved: `${count} Documents Approved`,
       document_rejected: `${count} Documents Rejected`,
       training_reminder: `${count} Upcoming Trainings`,
+      activity_event: `${count} Activity Events`,
     };
 
     result.push({
@@ -142,10 +146,64 @@ const groupSimilarNotifications = (items: Notification[]): Notification[] => {
   return result;
 };
 
+// Role-specific audit log action types for notification integration
+const ADMIN_AUDIT_ACTIONS = [
+  "USER_CREATED", "ROLE_ASSIGNED", "ROLE_CHANGED", "ROLE_REMOVED",
+  "COURSE_CREATED", "COURSE_PUBLISHED", "COURSE_UNPUBLISHED", "COURSE_UPDATED", "COURSE_DELETED",
+];
+const FACULTY_AUDIT_ACTIONS = [
+  "COURSE_COMPLETED", "COURSE_ENROLLED", "DOCUMENT_UPLOADED", "DOCUMENT_APPROVED", "DOCUMENT_REJECTED",
+];
+const HOD_AUDIT_ACTIONS = [
+  "DOCUMENT_APPROVED", "DOCUMENT_REJECTED", "COURSE_COMPLETED",
+];
+
+const getAuditActionsForRole = (role: string | null): string[] => {
+  switch (role) {
+    case "admin": return ADMIN_AUDIT_ACTIONS;
+    case "hod": return HOD_AUDIT_ACTIONS;
+    default: return FACULTY_AUDIT_ACTIONS;
+  }
+};
+
+const auditActionToNotification = (
+  actionType: string,
+  metadata: Record<string, any>
+): { title: string; message: string; severity: "info" | "warning" | "success" | "error"; category: NotificationCategory } => {
+  const m = metadata || {};
+  switch (actionType) {
+    case "COURSE_COMPLETED":
+      return { title: "Course Completed", message: `Completed: ${m.course_title || "a course"}`, severity: "success", category: "course" };
+    case "COURSE_CREATED":
+      return { title: "Course Created", message: `New course: ${m.title || "Unknown"}`, severity: "info", category: "activity" };
+    case "COURSE_PUBLISHED":
+      return { title: "Course Published", message: `Published: ${m.title || "Unknown"}`, severity: "success", category: "activity" };
+    case "COURSE_DELETED":
+      return { title: "Course Deleted", message: `Deleted: ${m.title || "Unknown"}`, severity: "warning", category: "activity" };
+    case "USER_CREATED":
+      return { title: "New User Registered", message: `${m.full_name || m.email || "A user"} joined`, severity: "info", category: "activity" };
+    case "ROLE_ASSIGNED":
+      return { title: "Role Assigned", message: `${m.user_name || "User"} assigned as ${m.role}`, severity: "info", category: "activity" };
+    case "ROLE_CHANGED":
+      return { title: "Role Changed", message: `${m.user_name || "User"}: ${m.old_role} → ${m.new_role}`, severity: "warning", category: "activity" };
+    case "ROLE_REMOVED":
+      return { title: "Role Removed", message: `Role removed for ${m.user_name || "a user"}`, severity: "error", category: "activity" };
+    case "DOCUMENT_APPROVED":
+      return { title: "Document Approved", message: `Document approved`, severity: "success", category: "document" };
+    case "DOCUMENT_REJECTED":
+      return { title: "Document Rejected", message: `Document rejected`, severity: "error", category: "document" };
+    case "DOCUMENT_UPLOADED":
+      return { title: "Document Uploaded", message: `New document uploaded`, severity: "info", category: "document" };
+    default:
+      return { title: actionType.replace(/_/g, " "), message: "Activity recorded", severity: "info", category: "activity" };
+  }
+};
+
 export const NotificationsProvider = ({ children }: { children: ReactNode }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const { role } = useUserRole();
 
   const generateNotifications = useCallback(async () => {
     if (!user) {
@@ -426,6 +484,45 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
         });
       }
 
+      // === AUDIT LOG / ACTIVITY TIMELINE NOTIFICATIONS ===
+      const auditActions = getAuditActionsForRole(role);
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const { data: auditLogs } = await supabase
+        .from("audit_logs")
+        .select("id, action_type, metadata, created_at")
+        .eq("user_id", user.id)
+        .gte("created_at", sevenDaysAgo.toISOString())
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (auditLogs) {
+        auditLogs.forEach((log) => {
+          if (!auditActions.includes(log.action_type)) return;
+
+          // Skip types already covered by dedicated notification sections
+          const skipDuplicateTypes = ["COURSE_COMPLETED", "DOCUMENT_APPROVED", "DOCUMENT_REJECTED"];
+          if (skipDuplicateTypes.includes(log.action_type)) return;
+
+          const mapped = auditActionToNotification(log.action_type, (log.metadata as Record<string, any>) || {});
+          const createdAt = new Date(log.created_at);
+          const daysSince = Math.floor((Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+
+          newNotifications.push({
+            id: `audit_${log.id}`,
+            type: "activity_event",
+            category: mapped.category,
+            title: mapped.title,
+            message: mapped.message,
+            severity: mapped.severity,
+            timestamp: createdAt,
+            read: daysSince > 1,
+            data: { auditLogId: log.id, actionType: log.action_type },
+          });
+        });
+      }
+
       // === GROUP SIMILAR NOTIFICATIONS ===
       const grouped = groupSimilarNotifications(newNotifications);
 
@@ -443,7 +540,7 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, role]);
 
   useEffect(() => {
     if (user) {
