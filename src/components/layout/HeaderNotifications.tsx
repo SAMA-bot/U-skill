@@ -16,6 +16,7 @@ import {
   FileX,
   FileCheck,
   ClipboardList,
+  History as HistoryIcon,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
