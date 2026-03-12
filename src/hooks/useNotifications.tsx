@@ -482,6 +482,45 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
         });
       }
 
+      // === AUDIT LOG / ACTIVITY TIMELINE NOTIFICATIONS ===
+      const auditActions = getAuditActionsForRole(role);
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const { data: auditLogs } = await supabase
+        .from("audit_logs")
+        .select("id, action_type, metadata, created_at")
+        .eq("user_id", user.id)
+        .gte("created_at", sevenDaysAgo.toISOString())
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (auditLogs) {
+        auditLogs.forEach((log) => {
+          if (!auditActions.includes(log.action_type)) return;
+
+          // Skip types already covered by dedicated notification sections
+          const skipDuplicateTypes = ["COURSE_COMPLETED", "DOCUMENT_APPROVED", "DOCUMENT_REJECTED"];
+          if (skipDuplicateTypes.includes(log.action_type)) return;
+
+          const mapped = auditActionToNotification(log.action_type, (log.metadata as Record<string, any>) || {});
+          const createdAt = new Date(log.created_at);
+          const daysSince = Math.floor((Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+
+          newNotifications.push({
+            id: `audit_${log.id}`,
+            type: "activity_event",
+            category: mapped.category,
+            title: mapped.title,
+            message: mapped.message,
+            severity: mapped.severity,
+            timestamp: createdAt,
+            read: daysSince > 1,
+            data: { auditLogId: log.id, actionType: log.action_type },
+          });
+        });
+      }
+
       // === GROUP SIMILAR NOTIFICATIONS ===
       const grouped = groupSimilarNotifications(newNotifications);
 
