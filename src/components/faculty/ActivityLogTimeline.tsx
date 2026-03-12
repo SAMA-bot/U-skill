@@ -413,11 +413,11 @@ const ActivityLogTimeline = () => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {CATEGORY_FILTERS.map((c) => (
-                  <SelectItem key={c.value} value={c.value}>
-                    {c.label}
-                  </SelectItem>
-                ))}
+                {categoryFilters.map((c) => (
+                   <SelectItem key={c.value} value={c.value}>
+                     {c.label}
+                   </SelectItem>
+                 ))}
               </SelectContent>
             </Select>
 
