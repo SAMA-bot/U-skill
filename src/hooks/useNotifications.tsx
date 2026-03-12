@@ -17,9 +17,10 @@ export type NotificationType =
   | "document_rejected"
   | "document_pending"
   | "training_reminder"
+  | "activity_event"
   | "system";
 
-export type NotificationCategory = "alert" | "course" | "achievement" | "document";
+export type NotificationCategory = "alert" | "course" | "achievement" | "document" | "activity";
 
 export interface Notification {
   id: string;
