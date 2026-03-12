@@ -57,14 +57,58 @@ interface LogEntry {
   created_at: string;
 }
 
-const CATEGORY_FILTERS = [
-  { value: "all", label: "All Activities" },
-  { value: "training", label: "Training & Courses" },
-  { value: "documents", label: "Document Uploads" },
-  { value: "profile", label: "Profile Updates" },
-  { value: "scores", label: "Score Changes" },
-  { value: "roles", label: "Role Changes" },
+// Role-specific allowed action types
+const ADMIN_ACTIONS = [
+  "USER_CREATED", "ROLE_ASSIGNED", "ROLE_CHANGED", "ROLE_REMOVED",
+  "COURSE_CREATED", "COURSE_PUBLISHED", "COURSE_UNPUBLISHED", "COURSE_UPDATED", "COURSE_DELETED",
+  "PROFILE_UPDATED",
 ];
+
+const FACULTY_ACTIONS = [
+  "COURSE_COMPLETED", "COURSE_ENROLLED",
+  "DOCUMENT_UPLOADED", "DOCUMENT_APPROVED", "DOCUMENT_REJECTED",
+  "PROFILE_UPDATED", "USER_CREATED",
+];
+
+const HOD_ACTIONS = [
+  "DOCUMENT_APPROVED", "DOCUMENT_REJECTED",
+  "PROFILE_UPDATED", "COURSE_COMPLETED",
+  "USER_CREATED",
+];
+
+const getAllowedActions = (role: string | null): string[] | null => {
+  switch (role) {
+    case "admin": return ADMIN_ACTIONS;
+    case "hod": return HOD_ACTIONS;
+    case "faculty": return FACULTY_ACTIONS;
+    default: return FACULTY_ACTIONS;
+  }
+};
+
+const getCategoryFiltersForRole = (role: string | null) => {
+  const base = [{ value: "all", label: "All Activities" }];
+  switch (role) {
+    case "admin":
+      return [...base,
+        { value: "roles", label: "Role Changes" },
+        { value: "training", label: "Course Management" },
+        { value: "profile", label: "User Management" },
+      ];
+    case "hod":
+      return [...base,
+        { value: "documents", label: "Document Approvals" },
+        { value: "training", label: "Training & Courses" },
+        { value: "profile", label: "Profile Updates" },
+      ];
+    default:
+      return [...base,
+        { value: "training", label: "Training & Courses" },
+        { value: "documents", label: "Documents" },
+        { value: "profile", label: "Profile Updates" },
+        { value: "scores", label: "Score Changes" },
+      ];
+  }
+};
 
 const DATE_PRESETS = [
   { value: "7", label: "Last 7 days" },
