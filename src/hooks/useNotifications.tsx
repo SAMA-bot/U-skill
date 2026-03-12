@@ -144,10 +144,64 @@ const groupSimilarNotifications = (items: Notification[]): Notification[] => {
   return result;
 };
 
+// Role-specific audit log action types for notification integration
+const ADMIN_AUDIT_ACTIONS = [
+  "USER_CREATED", "ROLE_ASSIGNED", "ROLE_CHANGED", "ROLE_REMOVED",
+  "COURSE_CREATED", "COURSE_PUBLISHED", "COURSE_UNPUBLISHED", "COURSE_UPDATED", "COURSE_DELETED",
+];
+const FACULTY_AUDIT_ACTIONS = [
+  "COURSE_COMPLETED", "COURSE_ENROLLED", "DOCUMENT_UPLOADED", "DOCUMENT_APPROVED", "DOCUMENT_REJECTED",
+];
+const HOD_AUDIT_ACTIONS = [
+  "DOCUMENT_APPROVED", "DOCUMENT_REJECTED", "COURSE_COMPLETED",
+];
+
+const getAuditActionsForRole = (role: string | null): string[] => {
+  switch (role) {
+    case "admin": return ADMIN_AUDIT_ACTIONS;
+    case "hod": return HOD_AUDIT_ACTIONS;
+    default: return FACULTY_AUDIT_ACTIONS;
+  }
+};
+
+const auditActionToNotification = (
+  actionType: string,
+  metadata: Record<string, any>
+): { title: string; message: string; severity: "info" | "warning" | "success" | "error"; category: NotificationCategory } => {
+  const m = metadata || {};
+  switch (actionType) {
+    case "COURSE_COMPLETED":
+      return { title: "Course Completed", message: `Completed: ${m.course_title || "a course"}`, severity: "success", category: "course" };
+    case "COURSE_CREATED":
+      return { title: "Course Created", message: `New course: ${m.title || "Unknown"}`, severity: "info", category: "activity" };
+    case "COURSE_PUBLISHED":
+      return { title: "Course Published", message: `Published: ${m.title || "Unknown"}`, severity: "success", category: "activity" };
+    case "COURSE_DELETED":
+      return { title: "Course Deleted", message: `Deleted: ${m.title || "Unknown"}`, severity: "warning", category: "activity" };
+    case "USER_CREATED":
+      return { title: "New User Registered", message: `${m.full_name || m.email || "A user"} joined`, severity: "info", category: "activity" };
+    case "ROLE_ASSIGNED":
+      return { title: "Role Assigned", message: `${m.user_name || "User"} assigned as ${m.role}`, severity: "info", category: "activity" };
+    case "ROLE_CHANGED":
+      return { title: "Role Changed", message: `${m.user_name || "User"}: ${m.old_role} → ${m.new_role}`, severity: "warning", category: "activity" };
+    case "ROLE_REMOVED":
+      return { title: "Role Removed", message: `Role removed for ${m.user_name || "a user"}`, severity: "error", category: "activity" };
+    case "DOCUMENT_APPROVED":
+      return { title: "Document Approved", message: `Document approved`, severity: "success", category: "document" };
+    case "DOCUMENT_REJECTED":
+      return { title: "Document Rejected", message: `Document rejected`, severity: "error", category: "document" };
+    case "DOCUMENT_UPLOADED":
+      return { title: "Document Uploaded", message: `New document uploaded`, severity: "info", category: "document" };
+    default:
+      return { title: actionType.replace(/_/g, " "), message: "Activity recorded", severity: "info", category: "activity" };
+  }
+};
+
 export const NotificationsProvider = ({ children }: { children: ReactNode }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const { role } = useUserRole();
 
   const generateNotifications = useCallback(async () => {
     if (!user) {
