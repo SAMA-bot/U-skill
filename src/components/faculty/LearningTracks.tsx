@@ -367,8 +367,32 @@ const TrackCourseCard = ({
 const LearningTracks = ({ courses }: LearningTracksProps) => {
   const tracksWithCourses = TRACKS.map((track) => ({
     track,
-    courses: courses.filter((c) => track.categories.includes(c.category)),
+    courses: courses.filter((c) => {
+      // Prioritize tags-based matching
+      if (c.tags && c.tags.length > 0) {
+        return c.tags.some(tag => 
+          track.categories.some(cat => 
+            tag.toLowerCase().includes(cat.toLowerCase()) ||
+            cat.toLowerCase().includes(tag.toLowerCase()) ||
+            track.label.toLowerCase().includes(tag.toLowerCase())
+          )
+        );
+      }
+      // Fallback to category matching
+      return track.categories.includes(c.category);
+    }),
   })).filter((t) => t.courses.length > 0);
+  
+  // Deduplicate: ensure each course appears only in the best-matching track
+  const assignedCourseIds = new Set<string>();
+  const dedupedTracks = tracksWithCourses.map(({ track, courses: trackCourses }) => ({
+    track,
+    courses: trackCourses.filter(c => {
+      if (assignedCourseIds.has(c.id)) return false;
+      assignedCourseIds.add(c.id);
+      return true;
+    }),
+  })).filter(t => t.courses.length > 0);
 
   if (tracksWithCourses.length === 0) {
     return (
