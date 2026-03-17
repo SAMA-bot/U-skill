@@ -178,6 +178,7 @@ export function CourseManagement() {
         is_mandatory: course.is_mandatory || false,
         department: course.department || '',
         training_date: course.training_date || '',
+        tags: course.tags || [],
       });
     } else {
       resetForm();
