@@ -29,6 +29,7 @@ interface CourseData {
   course_type: string;
   content_type: string;
   is_published: boolean;
+  tags: string[] | null;
 }
 
 const getYouTubeEmbedUrl = (url: string): string | null => {
@@ -79,7 +80,7 @@ const CourseDetailPage = () => {
     try {
       const { data, error } = await supabase
         .from("courses")
-        .select("id, title, description, category, duration_hours, instructor_name, thumbnail_url, course_url, video_url, document_url, course_type, content_type, is_published")
+        .select("id, title, description, category, duration_hours, instructor_name, thumbnail_url, course_url, video_url, document_url, course_type, content_type, is_published, tags")
         .eq("id", courseId)
         .maybeSingle();
       if (error) throw error;
@@ -237,6 +238,11 @@ const CourseDetailPage = () => {
               <Badge variant="outline" className={`text-xs ${difficulty.color}`}>
                 {difficulty.label}
               </Badge>
+              {course.tags && course.tags.length > 0 && course.tags.map((tag, i) => (
+                <Badge key={i} variant="secondary" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
               {completed && (
                 <Badge className="bg-success/15 text-success border-success/30 text-xs">
                   <CheckCircle2 className="h-3 w-3 mr-1" /> Completed

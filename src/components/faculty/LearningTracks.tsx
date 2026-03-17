@@ -41,6 +41,7 @@ export interface Course {
   course_type: string;
   content_type?: string;
   is_published: boolean;
+  tags?: string[] | null;
 }
 
 export interface TrackDefinition {
@@ -313,10 +314,15 @@ const TrackCourseCard = ({
           <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-5 ${difficulty.color}`}>
             {difficulty.label}
           </Badge>
-          {course.duration_hours && (
+          {course.tags && course.tags.length > 0 ? (
+            course.tags.slice(0, 2).map((tag, i) => (
+              <Badge key={i} variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-muted-foreground">
+                {tag}
+              </Badge>
+            ))
+          ) : (
             <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-muted-foreground">
-              <Clock className="h-2.5 w-2.5 mr-0.5" />
-              {course.duration_hours}h
+              {course.category}
             </Badge>
           )}
           {course.duration_hours && (
@@ -366,8 +372,32 @@ const TrackCourseCard = ({
 const LearningTracks = ({ courses }: LearningTracksProps) => {
   const tracksWithCourses = TRACKS.map((track) => ({
     track,
-    courses: courses.filter((c) => track.categories.includes(c.category)),
+    courses: courses.filter((c) => {
+      // Prioritize tags-based matching
+      if (c.tags && c.tags.length > 0) {
+        return c.tags.some(tag => 
+          track.categories.some(cat => 
+            tag.toLowerCase().includes(cat.toLowerCase()) ||
+            cat.toLowerCase().includes(tag.toLowerCase()) ||
+            track.label.toLowerCase().includes(tag.toLowerCase())
+          )
+        );
+      }
+      // Fallback to category matching
+      return track.categories.includes(c.category);
+    }),
   })).filter((t) => t.courses.length > 0);
+  
+  // Deduplicate: ensure each course appears only in the best-matching track
+  const assignedCourseIds = new Set<string>();
+  const dedupedTracks = tracksWithCourses.map(({ track, courses: trackCourses }) => ({
+    track,
+    courses: trackCourses.filter(c => {
+      if (assignedCourseIds.has(c.id)) return false;
+      assignedCourseIds.add(c.id);
+      return true;
+    }),
+  })).filter(t => t.courses.length > 0);
 
   if (tracksWithCourses.length === 0) {
     return (
@@ -381,7 +411,7 @@ const LearningTracks = ({ courses }: LearningTracksProps) => {
 
   return (
     <div className="space-y-6">
-      {tracksWithCourses.map(({ track, courses: trackCourses }, i) => (
+      {dedupedTracks.map(({ track, courses: trackCourses }, i) => (
         <motion.div
           key={track.key}
           initial={{ opacity: 0, y: 20 }}

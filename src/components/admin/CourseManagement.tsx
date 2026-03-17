@@ -56,6 +56,7 @@ interface Course {
   created_by: string;
   created_at: string;
   updated_at: string;
+  tags: string[] | null;
 }
 
 const CONTENT_TYPES = [
@@ -114,7 +115,9 @@ export function CourseManagement() {
     is_mandatory: false,
     department: '',
     training_date: '',
+    tags: [] as string[],
   });
+  const [tagInput, setTagInput] = useState('');
 
   useEffect(() => {
     fetchCourses();
@@ -150,7 +153,9 @@ export function CourseManagement() {
       is_mandatory: false,
       department: '',
       training_date: '',
+      tags: [],
     });
+    setTagInput('');
     setThumbnailFile(null);
     setDocumentFile(null);
     setVideoFile(null);
@@ -173,6 +178,7 @@ export function CourseManagement() {
         is_mandatory: course.is_mandatory || false,
         department: course.department || '',
         training_date: course.training_date || '',
+        tags: course.tags || [],
       });
     } else {
       resetForm();
@@ -273,6 +279,7 @@ export function CourseManagement() {
         department: formData.department || null,
         training_date: formData.training_date || null,
         created_by: user.id,
+        tags: formData.tags.length > 0 ? formData.tags : [],
       };
 
       if (editingCourse) {
@@ -325,7 +332,8 @@ export function CourseManagement() {
     (course) =>
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (course.instructor_name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
+      (course.instructor_name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+      (course.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ?? false)
   );
 
   const getCategoryBadgeStyle = (category: string) => {
@@ -484,6 +492,45 @@ export function CourseManagement() {
                   />
                 </div>
 
+                {/* Tags Input */}
+                <div className="space-y-2">
+                  <Label>Tags</Label>
+                  <div className="flex flex-wrap gap-1.5 min-h-[32px] p-2 rounded-md border border-input bg-background">
+                    {formData.tags.map((tag, i) => (
+                      <Badge key={i} variant="secondary" className="gap-1 text-xs">
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, tags: formData.tags.filter((_, idx) => idx !== i) })}
+                          className="ml-0.5 hover:text-destructive"
+                        >
+                          ×
+                        </button>
+                      </Badge>
+                    ))}
+                    <input
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if ((e.key === 'Enter' || e.key === ',') && tagInput.trim()) {
+                          e.preventDefault();
+                          const newTag = tagInput.trim().toLowerCase();
+                          if (!formData.tags.includes(newTag)) {
+                            setFormData({ ...formData, tags: [...formData.tags, newTag] });
+                          }
+                          setTagInput('');
+                        }
+                        if (e.key === 'Backspace' && !tagInput && formData.tags.length > 0) {
+                          setFormData({ ...formData, tags: formData.tags.slice(0, -1) });
+                        }
+                      }}
+                      placeholder={formData.tags.length === 0 ? "Type a tag and press Enter..." : "Add more..."}
+                      className="flex-1 min-w-[120px] bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">Press Enter or comma to add tags. Examples: cyber security, AI, beginner</p>
+                </div>
+
                 {/* Conditional content fields */}
                 {formData.content_type === 'platform_video' && (
                   <div className="space-y-2 p-3 bg-muted/30 rounded-lg border border-border/50">
@@ -639,9 +686,24 @@ export function CourseManagement() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col gap-1">
-                          <Badge variant="secondary" className={getCategoryBadgeStyle(course.category)}>
-                            {course.category.charAt(0).toUpperCase() + course.category.slice(1).replace('-', ' ')}
-                          </Badge>
+                          {course.tags && course.tags.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {course.tags.slice(0, 3).map((tag, i) => (
+                                <Badge key={i} variant="outline" className="text-[10px] px-1.5 py-0">
+                                  {tag}
+                                </Badge>
+                              ))}
+                              {course.tags.length > 3 && (
+                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-muted-foreground">
+                                  +{course.tags.length - 3}
+                                </Badge>
+                              )}
+                            </div>
+                          ) : (
+                            <Badge variant="secondary" className={getCategoryBadgeStyle(course.category)}>
+                              {course.category.charAt(0).toUpperCase() + course.category.slice(1).replace('-', ' ')}
+                            </Badge>
+                          )}
                           <Badge variant="outline" className="w-fit text-xs">
                             {getContentTypeIcon(course.content_type)} {getContentTypeLabel(course.content_type)}
                           </Badge>
