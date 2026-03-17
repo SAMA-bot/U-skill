@@ -279,6 +279,7 @@ export function CourseManagement() {
         department: formData.department || null,
         training_date: formData.training_date || null,
         created_by: user.id,
+        tags: formData.tags.length > 0 ? formData.tags : [],
       };
 
       if (editingCourse) {
