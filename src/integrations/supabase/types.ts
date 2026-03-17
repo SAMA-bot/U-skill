@@ -252,6 +252,7 @@ export type Database = {
           instructor_name: string | null
           is_mandatory: boolean
           is_published: boolean
+          tags: string[] | null
           thumbnail_url: string | null
           title: string
           training_date: string | null
@@ -273,6 +274,7 @@ export type Database = {
           instructor_name?: string | null
           is_mandatory?: boolean
           is_published?: boolean
+          tags?: string[] | null
           thumbnail_url?: string | null
           title: string
           training_date?: string | null
@@ -294,6 +296,7 @@ export type Database = {
           instructor_name?: string | null
           is_mandatory?: boolean
           is_published?: boolean
+          tags?: string[] | null
           thumbnail_url?: string | null
           title?: string
           training_date?: string | null
@@ -907,6 +910,7 @@ export type Database = {
           id: string | null
           instructor_name: string | null
           is_published: boolean | null
+          tags: string[] | null
           thumbnail_url: string | null
           title: string | null
           updated_at: string | null
@@ -924,6 +928,7 @@ export type Database = {
           id?: string | null
           instructor_name?: string | null
           is_published?: boolean | null
+          tags?: string[] | null
           thumbnail_url?: string | null
           title?: string | null
           updated_at?: string | null
@@ -941,6 +946,7 @@ export type Database = {
           id?: string | null
           instructor_name?: string | null
           is_published?: boolean | null
+          tags?: string[] | null
           thumbnail_url?: string | null
           title?: string | null
           updated_at?: string | null
