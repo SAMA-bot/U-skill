@@ -406,7 +406,7 @@ const LearningTracks = ({ courses }: LearningTracksProps) => {
 
   return (
     <div className="space-y-6">
-      {tracksWithCourses.map(({ track, courses: trackCourses }, i) => (
+      {dedupedTracks.map(({ track, courses: trackCourses }, i) => (
         <motion.div
           key={track.key}
           initial={{ opacity: 0, y: 20 }}
