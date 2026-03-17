@@ -115,7 +115,9 @@ export function CourseManagement() {
     is_mandatory: false,
     department: '',
     training_date: '',
+    tags: [] as string[],
   });
+  const [tagInput, setTagInput] = useState('');
 
   useEffect(() => {
     fetchCourses();
