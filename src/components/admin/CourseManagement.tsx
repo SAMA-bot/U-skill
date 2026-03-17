@@ -56,6 +56,7 @@ interface Course {
   created_by: string;
   created_at: string;
   updated_at: string;
+  tags: string[] | null;
 }
 
 const CONTENT_TYPES = [
