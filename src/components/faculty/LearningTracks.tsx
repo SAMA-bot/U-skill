@@ -314,10 +314,15 @@ const TrackCourseCard = ({
           <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-5 ${difficulty.color}`}>
             {difficulty.label}
           </Badge>
-          {course.duration_hours && (
+          {course.tags && course.tags.length > 0 ? (
+            course.tags.slice(0, 2).map((tag, i) => (
+              <Badge key={i} variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-muted-foreground">
+                {tag}
+              </Badge>
+            ))
+          ) : (
             <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-muted-foreground">
-              <Clock className="h-2.5 w-2.5 mr-0.5" />
-              {course.duration_hours}h
+              {course.category}
             </Badge>
           )}
           {course.duration_hours && (
