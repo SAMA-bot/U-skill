@@ -332,7 +332,8 @@ export function CourseManagement() {
     (course) =>
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (course.instructor_name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
+      (course.instructor_name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+      (course.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ?? false)
   );
 
   const getCategoryBadgeStyle = (category: string) => {
