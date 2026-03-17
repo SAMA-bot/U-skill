@@ -80,7 +80,7 @@ const CourseDetailPage = () => {
     try {
       const { data, error } = await supabase
         .from("courses")
-        .select("id, title, description, category, duration_hours, instructor_name, thumbnail_url, course_url, video_url, document_url, course_type, content_type, is_published")
+        .select("id, title, description, category, duration_hours, instructor_name, thumbnail_url, course_url, video_url, document_url, course_type, content_type, is_published, tags")
         .eq("id", courseId)
         .maybeSingle();
       if (error) throw error;

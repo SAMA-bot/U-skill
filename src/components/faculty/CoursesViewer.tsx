@@ -106,7 +106,7 @@ const CoursesViewer = () => {
         console.log("[CoursesViewer] No learning paths found, fetching published courses as fallback...");
         const { data: coursesData, error: coursesError } = await supabase
           .from("courses")
-          .select("id, title, description, category, duration_hours, instructor_name, thumbnail_url, course_url, video_url, document_url, course_type, content_type, is_published")
+          .select("id, title, description, category, duration_hours, instructor_name, thumbnail_url, course_url, video_url, document_url, course_type, content_type, is_published, tags")
           .eq("is_published", true)
           .order("created_at", { ascending: false });
         if (coursesError) {
