@@ -41,6 +41,7 @@ export interface Course {
   course_type: string;
   content_type?: string;
   is_published: boolean;
+  tags?: string[] | null;
 }
 
 export interface TrackDefinition {

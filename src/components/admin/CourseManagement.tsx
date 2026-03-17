@@ -686,9 +686,24 @@ export function CourseManagement() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col gap-1">
-                          <Badge variant="secondary" className={getCategoryBadgeStyle(course.category)}>
-                            {course.category.charAt(0).toUpperCase() + course.category.slice(1).replace('-', ' ')}
-                          </Badge>
+                          {course.tags && course.tags.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {course.tags.slice(0, 3).map((tag, i) => (
+                                <Badge key={i} variant="outline" className="text-[10px] px-1.5 py-0">
+                                  {tag}
+                                </Badge>
+                              ))}
+                              {course.tags.length > 3 && (
+                                <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-muted-foreground">
+                                  +{course.tags.length - 3}
+                                </Badge>
+                              )}
+                            </div>
+                          ) : (
+                            <Badge variant="secondary" className={getCategoryBadgeStyle(course.category)}>
+                              {course.category.charAt(0).toUpperCase() + course.category.slice(1).replace('-', ' ')}
+                            </Badge>
+                          )}
                           <Badge variant="outline" className="w-fit text-xs">
                             {getContentTypeIcon(course.content_type)} {getContentTypeLabel(course.content_type)}
                           </Badge>
