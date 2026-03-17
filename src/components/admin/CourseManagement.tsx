@@ -492,6 +492,45 @@ export function CourseManagement() {
                   />
                 </div>
 
+                {/* Tags Input */}
+                <div className="space-y-2">
+                  <Label>Tags</Label>
+                  <div className="flex flex-wrap gap-1.5 min-h-[32px] p-2 rounded-md border border-input bg-background">
+                    {formData.tags.map((tag, i) => (
+                      <Badge key={i} variant="secondary" className="gap-1 text-xs">
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, tags: formData.tags.filter((_, idx) => idx !== i) })}
+                          className="ml-0.5 hover:text-destructive"
+                        >
+                          ×
+                        </button>
+                      </Badge>
+                    ))}
+                    <input
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if ((e.key === 'Enter' || e.key === ',') && tagInput.trim()) {
+                          e.preventDefault();
+                          const newTag = tagInput.trim().toLowerCase();
+                          if (!formData.tags.includes(newTag)) {
+                            setFormData({ ...formData, tags: [...formData.tags, newTag] });
+                          }
+                          setTagInput('');
+                        }
+                        if (e.key === 'Backspace' && !tagInput && formData.tags.length > 0) {
+                          setFormData({ ...formData, tags: formData.tags.slice(0, -1) });
+                        }
+                      }}
+                      placeholder={formData.tags.length === 0 ? "Type a tag and press Enter..." : "Add more..."}
+                      className="flex-1 min-w-[120px] bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">Press Enter or comma to add tags. Examples: cyber security, AI, beginner</p>
+                </div>
+
                 {/* Conditional content fields */}
                 {formData.content_type === 'platform_video' && (
                   <div className="space-y-2 p-3 bg-muted/30 rounded-lg border border-border/50">
