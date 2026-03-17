@@ -153,7 +153,9 @@ export function CourseManagement() {
       is_mandatory: false,
       department: '',
       training_date: '',
+      tags: [],
     });
+    setTagInput('');
     setThumbnailFile(null);
     setDocumentFile(null);
     setVideoFile(null);
