@@ -238,6 +238,11 @@ const CourseDetailPage = () => {
               <Badge variant="outline" className={`text-xs ${difficulty.color}`}>
                 {difficulty.label}
               </Badge>
+              {course.tags && course.tags.length > 0 && course.tags.map((tag, i) => (
+                <Badge key={i} variant="secondary" className="text-xs">
+                  {tag}
+                </Badge>
+              ))}
               {completed && (
                 <Badge className="bg-success/15 text-success border-success/30 text-xs">
                   <CheckCircle2 className="h-3 w-3 mr-1" /> Completed
