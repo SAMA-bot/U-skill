@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, GraduationCap } from 'lucide-react';
+import { Menu, X, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -39,26 +39,31 @@ export function Header() {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? 'bg-card/95 backdrop-blur-md shadow-lg border-b border-border/50'
+          ? 'backdrop-blur-xl border-b border-border/50'
           : 'bg-transparent'
       }`}
+      style={isScrolled ? {
+        background: 'linear-gradient(180deg, hsl(228 14% 7% / 0.9), hsl(228 14% 7% / 0.7))',
+      } : undefined}
     >
       <nav className="container-wide mx-auto px-4 md:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <motion.a
             href="#"
-            className="flex items-center gap-2 text-foreground"
+            className="flex items-center gap-3 text-foreground"
             whileHover={{ scale: 1.02 }}
           >
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-              <GraduationCap className="w-6 h-6 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{
+              backgroundImage: 'linear-gradient(135deg, hsl(210 100% 60%), hsl(270 65% 62%))',
+            }}>
+              <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div className="hidden sm:block">
-              <span className="font-heading font-bold text-lg">SKIT</span>
-              <span className="text-xs block text-muted-foreground -mt-1">Faculty Tool</span>
+              <span className="font-heading font-bold text-lg tracking-tight">SKIT</span>
+              <span className="text-xs block text-muted-foreground -mt-0.5">Faculty Platform</span>
             </div>
           </motion.a>
 
@@ -68,7 +73,7 @@ export function Header() {
               <button
                 key={link.href}
                 onClick={() => scrollToSection(link.href)}
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors rounded-lg hover:bg-secondary/50"
+                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-secondary/50"
               >
                 {link.label}
               </button>
@@ -76,11 +81,11 @@ export function Header() {
           </div>
 
           {/* CTA Button & Theme Toggle */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
             <Button
+              variant="gradient"
               onClick={() => navigate('/auth/login')}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
             >
               Get Started
             </Button>
@@ -106,9 +111,12 @@ export function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-card/95 backdrop-blur-md border-b border-border"
+            className="lg:hidden backdrop-blur-xl border-b border-border/50"
+            style={{
+              background: 'linear-gradient(180deg, hsl(228 14% 7% / 0.95), hsl(228 14% 7% / 0.9))',
+            }}
           >
-            <div className="container-wide mx-auto px-4 py-4 flex flex-col gap-2">
+            <div className="container-wide mx-auto px-4 py-4 flex flex-col gap-1">
               {navLinks.map((link) => (
                 <button
                   key={link.href}
@@ -119,11 +127,12 @@ export function Header() {
                 </button>
               ))}
               <Button
+                variant="gradient"
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                   navigate('/auth/login');
                 }}
-                className="mt-2 bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="mt-2"
               >
                 Get Started
               </Button>
