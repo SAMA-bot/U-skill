@@ -24,7 +24,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
+import { NoCoursesSVG } from "@/components/dashboard/EmptyStateIllustrations";
 import { useCourseEnrollments } from "@/hooks/useCourseEnrollments";
+import { getCourseThumbnail } from "@/lib/thumbnailUtils";
 import { LucideIcon } from "lucide-react";
 
 export interface Course {
