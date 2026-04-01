@@ -6,6 +6,7 @@ import {
   ExternalLink, FileText, Video, Loader2, BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getCourseThumbnail } from "@/lib/thumbnailUtils";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
