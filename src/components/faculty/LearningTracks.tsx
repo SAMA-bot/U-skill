@@ -423,6 +423,7 @@ const LearningTracks = ({ courses }: LearningTracksProps) => {
         icon={Layers}
         title="No learning tracks available"
         description="Courses will be organized into learning tracks once your admin publishes training programs."
+        illustration={<NoCoursesSVG />}
       />
     );
   }
