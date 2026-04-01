@@ -365,7 +365,9 @@ const HodDashboard = () => {
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 overflow-auto p-6">
+          <main className="flex-1 overflow-auto p-6 relative">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-primary/[0.02] rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-20 left-10 w-64 h-64 bg-accent/[0.02] rounded-full blur-3xl pointer-events-none" />
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
               <div>
