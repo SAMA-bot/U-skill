@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
+import { NoCoursesSVG } from "@/components/dashboard/EmptyStateIllustrations";
 import {
   Dialog, DialogContent, DialogTitle,
 } from "@/components/ui/dialog";
