@@ -6,6 +6,7 @@ import {
   ExternalLink, FileText, Video, Loader2, BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getCourseThumbnail } from "@/lib/thumbnailUtils";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
@@ -218,16 +219,15 @@ const CourseDetailPage = () => {
           animate={{ opacity: 1, y: 0 }}
           className="rounded-2xl border border-border/40 bg-card overflow-hidden"
         >
-          {/* Thumbnail */}
-          {course.thumbnail_url && (
-            <div className="aspect-[3/1] w-full overflow-hidden bg-muted">
-              <img
-                src={course.thumbnail_url}
-                alt={course.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
+          {/* Thumbnail - always shown */}
+          <div className="aspect-[3/1] w-full overflow-hidden bg-muted relative">
+            <img
+              src={getCourseThumbnail(course)}
+              alt={course.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
+          </div>
 
           <div className="p-5 sm:p-6 space-y-4">
             <div className="flex flex-wrap items-center gap-2">

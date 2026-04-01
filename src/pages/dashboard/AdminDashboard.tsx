@@ -446,7 +446,9 @@ const AdminDashboard = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto focus:outline-none p-6">
+        <main className="flex-1 overflow-auto focus:outline-none p-6 relative">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.02] rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-24 left-0 w-72 h-72 bg-accent/[0.02] rounded-full blur-3xl pointer-events-none" />
           {activeSection === "roles" ? (
             <>
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">

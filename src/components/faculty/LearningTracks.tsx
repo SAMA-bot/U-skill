@@ -24,7 +24,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
+import { NoCoursesSVG } from "@/components/dashboard/EmptyStateIllustrations";
 import { useCourseEnrollments } from "@/hooks/useCourseEnrollments";
+import { getCourseThumbnail } from "@/lib/thumbnailUtils";
 import { LucideIcon } from "lucide-react";
 
 export interface Course {
@@ -299,16 +301,32 @@ const TrackCourseCard = ({
       transition={{ delay: index * 0.04 }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
       onClick={handleCardClick}
-      className={`group flex flex-col rounded-lg border bg-card shadow-sm transition-all duration-300 hover:shadow-lg cursor-pointer ${
+      className={`group flex flex-col rounded-lg border bg-card shadow-sm transition-all duration-300 hover:shadow-lg cursor-pointer overflow-hidden ${
         completed ? "border-success/50" : "border-border hover:border-primary/30"
       }`}
     >
+      {/* Thumbnail */}
+      <div className="relative h-28 overflow-hidden">
+        <img
+          src={getCourseThumbnail(course)}
+          alt={course.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        {completed && (
+          <div className="absolute top-2 right-2 bg-success/90 backdrop-blur-sm rounded-full p-1">
+            <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+          </div>
+        )}
+        {course.duration_hours && (
+          <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm rounded-md px-2 py-0.5 text-[10px] text-white flex items-center gap-1">
+            <Clock className="h-2.5 w-2.5" />
+            {course.duration_hours}h
+          </div>
+        )}
+      </div>
       {/* Card Top */}
       <div className="p-4 flex-1 space-y-3">
-        <div className="flex items-start justify-between gap-2">
-          <h4 className="font-medium text-sm text-foreground line-clamp-2 leading-snug">{course.title}</h4>
-          {completed && <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />}
-        </div>
+        <h4 className="font-medium text-sm text-foreground line-clamp-2 leading-snug">{course.title}</h4>
 
         <div className="flex flex-wrap gap-1.5">
           <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-5 ${difficulty.color}`}>
@@ -405,6 +423,7 @@ const LearningTracks = ({ courses }: LearningTracksProps) => {
         icon={Layers}
         title="No learning tracks available"
         description="Courses will be organized into learning tracks once your admin publishes training programs."
+        illustration={<NoCoursesSVG />}
       />
     );
   }
