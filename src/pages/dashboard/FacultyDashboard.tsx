@@ -548,7 +548,10 @@ const FacultyDashboard = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto focus:outline-none p-6">
+        <main className="flex-1 overflow-auto focus:outline-none p-6 relative">
+          {/* Subtle background decorations */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.02] rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent/[0.02] rounded-full blur-3xl pointer-events-none" />
           {activeSection === "calendar" ? <MyCalendar /> : activeSection === "courses" ? <CoursesViewer /> : activeSection === "performance" ? <PerformanceAssessment /> : activeSection === "motivation" ? <MotivationTools /> : activeSection === "activities" ? (
             <motion.div
               initial={{ opacity: 0 }}
