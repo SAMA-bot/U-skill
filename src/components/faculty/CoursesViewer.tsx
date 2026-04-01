@@ -301,6 +301,7 @@ const CoursesViewer = () => {
             icon={BookOpen}
             title="No learning paths available"
             description="Learning paths will appear here once your admin publishes them."
+            illustration={<NoCoursesSVG />}
           />
         )
       ) : (
