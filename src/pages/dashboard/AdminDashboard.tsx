@@ -123,24 +123,10 @@ const AdminDashboard = () => {
   const selectedFacultyScore = usePerformanceScore(selectedFacultyId || undefined);
   const navigate = useNavigate();
   const { user, loading: authLoading, signOut } = useAuth();
-  const { isAdmin, loading: roleLoading } = useUserRole();
+  const { isAdmin, roles, loading: roleLoading } = useUserRole();
   const { toast } = useToast();
 
-  // Redirect if not logged in or not admin
-  useEffect(() => {
-    if (!authLoading && !roleLoading) {
-      if (!user) {
-        navigate('/auth/login');
-      } else if (!isAdmin) {
-        navigate('/dashboard');
-        toast({
-          title: "Access Denied",
-          description: "You don't have permission to access the admin dashboard.",
-          variant: "destructive",
-        });
-      }
-    }
-  }, [user, isAdmin, authLoading, roleLoading, navigate, toast]);
+  // Auth & role check handled by ProtectedRoute
 
   // Fetch all data
   useEffect(() => {
@@ -417,14 +403,16 @@ const AdminDashboard = () => {
             </nav>
 
             <div className="px-2 pt-4 pb-2 border-t border-border">
-              <button
-                onClick={() => navigate('/dashboard')}
-                className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`}
-                title={sidebarCollapsed ? "Back to Faculty Dashboard" : undefined}
-              >
-                <ArrowLeft className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
-                {!sidebarCollapsed && "Back to Faculty Dashboard"}
-              </button>
+              {roles.length > 1 && (
+                <button
+                  onClick={() => navigate('/select-role')}
+                  className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`}
+                  title={sidebarCollapsed ? "Switch Role" : undefined}
+                >
+                  <ArrowLeft className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
+                  {!sidebarCollapsed && "Switch Role"}
+                </button>
+              )}
               <button
                 onClick={() => navigate('/dashboard/settings')}
                 className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`}

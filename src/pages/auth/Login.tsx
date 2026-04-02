@@ -29,7 +29,7 @@ export default function Login() {
   // Redirect if already logged in
   useEffect(() => {
     if (!loading && user) {
-      navigate('/dashboard');
+      navigate('/select-role');
     }
   }, [user, loading, navigate]);
 
@@ -69,7 +69,7 @@ export default function Login() {
       title: "Login Successful",
       description: "Welcome to your dashboard!",
     });
-    navigate('/dashboard');
+    navigate('/select-role');
     setIsLoading(false);
   };
 

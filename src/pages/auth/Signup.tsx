@@ -52,7 +52,7 @@ export default function Signup() {
   // Redirect if already logged in
   useEffect(() => {
     if (!loading && user) {
-      navigate('/dashboard');
+      navigate('/select-role');
     }
   }, [user, loading, navigate]);
 
@@ -107,7 +107,7 @@ export default function Signup() {
       title: "Account Created",
       description: "Welcome! Redirecting to your dashboard...",
     });
-    navigate('/dashboard');
+    navigate('/select-role');
     setIsLoading(false);
   };
 

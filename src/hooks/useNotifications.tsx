@@ -203,7 +203,7 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-  const { role } = useUserRole();
+  const { activeRole: role } = useUserRole();
 
   const generateNotifications = useCallback(async () => {
     if (!user) {

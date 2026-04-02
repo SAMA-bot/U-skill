@@ -103,8 +103,7 @@ const FacultyDashboard = () => {
     signOut
   } = useAuth();
   const {
-    isAdmin,
-    isHod
+    roles
   } = useUserRole();
   const {
     toast
@@ -112,12 +111,7 @@ const FacultyDashboard = () => {
   const { selectedYear, getDateRangeForYear } = useAcademicYear();
   const performanceScoreData = usePerformanceScore(user?.id);
 
-  // Redirect if not logged in
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth/login');
-    }
-  }, [user, loading, navigate]);
+  // Auth check handled by ProtectedRoute
 
   // Fetch user data on mount, when user changes, or when academic year changes
   useEffect(() => {
@@ -527,13 +521,9 @@ const FacultyDashboard = () => {
             </nav>
 
             <div className="px-2 pt-4 pb-2 border-t border-border">
-              {isAdmin && <button onClick={() => navigate('/admin')} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`} title={sidebarCollapsed ? "Admin Dashboard" : undefined}>
-                  <Shield className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
-                  {!sidebarCollapsed && "Admin Dashboard"}
-                </button>}
-              {isHod && <button onClick={() => navigate('/hod')} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`} title={sidebarCollapsed ? "HOD Dashboard" : undefined}>
-                  <Building2 className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
-                  {!sidebarCollapsed && "HOD Dashboard"}
+              {roles.length > 1 && <button onClick={() => navigate('/select-role')} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`} title={sidebarCollapsed ? "Switch Role" : undefined}>
+                  <ArrowRight className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
+                  {!sidebarCollapsed && "Switch Role"}
                 </button>}
               <button onClick={() => navigate('/dashboard/settings')} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`} title={sidebarCollapsed ? "Settings" : undefined}>
                 <Settings className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
