@@ -405,7 +405,15 @@ export type Database = {
           rating?: number
           reviewer_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_faculty_feedback_faculty_id"
+            columns: ["faculty_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       learning_modules: {
         Row: {
