@@ -289,9 +289,9 @@ const TimelineItem = ({ log, index }: { log: LogEntry; index: number }) => {
 // --- Main Component ---
 const ActivityLogTimeline = () => {
   const { user } = useAuth();
-  const { role } = useUserRole();
-  const allowedActions = getAllowedActions(role);
-  const categoryFilters = getCategoryFiltersForRole(role);
+  const { activeRole } = useUserRole();
+  const allowedActions = getAllowedActions(activeRole);
+  const categoryFilters = getCategoryFiltersForRole(activeRole);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState("all");

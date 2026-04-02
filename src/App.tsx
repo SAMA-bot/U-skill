@@ -6,11 +6,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/hooks/useAuth";
 import { AcademicYearProvider } from "@/contexts/AcademicYearContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import SelectRole from "./pages/SelectRole";
 import FacultyDashboard from "./pages/dashboard/FacultyDashboard";
 import ProfileSettings from "./pages/dashboard/ProfileSettings";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
@@ -34,12 +36,13 @@ const App = () => (
                 <Route path="/auth/login" element={<Login />} />
                 <Route path="/auth/signup" element={<Signup />} />
                 <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-                <Route path="/dashboard" element={<FacultyDashboard />} />
-                <Route path="/dashboard/settings" element={<ProfileSettings />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/hod" element={<HodDashboard />} />
-                <Route path="/learning-track/:trackKey" element={<LearningTrackPage />} />
-                <Route path="/courses/:courseId" element={<CourseDetailPage />} />
+                <Route path="/select-role" element={<ProtectedRoute><SelectRole /></ProtectedRoute>} />
+                <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['faculty']}><FacultyDashboard /></ProtectedRoute>} />
+                <Route path="/dashboard/settings" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
+                <Route path="/hod" element={<ProtectedRoute allowedRoles={['hod']}><HodDashboard /></ProtectedRoute>} />
+                <Route path="/learning-track/:trackKey" element={<ProtectedRoute><LearningTrackPage /></ProtectedRoute>} />
+                <Route path="/courses/:courseId" element={<ProtectedRoute><CourseDetailPage /></ProtectedRoute>} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
