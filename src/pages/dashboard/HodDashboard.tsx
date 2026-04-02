@@ -71,15 +71,7 @@ const HodDashboard = () => {
   const { toast } = useToast();
   const { selectedYear, getDateRangeForYear } = useAcademicYear();
 
-  useEffect(() => {
-    if (!loading && !user) navigate("/auth/login");
-  }, [user, loading, navigate]);
-
-  useEffect(() => {
-    if (!loading && !roleLoading && !isHod && !isAdmin) {
-      navigate("/dashboard");
-    }
-  }, [isHod, isAdmin, loading, roleLoading, navigate]);
+  // Auth & role check handled by ProtectedRoute
 
   useEffect(() => {
     if (user) fetchHodDepartment();

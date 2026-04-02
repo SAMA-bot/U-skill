@@ -126,21 +126,7 @@ const AdminDashboard = () => {
   const { isAdmin, loading: roleLoading } = useUserRole();
   const { toast } = useToast();
 
-  // Redirect if not logged in or not admin
-  useEffect(() => {
-    if (!authLoading && !roleLoading) {
-      if (!user) {
-        navigate('/auth/login');
-      } else if (!isAdmin) {
-        navigate('/dashboard');
-        toast({
-          title: "Access Denied",
-          description: "You don't have permission to access the admin dashboard.",
-          variant: "destructive",
-        });
-      }
-    }
-  }, [user, isAdmin, authLoading, roleLoading, navigate, toast]);
+  // Auth & role check handled by ProtectedRoute
 
   // Fetch all data
   useEffect(() => {

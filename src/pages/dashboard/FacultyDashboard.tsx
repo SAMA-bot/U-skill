@@ -112,12 +112,7 @@ const FacultyDashboard = () => {
   const { selectedYear, getDateRangeForYear } = useAcademicYear();
   const performanceScoreData = usePerformanceScore(user?.id);
 
-  // Redirect if not logged in
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth/login');
-    }
-  }, [user, loading, navigate]);
+  // Auth check handled by ProtectedRoute
 
   // Fetch user data on mount, when user changes, or when academic year changes
   useEffect(() => {
