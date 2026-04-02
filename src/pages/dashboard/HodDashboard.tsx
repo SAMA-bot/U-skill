@@ -67,7 +67,7 @@ const HodDashboard = () => {
 
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
-  const { isHod, isAdmin, loading: roleLoading } = useUserRole();
+  const { roles, loading: roleLoading } = useUserRole();
   const { toast } = useToast();
   const { selectedYear, getDateRangeForYear } = useAcademicYear();
 
