@@ -107,7 +107,7 @@ export default function Signup() {
       title: "Account Created",
       description: "Welcome! Redirecting to your dashboard...",
     });
-    navigate('/dashboard');
+    navigate('/select-role');
     setIsLoading(false);
   };
 
