@@ -52,7 +52,7 @@ export default function Signup() {
   // Redirect if already logged in
   useEffect(() => {
     if (!loading && user) {
-      navigate('/dashboard');
+      navigate('/select-role');
     }
   }, [user, loading, navigate]);
 
