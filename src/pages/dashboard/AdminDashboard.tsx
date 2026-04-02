@@ -123,7 +123,7 @@ const AdminDashboard = () => {
   const selectedFacultyScore = usePerformanceScore(selectedFacultyId || undefined);
   const navigate = useNavigate();
   const { user, loading: authLoading, signOut } = useAuth();
-  const { isAdmin, loading: roleLoading } = useUserRole();
+  const { isAdmin, roles, loading: roleLoading } = useUserRole();
   const { toast } = useToast();
 
   // Auth & role check handled by ProtectedRoute
