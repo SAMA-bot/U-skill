@@ -69,7 +69,7 @@ export default function Login() {
       title: "Login Successful",
       description: "Welcome to your dashboard!",
     });
-    navigate('/dashboard');
+    navigate('/select-role');
     setIsLoading(false);
   };
 
