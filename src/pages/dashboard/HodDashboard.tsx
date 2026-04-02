@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Home, BarChart3, Users, GraduationCap, Star, Settings, LogOut, Menu, X,
   Loader2, TrendingUp, Award, Clock, Shield, PanelLeftClose, PanelLeft,
-  Calendar, Activity, FolderUp, ClipboardList, FileCheck, MessageSquarePlus,
+  Calendar, Activity, FolderUp, ClipboardList, FileCheck, MessageSquarePlus, ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

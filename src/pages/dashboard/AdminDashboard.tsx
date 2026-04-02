@@ -403,14 +403,16 @@ const AdminDashboard = () => {
             </nav>
 
             <div className="px-2 pt-4 pb-2 border-t border-border">
-              <button
-                onClick={() => navigate('/dashboard')}
-                className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`}
-                title={sidebarCollapsed ? "Back to Faculty Dashboard" : undefined}
-              >
-                <ArrowLeft className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
-                {!sidebarCollapsed && "Back to Faculty Dashboard"}
-              </button>
+              {roles.length > 1 && (
+                <button
+                  onClick={() => navigate('/select-role')}
+                  className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`}
+                  title={sidebarCollapsed ? "Switch Role" : undefined}
+                >
+                  <ArrowLeft className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
+                  {!sidebarCollapsed && "Switch Role"}
+                </button>
+              )}
               <button
                 onClick={() => navigate('/dashboard/settings')}
                 className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`}
