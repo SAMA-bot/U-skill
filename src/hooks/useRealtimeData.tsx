@@ -2,10 +2,20 @@ import { useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
+// Only tables still in supabase_realtime publication will receive live updates.
+// Other tables listed here will silently not receive events (safe fallback).
 type TableName = 
   | "activities"
   | "courses"
-  | "course_enrollments";
+  | "course_enrollments"
+  | "performance_metrics"
+  | "capacity_skills"
+  | "motivation_scores"
+  | "profiles"
+  | "calendar_events"
+  | "achievement_badges"
+  | "faculty_feedback"
+  | "faculty_documents";
 
 interface UseRealtimeDataOptions {
   table: TableName;
