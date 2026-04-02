@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole, AppRole } from '@/hooks/useUserRole';
 import { Loader2 } from 'lucide-react';
@@ -12,6 +12,7 @@ interface ProtectedRouteProps {
 export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { user, loading: authLoading } = useAuth();
   const { activeRole, roles, loading: roleLoading } = useUserRole();
+  const location = useLocation();
 
   if (authLoading || roleLoading) {
     return (
@@ -25,8 +26,8 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
     return <Navigate to="/auth/login" replace />;
   }
 
-  // User has multiple roles but hasn't selected one yet
-  if (roles.length > 1 && !activeRole) {
+  // User has multiple roles but hasn't selected one yet (skip if already on select-role)
+  if (roles.length > 1 && !activeRole && location.pathname !== '/select-role') {
     return <Navigate to="/select-role" replace />;
   }
 
