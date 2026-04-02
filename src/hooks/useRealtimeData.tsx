@@ -3,17 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 type TableName = 
-  | "performance_metrics"
-  | "capacity_skills"
-  | "motivation_scores"
   | "activities"
   | "courses"
-  | "course_enrollments"
-  | "profiles"
-  | "calendar_events"
-  | "achievement_badges"
-  | "faculty_feedback"
-  | "faculty_documents";
+  | "course_enrollments";
 
 interface UseRealtimeDataOptions {
   table: TableName;
