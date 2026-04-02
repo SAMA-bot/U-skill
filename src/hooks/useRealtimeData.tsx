@@ -2,28 +2,17 @@ import { useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
-// Tables currently in supabase_realtime publication:
-// calendar_events, daily_checklist, lesson_progress, user_streaks, 
-// learning_paths, learning_modules, lessons, lesson_content,
-// performance_goals, self_assessments, reflection_journal, rate_limits, user_roles
-// 
-// The following were removed for security:
-// profiles, faculty_feedback, faculty_documents, achievement_badges,
-// performance_metrics, motivation_scores, capacity_skills,
-// activities, courses, course_enrollments
-type TableName =
-  | "calendar_events"
-  | "daily_checklist"
-  | "lesson_progress"
-  | "user_streaks"
-  | "learning_paths"
-  | "learning_modules"
-  | "lessons"
-  | "lesson_content"
-  | "performance_goals"
-  | "self_assessments"
-  | "reflection_journal"
-  | "user_roles";
+// Tables currently in supabase_realtime publication will receive live updates.
+// Subscriptions to removed tables will silently receive no events (safe fallback).
+//
+// Active: calendar_events, daily_checklist, lesson_progress, user_streaks,
+//   learning_paths, learning_modules, lessons, lesson_content,
+//   performance_goals, self_assessments, reflection_journal, user_roles
+//
+// Removed for security: profiles, faculty_feedback, faculty_documents,
+//   achievement_badges, performance_metrics, motivation_scores,
+//   capacity_skills, activities, courses, course_enrollments
+type TableName = string;
 
 interface UseRealtimeDataOptions {
   table: TableName;
