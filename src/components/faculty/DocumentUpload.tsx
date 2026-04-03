@@ -86,6 +86,7 @@ export default function DocumentUpload() {
     useFacultyDocuments();
   const [isOpen, setIsOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [documentType, setDocumentType] = useState<DocumentType>("certificate");
@@ -355,15 +356,19 @@ export default function DocumentUpload() {
                         )}
                       </div>
                     </div>
-                    {doc.status === "pending" && (
-                      <AlertDialog>
+                    <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
                             size="sm"
                             variant="ghost"
                             className="text-destructive hover:text-destructive"
+                            disabled={deletingId === doc.id}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            {deletingId === doc.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
@@ -377,7 +382,11 @@ export default function DocumentUpload() {
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() => deleteDocument(doc.id)}
+                              onClick={async () => {
+                                setDeletingId(doc.id);
+                                await deleteDocument(doc.id);
+                                setDeletingId(null);
+                              }}
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
                               Delete
@@ -385,7 +394,6 @@ export default function DocumentUpload() {
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
-                    )}
                   </div>
                 </motion.div>
               );

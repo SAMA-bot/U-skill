@@ -9,6 +9,7 @@ import {
   Eye,
   Search,
   Filter,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
@@ -102,6 +114,7 @@ export default function DocumentReview() {
   const [adminComment, setAdminComment] = useState("");
   const [processing, setProcessing] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -319,6 +332,36 @@ export default function DocumentReview() {
     } catch {
       // Fallback: try using URL directly
       window.open(doc.document_url, "_blank");
+    }
+  };
+
+  const handleDelete = async (doc: DocumentWithProfile) => {
+    setDeletingId(doc.id);
+    try {
+      if (doc.document_url) {
+        const filePath = doc.document_url.replace(/.*faculty-documents\//, "");
+        console.log("[admin deleteDocument] file_path:", filePath);
+        const { error: storageError } = await supabase.storage
+          .from("faculty-documents")
+          .remove([filePath]);
+        if (storageError) {
+          console.error("[admin deleteDocument] Storage error:", storageError);
+          throw new Error("Failed to remove file from storage");
+        }
+      }
+      const { error } = await supabase
+        .from("faculty_documents" as any)
+        .delete()
+        .eq("id", doc.id);
+      if (error) throw error;
+
+      setDocuments((prev) => prev.filter((d) => d.id !== doc.id));
+      toast({ title: "Document deleted", description: `"${doc.title}" has been removed.` });
+    } catch (error: any) {
+      console.error("[admin deleteDocument] Error:", error);
+      toast({ title: "Delete failed", description: getUserFriendlyError(error, "general"), variant: "destructive" });
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -551,6 +594,40 @@ export default function DocumentReview() {
                               {doc.reviewed_at && `Reviewed ${formatDate(doc.reviewed_at)}`}
                             </span>
                           )}
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                disabled={deletingId === doc.id}
+                                title="Delete document"
+                              >
+                                {deletingId === doc.id ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Document</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete "{doc.title}" by {doc.full_name}? This will remove the file permanently.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDelete(doc)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </TableCell>
                     </TableRow>
