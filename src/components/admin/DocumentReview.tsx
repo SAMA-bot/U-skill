@@ -335,6 +335,36 @@ export default function DocumentReview() {
     }
   };
 
+  const handleDelete = async (doc: DocumentWithProfile) => {
+    setDeletingId(doc.id);
+    try {
+      if (doc.document_url) {
+        const filePath = doc.document_url.replace(/.*faculty-documents\//, "");
+        console.log("[admin deleteDocument] file_path:", filePath);
+        const { error: storageError } = await supabase.storage
+          .from("faculty-documents")
+          .remove([filePath]);
+        if (storageError) {
+          console.error("[admin deleteDocument] Storage error:", storageError);
+          throw new Error("Failed to remove file from storage");
+        }
+      }
+      const { error } = await supabase
+        .from("faculty_documents" as any)
+        .delete()
+        .eq("id", doc.id);
+      if (error) throw error;
+
+      setDocuments((prev) => prev.filter((d) => d.id !== doc.id));
+      toast({ title: "Document deleted", description: `"${doc.title}" has been removed.` });
+    } catch (error: any) {
+      console.error("[admin deleteDocument] Error:", error);
+      toast({ title: "Delete failed", description: getUserFriendlyError(error, "general"), variant: "destructive" });
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   const getInitials = (name: string) =>
     name
       .split(" ")
