@@ -114,6 +114,7 @@ export default function DocumentReview() {
   const [adminComment, setAdminComment] = useState("");
   const [processing, setProcessing] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
