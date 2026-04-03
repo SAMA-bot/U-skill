@@ -134,9 +134,25 @@ export const useFacultyDocuments = (allUsers?: boolean) => {
 
   const deleteDocument = async (docId: string) => {
     try {
-      // Find the document to get its storage path
       const doc = documents.find((d) => d.id === docId);
+      const filePath = doc?.document_url;
 
+      console.log("[deleteDocument] file_path:", filePath, "user:", user?.id);
+
+      // Step 1: Delete file from storage first
+      if (filePath) {
+        const { error: storageError } = await supabase.storage
+          .from("faculty-documents")
+          .remove([filePath]);
+
+        if (storageError) {
+          console.error("[deleteDocument] Storage delete failed:", storageError);
+          throw new Error("Failed to remove file from storage");
+        }
+        console.log("[deleteDocument] Storage file removed successfully");
+      }
+
+      // Step 2: Delete DB record only after storage succeeds
       const { error } = await supabase
         .from("faculty_documents" as any)
         .delete()
@@ -144,20 +160,14 @@ export const useFacultyDocuments = (allUsers?: boolean) => {
 
       if (error) throw error;
 
-      // Also remove the file from storage if we have the path
-      if (doc?.document_url) {
-        await supabase.storage
-          .from("faculty-documents")
-          .remove([doc.document_url]);
-      }
-
+      console.log("[deleteDocument] DB record removed successfully");
       setDocuments((prev) => prev.filter((d) => d.id !== docId));
       toast({
         title: "Document deleted",
         description: "The document has been removed.",
       });
     } catch (error: any) {
-      console.error("Error deleting document:", error);
+      console.error("[deleteDocument] Error:", error);
       toast({
         title: "Delete failed",
         description: getUserFriendlyError(error, "general"),
