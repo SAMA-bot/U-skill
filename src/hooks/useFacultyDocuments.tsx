@@ -134,12 +134,22 @@ export const useFacultyDocuments = (allUsers?: boolean) => {
 
   const deleteDocument = async (docId: string) => {
     try {
+      // Find the document to get its storage path
+      const doc = documents.find((d) => d.id === docId);
+
       const { error } = await supabase
         .from("faculty_documents" as any)
         .delete()
         .eq("id", docId);
 
       if (error) throw error;
+
+      // Also remove the file from storage if we have the path
+      if (doc?.document_url) {
+        await supabase.storage
+          .from("faculty-documents")
+          .remove([doc.document_url]);
+      }
 
       setDocuments((prev) => prev.filter((d) => d.id !== docId));
       toast({
