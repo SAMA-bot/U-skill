@@ -86,6 +86,8 @@ export default function DocumentUpload() {
     useFacultyDocuments();
   const [isOpen, setIsOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [documentType, setDocumentType] = useState<DocumentType>("certificate");
