@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { toast as sonnerToast } from "sonner";
 import { getUserFriendlyError } from "@/lib/errorMessages";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
 
@@ -21,6 +22,8 @@ export interface FacultyDocument {
   reviewed_at: string | null;
   created_at: string;
   updated_at: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
 }
 
 export const DOCUMENT_TYPES: { value: DocumentType; label: string }[] = [
@@ -132,39 +135,70 @@ export const useFacultyDocuments = (allUsers?: boolean) => {
     }
   };
 
+  const undoTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
   const deleteDocument = async (docId: string) => {
+    if (!user) return;
+    const doc = documents.find((d) => d.id === docId);
+    if (!doc) return;
+
     try {
-      const doc = documents.find((d) => d.id === docId);
-      const filePath = doc?.document_url;
+      console.log("[deleteDocument] Soft deleting:", doc.document_url, "user:", user.id);
 
-      console.log("[deleteDocument] file_path:", filePath, "user:", user?.id);
-
-      // Step 1: Delete file from storage first
-      if (filePath) {
-        const { error: storageError } = await supabase.storage
-          .from("faculty-documents")
-          .remove([filePath]);
-
-        if (storageError) {
-          console.error("[deleteDocument] Storage delete failed:", storageError);
-          throw new Error("Failed to remove file from storage");
-        }
-        console.log("[deleteDocument] Storage file removed successfully");
-      }
-
-      // Step 2: Delete DB record only after storage succeeds
+      // Step 1: Soft delete in DB (triggers audit log automatically)
       const { error } = await supabase
         .from("faculty_documents" as any)
-        .delete()
+        .update({
+          deleted_at: new Date().toISOString(),
+          deleted_by: user.id,
+        } as any)
         .eq("id", docId);
 
       if (error) throw error;
 
-      console.log("[deleteDocument] DB record removed successfully");
+      // Step 2: Optimistically remove from UI
       setDocuments((prev) => prev.filter((d) => d.id !== docId));
-      toast({
-        title: "Document deleted",
-        description: "The document has been removed.",
+
+      // Step 3: Show undo snackbar (5 seconds)
+      const timer = setTimeout(async () => {
+        // After 5s, permanently remove the storage file
+        undoTimers.current.delete(docId);
+        if (doc.document_url) {
+          await supabase.storage.from("faculty-documents").remove([doc.document_url]);
+          console.log("[deleteDocument] Storage file permanently removed");
+        }
+      }, 5000);
+
+      undoTimers.current.set(docId, timer);
+
+      sonnerToast("Document deleted", {
+        description: `"${doc.title}" has been removed.`,
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            // Cancel the permanent deletion timer
+            const t = undoTimers.current.get(docId);
+            if (t) {
+              clearTimeout(t);
+              undoTimers.current.delete(docId);
+            }
+            // Restore the document
+            const { error: restoreError } = await supabase
+              .from("faculty_documents" as any)
+              .update({ deleted_at: null, deleted_by: null } as any)
+              .eq("id", docId);
+
+            if (restoreError) {
+              console.error("[deleteDocument] Undo failed:", restoreError);
+              sonnerToast.error("Failed to undo deletion");
+              return;
+            }
+            // Re-add to UI
+            setDocuments((prev) => [doc, ...prev]);
+            sonnerToast.success("Document restored");
+          },
+        },
+        duration: 5000,
       });
     } catch (error: any) {
       console.error("[deleteDocument] Error:", error);

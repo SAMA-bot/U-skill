@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { toast as sonnerToast } from "sonner";
 import { motion } from "framer-motion";
 import {
   CheckCircle2,
@@ -335,28 +336,63 @@ export default function DocumentReview() {
     }
   };
 
+  const undoTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
   const handleDelete = async (doc: DocumentWithProfile) => {
     setDeletingId(doc.id);
     try {
-      if (doc.document_url) {
-        const filePath = doc.document_url.replace(/.*faculty-documents\//, "");
-        console.log("[admin deleteDocument] file_path:", filePath);
-        const { error: storageError } = await supabase.storage
-          .from("faculty-documents")
-          .remove([filePath]);
-        if (storageError) {
-          console.error("[admin deleteDocument] Storage error:", storageError);
-          throw new Error("Failed to remove file from storage");
-        }
-      }
+      console.log("[admin deleteDocument] Soft deleting:", doc.id, "user:", user?.id);
+
+      // Soft delete
       const { error } = await supabase
         .from("faculty_documents" as any)
-        .delete()
+        .update({
+          deleted_at: new Date().toISOString(),
+          deleted_by: user?.id,
+        } as any)
         .eq("id", doc.id);
+
       if (error) throw error;
 
       setDocuments((prev) => prev.filter((d) => d.id !== doc.id));
-      toast({ title: "Document deleted", description: `"${doc.title}" has been removed.` });
+
+      // Schedule permanent storage file removal after 5s
+      const timer = setTimeout(async () => {
+        undoTimers.current.delete(doc.id);
+        if (doc.document_url) {
+          const filePath = doc.document_url.replace(/.*faculty-documents\//, "");
+          await supabase.storage.from("faculty-documents").remove([filePath]);
+          console.log("[admin deleteDocument] Storage file permanently removed");
+        }
+      }, 5000);
+
+      undoTimers.current.set(doc.id, timer);
+
+      sonnerToast("Document deleted", {
+        description: `"${doc.title}" by ${doc.full_name} has been removed.`,
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            const t = undoTimers.current.get(doc.id);
+            if (t) {
+              clearTimeout(t);
+              undoTimers.current.delete(doc.id);
+            }
+            const { error: restoreError } = await supabase
+              .from("faculty_documents" as any)
+              .update({ deleted_at: null, deleted_by: null } as any)
+              .eq("id", doc.id);
+
+            if (restoreError) {
+              sonnerToast.error("Failed to undo deletion");
+              return;
+            }
+            setDocuments((prev) => [doc, ...prev]);
+            sonnerToast.success("Document restored");
+          },
+        },
+        duration: 5000,
+      });
     } catch (error: any) {
       console.error("[admin deleteDocument] Error:", error);
       toast({ title: "Delete failed", description: getUserFriendlyError(error, "general"), variant: "destructive" });
