@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -13,23 +13,32 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <Button variant="ghost" size="icon" className="w-9 h-9">
+      <Button variant="ghost" size="icon" className="w-9 h-9" aria-label="Toggle theme">
         <Sun className="w-4 h-4" />
       </Button>
     );
   }
 
+  const isDark = resolvedTheme === 'dark';
+
+  const toggleTheme = () => {
+    const newTheme = isDark ? 'light' : 'dark';
+    console.log('[ThemeToggle] Switching theme:', resolvedTheme, '→', newTheme);
+    setTheme(newTheme);
+  };
+
   return (
     <Button
       variant="ghost"
       size="icon"
-      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-      className="w-9 h-9 rounded-lg hover:bg-secondary"
+      onClick={toggleTheme}
+      className="w-9 h-9 rounded-lg hover:bg-secondary transition-colors"
+      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
-      {theme === 'dark' ? (
-        <Sun className="w-4 h-4 text-foreground" />
+      {isDark ? (
+        <Sun className="w-4 h-4 text-foreground transition-transform duration-300 rotate-0" />
       ) : (
-        <Moon className="w-4 h-4 text-foreground" />
+        <Moon className="w-4 h-4 text-foreground transition-transform duration-300 rotate-0" />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>
