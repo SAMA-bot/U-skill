@@ -335,6 +335,8 @@ export type Database = {
       faculty_documents: {
         Row: {
           created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
           document_type: string
           document_url: string
           file_name: string
@@ -349,6 +351,8 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           document_type?: string
           document_url: string
           file_name: string
@@ -363,6 +367,8 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
           document_type?: string
           document_url?: string
           file_name?: string
