@@ -113,7 +113,7 @@ export function Header() {
             exit={{ opacity: 0, height: 0 }}
             className="lg:hidden backdrop-blur-xl border-b border-border/50"
             style={{
-              background: 'linear-gradient(180deg, hsl(228 14% 7% / 0.95), hsl(228 14% 7% / 0.9))',
+              background: 'linear-gradient(180deg, hsl(var(--background) / 0.95), hsl(var(--background) / 0.9))',
             }}
           >
             <div className="container-wide mx-auto px-4 py-4 flex flex-col gap-1">
