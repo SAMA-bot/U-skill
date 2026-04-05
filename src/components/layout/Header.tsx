@@ -45,7 +45,7 @@ export function Header() {
           : 'bg-transparent'
       }`}
       style={isScrolled ? {
-        background: 'linear-gradient(180deg, hsl(228 14% 7% / 0.9), hsl(228 14% 7% / 0.7))',
+        background: 'linear-gradient(180deg, hsl(var(--background) / 0.9), hsl(var(--background) / 0.7))',
       } : undefined}
     >
       <nav className="container-wide mx-auto px-4 md:px-8">
