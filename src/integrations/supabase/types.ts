@@ -970,6 +970,7 @@ export type Database = {
       }
     }
     Functions: {
+      auto_award_badges: { Args: never; Returns: undefined }
       check_rate_limit: {
         Args: {
           p_action_type: string
