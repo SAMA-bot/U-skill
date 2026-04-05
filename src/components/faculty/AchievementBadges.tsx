@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Award, Star, BookOpen, Flame, Target, Zap, Trophy, GraduationCap, Loader2 } from "lucide-react";
+import { Award, Star, BookOpen, Flame, Target, Zap, Trophy, GraduationCap, Loader2, Clock } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
 
 interface Badge {
   id: string;
@@ -23,24 +22,29 @@ const iconMap: Record<string, typeof Award> = {
   zap: Zap,
   trophy: Trophy,
   graduation: GraduationCap,
+  clock: Clock,
 };
 
 const allBadges = [
-  { name: "First Steps", icon: "star", description: "Complete your first activity", check: "activity_count >= 1" },
-  { name: "Dedicated Learner", icon: "book", description: "Complete 5 activities", check: "activity_count >= 5" },
-  { name: "Course Champion", icon: "graduation", description: "Complete 3 courses", check: "course_count >= 3" },
-  { name: "Streak Master", icon: "flame", description: "Reach a 7-day login streak", check: "login_streak >= 7" },
-  { name: "Goal Setter", icon: "target", description: "Set your first performance goal", check: "has_goals" },
-  { name: "Reflective Mind", icon: "book", description: "Write 5 journal entries", check: "journal_count >= 5" },
-  { name: "High Performer", icon: "trophy", description: "Reach 80+ performance score", check: "perf_score >= 80" },
-  { name: "Unstoppable", icon: "zap", description: "Reach a 30-day login streak", check: "login_streak >= 30" },
+  { name: "First Steps", icon: "star", description: "Complete your first activity" },
+  { name: "Dedicated Learner", icon: "book", description: "Complete 5 activities" },
+  { name: "First Course", icon: "graduation", description: "Complete your first course" },
+  { name: "Course Champion", icon: "graduation", description: "Complete 3 courses" },
+  { name: "Getting Started", icon: "flame", description: "Reach a 3-day login streak" },
+  { name: "Streak Master", icon: "flame", description: "Reach a 7-day login streak" },
+  { name: "Streak Legend", icon: "flame", description: "Reach a 15-day login streak" },
+  { name: "Unstoppable", icon: "zap", description: "Reach a 30-day login streak" },
+  { name: "Training Enthusiast", icon: "target", description: "Complete 10 hours of training" },
+  { name: "Training Expert", icon: "trophy", description: "Complete 50 hours of training" },
+  { name: "Reflective Mind", icon: "book", description: "Write 5 journal entries" },
+  { name: "High Performer", icon: "trophy", description: "Reach 80+ performance score" },
+  { name: "Goal Setter", icon: "target", description: "Set your first performance goal" },
 ];
 
 const AchievementBadges = () => {
   const [earnedBadges, setEarnedBadges] = useState<Badge[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-  const { toast } = useToast();
 
   useEffect(() => {
     if (user) checkAndFetchBadges();
@@ -50,51 +54,25 @@ const AchievementBadges = () => {
     if (!user) return;
 
     try {
-      // Fetch counts in parallel
-      const [activitiesRes, coursesRes, streakRes, journalRes, perfRes] = await Promise.all([
-        supabase.from("activities").select("id", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "completed"),
-        supabase.from("course_enrollments").select("id", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "completed"),
-        supabase.from("user_streaks").select("longest_streak").eq("user_id", user.id).eq("streak_type", "daily_login").maybeSingle(),
-        supabase.from("reflection_journal").select("id", { count: "exact", head: true }).eq("user_id", user.id),
-        supabase.from("performance_metrics").select("teaching_score, research_score, service_score").eq("user_id", user.id).order("year", { ascending: false }).limit(1).maybeSingle(),
-      ]);
+      // Call the server-side function to auto-award any new badges
+      await supabase.rpc("auto_award_badges" as any);
 
-      const activityCount = activitiesRes.count || 0;
-      const courseCount = coursesRes.count || 0;
-      const loginStreak = streakRes.data?.longest_streak || 0;
-      const journalCount = journalRes.count || 0;
-      const perfScore = perfRes.data
-        ? Math.round(((perfRes.data.teaching_score || 0) + (perfRes.data.research_score || 0) + (perfRes.data.service_score || 0)) / 3)
-        : 0;
+      // Also do client-side check for "Goal Setter" (needs performance_goals table)
+      const { count: goalCount } = await supabase
+        .from("performance_goals")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id);
 
-      // Check which badges should be earned
-      const shouldEarn: { name: string; icon: string; description: string }[] = [];
-
-      for (const badge of allBadges) {
-        let earned = false;
-        if (badge.check === "activity_count >= 1") earned = activityCount >= 1;
-        else if (badge.check === "activity_count >= 5") earned = activityCount >= 5;
-        else if (badge.check === "course_count >= 3") earned = courseCount >= 3;
-        else if (badge.check === "login_streak >= 7") earned = loginStreak >= 7;
-        else if (badge.check === "has_goals") earned = activityCount >= 1; // Simplified
-        else if (badge.check === "journal_count >= 5") earned = journalCount >= 5;
-        else if (badge.check === "perf_score >= 80") earned = perfScore >= 80;
-        else if (badge.check === "login_streak >= 30") earned = loginStreak >= 30;
-
-        if (earned) shouldEarn.push({ name: badge.name, icon: badge.icon, description: badge.description });
-      }
-
-      // Insert new badges (ignore conflicts)
-      for (const badge of shouldEarn) {
+      if ((goalCount || 0) >= 1) {
         await supabase
           .from("achievement_badges")
           .upsert(
-            { user_id: user.id, badge_name: badge.name, badge_icon: badge.icon, description: badge.description },
+            { user_id: user.id, badge_name: "Goal Setter", badge_icon: "target", description: "Set your first performance goal" },
             { onConflict: "user_id,badge_name", ignoreDuplicates: true }
           );
       }
 
-      // Fetch earned badges
+      // Fetch all earned badges
       const { data } = await supabase
         .from("achievement_badges")
         .select("*")
@@ -103,7 +81,7 @@ const AchievementBadges = () => {
 
       if (data) setEarnedBadges(data as Badge[]);
     } catch (err) {
-      console.error(err);
+      console.error("Error checking badges:", err);
     } finally {
       setLoading(false);
     }
@@ -136,6 +114,7 @@ const AchievementBadges = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {allBadges.map((badge, i) => {
             const isEarned = earnedNames.has(badge.name);
+            const earned = earnedBadges.find((b) => b.badge_name === badge.name);
             const Icon = iconMap[badge.icon] || Award;
             return (
               <motion.div
@@ -158,6 +137,11 @@ const AchievementBadges = () => {
                 </div>
                 <span className="text-xs font-medium text-foreground">{badge.name}</span>
                 <span className="text-[10px] text-muted-foreground mt-0.5">{badge.description}</span>
+                {isEarned && earned && (
+                  <span className="text-[9px] text-yellow-600 dark:text-yellow-400 mt-1">
+                    {new Date(earned.earned_at).toLocaleDateString()}
+                  </span>
+                )}
               </motion.div>
             );
           })}
