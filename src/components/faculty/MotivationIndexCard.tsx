@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TrendingUp, Loader2 } from "lucide-react";
+import { TrendingUp, Loader2, BookOpen, Flame, Zap, PenLine } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 const MotivationIndexCard = () => {
   const [index, setIndex] = useState(0);
   const [components, setComponents] = useState({ streaks: 0, activities: 0, engagement: 0, journal: 0 });
+  const [stats, setStats] = useState({ streak: 0, xp: 0, completedCourses: 0, totalActivities: 0 });
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
@@ -17,20 +18,27 @@ const MotivationIndexCard = () => {
 
   const calculate = async () => {
     if (!user) return;
-    const today = new Date().toISOString().split("T")[0];
 
-    const [streakRes, actRes, motivRes, journalRes] = await Promise.all([
+    const [streakRes, actRes, motivRes, journalRes, courseRes, xpRes] = await Promise.all([
       supabase.from("user_streaks").select("current_streak").eq("user_id", user.id).eq("streak_type", "daily_login").maybeSingle(),
       supabase.from("activities").select("id", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "completed"),
       supabase.from("motivation_scores").select("motivation_index, engagement_score").eq("user_id", user.id).order("year", { ascending: false }).order("week_number", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("reflection_journal").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+      supabase.from("course_enrollments").select("id", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "completed"),
+      supabase.from("lesson_progress").select("xp_earned").eq("user_id", user.id).eq("status", "completed"),
     ]);
 
+    const currentStreak = streakRes.data?.current_streak || 0;
+    const activityCount = actRes.count || 0;
+    const journalCount = journalRes.count || 0;
+    const completedCourses = courseRes.count || 0;
+    const totalXp = (xpRes.data || []).reduce((sum: number, r: any) => sum + (r.xp_earned || 0), 0);
+
     // Normalize each to 0-25 (total max 100)
-    const streakScore = Math.min((streakRes.data?.current_streak || 0) * 3, 25);
-    const activityScore = Math.min((actRes.count || 0) * 2.5, 25);
+    const streakScore = Math.min(currentStreak * 3, 25);
+    const activityScore = Math.min(activityCount * 2.5, 25);
     const engagementScore = Math.min(((motivRes.data?.engagement_score || 0) / 100) * 25, 25);
-    const journalScore = Math.min((journalRes.count || 0) * 2.5, 25);
+    const journalScore = Math.min(journalCount * 2.5, 25);
 
     setComponents({
       streaks: Math.round(streakScore),
@@ -39,6 +47,12 @@ const MotivationIndexCard = () => {
       journal: Math.round(journalScore),
     });
     setIndex(Math.round(streakScore + activityScore + engagementScore + journalScore));
+    setStats({
+      streak: currentStreak,
+      xp: totalXp,
+      completedCourses,
+      totalActivities: activityCount,
+    });
     setLoading(false);
   };
 
@@ -62,10 +76,10 @@ const MotivationIndexCard = () => {
   const label = getLabel(index);
 
   const breakdownItems = [
-    { label: "Streaks", value: components.streaks, max: 25 },
-    { label: "Activities", value: components.activities, max: 25 },
-    { label: "Engagement", value: components.engagement, max: 25 },
-    { label: "Reflections", value: components.journal, max: 25 },
+    { label: "Streaks", value: components.streaks, max: 25, icon: Flame },
+    { label: "Activities", value: components.activities, max: 25, icon: Zap },
+    { label: "Engagement", value: components.engagement, max: 25, icon: TrendingUp },
+    { label: "Reflections", value: components.journal, max: 25, icon: PenLine },
   ];
 
   return (
@@ -75,7 +89,7 @@ const MotivationIndexCard = () => {
           <TrendingUp className="h-5 w-5 text-primary" />
           Motivation Index
         </CardTitle>
-        <CardDescription>Your overall motivation score based on engagement</CardDescription>
+        <CardDescription>Based on your real engagement data</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-6 mb-4">
@@ -91,6 +105,7 @@ const MotivationIndexCard = () => {
                 strokeWidth="8"
                 strokeDasharray={`${index * 2.64} 264`}
                 strokeLinecap="round"
+                className="transition-all duration-700 ease-out"
               />
             </svg>
             <span className="absolute text-2xl font-bold text-foreground">{index}</span>
@@ -100,16 +115,39 @@ const MotivationIndexCard = () => {
             <p className="text-xs text-muted-foreground">out of 100</p>
           </div>
         </div>
+
+        {/* Real-time quick stats */}
+        <div className="grid grid-cols-3 gap-2 mb-4 p-3 rounded-lg bg-muted/30 border border-border">
+          <div className="text-center">
+            <p className="text-lg font-bold text-foreground">{stats.streak}</p>
+            <p className="text-[10px] text-muted-foreground">Day Streak</p>
+          </div>
+          <div className="text-center border-x border-border">
+            <p className="text-lg font-bold text-foreground">{stats.xp}</p>
+            <p className="text-[10px] text-muted-foreground">Total XP</p>
+          </div>
+          <div className="text-center">
+            <p className="text-lg font-bold text-foreground">{stats.completedCourses}</p>
+            <p className="text-[10px] text-muted-foreground">Courses Done</p>
+          </div>
+        </div>
+
         <div className="space-y-2">
-          {breakdownItems.map((item) => (
-            <div key={item.label} className="space-y-1">
-              <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">{item.label}</span>
-                <span className="text-foreground font-medium">{item.value}/{item.max}</span>
+          {breakdownItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.label} className="space-y-1">
+                <div className="flex justify-between text-xs items-center">
+                  <span className="text-muted-foreground flex items-center gap-1">
+                    <Icon className="h-3 w-3" />
+                    {item.label}
+                  </span>
+                  <span className="text-foreground font-medium">{item.value}/{item.max}</span>
+                </div>
+                <Progress value={(item.value / item.max) * 100} className="h-1.5" />
               </div>
-              <Progress value={(item.value / item.max) * 100} className="h-1.5" />
-            </div>
-          ))}
+            );
+          })}
         </div>
       </CardContent>
     </Card>
