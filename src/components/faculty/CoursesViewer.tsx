@@ -323,14 +323,7 @@ const CoursesViewer = () => {
                   className="w-full px-5 py-4 flex items-center gap-4 hover:bg-muted/30 transition-colors"
                 >
                   <div className="flex-1 text-left min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-foreground text-base truncate">{path.title}</h3>
-                      {isPathComplete && (
-                        <Badge className="bg-success/15 text-success border-success/30 text-[10px]">
-                          <Trophy className="h-3 w-3 mr-0.5" /> Complete
-                        </Badge>
-                      )}
-                    </div>
+                    <h3 className="font-bold text-foreground text-base truncate">{path.title}</h3>
                     <div className="flex items-center gap-3 mt-1">
                       <span className="text-xs text-muted-foreground">{pathCompletedCount}/{pathLessons.length} lessons</span>
                       <span className="text-xs font-semibold text-primary flex items-center gap-0.5">
