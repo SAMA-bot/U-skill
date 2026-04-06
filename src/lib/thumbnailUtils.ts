@@ -90,3 +90,39 @@ export function generateCourseThumbnail(title: string): string {
 export function getCourseThumbnail(course: { title: string; thumbnail_url: string | null }): string {
   return course.thumbnail_url || generateCourseThumbnail(course.title);
 }
+
+export function generatePathThumbnail(title: string): string {
+  const hash = hashString(title);
+  const [color1, color2] = GRADIENT_PAIRS[hash % GRADIENT_PAIRS.length];
+  const angle = (hash % 4) * 45 + 135;
+  const iconPath = getIconPath(title);
+  const initials = getInitials(title);
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200">
+    <defs>
+      <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%" gradientTransform="rotate(${angle})">
+        <stop offset="0%" stop-color="${color1}" stop-opacity="1"/>
+        <stop offset="100%" stop-color="${color2}" stop-opacity="1"/>
+      </linearGradient>
+      <linearGradient id="overlay" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="white" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="black" stop-opacity="0.2"/>
+      </linearGradient>
+    </defs>
+    <rect width="400" height="200" rx="16" fill="url(#bg)"/>
+    <rect width="400" height="200" rx="16" fill="url(#overlay)"/>
+    <circle cx="320" cy="40" r="70" fill="white" fill-opacity="0.06"/>
+    <circle cx="80" cy="170" r="50" fill="white" fill-opacity="0.04"/>
+    <circle cx="200" cy="100" r="90" fill="white" fill-opacity="0.03"/>
+    <g transform="translate(172, 45) scale(2.3)" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
+      <path d="${iconPath}"/>
+    </g>
+    <text x="200" y="165" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="18" fill="white" opacity="0.9">${initials}</text>
+  </svg>`;
+
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}
+
+export function getPathThumbnail(path: { title: string; thumbnail_url?: string | null }): string {
+  return path.thumbnail_url || generatePathThumbnail(path.title);
+}
