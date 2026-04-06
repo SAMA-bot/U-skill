@@ -269,19 +269,8 @@ const CoursesViewer = () => {
         )}
       </div>
 
-      {/* Learning Paths or Fallback Courses */}
+      {/* Learning Paths */}
       {paths.length === 0 ? (
-        fallbackCourses.length > 0 ? (
-          <div className="space-y-4">
-            <div className="rounded-xl border border-border/40 bg-muted/30 p-4">
-              <p className="text-sm text-muted-foreground">
-                <BookOpen className="h-4 w-4 inline mr-1.5 -mt-0.5" />
-                Showing available training courses. Structured learning paths will appear once your admin configures them.
-              </p>
-            </div>
-            <LearningTracks courses={fallbackCourses} />
-          </div>
-        ) : (
           <SmartEmptyState
             icon={BookOpen}
             title="No learning paths available"
