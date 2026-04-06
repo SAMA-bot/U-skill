@@ -77,7 +77,7 @@ const FacultyDashboard = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState<ActiveSection>("dashboard");
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [activities, setActivities] = useState<any[]>([]);
+  
   const [statsData, setStatsData] = useState({
     capacityScore: 0,
     performanceScore: 0,
