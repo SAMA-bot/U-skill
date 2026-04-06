@@ -542,22 +542,7 @@ const FacultyDashboard = () => {
           {/* Subtle background decorations */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.02] rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent/[0.02] rounded-full blur-3xl pointer-events-none" />
-          {activeSection === "calendar" ? <MyCalendar /> : activeSection === "courses" ? <CoursesViewer /> : activeSection === "performance" ? <PerformanceAssessment /> : activeSection === "motivation" ? <MotivationTools /> : activeSection === "activities" ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="max-w-5xl mx-auto space-y-8"
-            >
-              <div className="mb-6">
-                <h1 className="text-2xl font-bold text-foreground">Activity Log</h1>
-                <p className="text-muted-foreground">
-                  Track your professional activities and watch your skills grow automatically
-                </p>
-              </div>
-              <ActivityLogger />
-              <ActivityLogTimeline />
-            </motion.div>
-          ) : activeSection === "documents" ? (
+          {activeSection === "calendar" ? <MyCalendar /> : activeSection === "courses" ? <CoursesViewer /> : activeSection === "performance" ? <PerformanceAssessment /> : activeSection === "motivation" ? <MotivationTools /> : activeSection === "documents" ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
