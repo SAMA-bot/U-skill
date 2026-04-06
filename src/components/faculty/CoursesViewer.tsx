@@ -277,7 +277,6 @@ const CoursesViewer = () => {
             description="Learning paths will appear here once your admin publishes them."
             illustration={<NoCoursesSVG />}
           />
-        )
       ) : (
         <div className="space-y-4">
           {paths.map((path, pi) => {
