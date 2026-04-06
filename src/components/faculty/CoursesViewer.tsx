@@ -102,21 +102,6 @@ const CoursesViewer = () => {
       // Pre-fetch modules for all paths
       for (const p of pathList) fetchModules(p.id);
 
-      // If no learning paths, fetch published courses as fallback
-      if (pathList.length === 0) {
-        console.log("[CoursesViewer] No learning paths found, fetching published courses as fallback...");
-        const { data: coursesData, error: coursesError } = await supabase
-          .from("courses")
-          .select("id, title, description, category, duration_hours, instructor_name, thumbnail_url, course_url, video_url, document_url, course_type, content_type, is_published, tags")
-          .eq("is_published", true)
-          .order("created_at", { ascending: false });
-        if (coursesError) {
-          console.error("[CoursesViewer] Error fetching fallback courses:", coursesError);
-        } else {
-          console.log(`[CoursesViewer] Found ${coursesData?.length || 0} published courses as fallback`);
-          setFallbackCourses((coursesData || []) as Course[]);
-        }
-      }
     } catch (error: any) {
       toast({ title: "Error loading paths", description: error.message, variant: "destructive" });
     } finally {
