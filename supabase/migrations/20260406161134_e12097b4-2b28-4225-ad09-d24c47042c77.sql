@@ -1,0 +1,1 @@
+ALTER TABLE public.learning_paths ADD COLUMN IF NOT EXISTS thumbnail_url text;
