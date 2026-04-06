@@ -72,7 +72,6 @@ const CoursesViewer = () => {
   const [contentItems, setContentItems] = useState<Record<string, LessonContentItem[]>>({});
   const [loading, setLoading] = useState(true);
   const [expandedPaths, setExpandedPaths] = useState<string[]>([]);
-  const [fallbackCourses, setFallbackCourses] = useState<Course[]>([]);
 
   // Lesson viewer state
   const [viewingLesson, setViewingLesson] = useState<Lesson | null>(null);
