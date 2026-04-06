@@ -17,13 +17,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLessonProgress } from "@/hooks/useLessonProgress";
 import { getVideoSignedUrl, getDocumentSignedUrl } from "@/lib/storageUtils";
+import { getPathThumbnail } from "@/lib/thumbnailUtils";
 import { cn } from "@/lib/utils";
-import LearningTracks, { type Course } from "@/components/faculty/LearningTracks";
 
 // Types
 interface LearningPath {
   id: string; title: string; description: string | null;
   icon: string; color: string; is_published: boolean;
+  thumbnail_url: string | null;
 }
 interface LearningModule {
   id: string; path_id: string; title: string; description: string | null; sort_order: number;
@@ -71,7 +72,6 @@ const CoursesViewer = () => {
   const [contentItems, setContentItems] = useState<Record<string, LessonContentItem[]>>({});
   const [loading, setLoading] = useState(true);
   const [expandedPaths, setExpandedPaths] = useState<string[]>([]);
-  const [fallbackCourses, setFallbackCourses] = useState<Course[]>([]);
 
   // Lesson viewer state
   const [viewingLesson, setViewingLesson] = useState<Lesson | null>(null);
@@ -102,21 +102,6 @@ const CoursesViewer = () => {
       // Pre-fetch modules for all paths
       for (const p of pathList) fetchModules(p.id);
 
-      // If no learning paths, fetch published courses as fallback
-      if (pathList.length === 0) {
-        console.log("[CoursesViewer] No learning paths found, fetching published courses as fallback...");
-        const { data: coursesData, error: coursesError } = await supabase
-          .from("courses")
-          .select("id, title, description, category, duration_hours, instructor_name, thumbnail_url, course_url, video_url, document_url, course_type, content_type, is_published, tags")
-          .eq("is_published", true)
-          .order("created_at", { ascending: false });
-        if (coursesError) {
-          console.error("[CoursesViewer] Error fetching fallback courses:", coursesError);
-        } else {
-          console.log(`[CoursesViewer] Found ${coursesData?.length || 0} published courses as fallback`);
-          setFallbackCourses((coursesData || []) as Course[]);
-        }
-      }
     } catch (error: any) {
       toast({ title: "Error loading paths", description: error.message, variant: "destructive" });
     } finally {
@@ -284,26 +269,14 @@ const CoursesViewer = () => {
         )}
       </div>
 
-      {/* Learning Paths or Fallback Courses */}
+      {/* Learning Paths */}
       {paths.length === 0 ? (
-        fallbackCourses.length > 0 ? (
-          <div className="space-y-4">
-            <div className="rounded-xl border border-border/40 bg-muted/30 p-4">
-              <p className="text-sm text-muted-foreground">
-                <BookOpen className="h-4 w-4 inline mr-1.5 -mt-0.5" />
-                Showing available training courses. Structured learning paths will appear once your admin configures them.
-              </p>
-            </div>
-            <LearningTracks courses={fallbackCourses} />
-          </div>
-        ) : (
           <SmartEmptyState
             icon={BookOpen}
             title="No learning paths available"
             description="Learning paths will appear here once your admin publishes them."
             illustration={<NoCoursesSVG />}
           />
-        )
       ) : (
         <div className="space-y-4">
           {paths.map((path, pi) => {
@@ -327,25 +300,30 @@ const CoursesViewer = () => {
                   isPathComplete ? "border-success/40 shadow-[0_0_30px_hsl(var(--success)/0.1)]" : "border-border/50"
                 )}
               >
-                {/* Path header */}
+                {/* Path thumbnail + header */}
+                <div className="relative h-28 sm:h-32 overflow-hidden">
+                  <img
+                    src={getPathThumbnail(path)}
+                    alt={path.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  {isPathComplete && (
+                    <div className="absolute top-3 right-3">
+                      <Badge className="bg-success/90 text-white border-none text-[10px]">
+                        <Trophy className="h-3 w-3 mr-0.5" /> Complete
+                      </Badge>
+                    </div>
+                  )}
+                </div>
                 <button
                   onClick={() => setExpandedPaths(prev =>
                     prev.includes(path.id) ? prev.filter(id => id !== path.id) : [...prev, path.id]
                   )}
                   className="w-full px-5 py-4 flex items-center gap-4 hover:bg-muted/30 transition-colors"
                 >
-                  <div className={cn("flex h-12 w-12 items-center justify-center rounded-xl shrink-0", `bg-${path.color}/10`)}>
-                    <BookOpen className={`h-6 w-6 text-${path.color}`} />
-                  </div>
                   <div className="flex-1 text-left min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-foreground text-base truncate">{path.title}</h3>
-                      {isPathComplete && (
-                        <Badge className="bg-success/15 text-success border-success/30 text-[10px]">
-                          <Trophy className="h-3 w-3 mr-0.5" /> Complete
-                        </Badge>
-                      )}
-                    </div>
+                    <h3 className="font-bold text-foreground text-base truncate">{path.title}</h3>
                     <div className="flex items-center gap-3 mt-1">
                       <span className="text-xs text-muted-foreground">{pathCompletedCount}/{pathLessons.length} lessons</span>
                       <span className="text-xs font-semibold text-primary flex items-center gap-0.5">
