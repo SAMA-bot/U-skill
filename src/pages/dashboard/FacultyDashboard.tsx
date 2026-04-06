@@ -18,7 +18,6 @@ import SkillGrowthChart from "@/components/dashboard/SkillGrowthChart";
 import MotivationTrendChart from "@/components/dashboard/MotivationTrendChart";
 import CoursesViewer from "@/components/faculty/CoursesViewer";
 import PerformanceAssessment from "@/components/faculty/PerformanceAssessment";
-import ActivityLogger from "@/components/faculty/ActivityLogger";
 import HeaderNotifications from "@/components/layout/HeaderNotifications";
 import DocumentUpload from "@/components/faculty/DocumentUpload";
 import AreasToImprove from "@/components/faculty/AreasToImprove";
