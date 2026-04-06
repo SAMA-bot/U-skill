@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getPerformanceBadgeColor, getPerformanceBadgeLabel } from "@/lib/performanceUtils";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, Activity, FolderUp, PanelLeftClose, PanelLeft, Building2, ArrowRight } from "lucide-react";
+import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, FolderUp, PanelLeftClose, PanelLeft, Building2, ArrowRight } from "lucide-react";
 import SparklineChart from "@/components/dashboard/SparklineChart";
 import MetricProgressIndicator from "@/components/dashboard/MetricProgressIndicator";
 import { Button } from "@/components/ui/button";
@@ -18,13 +18,12 @@ import SkillGrowthChart from "@/components/dashboard/SkillGrowthChart";
 import MotivationTrendChart from "@/components/dashboard/MotivationTrendChart";
 import CoursesViewer from "@/components/faculty/CoursesViewer";
 import PerformanceAssessment from "@/components/faculty/PerformanceAssessment";
-import ActivityLogger from "@/components/faculty/ActivityLogger";
 import HeaderNotifications from "@/components/layout/HeaderNotifications";
 import DocumentUpload from "@/components/faculty/DocumentUpload";
 import AreasToImprove from "@/components/faculty/AreasToImprove";
 import AIInsightsPanel from "@/components/dashboard/AIInsightsPanel";
 import RecommendationPanel from "@/components/faculty/RecommendationPanel";
-import ActivityLogTimeline from "@/components/faculty/ActivityLogTimeline";
+
 import FacultyProgressTracker from "@/components/faculty/FacultyProgressTracker";
 import MotivationTools from "@/components/faculty/MotivationTools";
 import MyCalendar from "@/components/faculty/MyCalendar";
@@ -43,7 +42,7 @@ interface Profile {
   designation: string | null;
   avatar_url: string | null;
 }
-type ActiveSection = "dashboard" | "courses" | "performance" | "activities" | "documents" | "motivation" | "calendar";
+type ActiveSection = "dashboard" | "courses" | "performance" | "documents" | "motivation" | "calendar";
 const sidebarItems: {
   icon: typeof Home;
   label: string;
@@ -60,10 +59,6 @@ const sidebarItems: {
   icon: BarChart3,
   label: "Performance Assessment",
   section: "performance"
-}, {
-  icon: Activity,
-  label: "Activity Log",
-  section: "activities"
 }, {
   icon: FolderUp,
   label: "My Documents",
@@ -82,7 +77,7 @@ const FacultyDashboard = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState<ActiveSection>("dashboard");
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [activities, setActivities] = useState<any[]>([]);
+  
   const [statsData, setStatsData] = useState({
     capacityScore: 0,
     performanceScore: 0,
@@ -172,15 +167,6 @@ const FacultyDashboard = () => {
         setProfile(profileData);
       }
 
-      // Fetch activities filtered by academic year
-      let activitiesQuery = supabase.from('activities').select('*').eq('user_id', user.id);
-      if (startDate && endDate) {
-        activitiesQuery = activitiesQuery.gte('created_at', startDate).lte('created_at', endDate);
-      }
-      const { data: activitiesData } = await activitiesQuery.order('created_at', { ascending: false }).limit(3);
-      if (activitiesData) {
-        setActivities(activitiesData);
-      }
 
       // Fetch capacity skills (current snapshot, not filtered by year)
       const {
@@ -279,27 +265,6 @@ const FacultyDashboard = () => {
   };
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-  };
-  const formatTimeAgo = (date: string) => {
-    const now = new Date();
-    const past = new Date(date);
-    const diffMs = now.getTime() - past.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    return `${Math.floor(diffDays / 30)} months ago`;
-  };
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-      case 'in_progress':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
-      default:
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-    }
   };
   const statsCards = [{
     label: "Capacity Score",
@@ -542,22 +507,7 @@ const FacultyDashboard = () => {
           {/* Subtle background decorations */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.02] rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent/[0.02] rounded-full blur-3xl pointer-events-none" />
-          {activeSection === "calendar" ? <MyCalendar /> : activeSection === "courses" ? <CoursesViewer /> : activeSection === "performance" ? <PerformanceAssessment /> : activeSection === "motivation" ? <MotivationTools /> : activeSection === "activities" ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="max-w-5xl mx-auto space-y-8"
-            >
-              <div className="mb-6">
-                <h1 className="text-2xl font-bold text-foreground">Activity Log</h1>
-                <p className="text-muted-foreground">
-                  Track your professional activities and watch your skills grow automatically
-                </p>
-              </div>
-              <ActivityLogger />
-              <ActivityLogTimeline />
-            </motion.div>
-          ) : activeSection === "documents" ? (
+          {activeSection === "calendar" ? <MyCalendar /> : activeSection === "courses" ? <CoursesViewer /> : activeSection === "performance" ? <PerformanceAssessment /> : activeSection === "motivation" ? <MotivationTools /> : activeSection === "documents" ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -800,76 +750,9 @@ const FacultyDashboard = () => {
                 </div>
               </motion.div>
 
-              {/* Activities and Resources */}
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 mb-8">
-                {/* Recent Activities */}
-                <motion.div initial={{
-                opacity: 0,
-                y: 20
-              }} animate={{
-                opacity: 1,
-                y: 0
-              }} transition={{
-                delay: 0.6
-              }} className="bg-card shadow-sm rounded-lg overflow-hidden col-span-1 lg:col-span-2 border border-border">
-                  <div className="px-4 py-5 sm:px-6 border-b border-border">
-                    <h3 className="text-lg font-medium text-foreground">Recent Activities</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Your latest training and development activities
-                    </p>
-                  </div>
-                  <div className="divide-y divide-border">
-                    {activities.length > 0 ? activities.map((activity, index) => <div key={activity.id || index} className="px-4 py-5 sm:px-6 hover:bg-muted/50 transition-colors">
-                          <div className="flex items-start">
-                            <div className="flex-shrink-0">
-                              <div className="h-12 w-12 rounded-md bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                                <FileText className="h-6 w-6 text-primary" />
-                              </div>
-                            </div>
-                            <div className="ml-4 flex-1">
-                              <div className="flex items-center justify-between">
-                                <h4 className="text-sm font-medium text-primary">{activity.title}</h4>
-                                <span className="text-xs text-muted-foreground">{formatTimeAgo(activity.created_at)}</span>
-                              </div>
-                              <p className="mt-1 text-sm text-muted-foreground">{activity.description || 'No description'}</p>
-                              <div className="mt-2">
-                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
-                                  {activity.status === 'in_progress' ? 'In Progress' : activity.status.charAt(0).toUpperCase() + activity.status.slice(1)}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>) : <div className="px-4 py-6 text-center">
-                        <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-3">
-                          <FileText className="h-7 w-7 text-primary" />
-                        </div>
-                        <p className="font-medium text-foreground mb-1">No activities yet</p>
-                        <p className="text-sm text-muted-foreground max-w-xs mx-auto">Start logging professional activities to track your growth and earn performance points.</p>
-                        <Button variant="outline" size="sm" className="mt-3" onClick={() => setActiveSection("activities")}>
-                          Log Your First Activity
-                        </Button>
-                      </div>}
-                    <div className="px-4 py-5 sm:px-6">
-                      <button 
-                        onClick={() => setActiveSection("activities")}
-                        className="block w-full text-center px-4 py-2 border border-dashed border-border rounded-md text-sm font-medium text-muted-foreground hover:bg-muted transition-colors"
-                      >
-                        View All Activities
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Smart Recommendations */}
-                <motion.div initial={{
-                opacity: 0,
-                y: 20
-              }} animate={{
-                opacity: 1,
-                y: 0
-              }} transition={{
-                delay: 0.7
-              }}>
+              {/* Smart Recommendations */}
+              <div className="mb-8">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
                   <RecommendationPanel onNavigate={(section) => setActiveSection(section as ActiveSection)} />
                 </motion.div>
               </div>
