@@ -60,10 +60,6 @@ const sidebarItems: {
   label: "Performance Assessment",
   section: "performance"
 }, {
-  icon: Activity,
-  label: "Activity Log",
-  section: "activities"
-}, {
   icon: FolderUp,
   label: "My Documents",
   section: "documents"
