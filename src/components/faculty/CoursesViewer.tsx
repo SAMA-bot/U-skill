@@ -300,16 +300,28 @@ const CoursesViewer = () => {
                   isPathComplete ? "border-success/40 shadow-[0_0_30px_hsl(var(--success)/0.1)]" : "border-border/50"
                 )}
               >
-                {/* Path header */}
+                {/* Path thumbnail + header */}
+                <div className="relative h-28 sm:h-32 overflow-hidden">
+                  <img
+                    src={getPathThumbnail(path)}
+                    alt={path.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  {isPathComplete && (
+                    <div className="absolute top-3 right-3">
+                      <Badge className="bg-success/90 text-white border-none text-[10px]">
+                        <Trophy className="h-3 w-3 mr-0.5" /> Complete
+                      </Badge>
+                    </div>
+                  )}
+                </div>
                 <button
                   onClick={() => setExpandedPaths(prev =>
                     prev.includes(path.id) ? prev.filter(id => id !== path.id) : [...prev, path.id]
                   )}
                   className="w-full px-5 py-4 flex items-center gap-4 hover:bg-muted/30 transition-colors"
                 >
-                  <div className={cn("flex h-12 w-12 items-center justify-center rounded-xl shrink-0", `bg-${path.color}/10`)}>
-                    <BookOpen className={`h-6 w-6 text-${path.color}`} />
-                  </div>
                   <div className="flex-1 text-left min-w-0">
                     <div className="flex items-center gap-2">
                       <h3 className="font-bold text-foreground text-base truncate">{path.title}</h3>
