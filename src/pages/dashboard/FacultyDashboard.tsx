@@ -43,7 +43,7 @@ interface Profile {
   designation: string | null;
   avatar_url: string | null;
 }
-type ActiveSection = "dashboard" | "courses" | "performance" | "activities" | "documents" | "motivation" | "calendar";
+type ActiveSection = "dashboard" | "courses" | "performance" | "documents" | "motivation" | "calendar";
 const sidebarItems: {
   icon: typeof Home;
   label: string;
