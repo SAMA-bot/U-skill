@@ -785,65 +785,8 @@ const FacultyDashboard = () => {
                 </div>
               </motion.div>
 
-              {/* Activities and Resources */}
+              {/* Resources */}
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 mb-8">
-                {/* Recent Activities */}
-                <motion.div initial={{
-                opacity: 0,
-                y: 20
-              }} animate={{
-                opacity: 1,
-                y: 0
-              }} transition={{
-                delay: 0.6
-              }} className="bg-card shadow-sm rounded-lg overflow-hidden col-span-1 lg:col-span-2 border border-border">
-                  <div className="px-4 py-5 sm:px-6 border-b border-border">
-                    <h3 className="text-lg font-medium text-foreground">Recent Activities</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Your latest training and development activities
-                    </p>
-                  </div>
-                  <div className="divide-y divide-border">
-                    {activities.length > 0 ? activities.map((activity, index) => <div key={activity.id || index} className="px-4 py-5 sm:px-6 hover:bg-muted/50 transition-colors">
-                          <div className="flex items-start">
-                            <div className="flex-shrink-0">
-                              <div className="h-12 w-12 rounded-md bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                                <FileText className="h-6 w-6 text-primary" />
-                              </div>
-                            </div>
-                            <div className="ml-4 flex-1">
-                              <div className="flex items-center justify-between">
-                                <h4 className="text-sm font-medium text-primary">{activity.title}</h4>
-                                <span className="text-xs text-muted-foreground">{formatTimeAgo(activity.created_at)}</span>
-                              </div>
-                              <p className="mt-1 text-sm text-muted-foreground">{activity.description || 'No description'}</p>
-                              <div className="mt-2">
-                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(activity.status)}`}>
-                                  {activity.status === 'in_progress' ? 'In Progress' : activity.status.charAt(0).toUpperCase() + activity.status.slice(1)}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>) : <div className="px-4 py-6 text-center">
-                        <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-3">
-                          <FileText className="h-7 w-7 text-primary" />
-                        </div>
-                        <p className="font-medium text-foreground mb-1">No activities yet</p>
-                        <p className="text-sm text-muted-foreground max-w-xs mx-auto">Start logging professional activities to track your growth and earn performance points.</p>
-                        <Button variant="outline" size="sm" className="mt-3" onClick={() => setActiveSection("activities")}>
-                          Log Your First Activity
-                        </Button>
-                      </div>}
-                    <div className="px-4 py-5 sm:px-6">
-                      <button 
-                        onClick={() => setActiveSection("activities")}
-                        className="block w-full text-center px-4 py-2 border border-dashed border-border rounded-md text-sm font-medium text-muted-foreground hover:bg-muted transition-colors"
-                      >
-                        View All Activities
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
 
                 {/* Smart Recommendations */}
                 <motion.div initial={{
