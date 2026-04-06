@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 interface LearningPath {
   id: string; title: string; description: string | null;
   icon: string; color: string; is_published: boolean;
+  thumbnail_url: string | null;
 }
 interface LearningModule {
   id: string; path_id: string; title: string; description: string | null; sort_order: number;
