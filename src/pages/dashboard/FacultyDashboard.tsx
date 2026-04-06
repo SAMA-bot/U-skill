@@ -167,15 +167,6 @@ const FacultyDashboard = () => {
         setProfile(profileData);
       }
 
-      // Fetch activities filtered by academic year
-      let activitiesQuery = supabase.from('activities').select('*').eq('user_id', user.id);
-      if (startDate && endDate) {
-        activitiesQuery = activitiesQuery.gte('created_at', startDate).lte('created_at', endDate);
-      }
-      const { data: activitiesData } = await activitiesQuery.order('created_at', { ascending: false }).limit(3);
-      if (activitiesData) {
-        setActivities(activitiesData);
-      }
 
       // Fetch capacity skills (current snapshot, not filtered by year)
       const {
