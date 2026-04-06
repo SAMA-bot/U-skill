@@ -750,19 +750,9 @@ const FacultyDashboard = () => {
                 </div>
               </motion.div>
 
-              {/* Resources */}
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 mb-8">
-
-                {/* Smart Recommendations */}
-                <motion.div initial={{
-                opacity: 0,
-                y: 20
-              }} animate={{
-                opacity: 1,
-                y: 0
-              }} transition={{
-                delay: 0.7
-              }}>
+              {/* Smart Recommendations */}
+              <div className="mb-8">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
                   <RecommendationPanel onNavigate={(section) => setActiveSection(section as ActiveSection)} />
                 </motion.div>
               </div>
