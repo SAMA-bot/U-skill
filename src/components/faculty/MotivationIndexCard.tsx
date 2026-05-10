@@ -4,13 +4,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserXp } from "@/hooks/useUserXp";
 
 const MotivationIndexCard = () => {
   const [index, setIndex] = useState(0);
   const [components, setComponents] = useState({ streaks: 0, activities: 0, engagement: 0, journal: 0 });
-  const [stats, setStats] = useState({ streak: 0, xp: 0, completedCourses: 0, totalActivities: 0 });
+  const [stats, setStats] = useState({ streak: 0, completedCourses: 0, totalActivities: 0 });
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const { total: totalXp } = useUserXp();
 
   useEffect(() => {
     if (user) calculate();
