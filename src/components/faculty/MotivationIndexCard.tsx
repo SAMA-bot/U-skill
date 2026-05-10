@@ -122,7 +122,7 @@ const MotivationIndexCard = () => {
             <p className="text-[10px] text-muted-foreground">Day Streak</p>
           </div>
           <div className="text-center border-x border-border">
-            <p className="text-lg font-bold text-foreground">{stats.xp}</p>
+            <p className="text-lg font-bold text-foreground">{totalXp}</p>
             <p className="text-[10px] text-muted-foreground">Total XP</p>
           </div>
           <div className="text-center">
