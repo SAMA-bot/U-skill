@@ -6,6 +6,7 @@ import ReflectionJournal from "./ReflectionJournal";
 import MotivationIndexCard from "./MotivationIndexCard";
 import StreakTracker from "./StreakTracker";
 import AchievementBadges from "./AchievementBadges";
+import XpSummaryCard from "./XpSummaryCard";
 
 const MotivationTools = () => {
   return (
