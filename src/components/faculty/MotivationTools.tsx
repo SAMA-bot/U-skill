@@ -26,12 +26,15 @@ const MotivationTools = () => {
         </p>
       </div>
 
-      {/* Top row: Motivation Index + Streaks + Checklist */}
+      {/* Top row: Motivation Index + Streaks + XP */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <MotivationIndexCard />
         <StreakTracker />
-        <DailyChecklist />
+        <XpSummaryCard />
       </div>
+
+      {/* Daily Checklist */}
+      <DailyChecklist />
 
       {/* Achievement Badges */}
       <AchievementBadges />
