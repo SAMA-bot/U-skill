@@ -26,6 +26,7 @@ import RecommendationPanel from "@/components/faculty/RecommendationPanel";
 
 import FacultyProgressTracker from "@/components/faculty/FacultyProgressTracker";
 import MotivationTools from "@/components/faculty/MotivationTools";
+import XpSummaryCard from "@/components/faculty/XpSummaryCard";
 import MyCalendar from "@/components/faculty/MyCalendar";
 import PerformanceReportModal, { ReportData } from "@/components/faculty/PerformanceReportModal";
 import jsPDF from "jspdf";
