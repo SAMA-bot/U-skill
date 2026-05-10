@@ -27,6 +27,7 @@ import RecommendationPanel from "@/components/faculty/RecommendationPanel";
 import FacultyProgressTracker from "@/components/faculty/FacultyProgressTracker";
 import MotivationTools from "@/components/faculty/MotivationTools";
 import XpSummaryCard from "@/components/faculty/XpSummaryCard";
+import LevelCard from "@/components/faculty/LevelCard";
 import MyCalendar from "@/components/faculty/MyCalendar";
 import PerformanceReportModal, { ReportData } from "@/components/faculty/PerformanceReportModal";
 import jsPDF from "jspdf";
@@ -665,6 +666,11 @@ const FacultyDashboard = () => {
                 <PerformanceScoreCard data={performanceScoreData} />
                 <FacultyProgressTracker />
                 <XpSummaryCard />
+              </div>
+
+              {/* Level & Badges */}
+              <div className="mb-8">
+                <LevelCard />
               </div>
 
               {/* Areas to Improve & Suggested Trainings */}
