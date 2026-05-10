@@ -912,6 +912,36 @@ export type Database = {
         }
         Relationships: []
       }
+      xp_events: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          source_id: string
+          source_type: string
+          user_id: string
+          xp_amount: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          source_id: string
+          source_type: string
+          user_id: string
+          xp_amount?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          source_id?: string
+          source_type?: string
+          user_id?: string
+          xp_amount?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       courses_public: {

@@ -4,13 +4,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserXp } from "@/hooks/useUserXp";
 
 const MotivationIndexCard = () => {
   const [index, setIndex] = useState(0);
   const [components, setComponents] = useState({ streaks: 0, activities: 0, engagement: 0, journal: 0 });
-  const [stats, setStats] = useState({ streak: 0, xp: 0, completedCourses: 0, totalActivities: 0 });
+  const [stats, setStats] = useState({ streak: 0, completedCourses: 0, totalActivities: 0 });
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const { total: totalXp } = useUserXp();
 
   useEffect(() => {
     if (user) calculate();
@@ -19,20 +21,18 @@ const MotivationIndexCard = () => {
   const calculate = async () => {
     if (!user) return;
 
-    const [streakRes, actRes, motivRes, journalRes, courseRes, xpRes] = await Promise.all([
+    const [streakRes, actRes, motivRes, journalRes, courseRes] = await Promise.all([
       supabase.from("user_streaks").select("current_streak").eq("user_id", user.id).eq("streak_type", "daily_login").maybeSingle(),
       supabase.from("activities").select("id", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "completed"),
       supabase.from("motivation_scores").select("motivation_index, engagement_score").eq("user_id", user.id).order("year", { ascending: false }).order("week_number", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("reflection_journal").select("id", { count: "exact", head: true }).eq("user_id", user.id),
       supabase.from("course_enrollments").select("id", { count: "exact", head: true }).eq("user_id", user.id).eq("status", "completed"),
-      supabase.from("lesson_progress").select("xp_earned").eq("user_id", user.id).eq("status", "completed"),
     ]);
 
     const currentStreak = streakRes.data?.current_streak || 0;
     const activityCount = actRes.count || 0;
     const journalCount = journalRes.count || 0;
     const completedCourses = courseRes.count || 0;
-    const totalXp = (xpRes.data || []).reduce((sum: number, r: any) => sum + (r.xp_earned || 0), 0);
 
     // Normalize each to 0-25 (total max 100)
     const streakScore = Math.min(currentStreak * 3, 25);
@@ -49,7 +49,6 @@ const MotivationIndexCard = () => {
     setIndex(Math.round(streakScore + activityScore + engagementScore + journalScore));
     setStats({
       streak: currentStreak,
-      xp: totalXp,
       completedCourses,
       totalActivities: activityCount,
     });
@@ -123,7 +122,7 @@ const MotivationIndexCard = () => {
             <p className="text-[10px] text-muted-foreground">Day Streak</p>
           </div>
           <div className="text-center border-x border-border">
-            <p className="text-lg font-bold text-foreground">{stats.xp}</p>
+            <p className="text-lg font-bold text-foreground">{totalXp}</p>
             <p className="text-[10px] text-muted-foreground">Total XP</p>
           </div>
           <div className="text-center">
