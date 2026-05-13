@@ -315,9 +315,8 @@ const HodDashboard = () => {
               <nav className="mt-2 flex-1 flex flex-col px-2 space-y-1">
                 {[
                   { id: "overview", label: "Department Overview", icon: Home },
-                  { id: "documents", label: "Document Approvals", icon: FileCheck },
-                  { id: "performance", label: "Performance Review", icon: BarChart3 },
-                  { id: "feedback", label: "Faculty Feedback", icon: MessageSquarePlus },
+                  { id: "documents", label: "Approvals", icon: FileCheck },
+                  { id: "performance", label: "Reports", icon: BarChart3 },
                 ].map((tab) => (
                   <button
                     key={tab.id}
