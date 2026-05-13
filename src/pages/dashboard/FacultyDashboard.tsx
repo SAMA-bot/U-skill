@@ -44,7 +44,7 @@ interface Profile {
   designation: string | null;
   avatar_url: string | null;
 }
-type ActiveSection = "dashboard" | "courses" | "performance" | "documents" | "motivation" | "calendar";
+type ActiveSection = "dashboard" | "courses" | "performance" | "achievements" | "documents" | "motivation" | "calendar";
 const sidebarItems: {
   icon: typeof Home;
   label: string;
@@ -61,6 +61,10 @@ const sidebarItems: {
   icon: BarChart3,
   label: "Performance",
   section: "performance"
+}, {
+  icon: Trophy,
+  label: "Achievements",
+  section: "achievements"
 }];
 const FacultyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
