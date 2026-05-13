@@ -503,7 +503,29 @@ const FacultyDashboard = () => {
           {/* Subtle background decorations */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.02] rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent/[0.02] rounded-full blur-3xl pointer-events-none" />
-          {activeSection === "calendar" ? <MyCalendar /> : activeSection === "courses" ? <CoursesViewer /> : activeSection === "performance" ? <PerformanceAssessment /> : activeSection === "motivation" ? <MotivationTools /> : activeSection === "documents" ? (
+          {activeSection === "achievements" ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="max-w-6xl mx-auto space-y-8"
+            >
+              <div>
+                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                  <Trophy className="h-6 w-6 text-primary" />
+                  Achievements
+                </h1>
+                <p className="text-muted-foreground mt-1">
+                  Your level, badges, XP and learning streaks
+                </p>
+              </div>
+              <LevelCard />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <XpSummaryCard />
+                <StreakTracker />
+              </div>
+              <AchievementBadges />
+            </motion.div>
+          ) : activeSection === "calendar" ? <MyCalendar /> : activeSection === "courses" ? <CoursesViewer /> : activeSection === "performance" ? <PerformanceAssessment /> : activeSection === "motivation" ? <MotivationTools /> : activeSection === "documents" ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
