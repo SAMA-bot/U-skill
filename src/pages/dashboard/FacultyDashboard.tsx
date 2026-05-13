@@ -29,6 +29,8 @@ import MotivationTools from "@/components/faculty/MotivationTools";
 import XpSummaryCard from "@/components/faculty/XpSummaryCard";
 import LevelCard from "@/components/faculty/LevelCard";
 import MyCalendar from "@/components/faculty/MyCalendar";
+import AchievementBadges from "@/components/faculty/AchievementBadges";
+import StreakTracker from "@/components/faculty/StreakTracker";
 import PerformanceReportModal, { ReportData } from "@/components/faculty/PerformanceReportModal";
 import jsPDF from "jspdf";
 import { useAuth } from "@/hooks/useAuth";
