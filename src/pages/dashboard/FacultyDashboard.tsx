@@ -55,24 +55,12 @@ const sidebarItems: {
   section: "dashboard"
 }, {
   icon: ClipboardList,
-  label: "Capacity Building",
+  label: "Learning Paths",
   section: "courses"
 }, {
   icon: BarChart3,
-  label: "Performance Assessment",
+  label: "Performance",
   section: "performance"
-}, {
-  icon: FolderUp,
-  label: "My Documents",
-  section: "documents"
-}, {
-  icon: Star,
-  label: "Motivation Tools",
-  section: "motivation"
-}, {
-  icon: Calendar,
-  label: "My Calendar",
-  section: "calendar"
 }];
 const FacultyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
