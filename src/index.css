@@ -6,24 +6,24 @@
 
 @layer base {
   :root {
-    /* Light theme */
-    --background: 0 0% 100%;
-    --foreground: 228 14% 12%;
+    /* Light theme — soft slate background, crisp white cards */
+    --background: 210 20% 98%; /* ~#f8fafc */
+    --foreground: 222 47% 11%; /* ~slate-900 */
 
-    --card: 0 0% 99%;
-    --card-foreground: 228 14% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 228 14% 12%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 210 100% 50%;
+    --primary: 210 100% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 94%;
-    --secondary-foreground: 228 14% 20%;
+    --secondary: 210 20% 94%;
+    --secondary-foreground: 222 47% 16%;
 
-    --muted: 220 14% 94%;
-    --muted-foreground: 215 15% 45%;
+    --muted: 210 20% 94%;
+    --muted-foreground: 215 19% 35%; /* darker for AA contrast */
 
     --accent: 270 65% 58%;
     --accent-foreground: 0 0% 100%;
@@ -31,42 +31,42 @@
     --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 88%;
-    --input: 220 13% 88%;
-    --ring: 210 100% 50%;
+    --border: 215 20% 88%;
+    --input: 215 20% 88%;
+    --ring: 210 100% 45%;
 
     --radius: 0.75rem;
 
     /* Light premium tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(210 100% 50%) 0%, hsl(270 65% 58%) 50%, hsl(185 80% 48%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 20% 97%) 50%, hsl(0 0% 100%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(220 14% 97%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(270 65% 58%) 0%, hsl(290 60% 52%) 100%);
-    --gradient-glow: linear-gradient(135deg, hsl(210 100% 50% / 0.08) 0%, hsl(270 65% 58% / 0.08) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(210 100% 45%) 0%, hsl(270 65% 55%) 50%, hsl(185 80% 45%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(210 20% 98%) 0%, hsl(220 20% 96%) 50%, hsl(210 20% 98%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(210 20% 98%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(270 65% 55%) 0%, hsl(290 60% 50%) 100%);
+    --gradient-glow: linear-gradient(135deg, hsl(210 100% 45% / 0.08) 0%, hsl(270 65% 55% / 0.08) 100%);
 
-    --shadow-card: 0 2px 12px -4px hsl(0 0% 0% / 0.08);
-    --shadow-elevated: 0 8px 30px -8px hsl(0 0% 0% / 0.12);
-    --shadow-accent: 0 4px 20px -4px hsl(210 100% 50% / 0.15);
-    --shadow-glow: 0 0 30px -10px hsl(210 100% 50% / 0.08);
+    --shadow-card: 0 1px 3px hsl(220 30% 20% / 0.06), 0 4px 16px -6px hsl(220 30% 20% / 0.08);
+    --shadow-elevated: 0 8px 32px -8px hsl(220 30% 20% / 0.14);
+    --shadow-accent: 0 4px 20px -4px hsl(210 100% 45% / 0.18);
+    --shadow-glow: 0 0 30px -10px hsl(210 100% 45% / 0.1);
 
     /* Section backgrounds */
-    --section-alt: 220 14% 97%;
-    --section-highlight: 260 14% 97%;
+    --section-alt: 210 20% 96%;
+    --section-highlight: 260 20% 97%;
 
     /* Success/Info */
-    --success: 160 70% 40%;
+    --success: 160 70% 36%;
     --success-foreground: 0 0% 100%;
-    --info: 210 85% 55%;
+    --info: 210 85% 50%;
     --info-foreground: 0 0% 100%;
 
-    --sidebar-background: 0 0% 99%;
-    --sidebar-foreground: 228 14% 20%;
-    --sidebar-primary: 210 100% 50%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 16%;
+    --sidebar-primary: 210 100% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 94%;
-    --sidebar-accent-foreground: 228 14% 25%;
-    --sidebar-border: 220 13% 88%;
-    --sidebar-ring: 210 100% 50%;
+    --sidebar-accent: 210 20% 94%;
+    --sidebar-accent-foreground: 222 47% 20%;
+    --sidebar-border: 215 20% 88%;
+    --sidebar-ring: 210 100% 45%;
   }
 
   .dark {
@@ -158,8 +158,8 @@
   }
 
   .glass-card {
-    @apply rounded-xl bg-card/70 backdrop-blur-xl border border-border/50;
-    box-shadow: var(--shadow-card), inset 0 1px 0 hsl(0 0% 100% / 0.03);
+    @apply rounded-xl bg-card border border-border;
+    box-shadow: var(--shadow-card);
   }
 
   .dark .glass-card {
