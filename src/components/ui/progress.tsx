@@ -26,13 +26,16 @@ const Progress = React.forwardRef<
   return (
     <ProgressPrimitive.Root
       ref={ref}
-      className={cn("relative h-4 w-full overflow-hidden rounded-full bg-secondary/40", className)}
+      className={cn(
+        "relative h-4 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-secondary/40",
+        className
+      )}
       {...props}
     >
       <ProgressPrimitive.Indicator
         className={cn(
-          "h-full w-full flex-1 rounded-full bg-gradient-to-r from-primary via-primary/80 to-accent transition-all duration-700 ease-out",
-          showGlow && "shadow-[0_0_8px_hsl(var(--primary)/0.4)]"
+          "h-full w-full flex-1 rounded-full bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 dark:from-primary dark:via-primary/80 dark:to-accent transition-all duration-700 ease-out",
+          showGlow && "shadow-[0_0_10px_hsl(var(--primary)/0.5)]"
         )}
         style={{ transform: `translateX(-${100 - (displayValue as number)}%)` }}
       />
