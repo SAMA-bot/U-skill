@@ -158,8 +158,8 @@
   }
 
   .glass-card {
-    @apply rounded-xl bg-card/70 backdrop-blur-xl border border-border/50;
-    box-shadow: var(--shadow-card), inset 0 1px 0 hsl(0 0% 100% / 0.03);
+    @apply rounded-xl bg-card border border-border;
+    box-shadow: var(--shadow-card);
   }
 
   .dark .glass-card {
