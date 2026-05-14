@@ -2,15 +2,18 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
+const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, style, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border border-border/50 bg-card/80 backdrop-blur-sm text-card-foreground shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/15",
+      // Light mode: crisp white card with shadow + soft border. Dark mode: glass.
+      "rounded-xl border border-gray-200 bg-white text-card-foreground shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/20",
+      "dark:border-border/50 dark:bg-card/80 dark:backdrop-blur-sm dark:shadow-sm dark:hover:border-primary/15",
       className
     )}
     style={{
-      background: 'linear-gradient(145deg, hsl(228 14% 12% / 0.7), hsl(228 14% 8% / 0.5))',
+      background: 'var(--gradient-card)',
+      ...style,
     }}
     {...props}
   />
