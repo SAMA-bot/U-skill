@@ -6,24 +6,24 @@
 
 @layer base {
   :root {
-    /* Light theme */
-    --background: 0 0% 100%;
-    --foreground: 228 14% 12%;
+    /* Light theme — soft slate background, crisp white cards */
+    --background: 210 20% 98%; /* ~#f8fafc */
+    --foreground: 222 47% 11%; /* ~slate-900 */
 
-    --card: 0 0% 99%;
-    --card-foreground: 228 14% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 228 14% 12%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 210 100% 50%;
+    --primary: 210 100% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 94%;
-    --secondary-foreground: 228 14% 20%;
+    --secondary: 210 20% 94%;
+    --secondary-foreground: 222 47% 16%;
 
-    --muted: 220 14% 94%;
-    --muted-foreground: 215 15% 45%;
+    --muted: 210 20% 94%;
+    --muted-foreground: 215 19% 35%; /* darker for AA contrast */
 
     --accent: 270 65% 58%;
     --accent-foreground: 0 0% 100%;
