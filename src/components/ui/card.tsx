@@ -6,15 +6,13 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
   <div
     ref={ref}
     className={cn(
-      // Light mode: crisp white card with shadow + soft border. Dark mode: glass.
+      // Light mode: crisp solid white card with shadow + soft border. Dark mode: glass.
       "rounded-xl border border-gray-200 bg-white text-card-foreground shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/20",
       "dark:border-border/50 dark:bg-card/80 dark:backdrop-blur-sm dark:shadow-sm dark:hover:border-primary/15",
+      "dark:[background:var(--gradient-card)]",
       className
     )}
-    style={{
-      background: 'var(--gradient-card)',
-      ...style,
-    }}
+    style={style}
     {...props}
   />
 ));
