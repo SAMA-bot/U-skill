@@ -47,27 +47,25 @@ interface Profile {
   avatar_url: string | null;
 }
 type ActiveSection = "dashboard" | "courses" | "performance" | "achievements" | "documents" | "motivation" | "calendar";
-const sidebarItems: {
-  icon: typeof Home;
+const sidebarGroups: {
   label: string;
-  section: ActiveSection;
-}[] = [{
-  icon: Home,
-  label: "Dashboard",
-  section: "dashboard"
-}, {
-  icon: ClipboardList,
-  label: "Learning Paths",
-  section: "courses"
-}, {
-  icon: BarChart3,
-  label: "Performance",
-  section: "performance"
-}, {
-  icon: Trophy,
-  label: "Achievements",
-  section: "achievements"
-}];
+  items: { icon: typeof Home; label: string; section: ActiveSection }[];
+}[] = [
+  {
+    label: "Main",
+    items: [
+      { icon: Home, label: "Dashboard", section: "dashboard" },
+      { icon: BarChart3, label: "Performance", section: "performance" },
+      { icon: Trophy, label: "Achievements", section: "achievements" },
+    ],
+  },
+  {
+    label: "Learning",
+    items: [
+      { icon: ClipboardList, label: "Learning Paths", section: "courses" },
+    ],
+  },
+];
 const FacultyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
