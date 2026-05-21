@@ -781,7 +781,7 @@ const FacultyDashboard = () => {
             </>)} </> : <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <h2 className="text-xl font-semibold text-foreground mb-2">
-                  {sidebarItems.find(item => item.section === activeSection)?.label}
+                  {sidebarGroups.flatMap(g => g.items).find(item => item.section === activeSection)?.label}
                 </h2>
                 <p className="text-muted-foreground">This section is coming soon.</p>
               </div>
