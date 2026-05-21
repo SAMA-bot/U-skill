@@ -91,17 +91,32 @@ interface DepartmentStats {
   avgPerformance: number;
 }
 
-const sidebarItems = [
-  { icon: Home, label: "Dashboard", id: "dashboard" },
-  { icon: Shield, label: "Role Management", id: "roles" },
-  { icon: GraduationCap, label: "Capacity Building", id: "courses" },
-  { icon: FolderCheck, label: "Document Review", id: "documents" },
-  { icon: Users, label: "Faculty Management", id: "faculty" },
-  { icon: BarChart3, label: "Performance Reports", id: "reports" },
-  { icon: Building2, label: "Departments", id: "departments" },
-  { icon: Activity, label: "Audit Logs", id: "audit" },
-  { icon: Star, label: "Feedback Analytics", id: "feedback" },
-  { icon: Sparkles, label: "Predictive Analytics", id: "predictions" },
+const sidebarGroups = [
+  {
+    label: "Main",
+    items: [
+      { icon: Home, label: "Dashboard", id: "dashboard" },
+      { icon: Users, label: "Faculty Management", id: "faculty" },
+      { icon: Building2, label: "Departments", id: "departments" },
+    ],
+  },
+  {
+    label: "Learning",
+    items: [
+      { icon: GraduationCap, label: "Capacity Building", id: "courses" },
+      { icon: FolderCheck, label: "Document Review", id: "documents" },
+    ],
+  },
+  {
+    label: "Admin",
+    items: [
+      { icon: Shield, label: "Role Management", id: "roles" },
+      { icon: BarChart3, label: "Performance Reports", id: "reports" },
+      { icon: Activity, label: "Audit Logs", id: "audit" },
+      { icon: Star, label: "Feedback Analytics", id: "feedback" },
+      { icon: Sparkles, label: "Predictive Analytics", id: "predictions" },
+    ],
+  },
 ];
 
 const AdminDashboard = () => {
