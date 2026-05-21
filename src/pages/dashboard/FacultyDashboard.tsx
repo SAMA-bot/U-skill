@@ -47,27 +47,25 @@ interface Profile {
   avatar_url: string | null;
 }
 type ActiveSection = "dashboard" | "courses" | "performance" | "achievements" | "documents" | "motivation" | "calendar";
-const sidebarItems: {
-  icon: typeof Home;
+const sidebarGroups: {
   label: string;
-  section: ActiveSection;
-}[] = [{
-  icon: Home,
-  label: "Dashboard",
-  section: "dashboard"
-}, {
-  icon: ClipboardList,
-  label: "Learning Paths",
-  section: "courses"
-}, {
-  icon: BarChart3,
-  label: "Performance",
-  section: "performance"
-}, {
-  icon: Trophy,
-  label: "Achievements",
-  section: "achievements"
-}];
+  items: { icon: typeof Home; label: string; section: ActiveSection }[];
+}[] = [
+  {
+    label: "Main",
+    items: [
+      { icon: Home, label: "Dashboard", section: "dashboard" },
+      { icon: BarChart3, label: "Performance", section: "performance" },
+      { icon: Trophy, label: "Achievements", section: "achievements" },
+    ],
+  },
+  {
+    label: "Learning",
+    items: [
+      { icon: ClipboardList, label: "Learning Paths", section: "courses" },
+    ],
+  },
+];
 const FacultyDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -463,35 +461,50 @@ const FacultyDashboard = () => {
               </button>
             </div>
 
-            <nav className="mt-2 flex-1 flex flex-col px-2 space-y-1">
-              {sidebarItems.map((item, index) => {
-                const isActive = activeSection === item.section;
-                return <button key={index} onClick={() => {
-                  setActiveSection(item.section);
-                  setSidebarOpen(false);
-                }} className={`
-                      group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md transition-colors w-full text-left
-                      ${isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"}
-                    `}
-                  title={sidebarCollapsed ? item.label : undefined}
-                >
-                    <item.icon className={`flex-shrink-0 h-5 w-5 ${isActive ? "text-primary" : ""} ${sidebarCollapsed ? "" : "mr-3"}`} />
-                    {!sidebarCollapsed && item.label}
-                  </button>;
-              })}
+            <nav className="mt-2 flex-1 flex flex-col px-3 gap-6">
+              {sidebarGroups.map((group) => (
+                <div key={group.label} className="flex flex-col gap-1">
+                  {!sidebarCollapsed && (
+                    <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                      {group.label}
+                    </p>
+                  )}
+                  {sidebarCollapsed && <div className="h-px bg-border/60 mx-2 mb-1" />}
+                  {group.items.map((item) => {
+                    const isActive = activeSection === item.section;
+                    return (
+                      <button
+                        key={item.section}
+                        onClick={() => { setActiveSection(item.section); setSidebarOpen(false); }}
+                        className={`group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all w-full text-left
+                          ${isActive
+                            ? "bg-primary/10 text-primary shadow-sm"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                        title={sidebarCollapsed ? item.label : undefined}
+                      >
+                        <item.icon className={`flex-shrink-0 h-[18px] w-[18px] ${isActive ? "text-primary" : ""} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={isActive ? 2.25 : 2} />
+                        {!sidebarCollapsed && item.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
             </nav>
 
-            <div className="px-2 pt-4 pb-2 border-t border-border">
-              {roles.length > 1 && <button onClick={() => navigate('/select-role')} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`} title={sidebarCollapsed ? "Switch Role" : undefined}>
-                  <ArrowRight className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
+            <div className="px-3 pt-4 pb-2 mt-2 border-t border-border space-y-1">
+              {!sidebarCollapsed && (
+                <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">Account</p>
+              )}
+              {roles.length > 1 && <button onClick={() => navigate('/select-role')} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all`} title={sidebarCollapsed ? "Switch Role" : undefined}>
+                  <ArrowRight className={`flex-shrink-0 h-[18px] w-[18px] ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                   {!sidebarCollapsed && "Switch Role"}
                 </button>}
-              <button onClick={() => navigate('/dashboard/settings')} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`} title={sidebarCollapsed ? "Settings" : undefined}>
-                <Settings className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
+              <button onClick={() => navigate('/dashboard/settings')} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all`} title={sidebarCollapsed ? "Settings" : undefined}>
+                <Settings className={`flex-shrink-0 h-[18px] w-[18px] ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                 {!sidebarCollapsed && "Settings"}
               </button>
-              <button onClick={handleLogout} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-3"} py-2 text-sm font-medium rounded-md`} title={sidebarCollapsed ? "Sign out" : undefined}>
-                <LogOut className={`flex-shrink-0 h-5 w-5 ${sidebarCollapsed ? "" : "mr-3"}`} />
+              <button onClick={handleLogout} className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all`} title={sidebarCollapsed ? "Sign out" : undefined}>
+                <LogOut className={`flex-shrink-0 h-[18px] w-[18px] ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                 {!sidebarCollapsed && "Sign out"}
               </button>
             </div>
@@ -783,7 +796,7 @@ const FacultyDashboard = () => {
             </>)} </> : <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <h2 className="text-xl font-semibold text-foreground mb-2">
-                  {sidebarItems.find(item => item.section === activeSection)?.label}
+                  {sidebarGroups.flatMap(g => g.items).find(item => item.section === activeSection)?.label}
                 </h2>
                 <p className="text-muted-foreground">This section is coming soon.</p>
               </div>
