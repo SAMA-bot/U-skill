@@ -132,7 +132,7 @@ const DepartmentLeaderboard = () => {
     if (rank === 0)
       return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border-yellow-300 dark:border-yellow-700 ring-2 ring-yellow-400/30";
     if (rank === 1)
-      return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border-gray-300 dark:border-gray-600 ring-2 ring-gray-400/20";
+      return "bg-muted text-foreground border-border ring-2 ring-muted-foreground/20";
     if (rank === 2)
       return "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400 border-orange-300 dark:border-orange-700 ring-2 ring-orange-400/20";
     return "bg-muted text-muted-foreground border-border";

@@ -564,7 +564,7 @@ const HodDashboard = () => {
                                 <TableCell>
                                   <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold ${
                                     idx === 0 ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400" :
-                                    idx === 1 ? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300" :
+                                    idx === 1 ? "bg-muted text-foreground" :
                                     idx === 2 ? "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400" :
                                     "bg-muted text-muted-foreground"
                                   }`}>
