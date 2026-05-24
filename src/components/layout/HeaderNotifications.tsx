@@ -236,7 +236,7 @@ const HeaderNotifications = () => {
                       transition={{ delay: index * 0.02 }}
                       className={`
                         group flex items-start gap-2.5 px-4 py-2.5 cursor-pointer transition-colors hover:bg-muted/40
-                        ${notification.read ? "opacity-50" : ""}
+                        ${notification.read ? "opacity-70" : ""}
                       `}
                       onClick={() => markAsRead(notification.id)}
                     >
@@ -269,7 +269,7 @@ const HeaderNotifications = () => {
                         <p className="text-[11px] text-muted-foreground/80 line-clamp-1 mt-0.5">
                           {notification.message}
                         </p>
-                        <p className="text-[10px] text-muted-foreground/50 mt-0.5">
+                        <p className="text-[10px] text-muted-foreground mt-0.5">
                           {formatTimestamp(notification.timestamp)}
                         </p>
                       </div>
