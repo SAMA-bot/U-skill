@@ -177,7 +177,7 @@ const AIInsightsPanel = () => {
       <div className="p-4 sm:p-6">
         {!hasGenerated && !loading ? (
           <div className="flex flex-col items-center justify-center py-8 gap-4">
-            <Sparkles className="h-10 w-10 text-muted-foreground/50" />
+            <Sparkles className="h-10 w-10 text-primary" />
             <p className="text-sm text-muted-foreground text-center">
               Get AI-powered insights based on your performance data.
             </p>

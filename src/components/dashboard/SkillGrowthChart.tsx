@@ -126,7 +126,7 @@ const SkillGrowthChart = () => {
       <div className="p-4 sm:p-6">
         {!hasProgress ? (
           <div className="flex flex-col items-center justify-center py-10 text-center">
-            <Zap className="h-10 w-10 text-muted-foreground/40 mb-3" />
+            <Zap className="h-10 w-10 text-primary mb-3" />
             <p className="text-base font-medium text-foreground mb-1">
               Start Growing Your Skills
             </p>
@@ -175,7 +175,7 @@ const SkillGrowthChart = () => {
                   <span className="text-[11px] text-muted-foreground">Current</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground opacity-50" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground" />
                   <span className="text-[11px] text-muted-foreground">Target</span>
                 </div>
               </div>
