@@ -1,0 +1,1 @@
+REVOKE INSERT (xp_earned), UPDATE (xp_earned) ON public.lesson_progress FROM authenticated, anon, PUBLIC;
