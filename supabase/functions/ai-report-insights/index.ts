@@ -1,5 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
+
+const MAX_BODY_BYTES = 32 * 1024; // 32KB cap on metrics payload
 
 serve(async (req) => {
   const origin = req.headers.get("origin");
@@ -15,8 +18,59 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const { metrics } = await req.json();
-    if (!metrics) {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error("Backend configuration error");
+    }
+
+    // --- Authentication ---
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const token = authHeader.replace("Bearer ", "");
+    const anonClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: claimsData, error: claimsError } = await anonClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Session expired. Please log in again." }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // --- Payload size cap ---
+    const contentLength = Number(req.headers.get("content-length") || "0");
+    if (contentLength > MAX_BODY_BYTES) {
+      return new Response(JSON.stringify({ error: "Payload too large" }), {
+        status: 413,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const rawBody = await req.text();
+    if (rawBody.length > MAX_BODY_BYTES) {
+      return new Response(JSON.stringify({ error: "Payload too large" }), {
+        status: 413,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    let parsed: { metrics?: unknown };
+    try {
+      parsed = JSON.parse(rawBody);
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid JSON" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const { metrics } = parsed;
+    if (!metrics || typeof metrics !== "object") {
       return new Response(JSON.stringify({ error: "Missing metrics" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -108,7 +162,7 @@ Return ONLY valid JSON. No markdown, no explanation. Base all insights on the ac
     });
   } catch (e) {
     console.error("ai-report-insights error:", e);
-    return new Response(JSON.stringify({ fallback: true, error: String(e) }), {
+    return new Response(JSON.stringify({ fallback: true, error: "Insights temporarily unavailable" }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
