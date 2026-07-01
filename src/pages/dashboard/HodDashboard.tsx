@@ -331,11 +331,16 @@ const HodDashboard = () => {
                         <button
                           key={tab.id}
                           onClick={() => { setActiveTab(tab.id); setSidebarOpen(false); }}
-                          className={`group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg w-full text-left transition-all ${
-                            isActive ? "bg-primary/10 text-primary shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          className={`group relative flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm rounded-lg w-full text-left transition-all ${
+                            isActive
+                              ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold shadow-md shadow-purple-500/30"
+                              : "font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
                           }`}
                         >
-                          <tab.icon className={`flex-shrink-0 h-[18px] w-[18px] ${isActive ? "text-primary" : ""} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={isActive ? 2.25 : 2} />
+                          {isActive && !sidebarCollapsed && (
+                            <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-white/90 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                          )}
+                          <tab.icon className={`flex-shrink-0 h-[18px] w-[18px] ${isActive ? "text-white" : ""} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={isActive ? 2.5 : 2} />
                           {!sidebarCollapsed && tab.label}
                         </button>
                       );
