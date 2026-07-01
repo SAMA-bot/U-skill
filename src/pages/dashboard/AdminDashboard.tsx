@@ -443,7 +443,7 @@ const AdminDashboard = () => {
               )}
               <button
                 onClick={() => navigate('/dashboard/settings')}
-                className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all`}
+                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}
                 title={sidebarCollapsed ? "Settings" : undefined}
               >
                 <Settings className={`flex-shrink-0 h-[18px] w-[18px] ${sidebarCollapsed ? "" : "mr-2.5"}`} />
@@ -451,7 +451,7 @@ const AdminDashboard = () => {
               </button>
               <button
                 onClick={handleLogout}
-                className={`w-full text-muted-foreground hover:bg-muted hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all`}
+                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}
                 title={sidebarCollapsed ? "Sign out" : undefined}
               >
                 <LogOut className={`flex-shrink-0 h-[18px] w-[18px] ${sidebarCollapsed ? "" : "mr-2.5"}`} />
