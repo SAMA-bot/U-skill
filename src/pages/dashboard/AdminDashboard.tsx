@@ -367,7 +367,7 @@ const AdminDashboard = () => {
         {/* Sidebar */}
         <aside
           className={`
-            bg-card flex-shrink-0 border-r border-border
+            glass-sidebar flex-shrink-0 border-r border-border
             fixed md:sticky inset-y-0 left-0 z-50 md:z-auto
             transform transition-all duration-200 ease-in-out
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
