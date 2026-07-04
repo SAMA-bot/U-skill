@@ -314,13 +314,13 @@ const HodDashboard = () => {
               </div>
               <nav className="mt-2 flex-1 flex flex-col px-3 gap-6">
                 {[
-                  { label: "Main", items: [{ id: "overview", label: "Department Overview", icon: Home }] },
-                  { label: "Learning", items: [{ id: "documents", label: "Approvals", icon: FileCheck }] },
-                  { label: "Admin", items: [{ id: "performance", label: "Reports", icon: BarChart3 }] },
+                  { label: "Main", color: "text-blue-500 dark:text-white", items: [{ id: "overview", label: "Department Overview", icon: Home }] },
+                  { label: "Learning", color: "text-purple-500 dark:text-white", items: [{ id: "documents", label: "Approvals", icon: FileCheck }] },
+                  { label: "Admin", color: "text-blue-500 dark:text-white", items: [{ id: "performance", label: "Reports", icon: BarChart3 }] },
                 ].map((group) => (
                   <div key={group.label} className="flex flex-col gap-1">
                     {!sidebarCollapsed && (
-                      <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                      <p className={`px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider ${group.color}`}>
                         {group.label}
                       </p>
                     )}
@@ -334,13 +334,13 @@ const HodDashboard = () => {
                           className={`group relative flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm rounded-lg w-full text-left transition-all duration-200 ${
                             isActive
                               ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold shadow-md shadow-purple-500/30 hover:scale-[1.02]"
-                              : "font-medium text-muted-foreground hover:bg-muted/80 hover:text-foreground hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]"
+                              : `font-medium text-muted-foreground hover:bg-muted/80 hover:text-foreground hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`
                           }`}
                         >
                           {isActive && !sidebarCollapsed && (
                             <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-white/90 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
                           )}
-                          <tab.icon className={`flex-shrink-0 h-[18px] w-[18px] ${isActive ? "text-white" : ""} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={isActive ? 2.5 : 2} />
+                          <tab.icon className={`flex-shrink-0 h-[18px] w-[18px] ${isActive ? "text-white" : group.color} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={isActive ? 2.5 : 2} />
                           {!sidebarCollapsed && tab.label}
                         </button>
                       );
@@ -350,20 +350,20 @@ const HodDashboard = () => {
               </nav>
               <div className="px-3 pt-4 pb-2 mt-2 border-t border-border space-y-1">
                 {!sidebarCollapsed && (
-                  <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">Account</p>
+                  <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-blue-500 dark:text-white">Account</p>
                 )}
                 {roles.length > 1 && (
                   <button onClick={() => navigate("/select-role")} className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}>
-                    <ArrowRight className={`flex-shrink-0 h-[18px] w-[18px] ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                    <ArrowRight className={`flex-shrink-0 h-[18px] w-[18px] text-blue-500 dark:text-white ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                     {!sidebarCollapsed && "Switch Role"}
                   </button>
                 )}
                 <button onClick={() => navigate("/dashboard/settings")} className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}>
-                  <Settings className={`flex-shrink-0 h-[18px] w-[18px] ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                  <Settings className={`flex-shrink-0 h-[18px] w-[18px] text-blue-500 dark:text-white ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                   {!sidebarCollapsed && "Settings"}
                 </button>
                 <button onClick={handleLogout} className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}>
-                  <LogOut className={`flex-shrink-0 h-[18px] w-[18px] ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                  <LogOut className={`flex-shrink-0 h-[18px] w-[18px] text-blue-500 dark:text-white ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                   {!sidebarCollapsed && "Sign out"}
                 </button>
               </div>

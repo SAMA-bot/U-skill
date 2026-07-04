@@ -395,41 +395,47 @@ const AdminDashboard = () => {
             </div>
 
             <nav className="mt-2 flex-1 flex flex-col px-3 gap-6">
-              {sidebarGroups.map((group) => (
-                <div key={group.label} className="flex flex-col gap-1">
-                  {!sidebarCollapsed && (
-                    <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-                      {group.label}
-                    </p>
-                  )}
-                  {sidebarCollapsed && <div className="h-px bg-border/60 mx-2 mb-1" />}
-                  {group.items.map((item) => {
-                    const isActive = activeSection === item.id;
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => setActiveSection(item.id)}
-                        className={`group relative flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm rounded-lg w-full text-left transition-all duration-200
-                          ${isActive
-                            ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold shadow-md shadow-purple-500/30 hover:scale-[1.02]"
-                            : "font-medium text-muted-foreground hover:bg-muted/80 hover:text-foreground hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]"}`}
-                        title={sidebarCollapsed ? item.label : undefined}
-                      >
-                        {isActive && !sidebarCollapsed && (
-                          <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-white/90 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-                        )}
-                        <item.icon className={`flex-shrink-0 h-[18px] w-[18px] ${isActive ? "text-white" : ""} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={isActive ? 2.5 : 2} />
-                        {!sidebarCollapsed && item.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
+              {sidebarGroups.map((group) => {
+                const groupColor =
+                  group.label === "Learning"
+                    ? "text-purple-500 dark:text-white"
+                    : "text-blue-500 dark:text-white";
+                return (
+                  <div key={group.label} className="flex flex-col gap-1">
+                    {!sidebarCollapsed && (
+                      <p className={`px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider ${groupColor}`}>
+                        {group.label}
+                      </p>
+                    )}
+                    {sidebarCollapsed && <div className="h-px bg-border/60 mx-2 mb-1" />}
+                    {group.items.map((item) => {
+                      const isActive = activeSection === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => setActiveSection(item.id)}
+                          className={`group relative flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm rounded-lg w-full text-left transition-all duration-200
+                            ${isActive
+                              ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold shadow-md shadow-purple-500/30 hover:scale-[1.02]"
+                              : `font-medium text-muted-foreground hover:bg-muted/80 hover:text-foreground hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}`}
+                          title={sidebarCollapsed ? item.label : undefined}
+                        >
+                          {isActive && !sidebarCollapsed && (
+                            <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-white/90 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                          )}
+                          <item.icon className={`flex-shrink-0 h-[18px] w-[18px] ${isActive ? "text-white" : groupColor} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={isActive ? 2.5 : 2} />
+                          {!sidebarCollapsed && item.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })}
             </nav>
 
             <div className="px-3 pt-4 pb-2 mt-2 border-t border-border space-y-1">
               {!sidebarCollapsed && (
-                <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">Account</p>
+                <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-blue-500 dark:text-white">Account</p>
               )}
               {roles.length > 1 && (
                 <button
@@ -437,7 +443,7 @@ const AdminDashboard = () => {
                   className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}
                   title={sidebarCollapsed ? "Switch Role" : undefined}
                 >
-                  <ArrowLeft className={`flex-shrink-0 h-[18px] w-[18px] ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                  <ArrowLeft className={`flex-shrink-0 h-[18px] w-[18px] text-blue-500 dark:text-white ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                   {!sidebarCollapsed && "Switch Role"}
                 </button>
               )}
@@ -446,7 +452,7 @@ const AdminDashboard = () => {
                 className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}
                 title={sidebarCollapsed ? "Settings" : undefined}
               >
-                <Settings className={`flex-shrink-0 h-[18px] w-[18px] ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                <Settings className={`flex-shrink-0 h-[18px] w-[18px] text-blue-500 dark:text-white ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                 {!sidebarCollapsed && "Settings"}
               </button>
               <button
@@ -454,7 +460,7 @@ const AdminDashboard = () => {
                 className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}
                 title={sidebarCollapsed ? "Sign out" : undefined}
               >
-                <LogOut className={`flex-shrink-0 h-[18px] w-[18px] ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                <LogOut className={`flex-shrink-0 h-[18px] w-[18px] text-blue-500 dark:text-white ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                 {!sidebarCollapsed && "Sign out"}
               </button>
             </div>
