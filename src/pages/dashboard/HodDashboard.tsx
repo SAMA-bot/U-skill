@@ -305,10 +305,10 @@ const HodDashboard = () => {
             <div className="flex flex-col h-full pt-5 pb-4">
               <div className="flex items-center justify-between px-4 md:hidden">
                 <span className="text-lg font-semibold text-foreground">Menu</span>
-                <button onClick={() => setSidebarOpen(false)}><X className="h-5 w-5 text-muted-foreground" /></button>
+                <button onClick={() => setSidebarOpen(false)}><X className="h-5 w-5 text-blue-500 dark:text-white" /></button>
               </div>
               <div className="hidden md:flex justify-end px-2 mb-2">
-                <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="p-1.5 rounded-md text-blue-500 hover:text-blue-600 dark:text-white hover:bg-muted transition-colors">
                   {sidebarCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
                 </button>
               </div>

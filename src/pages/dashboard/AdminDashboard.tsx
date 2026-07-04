@@ -387,7 +387,7 @@ const AdminDashboard = () => {
             <div className="hidden md:flex justify-end px-2 mb-2">
               <button
                 onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                className="p-1.5 rounded-md text-blue-500 hover:text-blue-600 dark:text-white hover:bg-muted transition-colors"
                 title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
                 {sidebarCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
