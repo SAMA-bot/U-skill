@@ -379,7 +379,7 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between px-4 md:hidden">
               <span className="text-lg font-semibold text-foreground">Menu</span>
               <button onClick={() => setSidebarOpen(false)}>
-                <X className="h-5 w-5 text-muted-foreground" />
+                <X className="h-5 w-5 text-blue-500 dark:text-white" />
               </button>
             </div>
 
