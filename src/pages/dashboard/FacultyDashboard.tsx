@@ -485,7 +485,7 @@ const FacultyDashboard = () => {
                         {isActive && !sidebarCollapsed && (
                           <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-white/90 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
                         )}
-                        <item.icon className={`flex-shrink-0 h-[18px] w-[18px] ${isActive ? "text-white" : ""} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={isActive ? 2.5 : 2} />
+                        <item.icon className={`flex-shrink-0 h-[18px] w-[18px] ${isActive ? "text-white" : groupColor} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={isActive ? 2.5 : 2} />
                         {!sidebarCollapsed && item.label}
                       </button>
                     );
