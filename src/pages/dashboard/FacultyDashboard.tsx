@@ -813,6 +813,14 @@ const FacultyDashboard = () => {
       </div>
     </div>
     <PerformanceReportModal open={reportModalOpen} onOpenChange={setReportModalOpen} data={reportData} />
+    <OnboardingTour
+      storageKey="onboarding-tour-faculty-v1"
+      steps={[
+        { target: "sidebar-main", title: "Main workspace", description: "Your daily hub — Dashboard, Performance, and Achievements live here for a quick pulse on your progress." },
+        { target: "sidebar-learning", title: "Learning journey", description: "Continue your capacity-building path, unlock lessons, and earn XP as you level up." },
+      ]}
+    />
     </NotificationsProvider>;
+
 };
 export default FacultyDashboard;
