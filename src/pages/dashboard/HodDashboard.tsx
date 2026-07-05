@@ -32,6 +32,8 @@ import DepartmentAlerts from "@/components/hod/DepartmentAlerts";
 import HodDocumentApprovals from "@/components/hod/HodDocumentApprovals";
 import HodPerformanceReview from "@/components/hod/HodPerformanceReview";
 import HodFeedbackSystem from "@/components/hod/HodFeedbackSystem";
+import OnboardingTour from "@/components/OnboardingTour";
+
 
 interface FacultyRanking {
   user_id: string;
@@ -318,7 +320,7 @@ const HodDashboard = () => {
                   { label: "Learning", color: "text-purple-500 dark:text-white", items: [{ id: "documents", label: "Approvals", icon: FileCheck }] },
                   { label: "Admin", color: "text-blue-500 dark:text-white", items: [{ id: "performance", label: "Reports", icon: BarChart3 }] },
                 ].map((group) => (
-                  <div key={group.label} className="flex flex-col gap-1">
+                  <div key={group.label} data-tour={`sidebar-${group.label.toLowerCase()}`} className="flex flex-col gap-1">
                     {!sidebarCollapsed && (
                       <p className={`px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider ${group.color}`}>
                         {group.label}
@@ -619,7 +621,16 @@ const HodDashboard = () => {
           </main>
         </div>
       </div>
+      <OnboardingTour
+        storageKey="onboarding-tour-hod-v1"
+        steps={[
+          { target: "sidebar-main", title: "Department overview", description: "Track your department's performance, participation, and feedback at a glance." },
+          { target: "sidebar-learning", title: "Approvals hub", description: "Review and approve faculty documents submitted for your department." },
+          { target: "sidebar-admin", title: "Reports", description: "Dive into detailed performance reports for informed decisions." },
+        ]}
+      />
     </NotificationsProvider>
+
   );
 };
 

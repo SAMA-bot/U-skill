@@ -40,6 +40,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useMultipleRealtimeData } from "@/hooks/useRealtimeData";
 import { NotificationsProvider } from "@/hooks/useNotifications";
 import { useAcademicYear } from "@/contexts/AcademicYearContext";
+import OnboardingTour from "@/components/OnboardingTour";
+
 interface Profile {
   full_name: string;
   department: string | null;
@@ -468,7 +470,7 @@ const FacultyDashboard = () => {
                     ? "text-purple-500 dark:text-white"
                     : "text-blue-500 dark:text-white";
                 return (
-                  <div key={group.label} className="flex flex-col gap-1">
+                  <div key={group.label} data-tour={`sidebar-${group.label.toLowerCase()}`} className="flex flex-col gap-1">
                     {!sidebarCollapsed && (
                       <p className={`px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider ${groupColor}`}>
                         {group.label}
@@ -813,6 +815,14 @@ const FacultyDashboard = () => {
       </div>
     </div>
     <PerformanceReportModal open={reportModalOpen} onOpenChange={setReportModalOpen} data={reportData} />
+    <OnboardingTour
+      storageKey="onboarding-tour-faculty-v1"
+      steps={[
+        { target: "sidebar-main", title: "Main workspace", description: "Your daily hub — Dashboard, Performance, and Achievements live here for a quick pulse on your progress." },
+        { target: "sidebar-learning", title: "Learning journey", description: "Continue your capacity-building path, unlock lessons, and earn XP as you level up." },
+      ]}
+    />
     </NotificationsProvider>;
+
 };
 export default FacultyDashboard;

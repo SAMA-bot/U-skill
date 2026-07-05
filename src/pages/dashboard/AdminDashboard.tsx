@@ -73,6 +73,8 @@ import InstitutionalOverview from "@/components/admin/InstitutionalOverview";
 import FacultyComparison from "@/components/admin/FacultyComparison";
 import PredictiveAnalytics from "@/components/admin/PredictiveAnalytics";
 import PerformanceHeatmap from "@/components/admin/PerformanceHeatmap";
+import OnboardingTour from "@/components/OnboardingTour";
+
 interface FacultyMember {
   user_id: string;
   full_name: string;
@@ -401,7 +403,7 @@ const AdminDashboard = () => {
                     ? "text-purple-500 dark:text-white"
                     : "text-blue-500 dark:text-white";
                 return (
-                  <div key={group.label} className="flex flex-col gap-1">
+                  <div key={group.label} data-tour={`sidebar-${group.label.toLowerCase()}`} className="flex flex-col gap-1">
                     {!sidebarCollapsed && (
                       <p className={`px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider ${groupColor}`}>
                         {group.label}
@@ -919,7 +921,16 @@ const AdminDashboard = () => {
           )}
         </main>
       </div>
+      <OnboardingTour
+        storageKey="onboarding-tour-admin-v1"
+        steps={[
+          { target: "sidebar-main", title: "Main workspace", description: "Get an institutional snapshot, manage faculty, and oversee departments from one place." },
+          { target: "sidebar-learning", title: "Learning oversight", description: "Curate capacity-building paths and review faculty documents before they publish." },
+          { target: "sidebar-admin", title: "Admin controls", description: "Assign roles, run reports, audit activity, and forecast trends with predictive analytics." },
+        ]}
+      />
     </div>
+
   );
 };
 
