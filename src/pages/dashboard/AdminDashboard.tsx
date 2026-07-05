@@ -401,7 +401,7 @@ const AdminDashboard = () => {
                     ? "text-purple-500 dark:text-white"
                     : "text-blue-500 dark:text-white";
                 return (
-                  <div key={group.label} className="flex flex-col gap-1">
+                  <div key={group.label} data-tour={`sidebar-${group.label.toLowerCase()}`} className="flex flex-col gap-1">
                     {!sidebarCollapsed && (
                       <p className={`px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider ${groupColor}`}>
                         {group.label}
