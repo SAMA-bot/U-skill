@@ -621,7 +621,16 @@ const HodDashboard = () => {
           </main>
         </div>
       </div>
+      <OnboardingTour
+        storageKey="onboarding-tour-hod-v1"
+        steps={[
+          { target: "sidebar-main", title: "Department overview", description: "Track your department's performance, participation, and feedback at a glance." },
+          { target: "sidebar-learning", title: "Approvals hub", description: "Review and approve faculty documents submitted for your department." },
+          { target: "sidebar-admin", title: "Reports", description: "Dive into detailed performance reports for informed decisions." },
+        ]}
+      />
     </NotificationsProvider>
+
   );
 };
 

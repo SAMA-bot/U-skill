@@ -921,7 +921,16 @@ const AdminDashboard = () => {
           )}
         </main>
       </div>
+      <OnboardingTour
+        storageKey="onboarding-tour-admin-v1"
+        steps={[
+          { target: "sidebar-main", title: "Main workspace", description: "Get an institutional snapshot, manage faculty, and oversee departments from one place." },
+          { target: "sidebar-learning", title: "Learning oversight", description: "Curate capacity-building paths and review faculty documents before they publish." },
+          { target: "sidebar-admin", title: "Admin controls", description: "Assign roles, run reports, audit activity, and forecast trends with predictive analytics." },
+        ]}
+      />
     </div>
+
   );
 };
 
