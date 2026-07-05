@@ -40,6 +40,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useMultipleRealtimeData } from "@/hooks/useRealtimeData";
 import { NotificationsProvider } from "@/hooks/useNotifications";
 import { useAcademicYear } from "@/contexts/AcademicYearContext";
+import OnboardingTour from "@/components/OnboardingTour";
+
 interface Profile {
   full_name: string;
   department: string | null;

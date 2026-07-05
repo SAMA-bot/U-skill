@@ -73,6 +73,8 @@ import InstitutionalOverview from "@/components/admin/InstitutionalOverview";
 import FacultyComparison from "@/components/admin/FacultyComparison";
 import PredictiveAnalytics from "@/components/admin/PredictiveAnalytics";
 import PerformanceHeatmap from "@/components/admin/PerformanceHeatmap";
+import OnboardingTour from "@/components/OnboardingTour";
+
 interface FacultyMember {
   user_id: string;
   full_name: string;

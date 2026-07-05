@@ -32,6 +32,8 @@ import DepartmentAlerts from "@/components/hod/DepartmentAlerts";
 import HodDocumentApprovals from "@/components/hod/HodDocumentApprovals";
 import HodPerformanceReview from "@/components/hod/HodPerformanceReview";
 import HodFeedbackSystem from "@/components/hod/HodFeedbackSystem";
+import OnboardingTour from "@/components/OnboardingTour";
+
 
 interface FacultyRanking {
   user_id: string;
