@@ -123,8 +123,7 @@ const sidebarGroups = [
 ];
 
 const AdminDashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { collapsed: sidebarCollapsed, setCollapsed: setSidebarCollapsed, mobileOpen: sidebarOpen, setMobileOpen: setSidebarOpen } = useSidebarState("sidebar:admin");
   const [activeSection, setActiveSection] = useState("dashboard");
   const [facultyList, setFacultyList] = useState<FacultyMember[]>([]);
   const [departmentStats, setDepartmentStats] = useState<DepartmentStats[]>([]);
