@@ -34,6 +34,8 @@ import HodPerformanceReview from "@/components/hod/HodPerformanceReview";
 import HodFeedbackSystem from "@/components/hod/HodFeedbackSystem";
 import OnboardingTour from "@/components/OnboardingTour";
 import { useSidebarState } from "@/hooks/useSidebarState";
+import { SidebarProfile } from "@/components/layout/SidebarProfile";
+
 
 
 interface FacultyRanking {
@@ -58,7 +60,9 @@ interface DeptMetrics {
 const HodDashboard = () => {
   const { collapsed: sidebarCollapsed, setCollapsed: setSidebarCollapsed, mobileOpen: sidebarOpen, setMobileOpen: setSidebarOpen } = useSidebarState("sidebar:hod");
   const [activeTab, setActiveTab] = useState("overview");
+  const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [hodDepartment, setHodDepartment] = useState<string | null>(null);
+
   const [metrics, setMetrics] = useState<DeptMetrics>({
     avgPerformance: 0, avgFeedback: 0, trainingParticipation: 0,
     totalFaculty: 0, totalTrainings: 0, totalCompleted: 0,
@@ -87,11 +91,15 @@ const HodDashboard = () => {
     if (!user) return;
     const { data } = await supabase
       .from("profiles")
-      .select("department")
+      .select("department, full_name, avatar_url")
       .eq("user_id", user.id)
       .maybeSingle();
     setHodDepartment(data?.department || null);
+    if (data) {
+      setProfile({ full_name: data.full_name, avatar_url: data.avatar_url });
+    }
   };
+
 
   const fetchDepartmentData = async () => {
     if (!hodDepartment) return;
@@ -350,7 +358,14 @@ const HodDashboard = () => {
                   </div>
                 ))}
               </nav>
+              <SidebarProfile
+                user={user}
+                profile={profile}
+                role="Head of Department"
+                collapsed={sidebarCollapsed}
+              />
               <div className="px-3 pt-4 pb-2 mt-2 border-t border-border space-y-1">
+
                 {!sidebarCollapsed && (
                   <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-blue-500 dark:text-white">Account</p>
                 )}

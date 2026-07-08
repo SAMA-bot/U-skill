@@ -42,6 +42,8 @@ import { NotificationsProvider } from "@/hooks/useNotifications";
 import { useAcademicYear } from "@/contexts/AcademicYearContext";
 import OnboardingTour from "@/components/OnboardingTour";
 import { useSidebarState } from "@/hooks/useSidebarState";
+import { SidebarProfile } from "@/components/layout/SidebarProfile";
+
 
 interface Profile {
   full_name: string;
@@ -501,7 +503,15 @@ const FacultyDashboard = () => {
               );})}
             </nav>
 
+            <SidebarProfile
+              user={user}
+              profile={profile}
+              role="Faculty"
+              collapsed={sidebarCollapsed}
+            />
+
             <div className="px-3 pt-4 pb-2 mt-2 border-t border-border space-y-1">
+
               {!sidebarCollapsed && (
                 <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-blue-500 dark:text-white">Account</p>
               )}

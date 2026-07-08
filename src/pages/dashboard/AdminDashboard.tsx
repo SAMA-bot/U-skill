@@ -75,6 +75,8 @@ import PredictiveAnalytics from "@/components/admin/PredictiveAnalytics";
 import PerformanceHeatmap from "@/components/admin/PerformanceHeatmap";
 import OnboardingTour from "@/components/OnboardingTour";
 import { useSidebarState } from "@/hooks/useSidebarState";
+import { SidebarProfile } from "@/components/layout/SidebarProfile";
+
 
 interface FacultyMember {
   user_id: string;
@@ -125,7 +127,9 @@ const sidebarGroups = [
 const AdminDashboard = () => {
   const { collapsed: sidebarCollapsed, setCollapsed: setSidebarCollapsed, mobileOpen: sidebarOpen, setMobileOpen: setSidebarOpen } = useSidebarState("sidebar:admin");
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [facultyList, setFacultyList] = useState<FacultyMember[]>([]);
+
   const [departmentStats, setDepartmentStats] = useState<DepartmentStats[]>([]);
   const [institutionStats, setInstitutionStats] = useState({
     totalFaculty: 0,
@@ -149,8 +153,22 @@ const AdminDashboard = () => {
   useEffect(() => {
     if (user && isAdmin) {
       fetchAllData();
+      fetchCurrentProfile();
     }
   }, [user, isAdmin]);
+
+  const fetchCurrentProfile = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("profiles")
+      .select("full_name, avatar_url")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (data) {
+      setProfile(data);
+    }
+  };
+
 
   const fetchAllData = async () => {
     try {
@@ -435,7 +453,15 @@ const AdminDashboard = () => {
               })}
             </nav>
 
+            <SidebarProfile
+              user={user}
+              profile={profile}
+              role="Admin"
+              collapsed={sidebarCollapsed}
+            />
+
             <div className="px-3 pt-4 pb-2 mt-2 border-t border-border space-y-1">
+
               {!sidebarCollapsed && (
                 <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-blue-500 dark:text-white">Account</p>
               )}
