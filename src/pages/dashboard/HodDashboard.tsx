@@ -34,6 +34,8 @@ import HodPerformanceReview from "@/components/hod/HodPerformanceReview";
 import HodFeedbackSystem from "@/components/hod/HodFeedbackSystem";
 import OnboardingTour from "@/components/OnboardingTour";
 import { useSidebarState } from "@/hooks/useSidebarState";
+import { SidebarProfile } from "@/components/layout/SidebarProfile";
+
 
 
 interface FacultyRanking {
