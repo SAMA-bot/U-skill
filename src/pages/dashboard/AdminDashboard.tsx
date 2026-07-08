@@ -453,7 +453,15 @@ const AdminDashboard = () => {
               })}
             </nav>
 
+            <SidebarProfile
+              user={user}
+              profile={profile}
+              role="Admin"
+              collapsed={sidebarCollapsed}
+            />
+
             <div className="px-3 pt-4 pb-2 mt-2 border-t border-border space-y-1">
+
               {!sidebarCollapsed && (
                 <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-blue-500 dark:text-white">Account</p>
               )}
