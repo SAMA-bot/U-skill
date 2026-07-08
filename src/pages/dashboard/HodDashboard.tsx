@@ -60,7 +60,9 @@ interface DeptMetrics {
 const HodDashboard = () => {
   const { collapsed: sidebarCollapsed, setCollapsed: setSidebarCollapsed, mobileOpen: sidebarOpen, setMobileOpen: setSidebarOpen } = useSidebarState("sidebar:hod");
   const [activeTab, setActiveTab] = useState("overview");
+  const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [hodDepartment, setHodDepartment] = useState<string | null>(null);
+
   const [metrics, setMetrics] = useState<DeptMetrics>({
     avgPerformance: 0, avgFeedback: 0, trainingParticipation: 0,
     totalFaculty: 0, totalTrainings: 0, totalCompleted: 0,
