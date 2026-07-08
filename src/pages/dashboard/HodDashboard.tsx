@@ -33,6 +33,7 @@ import HodDocumentApprovals from "@/components/hod/HodDocumentApprovals";
 import HodPerformanceReview from "@/components/hod/HodPerformanceReview";
 import HodFeedbackSystem from "@/components/hod/HodFeedbackSystem";
 import OnboardingTour from "@/components/OnboardingTour";
+import { useSidebarState } from "@/hooks/useSidebarState";
 
 
 interface FacultyRanking {
@@ -55,8 +56,7 @@ interface DeptMetrics {
 }
 
 const HodDashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { collapsed: sidebarCollapsed, setCollapsed: setSidebarCollapsed, mobileOpen: sidebarOpen, setMobileOpen: setSidebarOpen } = useSidebarState("sidebar:hod");
   const [activeTab, setActiveTab] = useState("overview");
   const [hodDepartment, setHodDepartment] = useState<string | null>(null);
   const [metrics, setMetrics] = useState<DeptMetrics>({

@@ -74,6 +74,7 @@ import FacultyComparison from "@/components/admin/FacultyComparison";
 import PredictiveAnalytics from "@/components/admin/PredictiveAnalytics";
 import PerformanceHeatmap from "@/components/admin/PerformanceHeatmap";
 import OnboardingTour from "@/components/OnboardingTour";
+import { useSidebarState } from "@/hooks/useSidebarState";
 
 interface FacultyMember {
   user_id: string;
@@ -122,8 +123,7 @@ const sidebarGroups = [
 ];
 
 const AdminDashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { collapsed: sidebarCollapsed, setCollapsed: setSidebarCollapsed, mobileOpen: sidebarOpen, setMobileOpen: setSidebarOpen } = useSidebarState("sidebar:admin");
   const [activeSection, setActiveSection] = useState("dashboard");
   const [facultyList, setFacultyList] = useState<FacultyMember[]>([]);
   const [departmentStats, setDepartmentStats] = useState<DepartmentStats[]>([]);

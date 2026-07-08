@@ -41,6 +41,7 @@ import { useMultipleRealtimeData } from "@/hooks/useRealtimeData";
 import { NotificationsProvider } from "@/hooks/useNotifications";
 import { useAcademicYear } from "@/contexts/AcademicYearContext";
 import OnboardingTour from "@/components/OnboardingTour";
+import { useSidebarState } from "@/hooks/useSidebarState";
 
 interface Profile {
   full_name: string;
@@ -69,8 +70,7 @@ const sidebarGroups: {
   },
 ];
 const FacultyDashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { collapsed: sidebarCollapsed, setCollapsed: setSidebarCollapsed, mobileOpen: sidebarOpen, setMobileOpen: setSidebarOpen } = useSidebarState("sidebar:faculty");
   const [activeSection, setActiveSection] = useState<ActiveSection>("dashboard");
   const [profile, setProfile] = useState<Profile | null>(null);
   
