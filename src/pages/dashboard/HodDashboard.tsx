@@ -315,7 +315,7 @@ const HodDashboard = () => {
             <div className="flex flex-col h-full pt-5 pb-4">
               <div className="flex items-center justify-between px-4 md:hidden">
                 <span className="text-lg font-semibold text-foreground">Menu</span>
-                <button onClick={() => setSidebarOpen(false)}><X className="h-5 w-5 text-blue-500 dark:text-white" /></button>
+                <button onClick={() => setSidebarOpen(false)}><X className="h-5 w-5 text-muted-foreground" /></button>
               </div>
               <div className="hidden md:flex justify-end px-2 mb-2">
                 <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="p-1.5 rounded-md text-blue-500 hover:text-blue-600 dark:text-white hover:bg-muted transition-colors">
@@ -324,9 +324,9 @@ const HodDashboard = () => {
               </div>
               <nav className="mt-2 flex-1 flex flex-col px-3 gap-6">
                 {[
-                  { label: "Main", color: "text-blue-500 dark:text-white", items: [{ id: "overview", label: "Department Overview", icon: Home }] },
+                  { label: "Main", color: "text-muted-foreground", items: [{ id: "overview", label: "Department Overview", icon: Home }] },
                   { label: "Learning", color: "text-purple-500 dark:text-white", items: [{ id: "documents", label: "Approvals", icon: FileCheck }] },
-                  { label: "Admin", color: "text-blue-500 dark:text-white", items: [{ id: "performance", label: "Reports", icon: BarChart3 }] },
+                  { label: "Admin", color: "text-muted-foreground", items: [{ id: "performance", label: "Reports", icon: BarChart3 }] },
                 ].map((group) => (
                   <div key={group.label} data-tour={`sidebar-${group.label.toLowerCase()}`} className="flex flex-col gap-1">
                     {!sidebarCollapsed && (
@@ -341,10 +341,10 @@ const HodDashboard = () => {
                         <button
                           key={tab.id}
                           onClick={() => { setActiveTab(tab.id); setSidebarOpen(false); }}
-                          className={`group relative flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm rounded-lg w-full text-left transition-all duration-200 ${
+                          className={`group relative flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] rounded-md w-full text-left transition-all duration-200 ${
                             isActive
-                              ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold shadow-md shadow-purple-500/30 hover:scale-[1.02]"
-                              : `font-medium text-muted-foreground hover:bg-muted/80 hover:text-foreground hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`
+                              ? "bg-muted text-foreground font-semibold hover:scale-[1.02]"
+                              : `font-medium text-muted-foreground hover:bg-muted/80 hover:text-foreground`
                           }`}
                         >
                           {isActive && !sidebarCollapsed && (
@@ -367,20 +367,20 @@ const HodDashboard = () => {
               <div className="px-3 pt-4 pb-2 mt-2 border-t border-border space-y-1">
 
                 {!sidebarCollapsed && (
-                  <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-blue-500 dark:text-white">Account</p>
+                  <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Account</p>
                 )}
                 {roles.length > 1 && (
-                  <button onClick={() => navigate("/select-role")} className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}>
-                    <ArrowRight className={`flex-shrink-0 h-[18px] w-[18px] text-blue-500 dark:text-white ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                  <button onClick={() => navigate("/select-role")} className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`}>
+                    <ArrowRight className={`flex-shrink-0 h-[18px] w-[18px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                     {!sidebarCollapsed && "Switch Role"}
                   </button>
                 )}
-                <button onClick={() => navigate("/dashboard/settings")} className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}>
-                  <Settings className={`flex-shrink-0 h-[18px] w-[18px] text-blue-500 dark:text-white ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                <button onClick={() => navigate("/dashboard/settings")} className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`}>
+                  <Settings className={`flex-shrink-0 h-[18px] w-[18px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                   {!sidebarCollapsed && "Settings"}
                 </button>
-                <button onClick={handleLogout} className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}>
-                  <LogOut className={`flex-shrink-0 h-[18px] w-[18px] text-blue-500 dark:text-white ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                <button onClick={handleLogout} className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`}>
+                  <LogOut className={`flex-shrink-0 h-[18px] w-[18px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                   {!sidebarCollapsed && "Sign out"}
                 </button>
               </div>

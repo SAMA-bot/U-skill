@@ -399,7 +399,7 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between px-4 md:hidden">
               <span className="text-lg font-semibold text-foreground">Menu</span>
               <button onClick={() => setSidebarOpen(false)}>
-                <X className="h-5 w-5 text-blue-500 dark:text-white" />
+                <X className="h-5 w-5 text-muted-foreground" />
               </button>
             </div>
 
@@ -419,7 +419,7 @@ const AdminDashboard = () => {
                 const groupColor =
                   group.label === "Learning"
                     ? "text-purple-500 dark:text-white"
-                    : "text-blue-500 dark:text-white";
+                    : "text-muted-foreground";
                 return (
                   <div key={group.label} data-tour={`sidebar-${group.label.toLowerCase()}`} className="flex flex-col gap-1">
                     {!sidebarCollapsed && (
@@ -434,10 +434,10 @@ const AdminDashboard = () => {
                         <button
                           key={item.id}
                           onClick={() => setActiveSection(item.id)}
-                          className={`group relative flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm rounded-lg w-full text-left transition-all duration-200
+                          className={`group relative flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] rounded-md w-full text-left transition-all duration-200
                             ${isActive
-                              ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold shadow-md shadow-purple-500/30 hover:scale-[1.02]"
-                              : `font-medium text-muted-foreground hover:bg-muted/80 hover:text-foreground hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}`}
+                              ? "bg-muted text-foreground font-semibold hover:scale-[1.02]"
+                              : `font-medium text-muted-foreground hover:bg-muted/80 hover:text-foreground`}`}
                           title={sidebarCollapsed ? item.label : undefined}
                         >
                           {isActive && !sidebarCollapsed && (
@@ -463,32 +463,32 @@ const AdminDashboard = () => {
             <div className="px-3 pt-4 pb-2 mt-2 border-t border-border space-y-1">
 
               {!sidebarCollapsed && (
-                <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-blue-500 dark:text-white">Account</p>
+                <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Account</p>
               )}
               {roles.length > 1 && (
                 <button
                   onClick={() => navigate('/select-role')}
-                  className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}
+                  className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`}
                   title={sidebarCollapsed ? "Switch Role" : undefined}
                 >
-                  <ArrowLeft className={`flex-shrink-0 h-[18px] w-[18px] text-blue-500 dark:text-white ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                  <ArrowLeft className={`flex-shrink-0 h-[18px] w-[18px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                   {!sidebarCollapsed && "Switch Role"}
                 </button>
               )}
               <button
                 onClick={() => navigate('/dashboard/settings')}
-                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}
+                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`}
                 title={sidebarCollapsed ? "Settings" : undefined}
               >
-                <Settings className={`flex-shrink-0 h-[18px] w-[18px] text-blue-500 dark:text-white ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                <Settings className={`flex-shrink-0 h-[18px] w-[18px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                 {!sidebarCollapsed && "Settings"}
               </button>
               <button
                 onClick={handleLogout}
-                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(59,130,246,0.12)] dark:hover:shadow-[0_0_15px_rgba(139,92,246,0.15)]`}
+                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`}
                 title={sidebarCollapsed ? "Sign out" : undefined}
               >
-                <LogOut className={`flex-shrink-0 h-[18px] w-[18px] text-blue-500 dark:text-white ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                <LogOut className={`flex-shrink-0 h-[18px] w-[18px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                 {!sidebarCollapsed && "Sign out"}
               </button>
             </div>
