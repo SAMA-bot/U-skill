@@ -458,7 +458,7 @@ const FacultyDashboard = () => {
             <div className="hidden md:flex justify-end px-2 mb-2">
               <button
                 onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="p-1.5 rounded-md text-blue-500 hover:text-blue-600 dark:text-white hover:bg-muted transition-colors"
+                className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
                 title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
                 {sidebarCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
@@ -509,18 +509,18 @@ const FacultyDashboard = () => {
             <div className="px-3 pt-4 pb-2 mt-2 border-t border-border space-y-1">
 
               {!sidebarCollapsed && (
-                <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Account</p>
+                <p className="px-2 mb-1 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60">Account</p>
               )}
               {roles.length > 1 && <button onClick={() => navigate('/select-role')} className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`} title={sidebarCollapsed ? "Switch Role" : undefined}>
-                  <ArrowRight className={`flex-shrink-0 h-[18px] w-[18px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                  <ArrowRight className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                   {!sidebarCollapsed && "Switch Role"}
                 </button>}
               <button onClick={() => navigate('/dashboard/settings')} className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`} title={sidebarCollapsed ? "Settings" : undefined}>
-                <Settings className={`flex-shrink-0 h-[18px] w-[18px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                <Settings className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                 {!sidebarCollapsed && "Settings"}
               </button>
               <button onClick={handleLogout} className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`} title={sidebarCollapsed ? "Sign out" : undefined}>
-                <LogOut className={`flex-shrink-0 h-[18px] w-[18px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                <LogOut className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
                 {!sidebarCollapsed && "Sign out"}
               </button>
             </div>
