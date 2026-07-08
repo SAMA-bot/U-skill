@@ -91,11 +91,15 @@ const HodDashboard = () => {
     if (!user) return;
     const { data } = await supabase
       .from("profiles")
-      .select("department")
+      .select("department, full_name, avatar_url")
       .eq("user_id", user.id)
       .maybeSingle();
     setHodDepartment(data?.department || null);
+    if (data) {
+      setProfile({ full_name: data.full_name, avatar_url: data.avatar_url });
+    }
   };
+
 
   const fetchDepartmentData = async () => {
     if (!hodDepartment) return;
