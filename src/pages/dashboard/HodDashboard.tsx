@@ -33,6 +33,7 @@ import HodDocumentApprovals from "@/components/hod/HodDocumentApprovals";
 import HodPerformanceReview from "@/components/hod/HodPerformanceReview";
 import HodFeedbackSystem from "@/components/hod/HodFeedbackSystem";
 import OnboardingTour from "@/components/OnboardingTour";
+import { useSidebarState } from "@/hooks/useSidebarState";
 
 
 interface FacultyRanking {
