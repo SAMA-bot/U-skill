@@ -127,7 +127,9 @@ const sidebarGroups = [
 const AdminDashboard = () => {
   const { collapsed: sidebarCollapsed, setCollapsed: setSidebarCollapsed, mobileOpen: sidebarOpen, setMobileOpen: setSidebarOpen } = useSidebarState("sidebar:admin");
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [facultyList, setFacultyList] = useState<FacultyMember[]>([]);
+
   const [departmentStats, setDepartmentStats] = useState<DepartmentStats[]>([]);
   const [institutionStats, setInstitutionStats] = useState({
     totalFaculty: 0,
