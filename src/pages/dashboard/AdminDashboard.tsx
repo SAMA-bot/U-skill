@@ -153,8 +153,22 @@ const AdminDashboard = () => {
   useEffect(() => {
     if (user && isAdmin) {
       fetchAllData();
+      fetchCurrentProfile();
     }
   }, [user, isAdmin]);
+
+  const fetchCurrentProfile = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("profiles")
+      .select("full_name, avatar_url")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (data) {
+      setProfile(data);
+    }
+  };
+
 
   const fetchAllData = async () => {
     try {
