@@ -75,6 +75,8 @@ import PredictiveAnalytics from "@/components/admin/PredictiveAnalytics";
 import PerformanceHeatmap from "@/components/admin/PerformanceHeatmap";
 import OnboardingTour from "@/components/OnboardingTour";
 import { useSidebarState } from "@/hooks/useSidebarState";
+import { SidebarProfile } from "@/components/layout/SidebarProfile";
+
 
 interface FacultyMember {
   user_id: string;
