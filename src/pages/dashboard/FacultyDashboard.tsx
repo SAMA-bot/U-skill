@@ -42,6 +42,8 @@ import { NotificationsProvider } from "@/hooks/useNotifications";
 import { useAcademicYear } from "@/contexts/AcademicYearContext";
 import OnboardingTour from "@/components/OnboardingTour";
 import { useSidebarState } from "@/hooks/useSidebarState";
+import { SidebarProfile } from "@/components/layout/SidebarProfile";
+
 
 interface Profile {
   full_name: string;
