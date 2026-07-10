@@ -71,7 +71,14 @@ export default function Signup() {
     }
 
     setIsLoading(true);
-    
+
+    console.log('[Signup] Submitting signup request', {
+      email: email.trim(),
+      passwordLength: password.length,
+      fullName: fullName.trim(),
+      department,
+    });
+
     const { error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
@@ -85,10 +92,11 @@ export default function Signup() {
     });
 
     if (error) {
+      console.error('[Signup] Supabase signUp error:', error);
       setIsLoading(false);
       toast({
         title: "Signup Failed",
-        description: getUserFriendlyError(error, 'auth'),
+        description: error.message,
         variant: "destructive",
       });
       return;
