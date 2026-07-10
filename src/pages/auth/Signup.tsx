@@ -17,12 +17,11 @@ import { z } from 'zod';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { getUserFriendlyError } from '@/lib/errorMessages';
 
 const signupSchema = z.object({
   fullName: z.string().trim().min(2, { message: "Full name must be at least 2 characters" }).max(100),
   email: z.string().trim().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }).max(72, { message: "Password must be 72 characters or fewer" }),
   department: z.string().min(1, { message: "Please select a department" }),
 });
 
@@ -58,6 +57,8 @@ export default function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
+
     setErrors({});
 
     const result = signupSchema.safeParse({ fullName, email, password, department });
@@ -72,27 +73,34 @@ export default function Signup() {
 
     setIsLoading(true);
 
-    console.log('[Signup] Submitting signup request', {
-      email: email.trim(),
-      passwordLength: password.length,
-      fullName: fullName.trim(),
-      department,
-    });
-
-    const { error } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
+    const signupPayload = {
+      email: result.data.email,
+      password: result.data.password,
       options: {
         emailRedirectTo: window.location.origin,
         data: {
-          full_name: fullName.trim(),
-          department,
+          full_name: result.data.fullName,
+          department: result.data.department,
         },
       },
+    };
+
+    console.log('[Signup] Email:', signupPayload.email);
+    console.log('[Signup] Password Length:', signupPayload.password.length);
+    console.log('[Signup] Department:', signupPayload.options.data.department);
+    console.log('[Signup] Full Name:', signupPayload.options.data.full_name);
+    console.log('[Signup] Request Payload:', {
+      ...signupPayload,
+      password: `[redacted length=${signupPayload.password.length}]`,
     });
 
+    const { data, error } = await supabase.auth.signUp(signupPayload);
+
+    console.log('[Signup] Supabase Response:', data);
+    console.log('[Signup] Supabase Error:', error);
+
     if (error) {
-      console.error('[Signup] Supabase signUp error:', error);
+      console.error(error);
       setIsLoading(false);
       toast({
         title: "Signup Failed",
@@ -100,15 +108,6 @@ export default function Signup() {
         variant: "destructive",
       });
       return;
-    }
-
-    // Update the profile with department after signup
-    const { data: { user: newUser } } = await supabase.auth.getUser();
-    if (newUser) {
-      await supabase
-        .from('profiles')
-        .update({ department })
-        .eq('user_id', newUser.id);
     }
 
     toast({
