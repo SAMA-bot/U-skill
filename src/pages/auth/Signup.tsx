@@ -85,19 +85,23 @@ export default function Signup() {
       },
     };
 
-    console.log('[Signup] Email:', signupPayload.email);
-    console.log('[Signup] Password Length:', signupPayload.password.length);
-    console.log('[Signup] Department:', signupPayload.options.data.department);
-    console.log('[Signup] Full Name:', signupPayload.options.data.full_name);
-    console.log('[Signup] Request Payload:', {
-      ...signupPayload,
-      password: `[redacted length=${signupPayload.password.length}]`,
-    });
+    if (import.meta.env.DEV) {
+      console.log('[Signup] Email:', signupPayload.email);
+      console.log('[Signup] Password Length:', signupPayload.password.length);
+      console.log('[Signup] Department:', signupPayload.options.data.department);
+      console.log('[Signup] Full Name:', signupPayload.options.data.full_name);
+      console.log('[Signup] Request Payload:', {
+        ...signupPayload,
+        password: `[redacted length=${signupPayload.password.length}]`,
+      });
+    }
 
     const { data, error } = await supabase.auth.signUp(signupPayload);
 
-    console.log('[Signup] Supabase Response:', data);
-    console.log('[Signup] Supabase Error:', error);
+    if (import.meta.env.DEV) {
+      console.log('[Signup] Supabase Response:', data);
+      console.log('[Signup] Supabase Error:', error);
+    }
 
     if (error) {
       console.error(error);
