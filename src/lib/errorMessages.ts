@@ -42,10 +42,6 @@ export function getUserFriendlyError(error: ErrorWithMessage | null | undefined,
       return 'Too many attempts. Please wait a moment before trying again.';
     }
 
-    if (message.includes('password') && message.includes('weak')) {
-      return 'Please choose a stronger password with at least 6 characters.';
-    }
-
     if (message.includes('expired') || message.includes('token')) {
       return 'Your session has expired. Please sign in again.';
     }
