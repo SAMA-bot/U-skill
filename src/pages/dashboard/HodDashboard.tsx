@@ -60,6 +60,9 @@ interface DeptMetrics {
 
 const HodDashboard = () => {
   const { collapsed: sidebarCollapsed, setCollapsed: setSidebarCollapsed, mobileOpen: sidebarOpen, setMobileOpen: setSidebarOpen } = useSidebarState("sidebar:hod");
+  const sidebarTriggerRef = useRef<HTMLButtonElement>(null);
+  const { containerRef: sidebarRef } = useSidebarA11y(sidebarOpen, () => setSidebarOpen(false), sidebarTriggerRef);
+  const sidebarId = useId();
   const [activeTab, setActiveTab] = useState("overview");
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [hodDepartment, setHodDepartment] = useState<string | null>(null);
