@@ -74,6 +74,9 @@ const sidebarGroups: {
 ];
 const FacultyDashboard = () => {
   const { collapsed: sidebarCollapsed, setCollapsed: setSidebarCollapsed, mobileOpen: sidebarOpen, setMobileOpen: setSidebarOpen } = useSidebarState("sidebar:faculty");
+  const sidebarTriggerRef = useRef<HTMLButtonElement>(null);
+  const { containerRef: sidebarRef } = useSidebarA11y(sidebarOpen, () => setSidebarOpen(false), sidebarTriggerRef);
+  const sidebarId = useId();
   const [activeSection, setActiveSection] = useState<ActiveSection>("dashboard");
   const [profile, setProfile] = useState<Profile | null>(null);
   
