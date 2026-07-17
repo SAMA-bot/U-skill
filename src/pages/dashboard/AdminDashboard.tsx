@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useId } from "react";
 import { getPerformanceBadgeColor, getPerformanceBadgeLabel } from "@/lib/performanceUtils";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -75,6 +75,7 @@ import PredictiveAnalytics from "@/components/admin/PredictiveAnalytics";
 import PerformanceHeatmap from "@/components/admin/PerformanceHeatmap";
 import OnboardingTour from "@/components/OnboardingTour";
 import { useSidebarState } from "@/hooks/useSidebarState";
+import { useSidebarA11y } from "@/hooks/useSidebarA11y";
 import { SidebarProfile } from "@/components/layout/SidebarProfile";
 
 
@@ -126,6 +127,9 @@ const sidebarGroups = [
 
 const AdminDashboard = () => {
   const { collapsed: sidebarCollapsed, setCollapsed: setSidebarCollapsed, mobileOpen: sidebarOpen, setMobileOpen: setSidebarOpen } = useSidebarState("sidebar:admin");
+  const sidebarTriggerRef = useRef<HTMLButtonElement>(null);
+  const { containerRef: sidebarRef } = useSidebarA11y(sidebarOpen, () => setSidebarOpen(false), sidebarTriggerRef);
+  const sidebarId = useId();
   const [activeSection, setActiveSection] = useState("dashboard");
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [facultyList, setFacultyList] = useState<FacultyMember[]>([]);
@@ -347,10 +351,14 @@ const AdminDashboard = () => {
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
               <button
+                ref={sidebarTriggerRef}
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="text-muted-foreground hover:text-foreground focus:outline-none mr-2 md:hidden"
+                className="text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md mr-2 md:hidden"
+                aria-label={sidebarOpen ? "Close navigation menu" : "Open navigation menu"}
+                aria-expanded={sidebarOpen}
+                aria-controls={sidebarId}
               >
-                <Menu className="h-6 w-6" />
+                <Menu className="h-6 w-6" aria-hidden="true" />
               </button>
               <div className="flex-shrink-0 flex items-center">
                 <div className="h-8 w-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
@@ -380,16 +388,23 @@ const AdminDashboard = () => {
         {sidebarOpen && (
           <div
             className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            aria-hidden="true"
             onClick={() => setSidebarOpen(false)}
           />
         )}
 
         {/* Sidebar */}
         <aside
+          id={sidebarId}
+          ref={sidebarRef as React.RefObject<HTMLElement>}
+          tabIndex={-1}
+          role="navigation"
+          aria-label="Primary"
+          aria-modal={sidebarOpen ? true : undefined}
           className={`
             glass-sidebar flex-shrink-0 border-r border-border
             fixed md:sticky inset-y-0 left-0 z-50 md:z-auto
-            transform transition-all duration-200 ease-in-out
+            transform transition-all duration-200 ease-in-out outline-none
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
             ${sidebarCollapsed ? "w-16" : "w-64"}
             h-screen md:h-[calc(100vh-4rem)] overflow-y-auto
@@ -398,8 +413,12 @@ const AdminDashboard = () => {
           <div className="flex flex-col h-full pt-5 pb-4">
             <div className="flex items-center justify-between px-4 md:hidden">
               <span className="text-lg font-semibold text-foreground">Menu</span>
-              <button onClick={() => setSidebarOpen(false)}>
-                <X className="h-5 w-5 text-muted-foreground" />
+              <button
+                onClick={() => setSidebarOpen(false)}
+                aria-label="Close navigation menu"
+                className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
 
@@ -407,44 +426,56 @@ const AdminDashboard = () => {
             <div className="hidden md:flex justify-end px-2 mb-2">
               <button
                 onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+                className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                aria-pressed={sidebarCollapsed}
+                aria-controls={sidebarId}
                 title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
-                {sidebarCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+                {sidebarCollapsed ? <PanelLeft className="h-4 w-4" aria-hidden="true" /> : <PanelLeftClose className="h-4 w-4" aria-hidden="true" />}
               </button>
             </div>
 
-            <nav className="mt-2 flex-1 flex flex-col px-3 gap-5">
-              {sidebarGroups.map((group) => (
-                <div key={group.label} data-tour={`sidebar-${group.label.toLowerCase()}`} className="flex flex-col gap-0.5">
-                  {!sidebarCollapsed && (
-                    <p className="px-2 mb-1 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60">
-                      {group.label}
-                    </p>
-                  )}
-                  {sidebarCollapsed && <div className="h-px bg-border/60 mx-2 mb-1" />}
-                  {group.items.map((item) => {
-                    const isActive = activeSection === item.id;
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => setActiveSection(item.id)}
-                        className={`group relative flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] rounded-md w-full text-left transition-colors
-                          ${isActive
-                            ? "bg-muted text-foreground font-semibold"
-                            : "font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"}`}
-                        title={sidebarCollapsed ? item.label : undefined}
-                      >
-                        {isActive && !sidebarCollapsed && (
-                          <span className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-r-full bg-primary" />
-                        )}
-                        <item.icon className={`flex-shrink-0 h-[16px] w-[16px] ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={2} />
-                        {!sidebarCollapsed && item.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
+            <nav className="mt-2 flex-1 flex flex-col px-3 gap-5" aria-label="Dashboard sections">
+              {sidebarGroups.map((group) => {
+                const groupId = `${sidebarId}-${group.label.toLowerCase()}`;
+                return (
+                  <div key={group.label} data-tour={`sidebar-${group.label.toLowerCase()}`} className="flex flex-col gap-0.5" role="group" aria-labelledby={groupId}>
+                    {!sidebarCollapsed ? (
+                      <p id={groupId} className="px-2 mb-1 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60">
+                        {group.label}
+                      </p>
+                    ) : (
+                      <>
+                        <span id={groupId} className="sr-only">{group.label}</span>
+                        <div className="h-px bg-border/60 mx-2 mb-1" aria-hidden="true" />
+                      </>
+                    )}
+                    {group.items.map((item) => {
+                      const isActive = activeSection === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => { setActiveSection(item.id); setSidebarOpen(false); }}
+                          aria-current={isActive ? "page" : undefined}
+                          aria-label={sidebarCollapsed ? item.label : undefined}
+                          className={`group relative flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] rounded-md w-full text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                            ${isActive
+                              ? "bg-muted text-foreground font-semibold"
+                              : "font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"}`}
+                          title={sidebarCollapsed ? item.label : undefined}
+                        >
+                          {isActive && !sidebarCollapsed && (
+                            <span className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-r-full bg-primary" aria-hidden="true" />
+                          )}
+                          <item.icon className={`flex-shrink-0 h-[16px] w-[16px] ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={2} aria-hidden="true" />
+                          {!sidebarCollapsed && item.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })}
             </nav>
 
 
@@ -463,27 +494,30 @@ const AdminDashboard = () => {
               {roles.length > 1 && (
                 <button
                   onClick={() => navigate('/select-role')}
-                  className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`}
+                  aria-label={sidebarCollapsed ? "Switch Role" : undefined}
+                  className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
                   title={sidebarCollapsed ? "Switch Role" : undefined}
                 >
-                  <ArrowLeft className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                  <ArrowLeft className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} aria-hidden="true" />
                   {!sidebarCollapsed && "Switch Role"}
                 </button>
               )}
               <button
                 onClick={() => navigate('/dashboard/settings')}
-                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`}
+                aria-label={sidebarCollapsed ? "Settings" : undefined}
+                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
                 title={sidebarCollapsed ? "Settings" : undefined}
               >
-                <Settings className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                <Settings className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} aria-hidden="true" />
                 {!sidebarCollapsed && "Settings"}
               </button>
               <button
                 onClick={handleLogout}
-                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`}
+                aria-label={sidebarCollapsed ? "Sign out" : undefined}
+                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
                 title={sidebarCollapsed ? "Sign out" : undefined}
               >
-                <LogOut className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                <LogOut className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} aria-hidden="true" />
                 {!sidebarCollapsed && "Sign out"}
               </button>
             </div>
