@@ -494,27 +494,30 @@ const AdminDashboard = () => {
               {roles.length > 1 && (
                 <button
                   onClick={() => navigate('/select-role')}
-                  className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`}
+                  aria-label={sidebarCollapsed ? "Switch Role" : undefined}
+                  className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
                   title={sidebarCollapsed ? "Switch Role" : undefined}
                 >
-                  <ArrowLeft className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                  <ArrowLeft className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} aria-hidden="true" />
                   {!sidebarCollapsed && "Switch Role"}
                 </button>
               )}
               <button
                 onClick={() => navigate('/dashboard/settings')}
-                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`}
+                aria-label={sidebarCollapsed ? "Settings" : undefined}
+                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
                 title={sidebarCollapsed ? "Settings" : undefined}
               >
-                <Settings className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                <Settings className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} aria-hidden="true" />
                 {!sidebarCollapsed && "Settings"}
               </button>
               <button
                 onClick={handleLogout}
-                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200`}
+                aria-label={sidebarCollapsed ? "Sign out" : undefined}
+                className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
                 title={sidebarCollapsed ? "Sign out" : undefined}
               >
-                <LogOut className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} />
+                <LogOut className={`flex-shrink-0 h-[16px] w-[16px] text-muted-foreground ${sidebarCollapsed ? "" : "mr-2.5"}`} aria-hidden="true" />
                 {!sidebarCollapsed && "Sign out"}
               </button>
             </div>
