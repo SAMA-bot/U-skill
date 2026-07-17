@@ -42,6 +42,7 @@ import { NotificationsProvider } from "@/hooks/useNotifications";
 import { useAcademicYear } from "@/contexts/AcademicYearContext";
 import OnboardingTour from "@/components/OnboardingTour";
 import { useSidebarState } from "@/hooks/useSidebarState";
+import { useSidebarA11y } from "@/hooks/useSidebarA11y";
 import { SidebarProfile } from "@/components/layout/SidebarProfile";
 
 
