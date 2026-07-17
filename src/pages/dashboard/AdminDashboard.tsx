@@ -351,10 +351,14 @@ const AdminDashboard = () => {
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
               <button
+                ref={sidebarTriggerRef}
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="text-muted-foreground hover:text-foreground focus:outline-none mr-2 md:hidden"
+                className="text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md mr-2 md:hidden"
+                aria-label={sidebarOpen ? "Close navigation menu" : "Open navigation menu"}
+                aria-expanded={sidebarOpen}
+                aria-controls={sidebarId}
               >
-                <Menu className="h-6 w-6" />
+                <Menu className="h-6 w-6" aria-hidden="true" />
               </button>
               <div className="flex-shrink-0 flex items-center">
                 <div className="h-8 w-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
