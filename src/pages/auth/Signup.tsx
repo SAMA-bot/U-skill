@@ -19,10 +19,18 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { PasswordStrengthMeter } from '@/components/auth/PasswordStrengthMeter';
 
+const strongPassword = z.string()
+  .min(8, { message: "Password must be at least 8 characters" })
+  .max(72, { message: "Password must be 72 characters or fewer" })
+  .regex(/[A-Z]/, { message: "Password must include an uppercase letter" })
+  .regex(/[a-z]/, { message: "Password must include a lowercase letter" })
+  .regex(/[0-9]/, { message: "Password must include a number" })
+  .regex(/[^A-Za-z0-9]/, { message: "Password must include a special character" });
+
 const signupSchema = z.object({
   fullName: z.string().trim().min(2, { message: "Full name must be at least 2 characters" }).max(100),
   email: z.string().trim().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }).max(72, { message: "Password must be 72 characters or fewer" }),
+  password: strongPassword,
   department: z.string().min(1, { message: "Please select a department" }),
 });
 
@@ -86,16 +94,20 @@ export default function Signup() {
       },
     };
 
-    if (import.meta.env.DEV) {
-      console.log('[Signup] Email:', signupPayload.email);
-      console.log('[Signup] Password Length:', signupPayload.password.length);
-      console.log('[Signup] Department:', signupPayload.options.data.department);
-      console.log('[Signup] Full Name:', signupPayload.options.data.full_name);
-      console.log('[Signup] Request Payload:', {
-        ...signupPayload,
-        password: `[redacted length=${signupPayload.password.length}]`,
-      });
+    if (!signupPayload.password) {
+      setIsLoading(false);
+      setErrors({ password: 'Password is required' });
+      console.error('[Signup] Aborted: validated password was empty before auth request');
+      return;
     }
+
+    // Intentionally log only password length, never the password itself.
+    console.info('[Signup] Sending auth signup request', {
+      email: signupPayload.email,
+      passwordLength: signupPayload.password.length,
+      fullName: signupPayload.options.data.full_name,
+      department: signupPayload.options.data.department,
+    });
 
     const { data, error } = await supabase.auth.signUp(signupPayload);
 
@@ -125,8 +137,7 @@ export default function Signup() {
         setIsLoading(false);
         toast({
           title: "Couldn't finish setting up your account",
-          description:
-            "Your login was created, but we couldn't set up your profile. This is a server-side issue, not a problem with your password. Please try signing in — if that fails, contact your administrator.",
+          description: error.message,
           variant: "destructive",
         });
         return;
@@ -139,26 +150,8 @@ export default function Signup() {
       });
       setIsLoading(false);
 
-      const isCompromised =
-        raw.includes('pwned') ||
-        raw.includes('data breach') ||
-        raw.includes('known to be weak') ||
-        raw.includes('easy to guess') ||
-        raw.includes('compromised');
-
-      if (isCompromised) {
-        setErrors({
-          password:
-            'This password has appeared in a known data breach. Please choose a new, unique password you have not used elsewhere.',
-        });
-        toast({
-          title: "Choose a different password",
-          description:
-            "This password was found in a public data breach, so it can't be used. Pick a unique password you haven't used on any other site — try adding extra words or characters.",
-          variant: "destructive",
-        });
-        return;
-      }
+      const isPasswordError = raw.includes('password') || raw.includes('pwned') || raw.includes('weak');
+      if (isPasswordError) setErrors({ password: error.message });
 
       toast({
         title: "Signup Failed",
