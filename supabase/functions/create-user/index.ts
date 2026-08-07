@@ -72,9 +72,18 @@ Deno.serve(async (req) => {
       );
     }
 
-    if (typeof password !== "string" || password.length < 6 || password.length > 72) {
+    const hasStrongPassword =
+      typeof password === "string" &&
+      password.length >= 8 &&
+      password.length <= 72 &&
+      /[A-Z]/.test(password) &&
+      /[a-z]/.test(password) &&
+      /[0-9]/.test(password) &&
+      /[^A-Za-z0-9]/.test(password);
+
+    if (!hasStrongPassword) {
       return new Response(
-        JSON.stringify({ error: "Password must be between 6 and 72 characters" }),
+        JSON.stringify({ error: "Password must be 8-72 characters and include uppercase, lowercase, number, and special characters" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -105,7 +114,7 @@ Deno.serve(async (req) => {
       email,
       password,
       email_confirm: true,
-      user_metadata: { full_name: fullName },
+      user_metadata: { full_name: fullName, department },
     });
 
     if (createError) {
