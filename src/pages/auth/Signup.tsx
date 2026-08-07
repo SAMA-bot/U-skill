@@ -105,10 +105,40 @@ export default function Signup() {
     }
 
     if (error) {
-      console.error(error);
+      const raw = (error.message || '').toLowerCase();
+
+      // Profile/database provisioning failures — never surface these as password problems
+      const isProfileFailure =
+        raw.includes('database error') ||
+        raw.includes('saving new user') ||
+        raw.includes('unexpected_failure') ||
+        raw.includes('profiles') ||
+        raw.includes('relation') ||
+        raw.includes('violates');
+
+      if (isProfileFailure) {
+        console.error('[Signup] Profile creation failed after auth signup', {
+          code: (error as { code?: string }).code,
+          status: (error as { status?: number }).status,
+          message: error.message,
+        });
+        setIsLoading(false);
+        toast({
+          title: "Couldn't finish setting up your account",
+          description:
+            "Your login was created, but we couldn't set up your profile. This is a server-side issue, not a problem with your password. Please try signing in — if that fails, contact your administrator.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.error('[Signup] Auth signup failed', {
+        code: (error as { code?: string }).code,
+        status: (error as { status?: number }).status,
+        message: error.message,
+      });
       setIsLoading(false);
 
-      const raw = (error.message || '').toLowerCase();
       const isCompromised =
         raw.includes('pwned') ||
         raw.includes('data breach') ||
@@ -136,6 +166,30 @@ export default function Signup() {
         variant: "destructive",
       });
       return;
+    }
+
+    // Auth succeeded — verify the profile row was actually provisioned
+    if (data.session && data.user) {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('user_id', data.user.id)
+        .maybeSingle();
+
+      if (profileError || !profile) {
+        console.error('[Signup] Profile row missing after successful auth signup', {
+          userId: data.user.id,
+          profileError: profileError?.message,
+        });
+        setIsLoading(false);
+        toast({
+          title: "Account created, profile setup incomplete",
+          description:
+            "Your account was created, but your profile could not be set up. This isn't a password problem. Please contact your administrator so they can complete your profile.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     toast({
