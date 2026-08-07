@@ -107,6 +107,29 @@ export default function Signup() {
     if (error) {
       console.error(error);
       setIsLoading(false);
+
+      const raw = (error.message || '').toLowerCase();
+      const isCompromised =
+        raw.includes('pwned') ||
+        raw.includes('data breach') ||
+        raw.includes('known to be weak') ||
+        raw.includes('easy to guess') ||
+        raw.includes('compromised');
+
+      if (isCompromised) {
+        setErrors({
+          password:
+            'This password has appeared in a known data breach. Please choose a new, unique password you have not used elsewhere.',
+        });
+        toast({
+          title: "Choose a different password",
+          description:
+            "This password was found in a public data breach, so it can't be used. Pick a unique password you haven't used on any other site — try adding extra words or characters.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       toast({
         title: "Signup Failed",
         description: error.message,
