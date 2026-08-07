@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { PasswordStrengthMeter } from '@/components/auth/PasswordStrengthMeter';
 
 const signupSchema = z.object({
   fullName: z.string().trim().min(2, { message: "Full name must be at least 2 characters" }).max(100),
@@ -231,6 +232,7 @@ export default function Signup() {
                 {errors.password && (
                   <p className="text-sm text-destructive">{errors.password}</p>
                 )}
+                <PasswordStrengthMeter value={password} />
               </div>
 
               <div className="space-y-2">
