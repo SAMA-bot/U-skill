@@ -111,7 +111,7 @@ export default function Signup() {
     const { data, error } = await supabase.auth.signUp(signupPayload);
 
     console.info('[Signup] Supabase Response:', data);
-    console.error('[Signup] Supabase Error:', error);
+    if (error) console.error('[Signup] Supabase Error:', error);
 
     if (error) {
       const raw = (error.message || '').toLowerCase();
@@ -303,7 +303,11 @@ export default function Signup() {
               <div className="space-y-2">
                 <Label htmlFor="department">Department</Label>
                 <Select value={department} onValueChange={setDepartment}>
-                  <SelectTrigger className={errors.department ? 'border-destructive' : ''}>
+                  <SelectTrigger
+                    id="department"
+                    aria-invalid={Boolean(errors.department)}
+                    className={errors.department ? 'border-destructive' : ''}
+                  >
                     <SelectValue placeholder="Select Department" />
                   </SelectTrigger>
                   <SelectContent>
