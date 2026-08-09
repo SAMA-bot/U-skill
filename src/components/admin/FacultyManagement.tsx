@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { getUserFriendlyError } from "@/lib/errorMessages";
+import { getPasswordValidationError } from "@/lib/passwordValidation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -204,8 +205,9 @@ export default function FacultyManagement() {
       toast({ title: "Validation Error", description: "Fill in all required fields", variant: "destructive" });
       return;
     }
-    if (newUser.password.length < 6) {
-      toast({ title: "Validation Error", description: "Password must be at least 6 characters", variant: "destructive" });
+    const passwordError = getPasswordValidationError(newUser.password);
+    if (passwordError) {
+      toast({ title: "Validation Error", description: passwordError, variant: "destructive" });
       return;
     }
 

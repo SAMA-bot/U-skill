@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, UserCog, Loader2, Search, UserPlus, Trash2, Crown, GraduationCap, User, ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getPasswordValidationError } from "@/lib/passwordValidation";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -184,10 +185,11 @@ export function RoleManagement() {
       return;
     }
 
-    if (newUser.password.length < 6) {
+    const passwordError = getPasswordValidationError(newUser.password);
+    if (passwordError) {
       toast({
         title: "Validation Error",
-        description: "Password must be at least 6 characters",
+        description: passwordError,
         variant: "destructive",
       });
       return;

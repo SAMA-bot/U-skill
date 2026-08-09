@@ -18,19 +18,12 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { PasswordStrengthMeter } from '@/components/auth/PasswordStrengthMeter';
-
-const strongPassword = z.string()
-  .min(8, { message: "Password must be at least 8 characters" })
-  .max(72, { message: "Password must be 72 characters or fewer" })
-  .regex(/[A-Z]/, { message: "Password must include an uppercase letter" })
-  .regex(/[a-z]/, { message: "Password must include a lowercase letter" })
-  .regex(/[0-9]/, { message: "Password must include a number" })
-  .regex(/[^A-Za-z0-9]/, { message: "Password must include a special character" });
+import { strongPasswordSchema } from '@/lib/passwordValidation';
 
 const signupSchema = z.object({
   fullName: z.string().trim().min(2, { message: "Full name must be at least 2 characters" }).max(100),
   email: z.string().trim().email({ message: "Please enter a valid email address" }),
-  password: strongPassword,
+  password: strongPasswordSchema,
   department: z.string().min(1, { message: "Please select a department" }),
 });
 
@@ -102,19 +95,23 @@ export default function Signup() {
     }
 
     // Intentionally log only password length, never the password itself.
-    console.info('[Signup] Sending auth signup request', {
+    const safeRequestPayload = {
       email: signupPayload.email,
       passwordLength: signupPayload.password.length,
       fullName: signupPayload.options.data.full_name,
       department: signupPayload.options.data.department,
-    });
+      password: '[REDACTED]',
+    };
+    console.info('[Signup] Email:', signupPayload.email);
+    console.info('[Signup] Password Length:', signupPayload.password.length);
+    console.info('[Signup] Department:', signupPayload.options.data.department);
+    console.info('[Signup] Full Name:', signupPayload.options.data.full_name);
+    console.info('[Signup] Request Payload:', safeRequestPayload);
 
     const { data, error } = await supabase.auth.signUp(signupPayload);
 
-    if (import.meta.env.DEV) {
-      console.log('[Signup] Supabase Response:', data);
-      console.log('[Signup] Supabase Error:', error);
-    }
+    console.info('[Signup] Supabase Response:', data);
+    if (error) console.error('[Signup] Supabase Error:', error);
 
     if (error) {
       const raw = (error.message || '').toLowerCase();
@@ -129,11 +126,7 @@ export default function Signup() {
         raw.includes('violates');
 
       if (isProfileFailure) {
-        console.error('[Signup] Profile creation failed after auth signup', {
-          code: (error as { code?: string }).code,
-          status: (error as { status?: number }).status,
-          message: error.message,
-        });
+        console.error('[Signup] Profile creation failed after auth signup:', error);
         setIsLoading(false);
         toast({
           title: "Couldn't finish setting up your account",
@@ -143,11 +136,7 @@ export default function Signup() {
         return;
       }
 
-      console.error('[Signup] Auth signup failed', {
-        code: (error as { code?: string }).code,
-        status: (error as { status?: number }).status,
-        message: error.message,
-      });
+      console.error('[Signup] Auth signup failed:', error);
       setIsLoading(false);
 
       const isPasswordError = raw.includes('password') || raw.includes('pwned') || raw.includes('weak');
@@ -258,6 +247,8 @@ export default function Signup() {
                   placeholder="Enter your full name"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
+                   required
+                   aria-invalid={Boolean(errors.fullName)}
                   className={errors.fullName ? 'border-destructive' : ''}
                 />
                 {errors.fullName && (
@@ -273,6 +264,8 @@ export default function Signup() {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                   required
+                   aria-invalid={Boolean(errors.email)}
                   className={errors.email ? 'border-destructive' : ''}
                 />
                 {errors.email && (
@@ -289,6 +282,8 @@ export default function Signup() {
                     placeholder="Create a password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                     required
+                     aria-invalid={Boolean(errors.password)}
                     className={errors.password ? 'border-destructive pr-10' : 'pr-10'}
                   />
                   <button
@@ -308,7 +303,11 @@ export default function Signup() {
               <div className="space-y-2">
                 <Label htmlFor="department">Department</Label>
                 <Select value={department} onValueChange={setDepartment}>
-                  <SelectTrigger className={errors.department ? 'border-destructive' : ''}>
+                  <SelectTrigger
+                    id="department"
+                    aria-invalid={Boolean(errors.department)}
+                    className={errors.department ? 'border-destructive' : ''}
+                  >
                     <SelectValue placeholder="Select Department" />
                   </SelectTrigger>
                   <SelectContent>
