@@ -33,6 +33,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
+import StatCard from "@/components/dashboard/StatCard";
+import PageHeader from "@/components/dashboard/PageHeader";
+
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeletons";
 import MetricDetailSheet from "@/components/dashboard/MetricDetailSheet";
 import { ThemeToggle } from "@/components/ThemeToggle";
