@@ -437,23 +437,22 @@ const HodDashboard = () => {
             <div className="absolute top-0 right-0 w-80 h-80 bg-primary/[0.02] rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-20 left-10 w-64 h-64 bg-accent/[0.02] rounded-full blur-3xl pointer-events-none" />
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">
-                  {activeTab === "overview" && "Department Overview"}
-                  {activeTab === "documents" && "Document Approvals"}
-                  {activeTab === "performance" && "Faculty Performance Review"}
-                  {activeTab === "feedback" && "Faculty Feedback"}
-                </h1>
-                <p className="text-muted-foreground">
-                  {hodDepartment ? `${hodDepartment} Department` : "Loading department..."} · {selectedYear}
-                </p>
-              </div>
-              <Badge variant="outline" className="text-sm px-3 py-1">
-                <Award className="h-3.5 w-3.5 mr-1.5" />
-                Head of Department
-              </Badge>
-            </div>
+            <PageHeader
+              eyebrow={hodDepartment ? `${hodDepartment} Department · ${selectedYear}` : "Loading department…"}
+              title={
+                activeTab === "overview" ? "Department Overview" :
+                activeTab === "documents" ? "Document Approvals" :
+                activeTab === "performance" ? "Faculty Performance Review" :
+                "Faculty Feedback"
+              }
+              actions={
+                <Badge variant="outline" className="text-sm px-3 py-1">
+                  <Award className="h-3.5 w-3.5 mr-1.5" />
+                  Head of Department
+                </Badge>
+              }
+            />
+
 
             {!hodDepartment && !loadingData ? (
               <Card>
