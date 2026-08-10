@@ -658,69 +658,33 @@ const FacultyDashboard = () => {
               {/* Stats Cards */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
                 {statsCards.map((stat, index) => {
-                  const score = stat.suffix === "h" ? stat.value : stat.value;
+                  const score = stat.value;
                   const badgeLabel = stat.suffix === "/100" ? getPerformanceBadgeLabel(score) : (stat.value > 0 ? "On Track" : "Not Started");
                   const badgeColor = stat.suffix === "/100" ? getPerformanceBadgeColor(score) : (stat.value > 0
                     ? "bg-[rgba(34,197,94,0.15)] text-[#22c55e] border-[rgba(34,197,94,0.3)] dark:bg-[rgba(34,197,94,0.2)] dark:text-[#4ade80] dark:border-[rgba(34,197,94,0.4)]"
                     : "bg-muted text-muted-foreground border-border");
 
                   return (
-                    <motion.div
+                    <StatCard
                       key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                      index={index}
+                      icon={stat.icon}
+                      label={stat.label}
+                      value={stat.value}
+                      suffix={stat.suffix}
+                      badge={{ label: badgeLabel, className: badgeColor }}
                       onClick={() => { setSelectedMetric(stat); setMetricSheetOpen(true); }}
-                      className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg hover:border-primary/30 hover:shadow-primary/5 transition-all duration-300 cursor-pointer group flex flex-col min-h-[200px] relative"
+                      className="min-h-[196px]"
                     >
-                      {/* Decorative corner gradient */}
-                      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-primary/[0.05] to-transparent rounded-bl-3xl pointer-events-none" />
-                      <div className="p-4 sm:p-5 flex-1 flex flex-col gap-3 relative z-10">
-                        {/* Icon + Title row */}
-                        <div className="flex items-start gap-3">
-                          <motion.div
-                            className="bg-gradient-to-br from-primary to-accent rounded-xl p-2.5 flex-shrink-0 group-hover:scale-110 transition-transform"
-                            whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
-                          >
-                            <stat.icon className="h-5 w-5 text-white" />
-                          </motion.div>
-                          <p className="text-sm font-medium text-muted-foreground leading-snug pt-1 break-words min-w-0">
-                            {stat.label}
-                          </p>
-                        </div>
-
-                        {/* Score — primary visual element */}
-                        <AnimatedCounter
-                          value={stat.value}
-                          suffix={stat.suffix}
-                          className="text-3xl sm:text-4xl font-bold text-foreground"
-                        />
-
-                        {/* Status Badge */}
-                        <span className={`inline-flex items-center self-start rounded-full border px-2.5 py-0.5 text-[11px] font-semibold whitespace-nowrap ${badgeColor}`}>
-                          {badgeLabel}
-                        </span>
-
-                        {/* Animated Progress Indicator */}
-                        <div className="w-full">
-                          <MetricProgressIndicator type={stat.metricType} value={stat.value} />
-                        </div>
-
-                        {/* Sparkline & arrow */}
-                        <div className="flex items-center justify-between w-full mt-auto pt-1">
-                          <div className="flex-1 min-w-0">
-                            {stat.sparkline.length >= 2 && (
-                              <SparklineChart data={stat.sparkline} color={stat.sparkColor} />
-                            )}
-                          </div>
-                          <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-2" />
-                        </div>
-                      </div>
-                    </motion.div>
+                      <MetricProgressIndicator type={stat.metricType} value={stat.value} />
+                      {stat.sparkline.length >= 2 && (
+                        <SparklineChart data={stat.sparkline} color={stat.sparkColor} />
+                      )}
+                    </StatCard>
                   );
                 })}
               </div>
+
 
               {/* Metric Detail Sheet */}
               {selectedMetric && (
