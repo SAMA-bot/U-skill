@@ -599,12 +599,12 @@ const FacultyDashboard = () => {
               animate={{ opacity: 1 }}
               className="max-w-5xl mx-auto"
             >
-              <div className="mb-6">
-                <h1 className="text-2xl font-bold text-foreground">My Documents</h1>
-                <p className="text-muted-foreground">
-                  Upload certificates, publications, and other documents for verification
-                </p>
-              </div>
+              <PageHeader
+                eyebrow="Profile"
+                title="My Documents"
+                description="Upload certificates, publications, and other documents for verification."
+              />
+
               <DocumentUpload />
             </motion.div>
           ) : activeSection === "dashboard" ? <>
