@@ -577,15 +577,14 @@ const FacultyDashboard = () => {
               animate={{ opacity: 1 }}
               className="max-w-6xl mx-auto space-y-8"
             >
-              <div>
-                <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                  <Trophy className="h-6 w-6 text-primary" />
-                  Achievements
-                </h1>
-                <p className="text-muted-foreground mt-1">
-                  Your level, badges, XP and learning streaks
-                </p>
-              </div>
+              <PageHeader
+                eyebrow="Progress"
+                title="Achievements"
+                icon={Trophy}
+                description="Your level, badges, XP and learning streaks."
+                className="mb-0"
+              />
+
               <LevelCard />
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <XpSummaryCard />
