@@ -629,14 +629,11 @@ const AdminDashboard = () => {
             <>
           {loadingData ? <DashboardSkeleton statCount={6} /> : (<>
           {/* Page Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Institution Overview</h1>
-              <p className="text-muted-foreground">
-                Aggregated performance metrics across all departments
-              </p>
-            </div>
-            <div className="flex space-x-3">
+          <PageHeader
+            eyebrow="Administration"
+            title="Institution Overview"
+            description="Aggregated performance metrics across all departments."
+            actions={<>
               <Button variant="outline" size="sm">
                 <Download className="mr-2 h-4 w-4" />
                 Export Data
@@ -645,8 +642,9 @@ const AdminDashboard = () => {
                 <FileText className="mr-2 h-4 w-4" />
                 Generate Report
               </Button>
-            </div>
-          </div>
+            </>}
+          />
+
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 mb-8">
