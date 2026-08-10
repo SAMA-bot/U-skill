@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, FolderUp, PanelLeftClose, PanelLeft, Building2, ArrowRight, Trophy } from "lucide-react";
 import SparklineChart from "@/components/dashboard/SparklineChart";
 import MetricProgressIndicator from "@/components/dashboard/MetricProgressIndicator";
+import StatCard from "@/components/dashboard/StatCard";
+import PageHeader from "@/components/dashboard/PageHeader";
+
 import { Button } from "@/components/ui/button";
 import MetricDetailSheet from "@/components/dashboard/MetricDetailSheet";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
