@@ -283,7 +283,7 @@ const HodDashboard = () => {
     <NotificationsProvider>
       <div className="min-h-screen bg-background flex flex-col">
         {/* Header */}
-        <header className="bg-card border-b border-border shadow-sm z-30 sticky top-0">
+        <header className="sticky top-0 z-30 border-b border-border/70 bg-card/80 backdrop-blur-xl supports-[backdrop-filter]:bg-card/60">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16 items-center">
               <div className="flex items-center">
