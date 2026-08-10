@@ -560,14 +560,12 @@ const AdminDashboard = () => {
             </>
           ) : activeSection === "courses" ? (
             <>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Capacity Building</h1>
-                  <p className="text-muted-foreground">
-                    Manage learning paths, courses, and training programs
-                  </p>
-                </div>
-              </div>
+              <PageHeader
+                eyebrow="Learning"
+                title="Capacity Building"
+                description="Manage learning paths, courses, and training programs."
+              />
+
               <Tabs defaultValue="paths" className="space-y-6">
                 <TabsList>
                   <TabsTrigger value="paths">Learning Paths</TabsTrigger>
