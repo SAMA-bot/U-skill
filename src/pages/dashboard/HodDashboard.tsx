@@ -469,35 +469,19 @@ const HodDashboard = () => {
             ) : hodDepartment ? (
               <>
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
                   {statsCards.map((stat, index) => (
-                    <motion.div
+                    <StatCard
                       key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                      className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg transition-all duration-300"
-                    >
-                      <div className="p-5">
-                        <div className="flex items-center">
-                          <motion.div
-                            className={`bg-gradient-to-br ${stat.color} rounded-md p-3`}
-                            whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
-                          >
-                            <stat.icon className="h-6 w-6 text-white" />
-                          </motion.div>
-                          <div className="ml-5 w-0 flex-1">
-                            <dt className="text-sm font-medium text-muted-foreground truncate">{stat.label}</dt>
-                            <dd>
-                              <AnimatedCounter value={stat.value} suffix={stat.suffix} className="text-lg font-semibold text-foreground" />
-                            </dd>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
+                      index={index}
+                      icon={stat.icon}
+                      label={stat.label}
+                      value={stat.value}
+                      suffix={stat.suffix}
+                    />
                   ))}
                 </div>
+
 
                 {/* Department Radar & Activity Breakdown */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
