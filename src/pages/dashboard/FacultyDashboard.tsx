@@ -610,29 +610,26 @@ const FacultyDashboard = () => {
           ) : activeSection === "dashboard" ? <>
               {loadingProfile ? <FacultySkeleton /> : (<>
               {/* Page Header */}
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Faculty Dashboard</h1>
-                  <p className="text-muted-foreground">
-                    Welcome back, {displayName}! Here's your performance overview
-                  </p>
-                </div>
-                <div className="flex space-x-3">
+              <PageHeader
+                eyebrow={selectedYear}
+                title="Faculty Dashboard"
+                description={`Welcome back, ${displayName} — here's your performance overview.`}
+                actions={<>
                   <div className="relative group">
                     <Button variant="outline" size="sm" className="peer">
                       <Download className="mr-2 h-4 w-4" />
                       Export
                     </Button>
-                    <div className="absolute right-0 top-full mt-1 w-36 bg-card border border-border rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                    <div className="absolute right-0 top-full mt-1 w-36 bg-popover border border-border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden">
                       <button
                         onClick={() => handleExportCSV()}
-                        className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted rounded-t-md"
+                        className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted"
                       >
                         Export as CSV
                       </button>
                       <button
                         onClick={() => handleExportPDF()}
-                        className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted rounded-b-md"
+                        className="w-full text-left px-3 py-2 text-sm text-foreground hover:bg-muted"
                       >
                         Export as PDF
                       </button>
@@ -655,8 +652,9 @@ const FacultyDashboard = () => {
                     )}
                     {generatingReport ? "Generating…" : "Generate Report"}
                   </Button>
-                </div>
-              </div>
+                </>}
+              />
+
 
               {/* Stats Cards */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
