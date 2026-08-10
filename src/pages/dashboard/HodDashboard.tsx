@@ -13,6 +13,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
+import StatCard from "@/components/dashboard/StatCard";
+import PageHeader from "@/components/dashboard/PageHeader";
+
 import { HodSkeleton } from "@/components/dashboard/DashboardSkeletons";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AcademicYearSelector from "@/components/AcademicYearSelector";
@@ -280,7 +283,7 @@ const HodDashboard = () => {
     <NotificationsProvider>
       <div className="min-h-screen bg-background flex flex-col">
         {/* Header */}
-        <header className="bg-card border-b border-border shadow-sm z-30 sticky top-0">
+        <header className="sticky top-0 z-30 border-b border-border/70 bg-card/80 backdrop-blur-xl supports-[backdrop-filter]:bg-card/60">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16 items-center">
               <div className="flex items-center">
@@ -434,23 +437,22 @@ const HodDashboard = () => {
             <div className="absolute top-0 right-0 w-80 h-80 bg-primary/[0.02] rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-20 left-10 w-64 h-64 bg-accent/[0.02] rounded-full blur-3xl pointer-events-none" />
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">
-                  {activeTab === "overview" && "Department Overview"}
-                  {activeTab === "documents" && "Document Approvals"}
-                  {activeTab === "performance" && "Faculty Performance Review"}
-                  {activeTab === "feedback" && "Faculty Feedback"}
-                </h1>
-                <p className="text-muted-foreground">
-                  {hodDepartment ? `${hodDepartment} Department` : "Loading department..."} · {selectedYear}
-                </p>
-              </div>
-              <Badge variant="outline" className="text-sm px-3 py-1">
-                <Award className="h-3.5 w-3.5 mr-1.5" />
-                Head of Department
-              </Badge>
-            </div>
+            <PageHeader
+              eyebrow={hodDepartment ? `${hodDepartment} Department · ${selectedYear}` : "Loading department…"}
+              title={
+                activeTab === "overview" ? "Department Overview" :
+                activeTab === "documents" ? "Document Approvals" :
+                activeTab === "performance" ? "Faculty Performance Review" :
+                "Faculty Feedback"
+              }
+              actions={
+                <Badge variant="outline" className="text-sm px-3 py-1">
+                  <Award className="h-3.5 w-3.5 mr-1.5" />
+                  Head of Department
+                </Badge>
+              }
+            />
+
 
             {!hodDepartment && !loadingData ? (
               <Card>
@@ -469,35 +471,19 @@ const HodDashboard = () => {
             ) : hodDepartment ? (
               <>
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
                   {statsCards.map((stat, index) => (
-                    <motion.div
+                    <StatCard
                       key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                      className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg transition-all duration-300"
-                    >
-                      <div className="p-5">
-                        <div className="flex items-center">
-                          <motion.div
-                            className={`bg-gradient-to-br ${stat.color} rounded-md p-3`}
-                            whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
-                          >
-                            <stat.icon className="h-6 w-6 text-white" />
-                          </motion.div>
-                          <div className="ml-5 w-0 flex-1">
-                            <dt className="text-sm font-medium text-muted-foreground truncate">{stat.label}</dt>
-                            <dd>
-                              <AnimatedCounter value={stat.value} suffix={stat.suffix} className="text-lg font-semibold text-foreground" />
-                            </dd>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
+                      index={index}
+                      icon={stat.icon}
+                      label={stat.label}
+                      value={stat.value}
+                      suffix={stat.suffix}
+                    />
                   ))}
                 </div>
+
 
                 {/* Department Radar & Activity Breakdown */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">

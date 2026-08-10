@@ -33,6 +33,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AnimatedCounter from "@/components/dashboard/AnimatedCounter";
+import StatCard from "@/components/dashboard/StatCard";
+import PageHeader from "@/components/dashboard/PageHeader";
+
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeletons";
 import MetricDetailSheet from "@/components/dashboard/MetricDetailSheet";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -346,7 +349,7 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="bg-card border-b border-border shadow-sm z-30 sticky top-0">
+      <header className="sticky top-0 z-30 border-b border-border/70 bg-card/80 backdrop-blur-xl supports-[backdrop-filter]:bg-card/60">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
@@ -530,14 +533,12 @@ const AdminDashboard = () => {
           <div className="absolute bottom-24 left-0 w-72 h-72 bg-accent/[0.02] rounded-full blur-3xl pointer-events-none" />
           {activeSection === "roles" ? (
             <>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Role Management</h1>
-                  <p className="text-muted-foreground">
-                    Manage user roles, permissions, and access control
-                  </p>
-                </div>
-              </div>
+              <PageHeader
+                eyebrow="Administration"
+                title="Role Management"
+                description="Manage user roles, permissions, and access control."
+              />
+
               <Tabs defaultValue="overview" className="space-y-6">
                 <TabsList className="bg-muted/50">
                   <TabsTrigger value="overview">Role Overview</TabsTrigger>
@@ -557,14 +558,12 @@ const AdminDashboard = () => {
             </>
           ) : activeSection === "courses" ? (
             <>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Capacity Building</h1>
-                  <p className="text-muted-foreground">
-                    Manage learning paths, courses, and training programs
-                  </p>
-                </div>
-              </div>
+              <PageHeader
+                eyebrow="Learning"
+                title="Capacity Building"
+                description="Manage learning paths, courses, and training programs."
+              />
+
               <Tabs defaultValue="paths" className="space-y-6">
                 <TabsList>
                   <TabsTrigger value="paths">Learning Paths</TabsTrigger>
@@ -590,14 +589,12 @@ const AdminDashboard = () => {
             <FacultyManagement />
           ) : activeSection === "reports" ? (
             <>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Performance Reports</h1>
-                  <p className="text-muted-foreground">
-                    Reports, achievements, and department leaderboards
-                  </p>
-                </div>
-              </div>
+              <PageHeader
+                eyebrow="Administration"
+                title="Performance Reports"
+                description="Reports, achievements, and department leaderboards."
+              />
+
               <Tabs defaultValue="reports" className="space-y-6">
                 <TabsList className="bg-muted/50 flex-wrap">
                   <TabsTrigger value="reports">Reports</TabsTrigger>
@@ -629,14 +626,11 @@ const AdminDashboard = () => {
             <>
           {loadingData ? <DashboardSkeleton statCount={6} /> : (<>
           {/* Page Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Institution Overview</h1>
-              <p className="text-muted-foreground">
-                Aggregated performance metrics across all departments
-              </p>
-            </div>
-            <div className="flex space-x-3">
+          <PageHeader
+            eyebrow="Administration"
+            title="Institution Overview"
+            description="Aggregated performance metrics across all departments."
+            actions={<>
               <Button variant="outline" size="sm">
                 <Download className="mr-2 h-4 w-4" />
                 Export Data
@@ -645,48 +639,26 @@ const AdminDashboard = () => {
                 <FileText className="mr-2 h-4 w-4" />
                 Generate Report
               </Button>
-            </div>
-          </div>
+            </>}
+          />
+
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 mb-8">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 mb-8">
             {statsCards.map((stat, index) => (
-              <motion.div
+              <StatCard
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                index={index}
+                compact
+                icon={stat.icon}
+                label={stat.label}
+                value={stat.numValue}
+                suffix={stat.suffix}
                 onClick={() => { setSelectedAdminMetric(stat); setAdminMetricSheetOpen(true); }}
-                className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group"
-              >
-                <div className="p-4">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <motion.div
-                        className={`bg-gradient-to-br ${stat.color} rounded-md p-2 group-hover:scale-110 transition-transform`}
-                        whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
-                      >
-                        <stat.icon className="h-5 w-5 text-white" />
-                      </motion.div>
-                    </div>
-                    <div className="ml-3 w-0 flex-1">
-                      <dt className="text-xs font-medium text-muted-foreground truncate">
-                        {stat.label}
-                      </dt>
-                      <dd className="text-lg font-semibold text-foreground">
-                        <AnimatedCounter
-                          value={stat.numValue}
-                          suffix={stat.suffix}
-                        />
-                      </dd>
-                    </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                  </div>
-                </div>
-              </motion.div>
+              />
             ))}
           </div>
+
 
           {/* Admin Metric Detail Sheet */}
           {selectedAdminMetric && (
