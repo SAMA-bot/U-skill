@@ -649,44 +649,21 @@ const AdminDashboard = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 mb-8">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 mb-8">
             {statsCards.map((stat, index) => (
-              <motion.div
+              <StatCard
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                index={index}
+                compact
+                icon={stat.icon}
+                label={stat.label}
+                value={stat.numValue}
+                suffix={stat.suffix}
                 onClick={() => { setSelectedAdminMetric(stat); setAdminMetricSheetOpen(true); }}
-                className="bg-card overflow-hidden shadow-sm rounded-lg border border-border hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer group"
-              >
-                <div className="p-4">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <motion.div
-                        className={`bg-gradient-to-br ${stat.color} rounded-md p-2 group-hover:scale-110 transition-transform`}
-                        whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.4 } }}
-                      >
-                        <stat.icon className="h-5 w-5 text-white" />
-                      </motion.div>
-                    </div>
-                    <div className="ml-3 w-0 flex-1">
-                      <dt className="text-xs font-medium text-muted-foreground truncate">
-                        {stat.label}
-                      </dt>
-                      <dd className="text-lg font-semibold text-foreground">
-                        <AnimatedCounter
-                          value={stat.numValue}
-                          suffix={stat.suffix}
-                        />
-                      </dd>
-                    </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                  </div>
-                </div>
-              </motion.div>
+              />
             ))}
           </div>
+
 
           {/* Admin Metric Detail Sheet */}
           {selectedAdminMetric && (
