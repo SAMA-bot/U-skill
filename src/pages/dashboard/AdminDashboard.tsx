@@ -593,14 +593,12 @@ const AdminDashboard = () => {
             <FacultyManagement />
           ) : activeSection === "reports" ? (
             <>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Performance Reports</h1>
-                  <p className="text-muted-foreground">
-                    Reports, achievements, and department leaderboards
-                  </p>
-                </div>
-              </div>
+              <PageHeader
+                eyebrow="Administration"
+                title="Performance Reports"
+                description="Reports, achievements, and department leaderboards."
+              />
+
               <Tabs defaultValue="reports" className="space-y-6">
                 <TabsList className="bg-muted/50 flex-wrap">
                   <TabsTrigger value="reports">Reports</TabsTrigger>
