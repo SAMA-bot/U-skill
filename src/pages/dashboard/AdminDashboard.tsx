@@ -533,14 +533,12 @@ const AdminDashboard = () => {
           <div className="absolute bottom-24 left-0 w-72 h-72 bg-accent/[0.02] rounded-full blur-3xl pointer-events-none" />
           {activeSection === "roles" ? (
             <>
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">Role Management</h1>
-                  <p className="text-muted-foreground">
-                    Manage user roles, permissions, and access control
-                  </p>
-                </div>
-              </div>
+              <PageHeader
+                eyebrow="Administration"
+                title="Role Management"
+                description="Manage user roles, permissions, and access control."
+              />
+
               <Tabs defaultValue="overview" className="space-y-6">
                 <TabsList className="bg-muted/50">
                   <TabsTrigger value="overview">Role Overview</TabsTrigger>
