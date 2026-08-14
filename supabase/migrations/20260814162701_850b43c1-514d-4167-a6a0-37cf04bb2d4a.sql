@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.validate_path_difficulty() FROM anon, authenticated, PUBLIC;
