@@ -465,10 +465,13 @@ export type Database = {
           created_at: string
           created_by: string
           description: string | null
+          difficulty: string
+          estimated_hours: number
           icon: string
           id: string
           is_published: boolean
           sort_order: number
+          target_audience: string | null
           thumbnail_url: string | null
           title: string
           updated_at: string
@@ -478,10 +481,13 @@ export type Database = {
           created_at?: string
           created_by: string
           description?: string | null
+          difficulty?: string
+          estimated_hours?: number
           icon?: string
           id?: string
           is_published?: boolean
           sort_order?: number
+          target_audience?: string | null
           thumbnail_url?: string | null
           title: string
           updated_at?: string
@@ -491,10 +497,13 @@ export type Database = {
           created_at?: string
           created_by?: string
           description?: string | null
+          difficulty?: string
+          estimated_hours?: number
           icon?: string
           id?: string
           is_published?: boolean
           sort_order?: number
+          target_audience?: string | null
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
@@ -593,6 +602,7 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          duration_minutes: number
           id: string
           module_id: string
           sort_order: number
@@ -603,6 +613,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          duration_minutes?: number
           id?: string
           module_id: string
           sort_order?: number
@@ -613,6 +624,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          duration_minutes?: number
           id?: string
           module_id?: string
           sort_order?: number
