@@ -10,6 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
 import { NoCoursesSVG } from "@/components/dashboard/EmptyStateIllustrations";
+import PageHeader from "@/components/dashboard/PageHeader";
+import StatCard from "@/components/dashboard/StatCard";
+import { StatCardSkeleton, ListSkeleton } from "@/components/ui/skeleton";
 import {
   Dialog, DialogContent, DialogTitle,
 } from "@/components/ui/dialog";
