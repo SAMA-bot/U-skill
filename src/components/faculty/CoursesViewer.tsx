@@ -289,21 +289,24 @@ const CoursesViewer = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: pi * 0.08 }}
                 className={cn(
-                  "rounded-2xl border bg-card overflow-hidden transition-all duration-300",
-                  isPathComplete ? "border-success/40 shadow-[0_0_30px_hsl(var(--success)/0.1)]" : "border-border/50"
+                  "rounded-xl border bg-card overflow-hidden transition-all duration-200",
+                  isPathComplete
+                    ? "border-success/40"
+                    : "border-border hover:border-primary/30 hover:shadow-[0_8px_24px_-12px_hsl(var(--primary)/0.35)]"
                 )}
               >
                 {/* Path thumbnail + header */}
-                <div className="relative h-28 sm:h-32 overflow-hidden">
+                <div className="relative h-24 sm:h-28 overflow-hidden">
                   <img
                     src={getPathThumbnail(path)}
-                    alt={path.title}
+                    alt={`${path.title} learning path cover`}
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
                   {isPathComplete && (
                     <div className="absolute top-3 right-3">
-                      <Badge className="bg-success/90 text-white border-none text-[10px]">
+                      <Badge className="bg-success/15 text-success border border-success/30 text-[10px]">
                         <Trophy className="h-3 w-3 mr-0.5" /> Complete
                       </Badge>
                     </div>
@@ -313,20 +316,28 @@ const CoursesViewer = () => {
                   onClick={() => setExpandedPaths(prev =>
                     prev.includes(path.id) ? prev.filter(id => id !== path.id) : [...prev, path.id]
                   )}
-                  className="w-full px-5 py-4 flex items-center gap-4 hover:bg-muted/30 transition-colors"
+                  aria-expanded={isExpanded}
+                  className="w-full px-5 py-4 flex items-center gap-4 text-left hover:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                 >
-                  <div className="flex-1 text-left min-w-0">
-                    <h3 className="font-bold text-foreground text-base truncate">{path.title}</h3>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className="text-xs text-muted-foreground">{pathCompletedCount}/{pathLessons.length} lessons</span>
-                      <span className="text-xs font-semibold text-primary flex items-center gap-0.5">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold tracking-tight text-foreground text-[15px] truncate">{path.title}</h3>
+                    {path.description && (
+                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{path.description}</p>
+                    )}
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="text-xs text-muted-foreground tabular-nums">{pathCompletedCount}/{pathLessons.length} lessons</span>
+                      <span className="text-xs font-semibold text-primary flex items-center gap-0.5 tabular-nums">
                         <Star className="h-3 w-3" /> {pathEarnedXp}/{pathTotalXp} XP
                       </span>
                     </div>
-                    <Progress value={pathPercent} className="h-2 mt-2" animated={false} />
+                    <Progress value={pathPercent} className="h-1.5 mt-2" animated={false} />
                   </div>
-                  <ChevronDown className={cn("h-5 w-5 text-muted-foreground shrink-0 transition-transform duration-300", isExpanded && "rotate-180")} />
+                  <span className="shrink-0 flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground">
+                    {isPathComplete ? "Review" : pathCompletedCount > 0 ? "Continue" : "Start learning"}
+                    <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform duration-300", isExpanded && "rotate-180")} />
+                  </span>
                 </button>
+
 
                 {/* Expanded: Modules + Lessons Roadmap */}
                 <AnimatePresence>
