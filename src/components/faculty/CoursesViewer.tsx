@@ -10,6 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
 import { NoCoursesSVG } from "@/components/dashboard/EmptyStateIllustrations";
+import PageHeader from "@/components/dashboard/PageHeader";
+import StatCard from "@/components/dashboard/StatCard";
+import { StatCardSkeleton, ListSkeleton } from "@/components/ui/skeleton";
 import {
   Dialog, DialogContent, DialogTitle,
 } from "@/components/ui/dialog";
@@ -224,50 +227,40 @@ const CoursesViewer = () => {
   const earnedXp = getTotalXp();
   const completedCount = getCompletedCount();
 
+  const overallPercent = totalXpAvailable > 0 ? Math.round((earnedXp / totalXpAvailable) * 100) : 0;
+
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+    return (
+      <div className="space-y-6">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[0, 1, 2].map(i => <StatCardSkeleton key={i} />)}
+        </div>
+        <ListSkeleton items={3} />
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
-      {/* Gamified Header */}
-      <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-md p-5 sm:p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <Zap className="h-6 w-6 text-primary" /> Learning Paths
-            </h2>
-            <p className="text-muted-foreground mt-1 text-sm">
-              Complete lessons in order to unlock the next. Earn XP as you go!
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
-              <div className="flex items-center justify-center gap-1">
-                <Star className="h-4 w-4 text-primary" />
-                <span className="text-xl font-bold text-primary">{earnedXp}</span>
-              </div>
-              <div className="text-[10px] text-muted-foreground font-medium">XP Earned</div>
-            </div>
-            <div className="bg-success/10 border border-success/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
-              <div className="flex items-center justify-center gap-1">
-                <Trophy className="h-4 w-4 text-success" />
-                <span className="text-xl font-bold text-success">{completedCount}</span>
-              </div>
-              <div className="text-[10px] text-muted-foreground font-medium">Completed</div>
-            </div>
-          </div>
-        </div>
-        {totalXpAvailable > 0 && (
-          <div className="mt-4">
-            <div className="flex justify-between text-xs mb-1.5">
-              <span className="text-muted-foreground">Total Progress</span>
-              <span className="font-semibold text-primary">{earnedXp} / {totalXpAvailable} XP</span>
-            </div>
-            <Progress value={totalXpAvailable > 0 ? (earnedXp / totalXpAvailable) * 100 : 0} className="h-3" showGlow />
-          </div>
-        )}
+      <PageHeader
+        eyebrow="Capacity building"
+        title="Learning Paths"
+        icon={Zap}
+        description="Complete lessons in order to unlock the next one. Every lesson you finish adds XP to your profile."
+      />
+
+      {/* Progress summary */}
+      <div className="grid gap-4 sm:grid-cols-3">
+        <StatCard icon={Star} label="XP earned" value={earnedXp} index={0} />
+        <StatCard icon={Trophy} label="Lessons completed" value={completedCount} index={1} />
+        <StatCard icon={Flame} label="Overall progress" value={overallPercent} suffix="%" index={2}>
+          <Progress value={overallPercent} className="h-1.5" animated={false} />
+          <p className="text-[11px] text-muted-foreground tabular-nums">
+            {earnedXp} of {totalXpAvailable} XP available
+          </p>
+        </StatCard>
       </div>
+
 
       {/* Learning Paths */}
       {paths.length === 0 ? (
@@ -296,21 +289,24 @@ const CoursesViewer = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: pi * 0.08 }}
                 className={cn(
-                  "rounded-2xl border bg-card overflow-hidden transition-all duration-300",
-                  isPathComplete ? "border-success/40 shadow-[0_0_30px_hsl(var(--success)/0.1)]" : "border-border/50"
+                  "rounded-xl border bg-card overflow-hidden transition-all duration-200",
+                  isPathComplete
+                    ? "border-success/40"
+                    : "border-border hover:border-primary/30 hover:shadow-[0_8px_24px_-12px_hsl(var(--primary)/0.35)]"
                 )}
               >
                 {/* Path thumbnail + header */}
-                <div className="relative h-28 sm:h-32 overflow-hidden">
+                <div className="relative h-24 sm:h-28 overflow-hidden">
                   <img
                     src={getPathThumbnail(path)}
-                    alt={path.title}
+                    alt={`${path.title} learning path cover`}
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
                   {isPathComplete && (
                     <div className="absolute top-3 right-3">
-                      <Badge className="bg-success/90 text-white border-none text-[10px]">
+                      <Badge className="bg-success/15 text-success border border-success/30 text-[10px]">
                         <Trophy className="h-3 w-3 mr-0.5" /> Complete
                       </Badge>
                     </div>
@@ -320,20 +316,28 @@ const CoursesViewer = () => {
                   onClick={() => setExpandedPaths(prev =>
                     prev.includes(path.id) ? prev.filter(id => id !== path.id) : [...prev, path.id]
                   )}
-                  className="w-full px-5 py-4 flex items-center gap-4 hover:bg-muted/30 transition-colors"
+                  aria-expanded={isExpanded}
+                  className="w-full px-5 py-4 flex items-center gap-4 text-left hover:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                 >
-                  <div className="flex-1 text-left min-w-0">
-                    <h3 className="font-bold text-foreground text-base truncate">{path.title}</h3>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className="text-xs text-muted-foreground">{pathCompletedCount}/{pathLessons.length} lessons</span>
-                      <span className="text-xs font-semibold text-primary flex items-center gap-0.5">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold tracking-tight text-foreground text-[15px] truncate">{path.title}</h3>
+                    {path.description && (
+                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{path.description}</p>
+                    )}
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="text-xs text-muted-foreground tabular-nums">{pathCompletedCount}/{pathLessons.length} lessons</span>
+                      <span className="text-xs font-semibold text-primary flex items-center gap-0.5 tabular-nums">
                         <Star className="h-3 w-3" /> {pathEarnedXp}/{pathTotalXp} XP
                       </span>
                     </div>
-                    <Progress value={pathPercent} className="h-2 mt-2" animated={false} />
+                    <Progress value={pathPercent} className="h-1.5 mt-2" animated={false} />
                   </div>
-                  <ChevronDown className={cn("h-5 w-5 text-muted-foreground shrink-0 transition-transform duration-300", isExpanded && "rotate-180")} />
+                  <span className="shrink-0 flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground">
+                    {isPathComplete ? "Review" : pathCompletedCount > 0 ? "Continue" : "Start learning"}
+                    <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform duration-300", isExpanded && "rotate-180")} />
+                  </span>
                 </button>
+
 
                 {/* Expanded: Modules + Lessons Roadmap */}
                 <AnimatePresence>
