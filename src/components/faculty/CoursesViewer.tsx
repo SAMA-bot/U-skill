@@ -224,50 +224,40 @@ const CoursesViewer = () => {
   const earnedXp = getTotalXp();
   const completedCount = getCompletedCount();
 
+  const overallPercent = totalXpAvailable > 0 ? Math.round((earnedXp / totalXpAvailable) * 100) : 0;
+
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+    return (
+      <div className="space-y-6">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[0, 1, 2].map(i => <StatCardSkeleton key={i} />)}
+        </div>
+        <ListSkeleton rows={3} />
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
-      {/* Gamified Header */}
-      <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-md p-5 sm:p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <Zap className="h-6 w-6 text-primary" /> Learning Paths
-            </h2>
-            <p className="text-muted-foreground mt-1 text-sm">
-              Complete lessons in order to unlock the next. Earn XP as you go!
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
-              <div className="flex items-center justify-center gap-1">
-                <Star className="h-4 w-4 text-primary" />
-                <span className="text-xl font-bold text-primary">{earnedXp}</span>
-              </div>
-              <div className="text-[10px] text-muted-foreground font-medium">XP Earned</div>
-            </div>
-            <div className="bg-success/10 border border-success/20 rounded-xl px-4 py-3 text-center min-w-[80px]">
-              <div className="flex items-center justify-center gap-1">
-                <Trophy className="h-4 w-4 text-success" />
-                <span className="text-xl font-bold text-success">{completedCount}</span>
-              </div>
-              <div className="text-[10px] text-muted-foreground font-medium">Completed</div>
-            </div>
-          </div>
-        </div>
-        {totalXpAvailable > 0 && (
-          <div className="mt-4">
-            <div className="flex justify-between text-xs mb-1.5">
-              <span className="text-muted-foreground">Total Progress</span>
-              <span className="font-semibold text-primary">{earnedXp} / {totalXpAvailable} XP</span>
-            </div>
-            <Progress value={totalXpAvailable > 0 ? (earnedXp / totalXpAvailable) * 100 : 0} className="h-3" showGlow />
-          </div>
-        )}
+      <PageHeader
+        eyebrow="Capacity building"
+        title="Learning Paths"
+        icon={Zap}
+        description="Complete lessons in order to unlock the next one. Every lesson you finish adds XP to your profile."
+      />
+
+      {/* Progress summary */}
+      <div className="grid gap-4 sm:grid-cols-3">
+        <StatCard icon={Star} label="XP earned" value={earnedXp} index={0} />
+        <StatCard icon={Trophy} label="Lessons completed" value={completedCount} index={1} />
+        <StatCard icon={Flame} label="Overall progress" value={overallPercent} suffix="%" index={2}>
+          <Progress value={overallPercent} className="h-1.5" animated={false} />
+          <p className="text-[11px] text-muted-foreground tabular-nums">
+            {earnedXp} of {totalXpAvailable} XP available
+          </p>
+        </StatCard>
       </div>
+
 
       {/* Learning Paths */}
       {paths.length === 0 ? (
