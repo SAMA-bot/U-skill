@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Lock, CheckCircle2, Play, Video, FileText, Link2, Type,
   ChevronDown, Star, Flame, Trophy, Zap, Loader2, ArrowLeft,
-  BookOpen, ExternalLink, Download,
+  BookOpen, ExternalLink, Download, Clock, Signal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
