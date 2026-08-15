@@ -105,7 +105,7 @@ export function LearningPathManagement() {
   const [submitting, setSubmitting] = useState(false);
 
   // Form states
-  const [pathForm, setPathForm] = useState({ title: "", description: "", icon: "book-open", color: "primary", is_published: false });
+  const [pathForm, setPathForm] = useState({ title: "", description: "", icon: "book-open", color: "primary", is_published: false, difficulty: "beginner", estimated_hours: "0", target_audience: "" });
   const [moduleForm, setModuleForm] = useState({ title: "", description: "" });
   const [lessonForm, setLessonForm] = useState({ title: "", description: "", xp_reward: "10" });
   const [contentForm, setContentForm] = useState({ content_type: "text", title: "", text_content: "", external_url: "" });
