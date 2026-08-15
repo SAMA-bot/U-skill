@@ -28,13 +28,14 @@ interface LearningPath {
   id: string; title: string; description: string | null;
   icon: string; color: string; is_published: boolean;
   thumbnail_url: string | null;
+  difficulty: string | null; estimated_hours: number | null; target_audience: string | null;
 }
 interface LearningModule {
   id: string; path_id: string; title: string; description: string | null; sort_order: number;
 }
 interface Lesson {
   id: string; module_id: string; title: string; description: string | null;
-  xp_reward: number; sort_order: number;
+  xp_reward: number; sort_order: number; duration_minutes?: number | null;
 }
 interface LessonContentItem {
   id: string; lesson_id: string; content_type: string; title: string;
