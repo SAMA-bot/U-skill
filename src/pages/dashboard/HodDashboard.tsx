@@ -7,6 +7,7 @@ import {
   Calendar, Activity, FolderUp, ClipboardList, FileCheck, MessageSquarePlus, ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LearningPathManagement } from "@/components/admin/LearningPathManagement";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
