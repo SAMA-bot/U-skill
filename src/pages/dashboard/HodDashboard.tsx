@@ -441,6 +441,7 @@ const HodDashboard = () => {
               eyebrow={hodDepartment ? `${hodDepartment} Department · ${selectedYear}` : "Loading department…"}
               title={
                 activeTab === "overview" ? "Department Overview" :
+                activeTab === "paths" ? "Learning Paths" :
                 activeTab === "documents" ? "Document Approvals" :
                 activeTab === "performance" ? "Faculty Performance Review" :
                 "Faculty Feedback"
@@ -460,6 +461,8 @@ const HodDashboard = () => {
                   <p className="text-muted-foreground">No department assigned to your profile. Please contact an administrator.</p>
                 </CardContent>
               </Card>
+            ) : activeTab === "paths" ? (
+              <LearningPathManagement />
             ) : activeTab === "documents" && hodDepartment ? (
               <HodDocumentApprovals department={hodDepartment} />
             ) : activeTab === "performance" && hodDepartment ? (
