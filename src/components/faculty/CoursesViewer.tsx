@@ -45,6 +45,14 @@ interface LessonContentItem {
 
 type NodeState = "locked" | "available" | "in_progress" | "completed";
 
+const difficultyClass = (difficulty: string | null) => {
+  switch (difficulty) {
+    case "advanced": return "text-destructive border-destructive/30";
+    case "intermediate": return "text-warning border-warning/30";
+    default: return "text-success border-success/30";
+  }
+};
+
 const getContentTypeIcon = (type: string) => {
   switch (type) {
     case "platform_video": return <Video className="h-3.5 w-3.5 text-primary" />;
