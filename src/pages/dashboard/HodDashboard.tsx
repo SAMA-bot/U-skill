@@ -359,7 +359,7 @@ const HodDashboard = () => {
               <nav className="mt-2 flex-1 flex flex-col px-3 gap-5" aria-label="Dashboard sections">
                 {[
                   { label: "Main", items: [{ id: "overview", label: "Department Overview", icon: Home }] },
-                  { label: "Learning", items: [{ id: "documents", label: "Approvals", icon: FileCheck }] },
+                  { label: "Learning", items: [{ id: "paths", label: "Learning Paths", icon: GraduationCap }, { id: "documents", label: "Approvals", icon: FileCheck }] },
                   { label: "Admin", items: [{ id: "performance", label: "Reports", icon: BarChart3 }] },
                 ].map((group) => {
                   const groupId = `${sidebarId}-${group.label.toLowerCase()}`;
