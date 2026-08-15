@@ -325,11 +325,25 @@ const CoursesViewer = () => {
                     {path.description && (
                       <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{path.description}</p>
                     )}
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                      <Badge variant="outline" className={cn("text-[10px] capitalize gap-1", difficultyClass(path.difficulty))}>
+                        <Signal className="h-3 w-3" />{path.difficulty || "beginner"}
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px] gap-1 text-muted-foreground">
+                        <Clock className="h-3 w-3" />
+                        {path.estimated_hours && path.estimated_hours > 0
+                          ? `${path.estimated_hours}h`
+                          : `${Math.max(1, Math.round(pathLessons.reduce((s, l) => s + (l.duration_minutes || 15), 0) / 60))}h`}
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px] gap-1 text-muted-foreground">
+                        <BookOpen className="h-3 w-3" />{pathLessons.length} lessons
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px] gap-1 text-primary border-primary/30 tabular-nums">
+                        <Star className="h-3 w-3" />{pathEarnedXp}/{pathTotalXp} XP
+                      </Badge>
+                    </div>
                     <div className="flex items-center gap-3 mt-2">
-                      <span className="text-xs text-muted-foreground tabular-nums">{pathCompletedCount}/{pathLessons.length} lessons</span>
-                      <span className="text-xs font-semibold text-primary flex items-center gap-0.5 tabular-nums">
-                        <Star className="h-3 w-3" /> {pathEarnedXp}/{pathTotalXp} XP
-                      </span>
+                      <span className="text-xs text-muted-foreground tabular-nums">{pathCompletedCount}/{pathLessons.length} lessons done</span>
                     </div>
                     <Progress value={pathPercent} className="h-1.5 mt-2" animated={false} />
                   </div>
