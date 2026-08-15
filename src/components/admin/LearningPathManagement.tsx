@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import AiPathBuilder from "@/components/admin/AiPathBuilder";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -105,7 +106,7 @@ export function LearningPathManagement() {
   const [submitting, setSubmitting] = useState(false);
 
   // Form states
-  const [pathForm, setPathForm] = useState({ title: "", description: "", icon: "book-open", color: "primary", is_published: false });
+  const [pathForm, setPathForm] = useState({ title: "", description: "", icon: "book-open", color: "primary", is_published: false, difficulty: "beginner", estimated_hours: "0", target_audience: "" });
   const [moduleForm, setModuleForm] = useState({ title: "", description: "" });
   const [lessonForm, setLessonForm] = useState({ title: "", description: "", xp_reward: "10" });
   const [contentForm, setContentForm] = useState({ content_type: "text", title: "", text_content: "", external_url: "" });
@@ -198,10 +199,19 @@ export function LearningPathManagement() {
   const openPathDialog = (path?: LearningPath) => {
     if (path) {
       setEditingPath(path);
-      setPathForm({ title: path.title, description: path.description || "", icon: path.icon, color: path.color, is_published: path.is_published });
+      setPathForm({
+        title: path.title,
+        description: path.description || "",
+        icon: path.icon,
+        color: path.color,
+        is_published: path.is_published,
+        difficulty: (path as any).difficulty || "beginner",
+        estimated_hours: String((path as any).estimated_hours ?? 0),
+        target_audience: (path as any).target_audience || "",
+      });
     } else {
       setEditingPath(null);
-      setPathForm({ title: "", description: "", icon: "book-open", color: "primary", is_published: false });
+      setPathForm({ title: "", description: "", icon: "book-open", color: "primary", is_published: false, difficulty: "beginner", estimated_hours: "0", target_audience: "" });
     }
     setPathDialogOpen(true);
   };
@@ -210,7 +220,12 @@ export function LearningPathManagement() {
     if (!user || !pathForm.title.trim()) return;
     setSubmitting(true);
     try {
-      const data = { ...pathForm, created_by: user.id, sort_order: paths.length };
+      const data = {
+        ...pathForm,
+        estimated_hours: Number(pathForm.estimated_hours) || 0,
+        created_by: user.id,
+        sort_order: paths.length,
+      };
       if (editingPath) {
         const { error } = await supabase.from("learning_paths").update(data).eq("id", editingPath.id);
         if (error) throw error;
@@ -421,9 +436,12 @@ export function LearningPathManagement() {
             </CardTitle>
             <CardDescription>Create learning paths with modules, lessons, and multi-type content</CardDescription>
           </div>
-          <Button onClick={() => openPathDialog()}>
-            <Plus className="mr-2 h-4 w-4" /> New Path
-          </Button>
+          <div className="flex items-center gap-2">
+            <AiPathBuilder sortOrder={paths.length} onCreated={fetchPaths} />
+            <Button onClick={() => openPathDialog()}>
+              <Plus className="mr-2 h-4 w-4" /> New Path
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {paths.length === 0 ? (
@@ -573,6 +591,37 @@ export function LearningPathManagement() {
             <div className="space-y-2">
               <Label>Description</Label>
               <Textarea value={pathForm.description} onChange={e => setPathForm({ ...pathForm, description: e.target.value })} placeholder="Brief description..." rows={2} />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Difficulty</Label>
+                <Select value={pathForm.difficulty} onValueChange={v => setPathForm({ ...pathForm, difficulty: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {["beginner", "intermediate", "advanced"].map(d => (
+                      <SelectItem key={d} value={d} className="capitalize">{d}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Estimated hours</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  step={0.5}
+                  value={pathForm.estimated_hours}
+                  onChange={e => setPathForm({ ...pathForm, estimated_hours: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Target audience</Label>
+              <Input
+                value={pathForm.target_audience}
+                onChange={e => setPathForm({ ...pathForm, target_audience: e.target.value })}
+                placeholder="e.g., First-year engineering faculty"
+              />
             </div>
             <div className="space-y-2">
               <Label>Color Theme</Label>

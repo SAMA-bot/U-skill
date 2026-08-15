@@ -7,6 +7,7 @@ import {
   Calendar, Activity, FolderUp, ClipboardList, FileCheck, MessageSquarePlus, ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LearningPathManagement } from "@/components/admin/LearningPathManagement";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -359,7 +360,7 @@ const HodDashboard = () => {
               <nav className="mt-2 flex-1 flex flex-col px-3 gap-5" aria-label="Dashboard sections">
                 {[
                   { label: "Main", items: [{ id: "overview", label: "Department Overview", icon: Home }] },
-                  { label: "Learning", items: [{ id: "documents", label: "Approvals", icon: FileCheck }] },
+                  { label: "Learning", items: [{ id: "paths", label: "Learning Paths", icon: GraduationCap }, { id: "documents", label: "Approvals", icon: FileCheck }] },
                   { label: "Admin", items: [{ id: "performance", label: "Reports", icon: BarChart3 }] },
                 ].map((group) => {
                   const groupId = `${sidebarId}-${group.label.toLowerCase()}`;
@@ -441,6 +442,7 @@ const HodDashboard = () => {
               eyebrow={hodDepartment ? `${hodDepartment} Department · ${selectedYear}` : "Loading department…"}
               title={
                 activeTab === "overview" ? "Department Overview" :
+                activeTab === "paths" ? "Learning Paths" :
                 activeTab === "documents" ? "Document Approvals" :
                 activeTab === "performance" ? "Faculty Performance Review" :
                 "Faculty Feedback"
@@ -460,6 +462,8 @@ const HodDashboard = () => {
                   <p className="text-muted-foreground">No department assigned to your profile. Please contact an administrator.</p>
                 </CardContent>
               </Card>
+            ) : activeTab === "paths" ? (
+              <LearningPathManagement />
             ) : activeTab === "documents" && hodDepartment ? (
               <HodDocumentApprovals department={hodDepartment} />
             ) : activeTab === "performance" && hodDepartment ? (

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Lock, CheckCircle2, Play, Video, FileText, Link2, Type,
   ChevronDown, Star, Flame, Trophy, Zap, Loader2, ArrowLeft,
-  BookOpen, ExternalLink, Download,
+  BookOpen, ExternalLink, Download, Clock, Signal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,13 +28,14 @@ interface LearningPath {
   id: string; title: string; description: string | null;
   icon: string; color: string; is_published: boolean;
   thumbnail_url: string | null;
+  difficulty: string | null; estimated_hours: number | null; target_audience: string | null;
 }
 interface LearningModule {
   id: string; path_id: string; title: string; description: string | null; sort_order: number;
 }
 interface Lesson {
   id: string; module_id: string; title: string; description: string | null;
-  xp_reward: number; sort_order: number;
+  xp_reward: number; sort_order: number; duration_minutes?: number | null;
 }
 interface LessonContentItem {
   id: string; lesson_id: string; content_type: string; title: string;
@@ -43,6 +44,14 @@ interface LessonContentItem {
 }
 
 type NodeState = "locked" | "available" | "in_progress" | "completed";
+
+const difficultyClass = (difficulty: string | null) => {
+  switch (difficulty) {
+    case "advanced": return "text-destructive border-destructive/30";
+    case "intermediate": return "text-warning border-warning/30";
+    default: return "text-success border-success/30";
+  }
+};
 
 const getContentTypeIcon = (type: string) => {
   switch (type) {
@@ -324,11 +333,25 @@ const CoursesViewer = () => {
                     {path.description && (
                       <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{path.description}</p>
                     )}
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                      <Badge variant="outline" className={cn("text-[10px] capitalize gap-1", difficultyClass(path.difficulty))}>
+                        <Signal className="h-3 w-3" />{path.difficulty || "beginner"}
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px] gap-1 text-muted-foreground">
+                        <Clock className="h-3 w-3" />
+                        {path.estimated_hours && path.estimated_hours > 0
+                          ? `${path.estimated_hours}h`
+                          : `${Math.max(1, Math.round(pathLessons.reduce((s, l) => s + (l.duration_minutes || 15), 0) / 60))}h`}
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px] gap-1 text-muted-foreground">
+                        <BookOpen className="h-3 w-3" />{pathLessons.length} lessons
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px] gap-1 text-primary border-primary/30 tabular-nums">
+                        <Star className="h-3 w-3" />{pathEarnedXp}/{pathTotalXp} XP
+                      </Badge>
+                    </div>
                     <div className="flex items-center gap-3 mt-2">
-                      <span className="text-xs text-muted-foreground tabular-nums">{pathCompletedCount}/{pathLessons.length} lessons</span>
-                      <span className="text-xs font-semibold text-primary flex items-center gap-0.5 tabular-nums">
-                        <Star className="h-3 w-3" /> {pathEarnedXp}/{pathTotalXp} XP
-                      </span>
+                      <span className="text-xs text-muted-foreground tabular-nums">{pathCompletedCount}/{pathLessons.length} lessons done</span>
                     </div>
                     <Progress value={pathPercent} className="h-1.5 mt-2" animated={false} />
                   </div>
