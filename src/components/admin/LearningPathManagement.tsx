@@ -198,10 +198,19 @@ export function LearningPathManagement() {
   const openPathDialog = (path?: LearningPath) => {
     if (path) {
       setEditingPath(path);
-      setPathForm({ title: path.title, description: path.description || "", icon: path.icon, color: path.color, is_published: path.is_published });
+      setPathForm({
+        title: path.title,
+        description: path.description || "",
+        icon: path.icon,
+        color: path.color,
+        is_published: path.is_published,
+        difficulty: (path as any).difficulty || "beginner",
+        estimated_hours: String((path as any).estimated_hours ?? 0),
+        target_audience: (path as any).target_audience || "",
+      });
     } else {
       setEditingPath(null);
-      setPathForm({ title: "", description: "", icon: "book-open", color: "primary", is_published: false });
+      setPathForm({ title: "", description: "", icon: "book-open", color: "primary", is_published: false, difficulty: "beginner", estimated_hours: "0", target_audience: "" });
     }
     setPathDialogOpen(true);
   };
@@ -210,7 +219,12 @@ export function LearningPathManagement() {
     if (!user || !pathForm.title.trim()) return;
     setSubmitting(true);
     try {
-      const data = { ...pathForm, created_by: user.id, sort_order: paths.length };
+      const data = {
+        ...pathForm,
+        estimated_hours: Number(pathForm.estimated_hours) || 0,
+        created_by: user.id,
+        sort_order: paths.length,
+      };
       if (editingPath) {
         const { error } = await supabase.from("learning_paths").update(data).eq("id", editingPath.id);
         if (error) throw error;
