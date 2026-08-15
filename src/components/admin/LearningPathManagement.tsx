@@ -592,6 +592,37 @@ export function LearningPathManagement() {
               <Label>Description</Label>
               <Textarea value={pathForm.description} onChange={e => setPathForm({ ...pathForm, description: e.target.value })} placeholder="Brief description..." rows={2} />
             </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Difficulty</Label>
+                <Select value={pathForm.difficulty} onValueChange={v => setPathForm({ ...pathForm, difficulty: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {["beginner", "intermediate", "advanced"].map(d => (
+                      <SelectItem key={d} value={d} className="capitalize">{d}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Estimated hours</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  step={0.5}
+                  value={pathForm.estimated_hours}
+                  onChange={e => setPathForm({ ...pathForm, estimated_hours: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Target audience</Label>
+              <Input
+                value={pathForm.target_audience}
+                onChange={e => setPathForm({ ...pathForm, target_audience: e.target.value })}
+                placeholder="e.g., First-year engineering faculty"
+              />
+            </div>
             <div className="space-y-2">
               <Label>Color Theme</Label>
               <Select value={pathForm.color} onValueChange={v => setPathForm({ ...pathForm, color: v })}>
