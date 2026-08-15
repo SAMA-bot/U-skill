@@ -435,9 +435,12 @@ export function LearningPathManagement() {
             </CardTitle>
             <CardDescription>Create learning paths with modules, lessons, and multi-type content</CardDescription>
           </div>
-          <Button onClick={() => openPathDialog()}>
-            <Plus className="mr-2 h-4 w-4" /> New Path
-          </Button>
+          <div className="flex items-center gap-2">
+            <AiPathBuilder sortOrder={paths.length} onCreated={fetchPaths} />
+            <Button onClick={() => openPathDialog()}>
+              <Plus className="mr-2 h-4 w-4" /> New Path
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {paths.length === 0 ? (
