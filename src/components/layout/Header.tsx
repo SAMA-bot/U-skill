@@ -57,7 +57,7 @@ export function Header() {
             whileHover={{ scale: 1.02 }}
           >
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{
-              backgroundImage: 'linear-gradient(135deg, hsl(210 100% 60%), hsl(270 65% 62%))',
+              backgroundImage: 'linear-gradient(135deg, hsl(203 100% 59%), hsl(279 82% 54%))',
             }}>
               <Sparkles className="w-5 h-5 text-white" />
             </div>

@@ -48,7 +48,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const gradientStyle = variant === "gradient" 
       ? { 
           ...style,
-          backgroundImage: 'linear-gradient(135deg, hsl(210 100% 60%), hsl(270 65% 62%), hsl(185 80% 55%))',
+          backgroundImage: 'linear-gradient(135deg, hsl(203 100% 59%), hsl(279 82% 54%), hsl(162 100% 72%))',
           backgroundSize: '200% 200%',
         } 
       : style;

@@ -7,7 +7,7 @@ const technologies = [
     name: 'React.js', category: 'Frontend',
     description: 'Component-based UI library for building interactive interfaces',
     icon: '⚛️',
-    gradient: 'linear-gradient(135deg, hsl(210 100% 60%), hsl(185 80% 55%))',
+    gradient: 'linear-gradient(135deg, hsl(203 100% 59%), hsl(162 100% 72%))',
   },
   {
     name: 'Node.js', category: 'Backend',
@@ -25,7 +25,7 @@ const technologies = [
     name: 'Express.js', category: 'API',
     description: 'Fast, minimalist web framework for RESTful API development',
     icon: '⚡',
-    gradient: 'linear-gradient(135deg, hsl(270 65% 62%), hsl(210 100% 60%))',
+    gradient: 'linear-gradient(135deg, hsl(279 82% 54%), hsl(203 100% 59%))',
   },
 ];
 

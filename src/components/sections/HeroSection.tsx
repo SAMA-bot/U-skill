@@ -15,11 +15,11 @@ export function HeroSection() {
       {/* Background gradient orbs */}
       <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[120px] opacity-20"
-          style={{ background: 'hsl(210 100% 60%)' }} />
+          style={{ background: 'hsl(203 100% 59%)' }} />
         <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full blur-[120px] opacity-15"
-          style={{ background: 'hsl(270 65% 62%)' }} />
+          style={{ background: 'hsl(279 82% 54%)' }} />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-[120px] opacity-10"
-          style={{ background: 'hsl(185 80% 55%)' }} />
+          style={{ background: 'hsl(162 100% 72%)' }} />
       </div>
 
       {/* Grid pattern overlay */}
@@ -108,7 +108,7 @@ export function HeroSection() {
               <div className="glass-card p-8 rounded-2xl">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{
-                    backgroundImage: 'linear-gradient(135deg, hsl(210 100% 60% / 0.15), hsl(270 65% 62% / 0.15))',
+                    backgroundImage: 'linear-gradient(135deg, hsl(203 100% 59% / 0.15), hsl(279 82% 54% / 0.15))',
                   }}>
                     <TrendingUp className="w-6 h-6 text-primary" />
                   </div>
@@ -121,9 +121,9 @@ export function HeroSection() {
                 {/* Mock Chart */}
                 <div className="space-y-5">
                   {[
-                    { label: 'Teaching Excellence', value: 85, gradient: 'linear-gradient(90deg, hsl(210 100% 60%), hsl(185 80% 55%))' },
-                    { label: 'Research Output', value: 72, gradient: 'linear-gradient(90deg, hsl(270 65% 62%), hsl(210 100% 60%))' },
-                    { label: 'Administrative Skills', value: 90, gradient: 'linear-gradient(90deg, hsl(185 80% 55%), hsl(160 70% 45%))' },
+                    { label: 'Teaching Excellence', value: 85, gradient: 'linear-gradient(90deg, hsl(203 100% 59%), hsl(162 100% 72%))' },
+                    { label: 'Research Output', value: 72, gradient: 'linear-gradient(90deg, hsl(279 82% 54%), hsl(203 100% 59%))' },
+                    { label: 'Administrative Skills', value: 90, gradient: 'linear-gradient(90deg, hsl(162 100% 72%), hsl(160 70% 45%))' },
                   ].map((item) => (
                     <div key={item.label}>
                       <div className="flex justify-between text-sm mb-2">
@@ -152,7 +152,7 @@ export function HeroSection() {
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{
-                    backgroundImage: 'linear-gradient(135deg, hsl(270 65% 62% / 0.2), hsl(290 60% 55% / 0.2))',
+                    backgroundImage: 'linear-gradient(135deg, hsl(279 82% 54% / 0.2), hsl(190 100% 79% / 0.2))',
                   }}>
                     <Award className="w-5 h-5 text-accent" />
                   </div>
@@ -170,7 +170,7 @@ export function HeroSection() {
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{
-                    backgroundImage: 'linear-gradient(135deg, hsl(210 100% 60% / 0.2), hsl(185 80% 55% / 0.2))',
+                    backgroundImage: 'linear-gradient(135deg, hsl(203 100% 59% / 0.2), hsl(162 100% 72% / 0.2))',
                   }}>
                     <BookOpen className="w-5 h-5 text-primary" />
                   </div>
