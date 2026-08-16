@@ -201,7 +201,7 @@ export default function PerformanceReports() {
   const getBadgeStyle = (badge: string) => {
     switch (badge) {
       case "Excellent": return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400";
-      case "Good": return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+      case "Good": return "bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary";
       default: return "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400";
     }
   };

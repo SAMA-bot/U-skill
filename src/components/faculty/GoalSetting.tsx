@@ -209,7 +209,7 @@ const GoalSetting = () => {
       return <Badge variant="destructive">Overdue</Badge>;
     }
     if (progress >= 75) {
-      return <Badge className="bg-blue-500">On Track</Badge>;
+      return <Badge className="bg-primary">On Track</Badge>;
     }
     return <Badge variant="secondary">In Progress</Badge>;
   };

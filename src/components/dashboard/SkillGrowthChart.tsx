@@ -24,8 +24,8 @@ interface SkillData {
 }
 
 const skillColors: Record<string, string> = {
-  Teaching: "bg-blue-500",
-  Research: "bg-purple-500",
+  Teaching: "bg-primary",
+  Research: "bg-accent",
   Leadership: "bg-orange-500",
   Communication: "bg-teal-500",
   Technology: "bg-pink-500",

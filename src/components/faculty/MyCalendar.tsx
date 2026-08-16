@@ -65,11 +65,11 @@ interface CalendarEvent {
 }
 
 const EVENT_TYPES = [
-  { value: "training", label: "Training", icon: BookOpen, color: "bg-blue-500" },
+  { value: "training", label: "Training", icon: BookOpen, color: "bg-primary" },
   { value: "deadline", label: "Deadline", icon: AlertTriangle, color: "bg-red-500" },
   { value: "reminder", label: "Reminder", icon: Bell, color: "bg-amber-500" },
   { value: "personal", label: "Personal", icon: User, color: "bg-green-500" },
-  { value: "meeting", label: "Meeting", icon: Clock, color: "bg-purple-500" },
+  { value: "meeting", label: "Meeting", icon: Clock, color: "bg-accent" },
   { value: "document", label: "Document", icon: FileText, color: "bg-teal-500" },
 ];
 

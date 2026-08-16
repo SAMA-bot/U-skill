@@ -60,9 +60,9 @@ const getIconConfig = (type: Notification["type"], severity: Notification["sever
     case "course_completed":
       return { icon: <GraduationCap className={cls} />, bg: "bg-emerald-500/15", text: "text-emerald-600 dark:text-emerald-400" };
     case "course_started":
-      return { icon: <PlayCircle className={cls} />, bg: "bg-blue-500/15", text: "text-blue-600 dark:text-blue-400" };
+      return { icon: <PlayCircle className={cls} />, bg: "bg-primary/15", text: "text-primary dark:text-primary" };
     case "course_enrolled":
-      return { icon: <BookOpen className={cls} />, bg: "bg-indigo-500/15", text: "text-indigo-600 dark:text-indigo-400" };
+      return { icon: <BookOpen className={cls} />, bg: "bg-primary/15", text: "text-primary dark:text-primary" };
     case "training_reminder":
       return { icon: <ClipboardList className={cls} />, bg: "bg-orange-500/15", text: "text-orange-600 dark:text-orange-400" };
     case "achievement_earned":

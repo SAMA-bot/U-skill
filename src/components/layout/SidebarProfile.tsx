@@ -51,7 +51,7 @@ export function SidebarProfile({ user, profile, role, collapsed }: SidebarProfil
             <span className="text-sm font-semibold text-foreground truncate w-full">
               {displayName}
             </span>
-            <span className="text-xs font-medium text-blue-500 dark:text-white">
+            <span className="text-xs font-medium text-primary dark:text-white">
               {role}
             </span>
           </div>

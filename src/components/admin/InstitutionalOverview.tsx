@@ -108,8 +108,8 @@ const InstitutionalOverview = () => {
       value: metrics.totalFaculty,
       suffix: "",
       icon: Users,
-      color: "text-blue-500",
-      bgColor: "bg-blue-500/10",
+      color: "text-primary",
+      bgColor: "bg-primary/10",
       progress: null,
     },
     {

@@ -22,7 +22,7 @@ interface JournalEntry {
 
 const moodOptions = [
   { value: "great", icon: Heart, label: "Great", color: "text-green-500" },
-  { value: "good", icon: Smile, label: "Good", color: "text-blue-500" },
+  { value: "good", icon: Smile, label: "Good", color: "text-primary" },
   { value: "neutral", icon: Meh, label: "Neutral", color: "text-muted-foreground" },
   { value: "low", icon: Frown, label: "Low", color: "text-orange-500" },
   { value: "energized", icon: Zap, label: "Energized", color: "text-yellow-500" },

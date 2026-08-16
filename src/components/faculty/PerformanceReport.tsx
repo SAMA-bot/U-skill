@@ -182,11 +182,11 @@ const PerformanceReport = ({
         {/* Overall Score */}
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Award className="h-5 w-5 text-blue-600" />
+            <Award className="h-5 w-5 text-primary" />
             Overall Performance
           </h2>
           <div className="flex items-center gap-6">
-            <div className="w-24 h-24 rounded-full border-4 border-blue-500 flex items-center justify-center">
+            <div className="w-24 h-24 rounded-full border-4 border-primary flex items-center justify-center">
               <span className={`text-3xl font-bold ${getScoreColor(overallScore)}`}>
                 {overallScore}
               </span>
@@ -217,7 +217,7 @@ const PerformanceReport = ({
         {/* Category Breakdown */}
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-blue-600" />
+            <BarChart3 className="h-5 w-5 text-primary" />
             Performance by Category
           </h2>
           <div className="space-y-4">
@@ -230,7 +230,7 @@ const PerformanceReport = ({
                 <div className="flex-1">
                   <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-blue-500 rounded-full"
+                      className="h-full bg-primary rounded-full"
                       style={{ width: `${category.score}%` }}
                     />
                   </div>
@@ -246,7 +246,7 @@ const PerformanceReport = ({
         {/* Historical Trend */}
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-blue-600" />
+            <TrendingUp className="h-5 w-5 text-primary" />
             Performance History
           </h2>
           <div className="overflow-x-auto">
@@ -287,7 +287,7 @@ const PerformanceReport = ({
         {/* Skills Progress */}
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Target className="h-5 w-5 text-blue-600" />
+            <Target className="h-5 w-5 text-primary" />
             Skills Development
           </h2>
           <div className="grid grid-cols-2 gap-4">

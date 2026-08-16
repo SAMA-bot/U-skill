@@ -159,7 +159,7 @@ export default function CourseEnrollmentStats({ courseId, courseTitle }: Props) 
             <p className="text-[11px] text-muted-foreground">In Progress</p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 text-center">
-            <TrendingUp className="h-4 w-4 mx-auto mb-1 text-blue-500" />
+            <TrendingUp className="h-4 w-4 mx-auto mb-1 text-primary" />
             <p className="text-xl font-bold text-foreground">{stats.avgProgress}%</p>
             <p className="text-[11px] text-muted-foreground">Avg Progress</p>
           </div>

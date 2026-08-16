@@ -7,7 +7,7 @@ const XpSummaryCard = () => {
   const { total, lesson, course, streak, recent, loading } = useUserXp();
 
   const items = [
-    { label: "Lessons", value: lesson, icon: BookOpen, color: "text-blue-500" },
+    { label: "Lessons", value: lesson, icon: BookOpen, color: "text-primary" },
     { label: "Courses", value: course, icon: GraduationCap, color: "text-green-500" },
     { label: "Streaks", value: streak, icon: Flame, color: "text-orange-500" },
   ];

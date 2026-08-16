@@ -14,7 +14,7 @@ interface Streak {
 const streakConfig: Record<string, { label: string; icon: typeof Flame; color: string }> = {
   daily_login: { label: "Login Streak", icon: Flame, color: "text-orange-500" },
   activity_completion: { label: "Activity Streak", icon: Zap, color: "text-yellow-500" },
-  journal_streak: { label: "Journal Streak", icon: Calendar, color: "text-blue-500" },
+  journal_streak: { label: "Journal Streak", icon: Calendar, color: "text-primary" },
 };
 
 const StreakTracker = () => {

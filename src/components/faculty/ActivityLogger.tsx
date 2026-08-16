@@ -72,7 +72,7 @@ const statusConfig = {
   in_progress: { 
     icon: Clock, 
     label: "In Progress", 
-    className: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400" 
+    className: "bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary" 
   },
   completed: { 
     icon: CheckCircle2, 
@@ -161,7 +161,7 @@ export default function ActivityLogger() {
           className="bg-card border border-border rounded-lg p-4"
         >
           <p className="text-sm text-muted-foreground">In Progress</p>
-          <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.inProgress}</p>
+          <p className="text-2xl font-bold text-primary dark:text-primary">{stats.inProgress}</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
