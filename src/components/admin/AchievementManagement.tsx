@@ -253,7 +253,7 @@ const AchievementManagement = () => {
       label: "Faculty Awarded",
       value: new Set(achievements.map((a) => a.user_id)).size,
       icon: Users,
-      color: "from-blue-500 to-blue-600",
+      color: "from-primary to-primary",
     },
     {
       label: "This Month",
@@ -269,7 +269,7 @@ const AchievementManagement = () => {
       label: "Top Performer",
       value: topFaculty[0]?.profile.full_name.split(" ")[0] || "N/A",
       icon: Crown,
-      color: "from-purple-500 to-purple-600",
+      color: "from-accent to-accent",
     },
   ];
 

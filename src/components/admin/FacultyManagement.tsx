@@ -255,7 +255,7 @@ export default function FacultyManagement() {
   const getBadgeStyle = (badge?: string) => {
     switch (badge) {
       case "Excellent": return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400";
-      case "Good": return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+      case "Good": return "bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary";
       default: return "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400";
     }
   };
@@ -308,7 +308,7 @@ export default function FacultyManagement() {
         {[
           { label: "Total Faculty", value: faculty.length, icon: GraduationCap, color: "text-primary" },
           { label: "Excellent", value: faculty.filter((f) => f.badge === "Excellent").length, icon: Award, color: "text-emerald-500" },
-          { label: "Good", value: faculty.filter((f) => f.badge === "Good").length, icon: TrendingUp, color: "text-blue-500" },
+          { label: "Good", value: faculty.filter((f) => f.badge === "Good").length, icon: TrendingUp, color: "text-primary" },
           { label: "Needs Improvement", value: faculty.filter((f) => f.badge === "Needs Improvement").length, icon: BarChart3, color: "text-amber-500" },
         ].map((card) => (
           <div key={card.label} className="bg-card border border-border rounded-lg p-4 flex items-center gap-3">

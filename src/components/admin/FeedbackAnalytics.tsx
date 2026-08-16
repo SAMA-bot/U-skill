@@ -375,9 +375,9 @@ const FeedbackAnalytics = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: "Average Rating", value: `${overallStats.avgRating || "—"}/5`, icon: Star, color: "from-amber-500 to-amber-600" },
-          { label: "Total Feedback", value: overallStats.totalFeedback, icon: MessageSquare, color: "from-blue-500 to-blue-600" },
+          { label: "Total Feedback", value: overallStats.totalFeedback, icon: MessageSquare, color: "from-primary to-primary" },
           { label: "Faculty Reviewed", value: overallStats.totalFaculty, icon: Users, color: "from-green-500 to-green-600" },
-          { label: "Departments", value: departments.length, icon: Building2, color: "from-purple-500 to-purple-600" },
+          { label: "Departments", value: departments.length, icon: Building2, color: "from-accent to-accent" },
         ].map((stat, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
             <Card>

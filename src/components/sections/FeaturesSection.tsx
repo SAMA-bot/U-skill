@@ -25,7 +25,7 @@ export function FeaturesSection() {
       
       {/* Subtle background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full blur-[150px] opacity-[0.04]"
-        style={{ background: 'hsl(210 100% 60%)' }} />
+        style={{ background: 'hsl(var(--primary))' }} />
 
       <div className="container-wide mx-auto relative z-10">
         <motion.div
@@ -55,7 +55,7 @@ export function FeaturesSection() {
             >
               <div className="flex items-start gap-4">
                 <div className="w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0 border border-border/50 group-hover:border-primary/30 transition-colors" style={{
-                  background: 'linear-gradient(135deg, hsl(210 100% 60% / 0.1), hsl(270 65% 62% / 0.05))',
+                  background: 'linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.05))',
                 }}>
                   <feature.icon className="w-5 h-5 text-primary" />
                 </div>

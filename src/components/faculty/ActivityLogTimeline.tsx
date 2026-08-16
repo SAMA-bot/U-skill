@@ -142,7 +142,7 @@ const getActionColor = (actionType: string): string => {
       return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
     case "COURSE_CREATED":
     case "USER_CREATED":
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+      return "bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary";
     case "COURSE_PUBLISHED":
       return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400";
     case "COURSE_UNPUBLISHED":
@@ -151,7 +151,7 @@ const getActionColor = (actionType: string): string => {
       return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
     case "ROLE_ASSIGNED":
     case "ROLE_CHANGED":
-      return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
+      return "bg-accent/10 text-accent dark:bg-accent/30 dark:text-accent";
     case "PROFILE_UPDATED":
     case "COURSE_UPDATED":
       return "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400";
@@ -379,7 +379,7 @@ const ActivityLogTimeline = () => {
         {[
           { label: "Total Events", value: stats.total, color: "text-foreground" },
           { label: "Training", value: stats.training, color: "text-green-600 dark:text-green-400" },
-          { label: "Documents", value: stats.documents, color: "text-purple-600 dark:text-purple-400" },
+          { label: "Documents", value: stats.documents, color: "text-accent dark:text-accent" },
           { label: "Profile", value: stats.profile, color: "text-amber-600 dark:text-amber-400" },
         ].map((s) => (
           <Card key={s.label}>

@@ -18,7 +18,7 @@ const levels = [
   { label: 'Very weak', bar: 'bg-destructive', text: 'text-destructive' },
   { label: 'Weak', bar: 'bg-destructive', text: 'text-destructive' },
   { label: 'Fair', bar: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400' },
-  { label: 'Good', bar: 'bg-blue-500', text: 'text-blue-600 dark:text-blue-400' },
+  { label: 'Good', bar: 'bg-primary', text: 'text-primary dark:text-primary' },
   { label: 'Strong', bar: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' },
   { label: 'Very strong', bar: 'bg-emerald-600', text: 'text-emerald-600 dark:text-emerald-400' },
 ];

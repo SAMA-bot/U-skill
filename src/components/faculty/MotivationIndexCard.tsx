@@ -57,7 +57,7 @@ const MotivationIndexCard = () => {
 
   const getLabel = (score: number) => {
     if (score >= 80) return { text: "Highly Motivated", color: "text-green-500" };
-    if (score >= 60) return { text: "Motivated", color: "text-blue-500" };
+    if (score >= 60) return { text: "Motivated", color: "text-primary" };
     if (score >= 40) return { text: "Moderate", color: "text-yellow-500" };
     return { text: "Needs Boost", color: "text-orange-500" };
   };

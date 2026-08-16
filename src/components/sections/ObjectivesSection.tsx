@@ -38,7 +38,7 @@ export function ObjectivesSection() {
               </div>
               <div className="absolute inset-16 flex items-center justify-center">
                 <div className="w-full h-full rounded-full flex items-center justify-center" style={{
-                  background: 'linear-gradient(135deg, hsl(210 100% 60% / 0.08), hsl(270 65% 62% / 0.08))',
+                  background: 'linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--accent) / 0.08))',
                 }}>
                   <div className="text-center p-8">
                     <div className="text-5xl font-bold font-heading gradient-text mb-2">5</div>

@@ -215,7 +215,7 @@ const NotificationCenter = () => {
       case "error":
         return "border-l-red-500 bg-red-50 dark:bg-red-900/10";
       default:
-        return "border-l-blue-500 bg-blue-50 dark:bg-blue-900/10";
+        return "border-l-primary bg-primary/10 dark:bg-primary/10";
     }
   };
 

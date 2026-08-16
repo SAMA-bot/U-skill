@@ -168,7 +168,7 @@ const OnboardingTour = ({ storageKey, steps, autoStart = true }: OnboardingTourP
         >
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                 <Sparkles className="h-4 w-4 text-white" />
               </div>
               <div>
@@ -200,7 +200,7 @@ const OnboardingTour = ({ storageKey, steps, autoStart = true }: OnboardingTourP
                 key={i}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
                   i === stepIndex
-                    ? "w-6 bg-gradient-to-r from-blue-500 to-purple-600"
+                    ? "w-6 bg-gradient-to-r from-primary to-accent"
                     : i < stepIndex
                     ? "w-1.5 bg-primary/60"
                     : "w-1.5 bg-muted"

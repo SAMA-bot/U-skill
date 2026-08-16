@@ -33,9 +33,9 @@ const ICON_MAP = {
 };
 
 const COLOR_MAP = {
-  activity: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+  activity: "bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary",
   course: "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400",
-  document: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
+  document: "bg-accent/10 text-accent dark:bg-accent/30 dark:text-accent",
   assessment: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
 };
 

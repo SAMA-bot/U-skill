@@ -13,7 +13,7 @@ export function Footer() {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{
-                backgroundImage: 'linear-gradient(135deg, hsl(210 100% 60%), hsl(270 65% 62%))',
+                backgroundImage: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))',
               }}>
                 <Sparkles className="w-5 h-5 text-white" />
               </div>

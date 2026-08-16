@@ -17,7 +17,7 @@ const roleConfig: Record<AppRole, { icon: typeof Shield; label: string; descript
     icon: Users,
     label: 'Head of Department',
     description: 'Department overview — faculty performance, approvals, and feedback.',
-    color: 'from-blue-500 to-indigo-600',
+    color: 'from-primary to-accent',
     path: '/hod',
   },
   faculty: {

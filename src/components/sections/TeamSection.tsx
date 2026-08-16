@@ -50,7 +50,7 @@ export function TeamSection() {
               className="glass-card-hover rounded-2xl p-6 text-center group"
             >
               <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform duration-300" style={{
-                background: 'linear-gradient(135deg, hsl(210 100% 60% / 0.1), hsl(270 65% 62% / 0.1))',
+                background: 'linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.1))',
               }}>
                 <member.icon className="w-8 h-8 text-primary" />
               </div>
@@ -79,7 +79,7 @@ export function TeamSection() {
                 className="glass-card-hover rounded-2xl p-6 flex items-center gap-4"
               >
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0" style={{
-                  background: 'linear-gradient(135deg, hsl(270 65% 62% / 0.12), hsl(290 60% 55% / 0.08))',
+                  background: 'linear-gradient(135deg, hsl(var(--accent) / 0.12), hsl(var(--brand-d) / 0.08))',
                 }}>
                   <mentor.icon className="w-7 h-7 text-accent" />
                 </div>
