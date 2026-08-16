@@ -179,7 +179,7 @@ const AuditLogViewer = () => {
   }, [actionFilter, entityFilter, searchQuery, dateFrom, dateTo]);
 
   const stats = [
-    { label: "Total Events", value: logs.length, color: "from-blue-500 to-blue-600", icon: Activity },
+    { label: "Total Events", value: logs.length, color: "from-primary to-primary", icon: Activity },
     {
       label: "Course Events",
       value: logs.filter((l) => l.action_type.startsWith("COURSE")).length,
@@ -189,7 +189,7 @@ const AuditLogViewer = () => {
     {
       label: "Role Changes",
       value: logs.filter((l) => l.action_type.startsWith("ROLE")).length,
-      color: "from-purple-500 to-purple-600",
+      color: "from-accent to-accent",
       icon: UserCog,
     },
     {

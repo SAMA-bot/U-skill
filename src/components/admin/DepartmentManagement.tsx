@@ -230,7 +230,7 @@ const DepartmentManagement = () => {
   };
 
   const summaryCards = [
-    { label: "Total Departments", value: departments.length, icon: Building2, color: "from-blue-500 to-blue-600" },
+    { label: "Total Departments", value: departments.length, icon: Building2, color: "from-primary to-primary" },
     { label: "Total Faculty", value: profiles.length, icon: Users, color: "from-green-500 to-green-600" },
     {
       label: "Avg Performance",
@@ -238,7 +238,7 @@ const DepartmentManagement = () => {
         ? `${Math.round(departments.reduce((s, d) => s + d.avgPerformance, 0) / departments.length)}%`
         : "0%",
       icon: TrendingUp,
-      color: "from-purple-500 to-purple-600",
+      color: "from-accent to-accent",
     },
     {
       label: "Top Department",
