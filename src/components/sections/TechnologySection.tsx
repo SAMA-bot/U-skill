@@ -7,13 +7,13 @@ const technologies = [
     name: 'React.js', category: 'Frontend',
     description: 'Component-based UI library for building interactive interfaces',
     icon: '⚛️',
-    gradient: 'linear-gradient(135deg, hsl(203 100% 59%), hsl(162 100% 72%))',
+    gradient: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--brand-c)))',
   },
   {
     name: 'Node.js', category: 'Backend',
     description: 'JavaScript runtime for scalable server-side applications',
     icon: '🟢',
-    gradient: 'linear-gradient(135deg, hsl(160 70% 45%), hsl(140 60% 50%))',
+    gradient: 'linear-gradient(135deg, hsl(var(--success)), hsl(140 60% 50%))',
   },
   {
     name: 'MongoDB', category: 'Database',
@@ -25,7 +25,7 @@ const technologies = [
     name: 'Express.js', category: 'API',
     description: 'Fast, minimalist web framework for RESTful API development',
     icon: '⚡',
-    gradient: 'linear-gradient(135deg, hsl(279 82% 54%), hsl(203 100% 59%))',
+    gradient: 'linear-gradient(135deg, hsl(var(--accent)), hsl(var(--primary)))',
   },
 ];
 

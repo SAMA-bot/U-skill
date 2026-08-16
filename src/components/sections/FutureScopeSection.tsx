@@ -37,7 +37,7 @@ export function FutureScopeSection() {
 
         <div className="relative">
           <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-px -translate-y-1/2" style={{
-            backgroundImage: 'linear-gradient(90deg, transparent, hsl(203 100% 59% / 0.2), hsl(279 82% 54% / 0.2), transparent)',
+            backgroundImage: 'linear-gradient(90deg, transparent, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.2), transparent)',
           }} />
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -51,7 +51,7 @@ export function FutureScopeSection() {
               >
                 <div className="glass-card-hover p-6 rounded-2xl h-full">
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 border border-border/50" style={{
-                    background: 'linear-gradient(135deg, hsl(203 100% 59% / 0.1), hsl(279 82% 54% / 0.05))',
+                    background: 'linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.05))',
                   }}>
                     <item.icon className="w-5 h-5 text-primary" />
                   </div>

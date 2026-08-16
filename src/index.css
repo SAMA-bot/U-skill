@@ -67,6 +67,9 @@
     --sidebar-accent-foreground: 205 45% 18%;
     --sidebar-border: 190 60% 86%;
     --sidebar-ring: 203 100% 59%;
+
+    --brand-c: 162 100% 72%;
+    --brand-d: 190 100% 79%;
   }
 
   .dark {
@@ -126,6 +129,9 @@
     --sidebar-accent-foreground: 0 0% 93%;
     --sidebar-border: 218 10% 27%;
     --sidebar-ring: 183 100% 35%;
+
+    --brand-c: 165 72% 45%;
+    --brand-d: 279 82% 54%;
   }
 
 

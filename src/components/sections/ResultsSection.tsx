@@ -20,7 +20,7 @@ export function ResultsSection() {
       
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] rounded-full blur-[160px] opacity-[0.06]"
-        style={{ background: 'hsl(279 82% 54%)' }} />
+        style={{ background: 'hsl(var(--accent))' }} />
 
       <div className="container-wide mx-auto relative z-10">
         <motion.div
@@ -49,7 +49,7 @@ export function ResultsSection() {
               className="glass-card-hover rounded-2xl p-6 text-center group"
             >
               <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4" style={{
-                background: 'linear-gradient(135deg, hsl(203 100% 59% / 0.12), hsl(279 82% 54% / 0.08))',
+                background: 'linear-gradient(135deg, hsl(var(--primary) / 0.12), hsl(var(--accent) / 0.08))',
               }}>
                 <result.icon className="w-6 h-6 text-primary" />
               </div>
