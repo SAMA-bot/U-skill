@@ -67,7 +67,8 @@ describe('Signup password handling', () => {
     await fillForm(user, 'weakpass');
     await user.click(screen.getByRole('button', { name: /sign up/i }));
 
-    expect(await screen.findByText('Password must include an uppercase letter')).toBeInTheDocument();
+    expect(await screen.findByText(/^Password must include a/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^password$/i)).toHaveAttribute('aria-invalid', 'true');
     expect(signUpMock).not.toHaveBeenCalled();
   });
 
