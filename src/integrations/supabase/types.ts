@@ -876,6 +876,54 @@ export type Database = {
         }
         Relationships: []
       }
+      signup_telemetry: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          email_domain: string | null
+          error_code: string | null
+          error_message: string | null
+          http_status: number | null
+          id: string
+          metadata: Json
+          request_id: string
+          stage: string
+          status: string
+          supabase_request_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          email_domain?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          http_status?: number | null
+          id?: string
+          metadata?: Json
+          request_id: string
+          stage: string
+          status: string
+          supabase_request_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          email_domain?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          http_status?: number | null
+          id?: string
+          metadata?: Json
+          request_id?: string
+          stage?: string
+          status?: string
+          supabase_request_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
