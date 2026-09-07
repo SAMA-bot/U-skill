@@ -63,6 +63,9 @@ export default function Signup() {
 
     setErrors({});
 
+    const requestId = newRequestId();
+    const startedAt = Date.now();
+
     const result = signupSchema.safeParse({ fullName, email, password, department });
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -70,6 +73,17 @@ export default function Signup() {
         fieldErrors[err.path[0] as string] = err.message;
       });
       setErrors(fieldErrors);
+      trackSignupEvent({
+        requestId,
+        stage: 'client_validation',
+        status: 'error',
+        emailDomain: emailDomainOf(email),
+        durationMs: Date.now() - startedAt,
+        errorCode: 'client_validation_failed',
+        errorMessage: Object.values(fieldErrors).join('; '),
+        metadata: { invalidFields: Object.keys(fieldErrors).join(','), passwordLength: password.length },
+      });
+      void flushSignupTelemetry();
       return;
     }
 
@@ -87,31 +101,42 @@ export default function Signup() {
       },
     };
 
+    const emailDomain = emailDomainOf(signupPayload.email);
+
+    trackSignupEvent({
+      requestId,
+      stage: 'signup_submitted',
+      status: 'start',
+      emailDomain,
+      metadata: {
+        passwordLength: signupPayload.password.length,
+        department: signupPayload.options.data.department,
+      },
+    });
+
     if (!signupPayload.password) {
       setIsLoading(false);
       setErrors({ password: 'Password is required' });
-      console.error('[Signup] Aborted: validated password was empty before auth request');
+      trackSignupEvent({
+        requestId,
+        stage: 'signup_submitted',
+        status: 'error',
+        emailDomain,
+        errorCode: 'empty_password',
+        errorMessage: 'Validated password was empty before auth request',
+        durationMs: Date.now() - startedAt,
+      });
+      void flushSignupTelemetry();
       return;
     }
 
-    // Intentionally log only password length, never the password itself.
-    const safeRequestPayload = {
-      email: signupPayload.email,
-      passwordLength: signupPayload.password.length,
-      fullName: signupPayload.options.data.full_name,
-      department: signupPayload.options.data.department,
-      password: '[REDACTED]',
-    };
-    console.info('[Signup] Email:', signupPayload.email);
-    console.info('[Signup] Password Length:', signupPayload.password.length);
-    console.info('[Signup] Department:', signupPayload.options.data.department);
-    console.info('[Signup] Full Name:', signupPayload.options.data.full_name);
-    console.info('[Signup] Request Payload:', safeRequestPayload);
-
-    const { data, error } = await supabase.auth.signUp(signupPayload);
-
-    console.info('[Signup] Supabase Response:', data);
-    if (error) console.error('[Signup] Supabase Error:', error);
+    const authStartedAt = Date.now();
+    const { result: authResult, captured } = await withResponseCapture(
+      (url) => url.includes('/auth/v1/signup'),
+      () => supabase.auth.signUp(signupPayload),
+    );
+    const { data, error } = authResult;
+    const authDuration = Date.now() - authStartedAt;
 
     if (error) {
       const raw = (error.message || '').toLowerCase();
@@ -125,8 +150,20 @@ export default function Signup() {
         raw.includes('relation') ||
         raw.includes('violates');
 
+      trackSignupEvent({
+        requestId,
+        stage: isProfileFailure ? 'profile_provisioning' : 'auth_signup',
+        status: 'error',
+        emailDomain,
+        durationMs: authDuration,
+        httpStatus: captured.httpStatus ?? (error as { status?: number }).status ?? null,
+        supabaseRequestId: captured.supabaseRequestId,
+        errorCode: (error as { code?: string }).code ?? 'auth_signup_failed',
+        errorMessage: error.message,
+      });
+      void flushSignupTelemetry();
+
       if (isProfileFailure) {
-        console.error('[Signup] Profile creation failed after auth signup:', error);
         setIsLoading(false);
         toast({
           title: "Couldn't finish setting up your account",
@@ -136,7 +173,6 @@ export default function Signup() {
         return;
       }
 
-      console.error('[Signup] Auth signup failed:', error);
       setIsLoading(false);
 
       const isPasswordError = raw.includes('password') || raw.includes('pwned') || raw.includes('weak');
@@ -150,6 +186,18 @@ export default function Signup() {
       return;
     }
 
+    trackSignupEvent({
+      requestId,
+      stage: 'auth_signup',
+      status: 'success',
+      emailDomain,
+      userId: data.user?.id ?? null,
+      durationMs: authDuration,
+      httpStatus: captured.httpStatus,
+      supabaseRequestId: captured.supabaseRequestId,
+      metadata: { hasSession: Boolean(data.session) },
+    });
+
     // Auth succeeded — verify the profile row was actually provisioned
     if (data.session && data.user) {
       const { data: profile, error: profileError } = await supabase
@@ -159,10 +207,17 @@ export default function Signup() {
         .maybeSingle();
 
       if (profileError || !profile) {
-        console.error('[Signup] Profile row missing after successful auth signup', {
+        trackSignupEvent({
+          requestId,
+          stage: 'profile_provisioning',
+          status: 'error',
+          emailDomain,
           userId: data.user.id,
-          profileError: profileError?.message,
+          durationMs: Date.now() - startedAt,
+          errorCode: profileError ? 'profile_query_failed' : 'profile_row_missing',
+          errorMessage: profileError?.message ?? 'Profile row missing after successful auth signup',
         });
+        void flushSignupTelemetry();
         setIsLoading(false);
         toast({
           title: "Account created, profile setup incomplete",
@@ -172,7 +227,26 @@ export default function Signup() {
         });
         return;
       }
+
+      trackSignupEvent({
+        requestId,
+        stage: 'profile_provisioning',
+        status: 'success',
+        emailDomain,
+        userId: data.user.id,
+        durationMs: Date.now() - startedAt,
+      });
     }
+
+    trackSignupEvent({
+      requestId,
+      stage: 'signup_completed',
+      status: 'success',
+      emailDomain,
+      userId: data.user?.id ?? null,
+      durationMs: Date.now() - startedAt,
+    });
+    void flushSignupTelemetry();
 
     toast({
       title: "Account Created",
@@ -181,6 +255,7 @@ export default function Signup() {
     navigate('/select-role');
     setIsLoading(false);
   };
+
 
   return (
     <div className="min-h-screen bg-section-alt flex flex-col">
