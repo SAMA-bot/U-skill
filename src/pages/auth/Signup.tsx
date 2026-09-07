@@ -19,6 +19,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { PasswordStrengthMeter } from '@/components/auth/PasswordStrengthMeter';
 import { strongPasswordSchema } from '@/lib/passwordValidation';
+import {
+  trackSignupEvent,
+  flushSignupTelemetry,
+  newRequestId,
+  emailDomainOf,
+  withResponseCapture,
+} from '@/lib/signupTelemetry';
+
 
 const signupSchema = z.object({
   fullName: z.string().trim().min(2, { message: "Full name must be at least 2 characters" }).max(100),
