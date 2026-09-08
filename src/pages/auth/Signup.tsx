@@ -246,21 +246,38 @@ export default function Signup() {
       });
     }
 
+    // No session means the account needs email verification before it can be used.
+    const needsVerification = !data.session;
+
     trackSignupEvent({
       requestId,
-      stage: 'signup_completed',
+      stage: needsVerification ? 'verification_pending' : 'signup_completed',
       status: 'success',
       emailDomain,
       userId: data.user?.id ?? null,
       durationMs: Date.now() - startedAt,
+      metadata: { needsVerification },
     });
     void flushSignupTelemetry();
+
+    if (needsVerification) {
+      localStorage.setItem('pending-verification-email', signupPayload.email);
+      localStorage.setItem('pending-verification-request-id', requestId);
+      toast({
+        title: 'Check your inbox',
+        description: `We sent a verification link to ${signupPayload.email}.`,
+      });
+      navigate('/auth/verify-email', { state: { email: signupPayload.email } });
+      setIsLoading(false);
+      return;
+    }
 
     toast({
       title: "Account Created",
       description: "Welcome! Redirecting to your dashboard...",
     });
     navigate('/select-role');
+
     setIsLoading(false);
   };
 
