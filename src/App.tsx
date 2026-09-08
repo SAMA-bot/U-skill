@@ -20,6 +20,8 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Login = lazy(() => import("./pages/auth/Login"));
 const Signup = lazy(() => import("./pages/auth/Signup"));
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
+const VerifyEmail = lazy(() => import("./pages/auth/VerifyEmail"));
+
 const SelectRole = lazy(() => import("./pages/SelectRole"));
 const FacultyDashboard = lazy(() => import("./pages/dashboard/FacultyDashboard"));
 const ProfileSettings = lazy(() => import("./pages/dashboard/ProfileSettings"));
