@@ -62,6 +62,7 @@ const AppRoutes = () => {
             <Route path="/hod" element={<ProtectedRoute allowedRoles={['hod']}><HodDashboard /></ProtectedRoute>} />
             <Route path="/learning-track/:trackKey" element={<ProtectedRoute><LearningTrackPage /></ProtectedRoute>} />
             <Route path="/courses/:courseId" element={<ProtectedRoute><CourseDetailPage /></ProtectedRoute>} />
+            <Route path="/learning-paths/:pathId" element={<ProtectedRoute><LearningPathDetailPage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
