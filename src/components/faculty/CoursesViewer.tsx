@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
-  Lock, CheckCircle2, Play, Video, FileText, Link2, Type,
-  ChevronDown, Star, Flame, Trophy, Zap, Loader2, ArrowLeft,
-  BookOpen, ExternalLink, Download, Clock, Signal,
+  Star, Flame, Trophy, Zap, ChevronRight,
+  BookOpen, Clock, Signal,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
@@ -13,13 +12,9 @@ import { NoCoursesSVG } from "@/components/dashboard/EmptyStateIllustrations";
 import PageHeader from "@/components/dashboard/PageHeader";
 import StatCard from "@/components/dashboard/StatCard";
 import { StatCardSkeleton, ListSkeleton } from "@/components/ui/skeleton";
-import {
-  Dialog, DialogContent, DialogTitle,
-} from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLessonProgress } from "@/hooks/useLessonProgress";
-import { getVideoSignedUrl, getDocumentSignedUrl } from "@/lib/storageUtils";
 import { getPathThumbnail } from "@/lib/thumbnailUtils";
 import { cn } from "@/lib/utils";
 
@@ -37,11 +32,6 @@ interface Lesson {
   id: string; module_id: string; title: string; description: string | null;
   xp_reward: number; sort_order: number; duration_minutes?: number | null;
 }
-interface LessonContentItem {
-  id: string; lesson_id: string; content_type: string; title: string;
-  text_content: string | null; video_url: string | null;
-  document_url: string | null; external_url: string | null; sort_order: number;
-}
 
 type NodeState = "locked" | "available" | "in_progress" | "completed";
 
@@ -53,46 +43,13 @@ const difficultyClass = (difficulty: string | null) => {
   }
 };
 
-const getContentTypeIcon = (type: string) => {
-  switch (type) {
-    case "platform_video": return <Video className="h-3.5 w-3.5 text-primary" />;
-    case "pdf": return <FileText className="h-3.5 w-3.5 text-destructive" />;
-    case "external_url": return <Link2 className="h-3.5 w-3.5 text-info" />;
-    case "text": return <Type className="h-3.5 w-3.5" />;
-    default: return <BookOpen className="h-3.5 w-3.5" />;
-  }
-};
-
-const getYouTubeEmbedUrl = (url: string): string | null => {
-  try {
-    const parsed = new URL(url);
-    const h = parsed.hostname.toLowerCase();
-    if (h.includes("youtube.com") && parsed.pathname === "/watch") {
-      const v = parsed.searchParams.get("v");
-      return v ? `https://www.youtube-nocookie.com/embed/${v}` : null;
-    }
-    if (h.includes("youtu.be")) return `https://www.youtube-nocookie.com/embed/${parsed.pathname.slice(1)}`;
-    if (h.includes("youtube.com") && parsed.pathname.startsWith("/embed/")) return url;
-    return null;
-  } catch { return null; }
-};
-
 const CoursesViewer = () => {
   const [paths, setPaths] = useState<LearningPath[]>([]);
   const [modules, setModules] = useState<Record<string, LearningModule[]>>({});
   const [lessons, setLessons] = useState<Record<string, Lesson[]>>({});
-  const [contentItems, setContentItems] = useState<Record<string, LessonContentItem[]>>({});
   const [loading, setLoading] = useState(true);
-  const [expandedPaths, setExpandedPaths] = useState<string[]>([]);
 
-  // Lesson viewer state
-  const [viewingLesson, setViewingLesson] = useState<Lesson | null>(null);
-  const [lessonContent, setLessonContent] = useState<LessonContentItem[]>([]);
-  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
-  const [loadingMedia, setLoadingMedia] = useState(false);
-  const [viewedContentIds, setViewedContentIds] = useState<Set<string>>(new Set());
-  const [autoCompleting, setAutoCompleting] = useState(false);
-
+  const navigate = useNavigate();
   const { toast } = useToast();
   const {
     isLessonCompleted, getLessonStatus, completeLesson, startLesson,
@@ -138,17 +95,6 @@ const CoursesViewer = () => {
     if (data) setLessons(prev => ({ ...prev, [moduleId]: data as Lesson[] }));
   };
 
-  const fetchContentForLesson = async (lessonId: string) => {
-    const { data } = await supabase
-      .from("lesson_content").select("*")
-      .eq("lesson_id", lessonId).order("sort_order", { ascending: true });
-    if (data) {
-      setContentItems(prev => ({ ...prev, [lessonId]: data as LessonContentItem[] }));
-      return data as LessonContentItem[];
-    }
-    return [];
-  };
-
   // Get all lessons for a path in order (flat)
   const getPathLessons = (pathId: string): Lesson[] => {
     const pathModules = modules[pathId] || [];
@@ -166,68 +112,6 @@ const CoursesViewer = () => {
     const prevLesson = allLessons[index - 1];
     if (prevLesson && isLessonCompleted(prevLesson.id)) return "available";
     return "locked";
-  };
-
-  const markContentViewed = (contentId: string) => {
-    setViewedContentIds(prev => {
-      const next = new Set(prev);
-      next.add(contentId);
-      return next;
-    });
-  };
-
-  // Auto-complete when all content items are viewed
-  useEffect(() => {
-    if (!viewingLesson || lessonContent.length === 0 || loadingMedia || autoCompleting) return;
-    if (isLessonCompleted(viewingLesson.id)) return;
-    const allViewed = lessonContent.every(item => viewedContentIds.has(item.id));
-    if (allViewed) {
-      setAutoCompleting(true);
-      completeLesson(viewingLesson.id, viewingLesson.xp_reward).then(() => {
-        setAutoCompleting(false);
-      });
-    }
-  }, [viewedContentIds, lessonContent, viewingLesson, loadingMedia]);
-
-  const handleLessonClick = async (lesson: Lesson, state: NodeState) => {
-    if (state === "locked") return;
-    await startLesson(lesson.id);
-    setViewingLesson(lesson);
-    setViewedContentIds(new Set());
-    setLoadingMedia(true);
-    const content = await fetchContentForLesson(lesson.id);
-    setLessonContent(content);
-
-    // Auto-mark text content as viewed immediately (no interaction needed beyond reading)
-    const autoViewedIds = new Set<string>();
-    
-    const urls: Record<string, string> = {};
-    for (const item of content) {
-      if (item.content_type === "text") {
-        autoViewedIds.add(item.id);
-      }
-      if (item.content_type === "platform_video" && item.video_url) {
-        const ytEmbed = getYouTubeEmbedUrl(item.video_url);
-        if (ytEmbed) { urls[item.id] = ytEmbed; }
-        else {
-          const signed = await getVideoSignedUrl(item.video_url);
-          if (signed) urls[item.id] = signed;
-        }
-      }
-      if (item.content_type === "pdf" && item.document_url) {
-        const signed = await getDocumentSignedUrl(item.document_url);
-        if (signed) urls[item.id] = signed;
-      }
-    }
-    setSignedUrls(urls);
-    setViewedContentIds(autoViewedIds);
-    setLoadingMedia(false);
-  };
-
-  const handleCompleteLesson = async () => {
-    if (!viewingLesson) return;
-    await completeLesson(viewingLesson.id, viewingLesson.xp_reward);
-    setViewingLesson(null);
   };
 
   // Calculate total stats
@@ -288,7 +172,6 @@ const CoursesViewer = () => {
             const pathTotalXp = pathLessons.reduce((s, l) => s + l.xp_reward, 0);
             const pathEarnedXp = pathLessons.filter(l => isLessonCompleted(l.id)).reduce((s, l) => s + l.xp_reward, 0);
             const pathPercent = pathLessons.length > 0 ? Math.round((pathCompletedCount / pathLessons.length) * 100) : 0;
-            const isExpanded = expandedPaths.includes(path.id);
             const isPathComplete = pathCompletedCount === pathLessons.length && pathLessons.length > 0;
 
             return (
