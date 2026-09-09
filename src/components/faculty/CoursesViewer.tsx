@@ -322,10 +322,7 @@ const CoursesViewer = () => {
                   )}
                 </div>
                 <button
-                  onClick={() => setExpandedPaths(prev =>
-                    prev.includes(path.id) ? prev.filter(id => id !== path.id) : [...prev, path.id]
-                  )}
-                  aria-expanded={isExpanded}
+                  onClick={() => navigate(`/learning-paths/${path.id}`)}
                   className="w-full px-5 py-4 flex items-center gap-4 text-left hover:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                 >
                   <div className="flex-1 min-w-0">
@@ -356,136 +353,10 @@ const CoursesViewer = () => {
                     <Progress value={pathPercent} className="h-1.5 mt-2" animated={false} />
                   </div>
                   <span className="shrink-0 flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground">
-                    {isPathComplete ? "Review" : pathCompletedCount > 0 ? "Continue" : "Start learning"}
-                    <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform duration-300", isExpanded && "rotate-180")} />
+                    {isPathComplete ? "Review" : pathCompletedCount > 0 ? "Resume" : "Start learning"}
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </span>
                 </button>
-
-
-                {/* Expanded: Modules + Lessons Roadmap */}
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-5 pb-6 pt-2">
-                        {/* XP summary bar */}
-                        <div className="flex items-center justify-center gap-4 mb-6 py-3 rounded-lg bg-muted/40 border border-border/30">
-                          <div className="flex items-center gap-1.5">
-                            <Star className="h-4 w-4 text-primary" />
-                            <span className="text-sm font-bold text-foreground">{pathEarnedXp} XP earned</span>
-                          </div>
-                          <div className="h-4 w-px bg-border" />
-                          <div className="flex items-center gap-1.5">
-                            <Flame className="h-4 w-4 text-destructive" />
-                            <span className="text-sm text-muted-foreground">{pathPercent}% complete</span>
-                          </div>
-                        </div>
-
-                        {/* Modules as sections */}
-                        {pathModules.map((mod, mi) => {
-                          const modLessons = lessons[mod.id] || [];
-                          // Calculate flat index for sequential progression across modules
-                          const previousModulesLessonCount = pathModules.slice(0, mi).reduce((s, m) => s + (lessons[m.id] || []).length, 0);
-
-                          return (
-                            <div key={mod.id} className="mb-6 last:mb-0">
-                              {/* Module label */}
-                              <div className="flex items-center gap-2 mb-4">
-                                <div className="h-6 w-6 rounded-md bg-accent/15 flex items-center justify-center">
-                                  <span className="text-xs font-bold text-accent-foreground">{mi + 1}</span>
-                                </div>
-                                <h4 className="text-sm font-semibold text-foreground">{mod.title}</h4>
-                                <span className="text-[10px] text-muted-foreground">
-                                  {modLessons.filter(l => isLessonCompleted(l.id)).length}/{modLessons.length}
-                                </span>
-                              </div>
-
-                              {/* Lesson nodes - vertical path */}
-                              <div className="flex flex-col items-center gap-1">
-                                {modLessons.map((lesson, li) => {
-                                  const globalIndex = previousModulesLessonCount + li;
-                                  const state = getLessonNodeState(lesson, globalIndex, pathLessons);
-                                  const offsetX = li % 2 === 0 ? -40 : 40;
-
-                                  const stateStyles = {
-                                    locked: { bg: "bg-muted/60", border: "border-border/50", iconColor: "text-muted-foreground/50" },
-                                    available: { bg: "bg-gradient-to-br from-primary to-primary/80", border: "border-primary/60 shadow-[0_0_20px_hsl(var(--primary)/0.3)]", iconColor: "text-primary-foreground" },
-                                    in_progress: { bg: "bg-gradient-to-br from-accent to-accent/80", border: "border-accent/60 shadow-[0_0_20px_hsl(var(--accent)/0.3)]", iconColor: "text-accent-foreground" },
-                                    completed: { bg: "bg-gradient-to-br from-success to-success/80", border: "border-success/60", iconColor: "text-success-foreground" },
-                                  };
-                                  const style = stateStyles[state];
-                                  const isInteractive = state !== "locked";
-                                  const NodeIcon = state === "completed" ? CheckCircle2 : state === "locked" ? Lock : Play;
-
-                                  return (
-                                    <div key={lesson.id} className="flex flex-col items-center">
-                                      <motion.div
-                                        initial={{ opacity: 0, scale: 0.8 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        transition={{ delay: li * 0.06, type: "spring", stiffness: 200 }}
-                                        className="flex flex-col items-center"
-                                        style={{ transform: `translateX(${offsetX}px)` }}
-                                      >
-                                        <motion.button
-                                          whileHover={isInteractive ? { scale: 1.12 } : undefined}
-                                          whileTap={isInteractive ? { scale: 0.95 } : undefined}
-                                          disabled={!isInteractive}
-                                          onClick={() => handleLessonClick(lesson, state)}
-                                          className={cn(
-                                            "relative flex items-center justify-center w-16 h-16 rounded-full border-[3px] transition-all duration-300",
-                                            style.bg, style.border,
-                                            isInteractive ? "cursor-pointer" : "cursor-not-allowed opacity-60"
-                                          )}
-                                        >
-                                          {(state === "available" || state === "in_progress") && (
-                                            <span className="absolute inset-0 rounded-full animate-ping opacity-20 bg-current" />
-                                          )}
-                                          <NodeIcon className={cn("h-6 w-6 relative z-10", style.iconColor)} />
-                                        </motion.button>
-                                        <div className="mt-2 text-center max-w-[140px]">
-                                          <p className={cn("text-xs font-semibold leading-tight line-clamp-2", state === "locked" ? "text-muted-foreground/50" : "text-foreground")}>
-                                            {lesson.title}
-                                          </p>
-                                          <span className={cn("text-[10px] font-bold", state === "completed" ? "text-success" : state === "locked" ? "text-muted-foreground/40" : "text-primary")}>
-                                            +{lesson.xp_reward} XP
-                                          </span>
-                                        </div>
-                                      </motion.div>
-
-                                      {/* Connector dots */}
-                                      {li < modLessons.length - 1 && (
-                                        <div className="flex flex-col items-center my-1">
-                                          {[0, 1, 2].map(dot => (
-                                            <div key={dot} className={cn("w-1 h-1 rounded-full my-0.5", state === "completed" ? "bg-success/60" : "bg-border")} />
-                                          ))}
-                                        </div>
-                                      )}
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          );
-                        })}
-
-                        {/* Path completion trophy */}
-                        {isPathComplete && (
-                          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="mt-4 flex flex-col items-center gap-2">
-                            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-success to-success/70 flex items-center justify-center border-[3px] border-success/40 shadow-[0_0_24px_hsl(var(--success)/0.3)]">
-                              <Trophy className="h-7 w-7 text-success-foreground" />
-                            </div>
-                            <span className="text-xs font-bold text-success">Path Mastered!</span>
-                          </motion.div>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </motion.div>
             );
           })}
