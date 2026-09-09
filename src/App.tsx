@@ -29,6 +29,7 @@ const AdminDashboard = lazy(() => import("./pages/dashboard/AdminDashboard"));
 const HodDashboard = lazy(() => import("./pages/dashboard/HodDashboard"));
 const LearningTrackPage = lazy(() => import("./pages/dashboard/LearningTrackPage"));
 const CourseDetailPage = lazy(() => import("./pages/dashboard/CourseDetailPage"));
+const LearningPathDetailPage = lazy(() => import("./pages/dashboard/LearningPathDetailPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
