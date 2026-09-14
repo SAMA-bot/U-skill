@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useId } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import CommandPaletteTrigger from "@/components/search/CommandPaletteTrigger";
 import {
   Home, BarChart3, Users, GraduationCap, Star, Settings, LogOut, Menu, X,
   Loader2, TrendingUp, Award, Clock, Shield, PanelLeftClose, PanelLeft,
@@ -68,6 +69,22 @@ const HodDashboard = () => {
   const { containerRef: sidebarRef } = useSidebarA11y(sidebarOpen, () => setSidebarOpen(false), sidebarTriggerRef);
   const sidebarId = useId();
   const [activeTab, setActiveTab] = useState("overview");
+  const [searchParams] = useSearchParams();
+
+  // Global search can deep-link into a dashboard tab (?section=documents).
+  useEffect(() => {
+    const section = searchParams.get("section");
+    const map: Record<string, string> = {
+      faculty: "overview",
+      departments: "overview",
+      documents: "documents",
+      courses: "paths",
+      paths: "paths",
+      performance: "performance",
+      overview: "overview",
+    };
+    if (section && map[section]) setActiveTab(map[section]);
+  }, [searchParams]);
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [hodDepartment, setHodDepartment] = useState<string | null>(null);
 
@@ -306,6 +323,7 @@ const HodDashboard = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-4">
+                <CommandPaletteTrigger />
                 <AcademicYearSelector showLabel={false} />
                 <ThemeToggle />
                 <HeaderNotifications />

@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef, useId } from "react";
 import { getPerformanceBadgeColor, getPerformanceBadgeLabel } from "@/lib/performanceUtils";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import CommandPaletteTrigger from "@/components/search/CommandPaletteTrigger";
 import { Home, ClipboardList, BarChart3, Clock, Star, Calendar, Settings, LogOut, Menu, Download, FileText, X, TrendingUp, Loader2, Shield, FolderUp, PanelLeftClose, PanelLeft, Building2, ArrowRight, Trophy } from "lucide-react";
 import SparklineChart from "@/components/dashboard/SparklineChart";
 import MetricProgressIndicator from "@/components/dashboard/MetricProgressIndicator";
@@ -81,6 +82,14 @@ const FacultyDashboard = () => {
   const { containerRef: sidebarRef } = useSidebarA11y(sidebarOpen, () => setSidebarOpen(false), sidebarTriggerRef);
   const sidebarId = useId();
   const [activeSection, setActiveSection] = useState<ActiveSection>("dashboard");
+  const [searchParams] = useSearchParams();
+
+  // Global search can deep-link into a dashboard section (?section=documents).
+  useEffect(() => {
+    const section = searchParams.get("section") as ActiveSection | null;
+    const valid: ActiveSection[] = ["dashboard", "courses", "performance", "achievements", "documents", "motivation", "calendar"];
+    if (section && valid.includes(section)) setActiveSection(section);
+  }, [searchParams]);
   const [profile, setProfile] = useState<Profile | null>(null);
   
   const [statsData, setStatsData] = useState({
@@ -431,6 +440,7 @@ const FacultyDashboard = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <CommandPaletteTrigger />
               <AcademicYearSelector showLabel={false} />
               <ThemeToggle />
               <HeaderNotifications />

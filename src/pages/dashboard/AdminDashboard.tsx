@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useId } from "react";
 import { getPerformanceBadgeColor, getPerformanceBadgeLabel } from "@/lib/performanceUtils";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import CommandPaletteTrigger from "@/components/search/CommandPaletteTrigger";
 import {
   Home,
   Users,
@@ -134,6 +135,14 @@ const AdminDashboard = () => {
   const { containerRef: sidebarRef } = useSidebarA11y(sidebarOpen, () => setSidebarOpen(false), sidebarTriggerRef);
   const sidebarId = useId();
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [searchParams] = useSearchParams();
+
+  // Global search can deep-link into a dashboard section (?section=documents).
+  useEffect(() => {
+    const section = searchParams.get("section");
+    const valid = ["dashboard", "faculty", "departments", "courses", "documents", "roles", "reports", "audit", "feedback", "predictions"];
+    if (section && valid.includes(section)) setActiveSection(section);
+  }, [searchParams]);
   const [profile, setProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [facultyList, setFacultyList] = useState<FacultyMember[]>([]);
 
@@ -373,6 +382,7 @@ const AdminDashboard = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <CommandPaletteTrigger />
               <AcademicYearSelector showLabel={false} />
               <ThemeToggle />
               <button className="bg-muted p-2 rounded-full text-muted-foreground hover:text-foreground focus:outline-none">
