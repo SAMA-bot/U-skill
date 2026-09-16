@@ -120,7 +120,7 @@ const AiPathBuilder = ({ onCreated, sortOrder }: AiPathBuilderProps) => {
 
   const setField = (key: keyof typeof form, value: string) => {
     setForm(prev => ({ ...prev, [key]: value }));
-    if (key in fieldErrors) setFieldErrors(prev => ({ ...prev, [key]: undefined }));
+    setFieldErrors(prev => ({ ...prev, [key]: undefined }));
   };
 
   const validateForm = (): boolean => {
