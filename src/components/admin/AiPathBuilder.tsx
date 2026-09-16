@@ -365,13 +365,17 @@ const AiPathBuilder = ({ onCreated, sortOrder }: AiPathBuilderProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="ai-audience">Target audience</Label>
+              <Label htmlFor="ai-audience">Target audience *</Label>
               <Input
                 id="ai-audience"
                 value={form.audience}
-                onChange={e => setForm({ ...form, audience: e.target.value })}
+                onChange={e => setField("audience", e.target.value)}
                 placeholder="e.g., First-year engineering faculty"
+                maxLength={200}
+                aria-invalid={!!fieldErrors.audience}
+                className={fieldErrors.audience ? "border-destructive focus-visible:ring-destructive" : undefined}
               />
+              {fieldErrors.audience && <p className="text-xs text-destructive">{fieldErrors.audience}</p>}
             </div>
 
             <div className="space-y-2">
@@ -380,14 +384,24 @@ const AiPathBuilder = ({ onCreated, sortOrder }: AiPathBuilderProps) => {
                 id="ai-notes"
                 rows={2}
                 value={form.notes}
-                onChange={e => setForm({ ...form, notes: e.target.value })}
+                onChange={e => setField("notes", e.target.value)}
                 placeholder="e.g., Include NAAC criteria and a capstone reflection lesson"
+                maxLength={1000}
+                aria-invalid={!!fieldErrors.notes}
+                className={fieldErrors.notes ? "border-destructive focus-visible:ring-destructive" : undefined}
               />
+              {fieldErrors.notes && <p className="text-xs text-destructive">{fieldErrors.notes}</p>}
             </div>
 
-            <Button onClick={generate} disabled={generating || !form.topic.trim()} className="w-full gap-2">
-              {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {generating ? "Drafting your path…" : plan ? "Regenerate draft" : "Generate draft"}
+            <Button onClick={generate} disabled={generating} className="w-full gap-2">
+              {generating ? <Loader2 className="h-4 w-4 animate-spin" />
+                : genError ? <RotateCcw className="h-4 w-4" />
+                : plan ? <RefreshCw className="h-4 w-4" />
+                : <Sparkles className="h-4 w-4" />}
+              {generating ? "Drafting your path…"
+                : genError ? "Try again"
+                : plan ? "Regenerate draft"
+                : "Generate draft"}
             </Button>
 
             {generating && (
@@ -395,6 +409,46 @@ const AiPathBuilder = ({ onCreated, sortOrder }: AiPathBuilderProps) => {
                 This usually takes 20–60 seconds while the AI structures the curriculum.
               </p>
             )}
+
+            {genError && !generating && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>{genError.title}</AlertTitle>
+                <AlertDescription className="space-y-3">
+                  <p>{genError.message}</p>
+                  {attempts > 1 && genError.retryable && (
+                    <p className="text-xs opacity-80">
+                      Attempt {attempts} failed. Fewer modules or a simpler topic often works better.
+                    </p>
+                  )}
+                  {genError.retryable && (
+                    <Button size="sm" variant="outline" onClick={generate} className="gap-2">
+                      <RotateCcw className="h-3.5 w-3.5" /> Retry generation
+                    </Button>
+                  )}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {saveError && !saving && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Could not save the path</AlertTitle>
+                <AlertDescription className="space-y-3">
+                  <p>{saveError}</p>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={savePlan} className="gap-2">
+                      <RotateCcw className="h-3.5 w-3.5" /> Retry saving
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={generate} className="gap-2">
+                      <RefreshCw className="h-3.5 w-3.5" /> Regenerate draft
+                    </Button>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+
+
 
             {plan && (
               <motion.div
