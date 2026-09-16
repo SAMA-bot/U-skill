@@ -317,11 +317,20 @@ const AiPathBuilder = ({ onCreated, sortOrder }: AiPathBuilderProps) => {
               <Input
                 id="ai-topic"
                 value={form.topic}
-                onChange={e => setForm({ ...form, topic: e.target.value })}
+                onChange={e => setField("topic", e.target.value)}
                 placeholder="e.g., Outcome-Based Education and Rubric Design"
                 maxLength={200}
+                aria-invalid={!!fieldErrors.topic}
+                aria-describedby={fieldErrors.topic ? "ai-topic-error" : undefined}
+                className={fieldErrors.topic ? "border-destructive focus-visible:ring-destructive" : undefined}
               />
+              {fieldErrors.topic ? (
+                <p id="ai-topic-error" className="text-xs text-destructive">{fieldErrors.topic}</p>
+              ) : (
+                <p className="text-xs text-muted-foreground">{form.topic.trim().length}/200 characters</p>
+              )}
             </div>
+
 
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="space-y-2">
