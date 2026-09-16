@@ -459,6 +459,69 @@ export type Database = {
           },
         ]
       }
+      learning_path_progress: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          current_lesson_id: string | null
+          id: string
+          last_activity_at: string
+          lessons_completed: number
+          path_id: string
+          started_at: string
+          status: string
+          total_lessons: number
+          updated_at: string
+          user_id: string
+          xp_earned: number
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          current_lesson_id?: string | null
+          id?: string
+          last_activity_at?: string
+          lessons_completed?: number
+          path_id: string
+          started_at?: string
+          status?: string
+          total_lessons?: number
+          updated_at?: string
+          user_id: string
+          xp_earned?: number
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          current_lesson_id?: string | null
+          id?: string
+          last_activity_at?: string
+          lessons_completed?: number
+          path_id?: string
+          started_at?: string
+          status?: string
+          total_lessons?: number
+          updated_at?: string
+          user_id?: string
+          xp_earned?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_path_progress_current_lesson_id_fkey"
+            columns: ["current_lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_path_progress_path_id_fkey"
+            columns: ["path_id"]
+            isOneToOne: false
+            referencedRelation: "learning_paths"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       learning_paths: {
         Row: {
           color: string
