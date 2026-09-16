@@ -49,12 +49,53 @@ interface AiPathBuilderProps {
 
 const DIFFICULTIES = ["beginner", "intermediate", "advanced"];
 
+type FieldErrors = { topic?: string; audience?: string; notes?: string };
+
+interface GenError {
+  title: string;
+  message: string;
+  retryable: boolean;
+}
+
+/** Pull the real error text out of a Supabase Functions error (body of the HTTP response). */
+const extractFunctionError = async (error: any): Promise<{ message: string; status?: number }> => {
+  const status: number | undefined = error?.context?.status;
+  try {
+    const body = await error?.context?.clone?.().json?.();
+    if (body?.error) return { message: String(body.error), status };
+  } catch {
+    /* body was not JSON */
+  }
+  return { message: error?.message || "Something went wrong while contacting the AI.", status };
+};
+
+/** Make sure the AI actually returned a usable path before we show or save it. */
+const validatePlan = (plan: any): string | null => {
+  if (!plan || typeof plan !== "object") return "The AI response was empty.";
+  if (!plan.title?.trim()) return "The generated path has no title.";
+  if (!Array.isArray(plan.modules) || plan.modules.length === 0) return "The generated path has no modules.";
+  for (const mod of plan.modules) {
+    if (!mod?.title?.trim()) return "One of the generated modules has no title.";
+    if (!Array.isArray(mod.lessons) || mod.lessons.length === 0) {
+      return `Module "${mod.title}" came back without any lessons.`;
+    }
+    if (mod.lessons.some((l: any) => !l?.title?.trim())) {
+      return `Module "${mod.title}" has a lesson without a title.`;
+    }
+  }
+  return null;
+};
+
 const AiPathBuilder = ({ onCreated, sortOrder }: AiPathBuilderProps) => {
   const [open, setOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [plan, setPlan] = useState<GeneratedPath | null>(null);
   const [publish, setPublish] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [genError, setGenError] = useState<GenError | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [attempts, setAttempts] = useState(0);
   const [form, setForm] = useState({
     topic: "",
     difficulty: "beginner",
@@ -71,12 +112,48 @@ const AiPathBuilder = ({ onCreated, sortOrder }: AiPathBuilderProps) => {
     setPlan(null);
     setGenerating(false);
     setSaving(false);
+    setFieldErrors({});
+    setGenError(null);
+    setSaveError(null);
+    setAttempts(0);
+  };
+
+  const setField = (key: keyof typeof form, value: string) => {
+    setForm(prev => ({ ...prev, [key]: value }));
+    if (key in fieldErrors) setFieldErrors(prev => ({ ...prev, [key]: undefined }));
+  };
+
+  const validateForm = (): boolean => {
+    const errors: FieldErrors = {};
+    const topic = form.topic.trim();
+    if (!topic) errors.topic = "Add a topic so the AI knows what to build.";
+    else if (topic.length < 6) errors.topic = "Give a bit more detail — at least 6 characters.";
+    else if (topic.length > 200) errors.topic = "Keep the topic under 200 characters.";
+
+    const audience = form.audience.trim();
+    if (!audience) errors.audience = "Tell the AI who this path is for.";
+    else if (audience.length > 200) errors.audience = "Keep the audience under 200 characters.";
+
+    if (form.notes.length > 1000) errors.notes = "Extra requirements must be under 1000 characters.";
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const generate = async () => {
-    if (!form.topic.trim()) return;
+    setGenError(null);
+    setSaveError(null);
+    if (!validateForm()) {
+      toast({
+        title: "Check the form",
+        description: "Some details are missing or too long.",
+        variant: "destructive",
+      });
+      return;
+    }
     setGenerating(true);
     setPlan(null);
+    setAttempts(a => a + 1);
     try {
       const { data, error } = await supabase.functions.invoke("generate-learning-path", {
         body: {
@@ -84,23 +161,56 @@ const AiPathBuilder = ({ onCreated, sortOrder }: AiPathBuilderProps) => {
           difficulty: form.difficulty,
           moduleCount: Number(form.moduleCount),
           lessonsPerModule: Number(form.lessonsPerModule),
-          audience: form.audience,
-          notes: form.notes,
+          audience: form.audience.trim(),
+          notes: form.notes.trim(),
         },
       });
-      if (error) throw error;
-      if ((data as any)?.error) throw new Error((data as any).error);
-      setPlan((data as any).plan as GeneratedPath);
+
+      if (error) {
+        const { message, status } = await extractFunctionError(error);
+        const retryable = status === undefined || status === 429 || status >= 500;
+        setGenError({
+          title:
+            status === 403 ? "You don't have permission"
+            : status === 401 ? "Your session expired"
+            : status === 402 ? "AI credits exhausted"
+            : status === 429 ? "The AI is busy"
+            : "Generation failed",
+          message,
+          retryable,
+        });
+        return;
+      }
+
+      if ((data as any)?.error) {
+        setGenError({ title: "Generation failed", message: String((data as any).error), retryable: true });
+        return;
+      }
+
+      const candidate = (data as any)?.plan;
+      const invalid = validatePlan(candidate);
+      if (invalid) {
+        setGenError({
+          title: "The draft came back incomplete",
+          message: `${invalid} Try generating again, or simplify the topic and requirements.`,
+          retryable: true,
+        });
+        return;
+      }
+
+      setPlan(candidate as GeneratedPath);
+      toast({ title: "Draft ready", description: "Review the modules below before saving." });
     } catch (err: any) {
-      toast({
-        title: "Could not generate the path",
-        description: err.message ?? "Please try again in a moment.",
-        variant: "destructive",
+      setGenError({
+        title: "Couldn't reach the AI",
+        message: err?.message ?? "Check your connection and try again.",
+        retryable: true,
       });
     } finally {
       setGenerating(false);
     }
   };
+
 
   const savePlan = async () => {
     if (!plan || !user) return;
