@@ -283,7 +283,9 @@ const AiPathBuilder = ({ onCreated, sortOrder }: AiPathBuilderProps) => {
       reset();
       onCreated();
     } catch (err: any) {
-      toast({ title: "Could not save the path", description: err.message, variant: "destructive" });
+      const message = err?.message ?? "Unknown error while saving.";
+      setSaveError(message);
+      toast({ title: "Could not save the path", description: message, variant: "destructive" });
     } finally {
       setSaving(false);
     }
