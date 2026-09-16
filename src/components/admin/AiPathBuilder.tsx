@@ -213,7 +213,17 @@ const AiPathBuilder = ({ onCreated, sortOrder }: AiPathBuilderProps) => {
 
 
   const savePlan = async () => {
-    if (!plan || !user) return;
+    if (!plan) return;
+    if (!user) {
+      setSaveError("Your session expired. Please log in again before saving.");
+      return;
+    }
+    const invalid = validatePlan(plan);
+    if (invalid) {
+      setSaveError(`${invalid} Regenerate the draft before saving.`);
+      return;
+    }
+    setSaveError(null);
     setSaving(true);
     try {
       const { data: path, error: pathError } = await supabase
