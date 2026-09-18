@@ -574,11 +574,3 @@ Faculty Capacity Building & Performance Management Platform
 
 Built with React, TypeScript, Vite, Supabase, Tailwind CSS, and
 AI-powered Edge Functions.
-
-------------------------------------------------------------------------
-
-## 📄 License
-
-No explicit license file was identified in the provided project archive.
-Add a license appropriate to your intended distribution before
-publishing the repository publicly.
