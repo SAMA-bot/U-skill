@@ -39,6 +39,11 @@ interface Lesson {
 }
 
 type NodeState = "locked" | "available" | "in_progress" | "completed";
+type DifficultyFilter = "all" | "beginner" | "intermediate" | "advanced";
+type DurationFilter = "all" | "short" | "medium" | "long";
+type SortKey = "default" | "xp_desc" | "duration_asc" | "duration_desc" | "difficulty_asc";
+
+const DIFFICULTY_RANK: Record<string, number> = { beginner: 0, intermediate: 1, advanced: 2 };
 
 const difficultyClass = (difficulty: string | null) => {
   switch (difficulty) {
@@ -53,6 +58,9 @@ const CoursesViewer = () => {
   const [modules, setModules] = useState<Record<string, LearningModule[]>>({});
   const [lessons, setLessons] = useState<Record<string, Lesson[]>>({});
   const [loading, setLoading] = useState(true);
+  const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>("all");
+  const [durationFilter, setDurationFilter] = useState<DurationFilter>("all");
+  const [sortKey, setSortKey] = useState<SortKey>("default");
 
   const navigate = useNavigate();
   const { toast } = useToast();
