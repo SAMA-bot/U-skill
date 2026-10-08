@@ -1,12 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Star, Flame, Trophy, Zap, ChevronRight,
-  BookOpen, Clock, Signal,
+  BookOpen, Clock, Signal, ArrowUpDown, Filter, X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
 import { NoCoursesSVG } from "@/components/dashboard/EmptyStateIllustrations";
 import PageHeader from "@/components/dashboard/PageHeader";
