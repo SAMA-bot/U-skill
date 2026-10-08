@@ -275,7 +275,8 @@ const CoursesViewer = () => {
               icon={Filter}
               title="No paths match these filters"
               description="Try a different difficulty or duration, or reset the filters."
-              action={{ label: "Reset filters", onClick: resetFilters }}
+              actionLabel="Reset filters"
+              onAction={resetFilters}
             />
           ) : (
           <div className="space-y-4">
@@ -368,6 +369,8 @@ const CoursesViewer = () => {
               </motion.div>
             );
           })}
+          </div>
+          )}
         </div>
       )}
 
