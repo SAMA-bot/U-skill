@@ -218,7 +218,68 @@ const CoursesViewer = () => {
           />
       ) : (
         <div className="space-y-4">
-          {paths.map((path, pi) => {
+          {/* Filter & sort toolbar */}
+          <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card/60 px-3 py-2.5">
+            <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground mr-1">
+              <Filter className="h-3.5 w-3.5" /> Filter
+            </span>
+            <Select value={difficultyFilter} onValueChange={(v) => setDifficultyFilter(v as DifficultyFilter)}>
+              <SelectTrigger className="h-8 w-[130px] text-xs" aria-label="Filter by difficulty">
+                <SelectValue placeholder="Difficulty" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All levels</SelectItem>
+                <SelectItem value="beginner">Beginner</SelectItem>
+                <SelectItem value="intermediate">Intermediate</SelectItem>
+                <SelectItem value="advanced">Advanced</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={durationFilter} onValueChange={(v) => setDurationFilter(v as DurationFilter)}>
+              <SelectTrigger className="h-8 w-[130px] text-xs" aria-label="Filter by duration">
+                <SelectValue placeholder="Duration" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Any length</SelectItem>
+                <SelectItem value="short">Short (≤ 2h)</SelectItem>
+                <SelectItem value="medium">Medium (2–5h)</SelectItem>
+                <SelectItem value="long">Long (&gt; 5h)</SelectItem>
+              </SelectContent>
+            </Select>
+            <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground ml-2 mr-1">
+              <ArrowUpDown className="h-3.5 w-3.5" /> Sort
+            </span>
+            <Select value={sortKey} onValueChange={(v) => setSortKey(v as SortKey)}>
+              <SelectTrigger className="h-8 w-[150px] text-xs" aria-label="Sort learning paths">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">Recommended</SelectItem>
+                <SelectItem value="xp_desc">Most XP</SelectItem>
+                <SelectItem value="duration_asc">Shortest first</SelectItem>
+                <SelectItem value="duration_desc">Longest first</SelectItem>
+                <SelectItem value="difficulty_asc">Easiest first</SelectItem>
+              </SelectContent>
+            </Select>
+            {hasActiveFilters && (
+              <Button variant="ghost" size="sm" onClick={resetFilters} className="h-8 px-2 text-xs text-muted-foreground">
+                <X className="h-3.5 w-3.5 mr-1" /> Reset
+              </Button>
+            )}
+            <span className="ml-auto text-[11px] text-muted-foreground tabular-nums">
+              {visiblePaths.length} of {paths.length} paths
+            </span>
+          </div>
+
+          {visiblePaths.length === 0 ? (
+            <SmartEmptyState
+              icon={Filter}
+              title="No paths match these filters"
+              description="Try a different difficulty or duration, or reset the filters."
+              action={{ label: "Reset filters", onClick: resetFilters }}
+            />
+          ) : (
+          <div className="space-y-4">
+          {visiblePaths.map((path, pi) => {
             const pathLessons = getPathLessons(path.id);
             const pathModules = modules[path.id] || [];
             const pathCompletedCount = pathLessons.filter(l => isLessonCompleted(l.id)).length;
