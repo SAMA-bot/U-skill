@@ -115,6 +115,45 @@ const CoursesViewer = () => {
     return pathModules.flatMap(m => lessons[m.id] || []);
   };
 
+  const getPathHours = (path: LearningPath): number => {
+    if (path.estimated_hours && path.estimated_hours > 0) return path.estimated_hours;
+    const mins = getPathLessons(path.id).reduce((s, l) => s + (l.duration_minutes || 15), 0);
+    return Math.max(1, Math.round(mins / 60));
+  };
+
+  const getPathTotalXp = (pathId: string): number =>
+    getPathLessons(pathId).reduce((s, l) => s + l.xp_reward, 0);
+
+  const visiblePaths = useMemo(() => {
+    let list = paths.filter(p => {
+      if (difficultyFilter !== "all" && (p.difficulty || "beginner") !== difficultyFilter) return false;
+      if (durationFilter !== "all") {
+        const h = getPathHours(p);
+        if (durationFilter === "short" && h > 2) return false;
+        if (durationFilter === "medium" && (h <= 2 || h > 5)) return false;
+        if (durationFilter === "long" && h <= 5) return false;
+      }
+      return true;
+    });
+    if (sortKey !== "default") {
+      list = [...list].sort((a, b) => {
+        switch (sortKey) {
+          case "xp_desc": return getPathTotalXp(b.id) - getPathTotalXp(a.id);
+          case "duration_asc": return getPathHours(a) - getPathHours(b);
+          case "duration_desc": return getPathHours(b) - getPathHours(a);
+          case "difficulty_asc":
+            return (DIFFICULTY_RANK[a.difficulty || "beginner"] ?? 0) - (DIFFICULTY_RANK[b.difficulty || "beginner"] ?? 0);
+          default: return 0;
+        }
+      });
+    }
+    return list;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paths, modules, lessons, difficultyFilter, durationFilter, sortKey]);
+
+  const hasActiveFilters = difficultyFilter !== "all" || durationFilter !== "all" || sortKey !== "default";
+  const resetFilters = () => { setDifficultyFilter("all"); setDurationFilter("all"); setSortKey("default"); };
+
   // Determine lesson state based on sequential progression
   const getLessonNodeState = (lesson: Lesson, index: number, allLessons: Lesson[]): NodeState => {
     const status = getLessonStatus(lesson.id);
