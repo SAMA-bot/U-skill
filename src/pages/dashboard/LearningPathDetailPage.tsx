@@ -15,6 +15,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useLessonProgress } from "@/hooks/useLessonProgress";
+import { useLearningPathProgress, PATH_COMPLETION_BONUS_XP } from "@/hooks/useLearningPathProgress";
+import { AnimatePresence } from "framer-motion";
 import { getPathThumbnail } from "@/lib/thumbnailUtils";
 import { cn } from "@/lib/utils";
 
@@ -54,6 +56,8 @@ const LearningPathDetailPage = () => {
   const [viewingLesson, setViewingLesson] = useState<Lesson | null>(null);
 
   const { isLessonCompleted, getLessonStatus, completeLesson, startLesson } = useLessonProgress();
+  const { getPathProgress, refetch: refetchPathProgress } = useLearningPathProgress();
+  const [xpBurst, setXpBurst] = useState<{ amount: number; key: number; bonus: boolean } | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth/login");
@@ -116,6 +120,7 @@ const LearningPathDetailPage = () => {
   const openLesson = async (lesson: Lesson, state: NodeState) => {
     if (state === "locked") return;
     await startLesson(lesson.id);
+    refetchPathProgress();
     setViewingLesson(lesson);
   };
 
@@ -215,6 +220,16 @@ const LearningPathDetailPage = () => {
                 <span className="font-semibold text-foreground tabular-nums">{percent}%</span>
               </div>
               <Progress value={percent} className="h-2" animated={false} />
+              {(() => {
+                const pp = getPathProgress(path.id);
+                if (!pp) return <p className="text-[11px] text-muted-foreground">Not started yet</p>;
+                return (
+                  <p className="text-[11px] text-muted-foreground">
+                    Started {new Date(pp.started_at).toLocaleDateString()}
+                    {pp.completed_at ? ` · Completed ${new Date(pp.completed_at).toLocaleDateString()}` : ` · Last active ${new Date(pp.last_activity_at).toLocaleDateString()}`}
+                  </p>
+                );
+              })()}
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -321,8 +336,36 @@ const LearningPathDetailPage = () => {
         lesson={viewingLesson as ViewerLesson | null}
         isCompleted={viewingLesson ? isLessonCompleted(viewingLesson.id) : false}
         onClose={() => setViewingLesson(null)}
-        onComplete={async (l) => { await completeLesson(l.id, l.xp_reward); }}
+        onComplete={async (l) => {
+          const wasCompleted = isLessonCompleted(l.id);
+          const willFinishPath = !wasCompleted && allLessons.length > 0 &&
+            completedLessons.length + 1 === allLessons.length;
+          await completeLesson(l.id, l.xp_reward);
+          if (!wasCompleted) {
+            setXpBurst({ amount: l.xp_reward + (willFinishPath ? PATH_COMPLETION_BONUS_XP : 0), key: Date.now(), bonus: willFinishPath });
+            setTimeout(() => setXpBurst(null), 2600);
+            if (willFinishPath) toast({ title: `🏆 Path complete! +${PATH_COMPLETION_BONUS_XP} bonus XP`, description: path.title });
+          }
+          refetchPathProgress();
+        }}
       />
+
+      <AnimatePresence>
+        {xpBurst && (
+          <motion.div
+            key={xpBurst.key}
+            initial={{ opacity: 0, y: 24, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -24 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] rounded-full border border-primary/40 bg-card px-5 py-2.5 shadow-lg flex items-center gap-2"
+            role="status"
+          >
+            <Star className="h-4 w-4 text-primary" />
+            <span className="text-sm font-bold text-primary tabular-nums">+{xpBurst.amount} XP</span>
+            {xpBurst.bonus && <span className="text-xs text-muted-foreground">incl. path bonus</span>}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
