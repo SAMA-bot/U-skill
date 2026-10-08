@@ -1,12 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Star, Flame, Trophy, Zap, ChevronRight,
-  BookOpen, Clock, Signal,
+  BookOpen, Clock, Signal, ArrowUpDown, Filter, X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
 import { NoCoursesSVG } from "@/components/dashboard/EmptyStateIllustrations";
 import PageHeader from "@/components/dashboard/PageHeader";
@@ -35,6 +39,11 @@ interface Lesson {
 }
 
 type NodeState = "locked" | "available" | "in_progress" | "completed";
+type DifficultyFilter = "all" | "beginner" | "intermediate" | "advanced";
+type DurationFilter = "all" | "short" | "medium" | "long";
+type SortKey = "default" | "xp_desc" | "duration_asc" | "duration_desc" | "difficulty_asc";
+
+const DIFFICULTY_RANK: Record<string, number> = { beginner: 0, intermediate: 1, advanced: 2 };
 
 const difficultyClass = (difficulty: string | null) => {
   switch (difficulty) {
@@ -49,6 +58,9 @@ const CoursesViewer = () => {
   const [modules, setModules] = useState<Record<string, LearningModule[]>>({});
   const [lessons, setLessons] = useState<Record<string, Lesson[]>>({});
   const [loading, setLoading] = useState(true);
+  const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>("all");
+  const [durationFilter, setDurationFilter] = useState<DurationFilter>("all");
+  const [sortKey, setSortKey] = useState<SortKey>("default");
 
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -102,6 +114,45 @@ const CoursesViewer = () => {
     const pathModules = modules[pathId] || [];
     return pathModules.flatMap(m => lessons[m.id] || []);
   };
+
+  const getPathHours = (path: LearningPath): number => {
+    if (path.estimated_hours && path.estimated_hours > 0) return path.estimated_hours;
+    const mins = getPathLessons(path.id).reduce((s, l) => s + (l.duration_minutes || 15), 0);
+    return Math.max(1, Math.round(mins / 60));
+  };
+
+  const getPathTotalXp = (pathId: string): number =>
+    getPathLessons(pathId).reduce((s, l) => s + l.xp_reward, 0);
+
+  const visiblePaths = useMemo(() => {
+    let list = paths.filter(p => {
+      if (difficultyFilter !== "all" && (p.difficulty || "beginner") !== difficultyFilter) return false;
+      if (durationFilter !== "all") {
+        const h = getPathHours(p);
+        if (durationFilter === "short" && h > 2) return false;
+        if (durationFilter === "medium" && (h <= 2 || h > 5)) return false;
+        if (durationFilter === "long" && h <= 5) return false;
+      }
+      return true;
+    });
+    if (sortKey !== "default") {
+      list = [...list].sort((a, b) => {
+        switch (sortKey) {
+          case "xp_desc": return getPathTotalXp(b.id) - getPathTotalXp(a.id);
+          case "duration_asc": return getPathHours(a) - getPathHours(b);
+          case "duration_desc": return getPathHours(b) - getPathHours(a);
+          case "difficulty_asc":
+            return (DIFFICULTY_RANK[a.difficulty || "beginner"] ?? 0) - (DIFFICULTY_RANK[b.difficulty || "beginner"] ?? 0);
+          default: return 0;
+        }
+      });
+    }
+    return list;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paths, modules, lessons, difficultyFilter, durationFilter, sortKey]);
+
+  const hasActiveFilters = difficultyFilter !== "all" || durationFilter !== "all" || sortKey !== "default";
+  const resetFilters = () => { setDifficultyFilter("all"); setDurationFilter("all"); setSortKey("default"); };
 
   // Determine lesson state based on sequential progression
   const getLessonNodeState = (lesson: Lesson, index: number, allLessons: Lesson[]): NodeState => {
@@ -167,7 +218,69 @@ const CoursesViewer = () => {
           />
       ) : (
         <div className="space-y-4">
-          {paths.map((path, pi) => {
+          {/* Filter & sort toolbar */}
+          <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card/60 px-3 py-2.5">
+            <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground mr-1">
+              <Filter className="h-3.5 w-3.5" /> Filter
+            </span>
+            <Select value={difficultyFilter} onValueChange={(v) => setDifficultyFilter(v as DifficultyFilter)}>
+              <SelectTrigger className="h-8 w-[130px] text-xs" aria-label="Filter by difficulty">
+                <SelectValue placeholder="Difficulty" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All levels</SelectItem>
+                <SelectItem value="beginner">Beginner</SelectItem>
+                <SelectItem value="intermediate">Intermediate</SelectItem>
+                <SelectItem value="advanced">Advanced</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={durationFilter} onValueChange={(v) => setDurationFilter(v as DurationFilter)}>
+              <SelectTrigger className="h-8 w-[130px] text-xs" aria-label="Filter by duration">
+                <SelectValue placeholder="Duration" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Any length</SelectItem>
+                <SelectItem value="short">Short (≤ 2h)</SelectItem>
+                <SelectItem value="medium">Medium (2–5h)</SelectItem>
+                <SelectItem value="long">Long (&gt; 5h)</SelectItem>
+              </SelectContent>
+            </Select>
+            <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground ml-2 mr-1">
+              <ArrowUpDown className="h-3.5 w-3.5" /> Sort
+            </span>
+            <Select value={sortKey} onValueChange={(v) => setSortKey(v as SortKey)}>
+              <SelectTrigger className="h-8 w-[150px] text-xs" aria-label="Sort learning paths">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">Recommended</SelectItem>
+                <SelectItem value="xp_desc">Most XP</SelectItem>
+                <SelectItem value="duration_asc">Shortest first</SelectItem>
+                <SelectItem value="duration_desc">Longest first</SelectItem>
+                <SelectItem value="difficulty_asc">Easiest first</SelectItem>
+              </SelectContent>
+            </Select>
+            {hasActiveFilters && (
+              <Button variant="ghost" size="sm" onClick={resetFilters} className="h-8 px-2 text-xs text-muted-foreground">
+                <X className="h-3.5 w-3.5 mr-1" /> Reset
+              </Button>
+            )}
+            <span className="ml-auto text-[11px] text-muted-foreground tabular-nums">
+              {visiblePaths.length} of {paths.length} paths
+            </span>
+          </div>
+
+          {visiblePaths.length === 0 ? (
+            <SmartEmptyState
+              icon={Filter}
+              title="No paths match these filters"
+              description="Try a different difficulty or duration, or reset the filters."
+              actionLabel="Reset filters"
+              onAction={resetFilters}
+            />
+          ) : (
+          <div className="space-y-4">
+          {visiblePaths.map((path, pi) => {
             const pathLessons = getPathLessons(path.id);
             const pathModules = modules[path.id] || [];
             const pathCompletedCount = pathLessons.filter(l => isLessonCompleted(l.id)).length;
@@ -256,6 +369,8 @@ const CoursesViewer = () => {
               </motion.div>
             );
           })}
+          </div>
+          )}
         </div>
       )}
 
