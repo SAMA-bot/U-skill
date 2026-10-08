@@ -15,6 +15,7 @@ import { StatCardSkeleton, ListSkeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLessonProgress } from "@/hooks/useLessonProgress";
+import { useLearningPathProgress } from "@/hooks/useLearningPathProgress";
 import { getPathThumbnail } from "@/lib/thumbnailUtils";
 import { cn } from "@/lib/utils";
 
@@ -55,6 +56,7 @@ const CoursesViewer = () => {
     isLessonCompleted, getLessonStatus, completeLesson, startLesson,
     getTotalXp, getCompletedCount,
   } = useLessonProgress();
+  const { getPathProgress } = useLearningPathProgress();
 
   useEffect(() => { fetchPaths(); }, []);
 
@@ -173,6 +175,10 @@ const CoursesViewer = () => {
             const pathEarnedXp = pathLessons.filter(l => isLessonCompleted(l.id)).reduce((s, l) => s + l.xp_reward, 0);
             const pathPercent = pathLessons.length > 0 ? Math.round((pathCompletedCount / pathLessons.length) * 100) : 0;
             const isPathComplete = pathCompletedCount === pathLessons.length && pathLessons.length > 0;
+            const pp = getPathProgress(path.id);
+            const currentLesson = pathLessons.find(l => l.id === pp?.current_lesson_id)
+              || pathLessons.find(l => !isLessonCompleted(l.id));
+            const isStarted = !!pp || pathLessons.some(l => getLessonStatus(l.id));
 
             return (
               <motion.div
@@ -231,12 +237,19 @@ const CoursesViewer = () => {
                       </Badge>
                     </div>
                     <div className="flex items-center gap-3 mt-2">
+                      <Badge variant="outline" className={cn("text-[10px]",
+                        isPathComplete ? "text-success border-success/30" : isStarted ? "text-primary border-primary/30" : "text-muted-foreground")}>
+                        {isPathComplete ? "Completed" : isStarted ? "In progress" : "Not started"}
+                      </Badge>
                       <span className="text-xs text-muted-foreground tabular-nums">{pathCompletedCount}/{pathLessons.length} lessons done</span>
+                      {!isPathComplete && isStarted && currentLesson && (
+                        <span className="text-xs text-muted-foreground truncate">· Current: <span className="text-foreground">{currentLesson.title}</span></span>
+                      )}
                     </div>
                     <Progress value={pathPercent} className="h-1.5 mt-2" animated={false} />
                   </div>
                   <span className="shrink-0 flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground">
-                    {isPathComplete ? "Review" : pathCompletedCount > 0 ? "Resume" : "Start learning"}
+                    {isPathComplete ? "Review" : isStarted ? "Resume" : "Start learning"}
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </span>
                 </button>
