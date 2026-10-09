@@ -94,13 +94,13 @@ const MotivationIndexCard = () => {
         <div className="flex items-center gap-6 mb-4">
           <div className="relative h-24 w-24 flex items-center justify-center">
             <svg className="h-24 w-24 transform -rotate-90" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="42" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
+              <circle cx="50" cy="50" r="42" fill="none" stroke="hsl(var(--chart-track))" strokeWidth="8" />
               <circle
                 cx="50"
                 cy="50"
                 r="42"
                 fill="none"
-                stroke="hsl(var(--primary))"
+                stroke="hsl(var(--chart-1))"
                 strokeWidth="8"
                 strokeDasharray={`${index * 2.64} 264`}
                 strokeLinecap="round"

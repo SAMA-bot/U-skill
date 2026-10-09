@@ -16,17 +16,16 @@ interface FacultyCell {
 }
 
 const getHeatColor = (score: number): string => {
-  if (score >= 80) return "bg-emerald-500/80 dark:bg-emerald-500/70";
-  if (score >= 60) return "bg-emerald-400/60 dark:bg-emerald-400/50";
-  if (score >= 40) return "bg-amber-400/60 dark:bg-amber-400/50";
-  if (score >= 20) return "bg-orange-400/60 dark:bg-orange-400/50";
-  if (score > 0) return "bg-red-400/60 dark:bg-red-400/50";
-  return "bg-muted/40";
+  if (score >= 80) return "bg-chart-heat-5";
+  if (score >= 60) return "bg-chart-heat-4";
+  if (score >= 40) return "bg-chart-heat-3";
+  if (score >= 20) return "bg-chart-heat-2";
+  if (score > 0) return "bg-chart-heat-1";
+  return "bg-chart-track";
 };
 
 const getTextColor = (score: number): string => {
-  if (score >= 60) return "text-white dark:text-white";
-  if (score > 0) return "text-foreground";
+  if (score > 0) return "text-chart-heat-foreground";
   return "text-muted-foreground";
 };
 
@@ -53,7 +52,8 @@ const PerformanceHeatmap = () => {
       const userMetrics = new Map<string, { t: number[]; r: number[]; s: number[] }>();
       for (const m of metrics) {
         if (!userMetrics.has(m.user_id)) userMetrics.set(m.user_id, { t: [], r: [], s: [] });
-        const u = userMetrics.get(m.user_id)!;
+        const u = userMetrics.get(m.user_id);
+        if (!u) continue;
         u.t.push(m.teaching_score || 0);
         u.r.push(m.research_score || 0);
         u.s.push(m.service_score || 0);

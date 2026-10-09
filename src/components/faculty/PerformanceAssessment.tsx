@@ -444,7 +444,6 @@ const PerformanceAssessment = () => {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <div
-                          className="p-2 rounded-lg"
                           className="p-2 rounded-lg bg-muted"
                         >
                           <category.icon
