@@ -7,7 +7,7 @@ interface SparklineChartProps {
   width?: number;
 }
 
-const SparklineChart = ({ data, color = "hsl(var(--primary))", height = 32, width = 80 }: SparklineChartProps) => {
+const SparklineChart = ({ data, color = "hsl(var(--chart-1))", height = 32, width = 80 }: SparklineChartProps) => {
   if (data.length < 2) return null;
 
   const max = Math.max(...data);

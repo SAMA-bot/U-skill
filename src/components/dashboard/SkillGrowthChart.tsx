@@ -24,16 +24,16 @@ interface SkillData {
 }
 
 const skillColors: Record<string, string> = {
-  Teaching: "bg-primary",
-  Research: "bg-accent",
-  Leadership: "bg-orange-500",
-  Communication: "bg-teal-500",
-  Technology: "bg-pink-500",
-  Mentoring: "bg-green-500",
+  Teaching: "bg-chart-1",
+  Research: "bg-chart-2",
+  Leadership: "bg-chart-3",
+  Communication: "bg-chart-4",
+  Technology: "bg-chart-5",
+  Mentoring: "bg-chart-3",
 };
 
 const getGrowthLabel = (level: number): { text: string; inlineStyle: React.CSSProperties } => {
-  if (level >= 80) return { text: "Expert", inlineStyle: { background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.4)" } };
+  if (level >= 80) return { text: "Expert", inlineStyle: { background: "rgba(34,197,94,0.15)", color: "hsl(var(--chart-3))", border: "1px solid rgba(34,197,94,0.4)" } };
   if (level >= 60) return { text: "Advanced", inlineStyle: { background: "rgba(59,130,246,0.15)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.4)" } };
   if (level >= 30) return { text: "Intermediate", inlineStyle: { background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.4)" } };
   return { text: "Beginner", inlineStyle: { background: "rgba(161,161,170,0.15)", color: "#a1a1aa", border: "1px solid rgba(161,161,170,0.4)" } };
@@ -141,7 +141,7 @@ const SkillGrowthChart = () => {
               .sort((a, b) => b.current - a.current)
               .map((sk, i) => {
                 const growth = getGrowthLabel(sk.current);
-                const color = skillColors[sk.skill] || "bg-primary";
+                const color = skillColors[sk.skill] || "bg-chart-1";
                 return (
                   <motion.div
                     key={sk.skill}
@@ -171,20 +171,20 @@ const SkillGrowthChart = () => {
             <div className="flex flex-col items-center">
               <div className="flex gap-3 mb-1">
                 <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-chart-1" />
                   <span className="text-[11px] text-muted-foreground">Current</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-chart-reference" />
                   <span className="text-[11px] text-muted-foreground">Target</span>
                 </div>
               </div>
               <ResponsiveContainer width="100%" height={240}>
                 <RadarChart data={skills} cx="50%" cy="50%" outerRadius="75%">
-                  <PolarGrid stroke="hsl(var(--border))" />
+                  <PolarGrid stroke="hsl(var(--chart-grid))" />
                   <PolarAngleAxis
                     dataKey="skill"
-                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                    tick={{ fill: "hsl(var(--chart-label))", fontSize: 10 }}
                   />
                   <PolarRadiusAxis
                     angle={30}
@@ -205,8 +205,8 @@ const SkillGrowthChart = () => {
                   <Radar
                     name="Target"
                     dataKey="target"
-                    stroke="hsl(var(--muted-foreground))"
-                    fill="hsl(var(--muted))"
+                    stroke="hsl(var(--chart-reference))"
+                    fill="hsl(var(--chart-track))"
                     fillOpacity={0.2}
                     strokeWidth={1.5}
                     strokeDasharray="4 4"
@@ -216,8 +216,8 @@ const SkillGrowthChart = () => {
                   <Radar
                     name="Current"
                     dataKey="current"
-                    stroke="hsl(var(--primary))"
-                    fill="hsl(var(--primary))"
+                    stroke="hsl(var(--chart-1))"
+                    fill="hsl(var(--chart-1))"
                     fillOpacity={0.35}
                     strokeWidth={2}
                     animationDuration={1500}
@@ -233,7 +233,7 @@ const SkillGrowthChart = () => {
                 .sort((a, b) => b.current - a.current)
                 .map((sk, i) => {
                   const growth = getGrowthLabel(sk.current);
-                  const color = skillColors[sk.skill] || "bg-primary";
+                  const color = skillColors[sk.skill] || "bg-chart-1";
                   return (
                     <motion.div
                       key={sk.skill}

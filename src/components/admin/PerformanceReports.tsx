@@ -473,7 +473,7 @@ export default function PerformanceReports() {
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={deptData} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
                     <XAxis type="number" domain={[0, 100]} />
                     <YAxis type="category" dataKey="department" width={120} tick={{ fontSize: 12 }} />
                     <Tooltip
@@ -484,7 +484,7 @@ export default function PerformanceReports() {
                         color: "hsl(var(--foreground))",
                       }}
                     />
-                    <Bar dataKey="avgScore" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} name="Avg Score" />
+                    <Bar dataKey="avgScore" fill="hsl(var(--chart-1))" radius={[0, 4, 4, 0]} name="Avg Score" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -498,12 +498,12 @@ export default function PerformanceReports() {
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart data={deptData}>
-                    <PolarGrid className="opacity-30" />
-                    <PolarAngleAxis dataKey="department" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
+                    <PolarGrid stroke="hsl(var(--chart-grid))" />
+                    <PolarAngleAxis dataKey="department" tick={{ fontSize: 11, fill: "hsl(var(--chart-label))" }} />
                     <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
-                    <Radar name="Teaching" dataKey="avgTeaching" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} />
-                    <Radar name="Research" dataKey="avgResearch" stroke="hsl(210, 70%, 50%)" fill="hsl(210, 70%, 50%)" fillOpacity={0.15} />
-                    <Radar name="Service" dataKey="avgService" stroke="hsl(150, 60%, 45%)" fill="hsl(150, 60%, 45%)" fillOpacity={0.15} />
+                    <Radar name="Teaching" dataKey="avgTeaching" stroke="hsl(var(--chart-1))" fill="hsl(var(--chart-1))" fillOpacity={0.2} />
+                    <Radar name="Research" dataKey="avgResearch" stroke="hsl(var(--chart-2))" fill="hsl(var(--chart-2))" fillOpacity={0.15} />
+                    <Radar name="Service" dataKey="avgService" stroke="hsl(var(--chart-3))" fill="hsl(var(--chart-3))" fillOpacity={0.15} />
                     <Legend />
                     <Tooltip
                       contentStyle={{
@@ -569,7 +569,7 @@ export default function PerformanceReports() {
                 <div className="h-[350px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={yearData}>
-                      <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
                       <XAxis dataKey="year" tick={{ fontSize: 12 }} />
                       <YAxis domain={[0, 100]} />
                       <Tooltip
@@ -581,9 +581,9 @@ export default function PerformanceReports() {
                         }}
                       />
                       <Legend />
-                      <Line type="monotone" dataKey="avgTeaching" name="Teaching" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4 }} />
-                      <Line type="monotone" dataKey="avgResearch" name="Research" stroke="hsl(210, 70%, 50%)" strokeWidth={2} dot={{ r: 4 }} />
-                      <Line type="monotone" dataKey="avgService" name="Service" stroke="hsl(150, 60%, 45%)" strokeWidth={2} dot={{ r: 4 }} />
+                      <Line type="monotone" dataKey="avgTeaching" name="Teaching" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={{ r: 4 }} />
+                      <Line type="monotone" dataKey="avgResearch" name="Research" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={{ r: 4 }} />
+                      <Line type="monotone" dataKey="avgService" name="Service" stroke="hsl(var(--chart-3))" strokeWidth={2} dot={{ r: 4 }} />
                       <Line type="monotone" dataKey="avgComposite" name="Composite" stroke="hsl(var(--foreground))" strokeWidth={2.5} strokeDasharray="5 5" dot={{ r: 5 }} />
                     </LineChart>
                   </ResponsiveContainer>

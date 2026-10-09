@@ -124,15 +124,15 @@ const YearWiseComparison = () => {
           ) : (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={summaries} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
                 <XAxis
                   dataKey="year"
-                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                  axisLine={{ stroke: "hsl(var(--border))" }}
+                  tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }}
+                  axisLine={{ stroke: "hsl(var(--chart-axis))" }}
                 />
                 <YAxis
-                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                  axisLine={{ stroke: "hsl(var(--border))" }}
+                  tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }}
+                  axisLine={{ stroke: "hsl(var(--chart-axis))" }}
                   domain={[0, 100]}
                 />
                 <Tooltip
@@ -144,9 +144,9 @@ const YearWiseComparison = () => {
                   }}
                 />
                 <Legend />
-                <Bar dataKey="teaching" name="Teaching" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="research" name="Research" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="service" name="Service" fill="#22c55e" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="teaching" name="Teaching" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="research" name="Research" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="service" name="Service" fill="hsl(var(--chart-3))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}

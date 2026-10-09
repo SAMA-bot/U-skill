@@ -521,10 +521,10 @@ const HodDashboard = () => {
                       <CardContent>
                         <ResponsiveContainer width="100%" height={280}>
                           <RadarChart data={radarData}>
-                            <PolarGrid stroke="hsl(var(--border))" />
-                            <PolarAngleAxis dataKey="area" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
-                            <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} />
-                            <Radar name="Score" dataKey="value" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} strokeWidth={2} />
+                            <PolarGrid stroke="hsl(var(--chart-grid))" />
+                            <PolarAngleAxis dataKey="area" tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }} />
+                            <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: "hsl(var(--chart-label))", fontSize: 10 }} />
+                            <Radar name="Score" dataKey="value" stroke="hsl(var(--chart-1))" fill="hsl(var(--chart-1))" fillOpacity={0.2} strokeWidth={2} />
                           </RadarChart>
                         </ResponsiveContainer>
                       </CardContent>
@@ -544,13 +544,13 @@ const HodDashboard = () => {
                         {categoryBreakdown.length > 0 ? (
                           <ResponsiveContainer width="100%" height={280}>
                             <BarChart data={categoryBreakdown}>
-                              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                              <XAxis dataKey="name" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
-                              <YAxis tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
+                              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
+                              <XAxis dataKey="name" tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }} />
+                              <YAxis tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }} />
                               <Tooltip
                                 contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", color: "hsl(var(--foreground))" }}
                               />
-                              <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                              <Bar dataKey="count" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
                             </BarChart>
                           </ResponsiveContainer>
                         ) : (
