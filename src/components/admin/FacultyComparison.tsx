@@ -43,11 +43,11 @@ interface FacultyMetrics {
 }
 
 const COLORS = [
-  "hsl(var(--primary))",
-  "hsl(220, 70%, 55%)",
-  "hsl(150, 60%, 45%)",
-  "hsl(30, 80%, 55%)",
-  "hsl(280, 60%, 55%)",
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
 ];
 
 const FacultyComparison = () => {
@@ -342,9 +342,9 @@ const FacultyComparison = () => {
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={barChartData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                      <XAxis dataKey="metric" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
-                      <YAxis domain={[0, 100]} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
+                      <XAxis dataKey="metric" tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }} />
+                      <YAxis domain={[0, 100]} tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }} />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: "hsl(var(--card))",
@@ -371,9 +371,9 @@ const FacultyComparison = () => {
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
                     <RadarChart data={radarChartData}>
-                      <PolarGrid stroke="hsl(var(--border))" />
-                      <PolarAngleAxis dataKey="subject" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
-                      <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} />
+                      <PolarGrid stroke="hsl(var(--chart-grid))" />
+                      <PolarAngleAxis dataKey="subject" tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }} />
+                      <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: "hsl(var(--chart-label))", fontSize: 10 }} />
                       {comparisonData.map((d, i) => (
                         <Radar
                           key={d.profile.user_id}

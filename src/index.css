@@ -68,6 +68,26 @@
     --sidebar-border: 190 60% 86%;
     --sidebar-ring: 203 100% 59%;
 
+
+    /* Palette-derived chart inks: stronger than decorative brand fills. */
+    --chart-1: 203 100% 36%;
+    --chart-2: 190 100% 28%;
+    --chart-3: 162 75% 26%;
+    --chart-4: 98 55% 29%;
+    --chart-5: 126 45% 28%;
+    --chart-label: 205 22% 33%;
+    --chart-axis: 205 22% 46%;
+    --chart-grid: 190 28% 70%;
+    --chart-track: 190 40% 88%;
+    --chart-reference: 205 22% 46%;
+    --chart-heat-1: 190 100% 79%;
+    --chart-heat-2: 126 74% 87%;
+    --chart-heat-3: 98 100% 89%;
+    --chart-heat-4: 162 100% 72%;
+    --chart-heat-5: 203 100% 59%;
+    --chart-heat-foreground: 210 40% 12%;
+    --warning: 38 90% 30%;
+
     --brand-c: 162 100% 72%;
     --brand-d: 190 100% 79%;
   }
@@ -129,6 +149,25 @@
     --sidebar-accent-foreground: 0 0% 93%;
     --sidebar-border: 218 10% 27%;
     --sidebar-ring: 183 100% 35%;
+
+
+    --chart-1: 183 100% 42%;
+    --chart-2: 279 82% 68%;
+    --chart-3: 0 0% 93%;
+    --chart-4: 183 55% 68%;
+    --chart-5: 279 45% 82%;
+    --chart-label: 0 0% 93%;
+    --chart-axis: 210 8% 65%;
+    --chart-grid: 218 10% 39%;
+    --chart-track: 218 10% 25%;
+    --chart-reference: 210 8% 72%;
+    --chart-heat-1: 218 10% 25%;
+    --chart-heat-2: 279 30% 31%;
+    --chart-heat-3: 279 50% 39%;
+    --chart-heat-4: 183 75% 28%;
+    --chart-heat-5: 183 100% 35%;
+    --chart-heat-foreground: 0 0% 93%;
+    --warning: 38 92% 68%;
 
     --brand-c: 165 72% 45%;
     --brand-d: 279 82% 54%;
@@ -358,4 +397,36 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Keep Recharts defaults readable, including axes without explicit tick props. */
+.recharts-cartesian-axis-tick-value,
+.recharts-polar-angle-axis-tick-value,
+.recharts-polar-radius-axis-tick-value,
+.recharts-label {
+  fill: hsl(var(--chart-label));
+}
+.recharts-cartesian-axis-line,
+.recharts-cartesian-axis-tick-line,
+.recharts-polar-radius-axis .recharts-polar-radius-axis-line {
+  stroke: hsl(var(--chart-axis));
+}
+.recharts-cartesian-grid line,
+.recharts-polar-grid-angle line,
+.recharts-polar-grid-concentric path,
+.recharts-polar-grid-concentric circle {
+  stroke: hsl(var(--chart-grid));
+  opacity: 1;
+}
+.recharts-legend-item-text,
+.recharts-default-tooltip .recharts-tooltip-item,
+.recharts-tooltip-label {
+  color: hsl(var(--chart-label)) !important;
+}
+.recharts-rectangle.recharts-tooltip-cursor {
+  fill: hsl(var(--chart-track));
+  fill-opacity: 0.45;
+}
+.recharts-curve.recharts-tooltip-cursor {
+  stroke: hsl(var(--chart-axis));
 }

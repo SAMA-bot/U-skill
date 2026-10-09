@@ -496,7 +496,7 @@ const DepartmentManagement = () => {
             {barChartData.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={barChartData}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
                   <XAxis dataKey="name" className="text-xs fill-muted-foreground" tick={{ fontSize: 11 }} />
                   <YAxis className="text-xs fill-muted-foreground" />
                   <Tooltip
@@ -508,8 +508,8 @@ const DepartmentManagement = () => {
                     }}
                   />
                   <Legend />
-                  <Bar dataKey="Performance" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="Trainings" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Performance" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Trainings" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -530,12 +530,12 @@ const DepartmentManagement = () => {
             {radarData.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <RadarChart data={radarData}>
-                  <PolarGrid className="stroke-border" />
+                  <PolarGrid stroke="hsl(var(--chart-grid))" />
                   <PolarAngleAxis dataKey="department" className="text-xs fill-muted-foreground" tick={{ fontSize: 11 }} />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} className="text-xs fill-muted-foreground" />
-                  <Radar name="Teaching" dataKey="Teaching" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.2} />
-                  <Radar name="Research" dataKey="Research" stroke="hsl(142 71% 45%)" fill="hsl(142 71% 45%)" fillOpacity={0.2} />
-                  <Radar name="Service" dataKey="Service" stroke="hsl(38 92% 50%)" fill="hsl(38 92% 50%)" fillOpacity={0.2} />
+                  <Radar name="Teaching" dataKey="Teaching" stroke="hsl(var(--chart-1))" fill="hsl(var(--chart-1))" fillOpacity={0.2} />
+                  <Radar name="Research" dataKey="Research" stroke="hsl(var(--chart-2))" fill="hsl(var(--chart-2))" fillOpacity={0.2} />
+                  <Radar name="Service" dataKey="Service" stroke="hsl(var(--chart-3))" fill="hsl(var(--chart-3))" fillOpacity={0.2} />
                   <Legend />
                 </RadarChart>
               </ResponsiveContainer>

@@ -27,14 +27,14 @@ const Progress = React.forwardRef<
     <ProgressPrimitive.Root
       ref={ref}
       className={cn(
-        "relative h-4 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700",
+        "relative h-4 w-full overflow-hidden rounded-full bg-chart-track",
         className
       )}
       {...props}
     >
       <ProgressPrimitive.Indicator
         className={cn(
-          "h-full w-full flex-1 rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-700 ease-out",
+          "h-full w-full flex-1 rounded-full bg-chart-1 transition-all duration-700 ease-out",
           showGlow && "shadow-[0_0_10px_hsl(var(--primary)/0.5)]"
         )}
         style={{ transform: `translateX(-${100 - (displayValue as number)}%)` }}
@@ -45,7 +45,7 @@ const Progress = React.forwardRef<
           className="absolute inset-0 rounded-full overflow-hidden pointer-events-none"
           style={{ clipPath: `inset(0 ${100 - (displayValue as number)}% 0 0)` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_ease-in-out_infinite]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/10 to-transparent animate-[shimmer_2s_ease-in-out_infinite]" />
         </div>
       )}
     </ProgressPrimitive.Root>

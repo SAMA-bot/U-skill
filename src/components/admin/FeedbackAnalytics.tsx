@@ -290,9 +290,9 @@ const FeedbackAnalytics = () => {
   };
 
   const getRatingBarColor = (rating: number) => {
-    if (rating >= 4) return "hsl(142 76% 36%)";
-    if (rating >= 3) return "hsl(48 96% 53%)";
-    return "hsl(0 84% 60%)";
+    if (rating >= 4) return "hsl(var(--chart-3))";
+    if (rating >= 3) return "hsl(var(--chart-4))";
+    return "hsl(var(--chart-2))";
   };
 
   const getTrendIcon = (trend: string) => {
@@ -353,7 +353,7 @@ const FeedbackAnalytics = () => {
     return entry;
   });
 
-  const radarColors = ["hsl(var(--primary))", "hsl(142 71% 45%)", "hsl(38 92% 50%)", "hsl(280 65% 60%)"];
+  const radarColors = ["hsl(var(--chart-1))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))"];
 
   if (loading) {
     return (
@@ -489,9 +489,9 @@ const FeedbackAnalytics = () => {
                 {filteredSummaries.length > 0 ? (
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={filteredSummaries.slice(0, 10).map((s) => ({ name: s.facultyName.split(" ")[0], rating: s.avgRating }))}>
-                      <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                      <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                      <YAxis domain={[0, 5]} tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
+                      <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--chart-label))" }} />
+                      <YAxis domain={[0, 5]} tick={{ fill: "hsl(var(--chart-label))" }} />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: "hsl(var(--card))",
@@ -626,9 +626,9 @@ const FeedbackAnalytics = () => {
                 {deptBarData.length > 0 ? (
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={deptBarData}>
-                      <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                      <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                      <YAxis domain={[0, 5]} tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
+                      <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--chart-label))" }} />
+                      <YAxis domain={[0, 5]} tick={{ fill: "hsl(var(--chart-label))" }} />
                       <Tooltip
                         contentStyle={{
                           backgroundColor: "hsl(var(--card))",
@@ -638,7 +638,7 @@ const FeedbackAnalytics = () => {
                         }}
                       />
                       <Legend />
-                      <Bar dataKey="Rating" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="Rating" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
@@ -659,8 +659,8 @@ const FeedbackAnalytics = () => {
                 {deptRadarData.length > 0 && deptSummaries.length > 0 ? (
                   <ResponsiveContainer width="100%" height={300}>
                     <RadarChart data={deptRadarData}>
-                      <PolarGrid className="stroke-border" />
-                      <PolarAngleAxis dataKey="category" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
+                      <PolarGrid stroke="hsl(var(--chart-grid))" />
+                      <PolarAngleAxis dataKey="category" tick={{ fontSize: 11, fill: "hsl(var(--chart-label))" }} />
                       <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fontSize: 10 }} />
                       {deptSummaries.slice(0, 4).map((d, i) => (
                         <Radar
@@ -739,9 +739,9 @@ const FeedbackAnalytics = () => {
               {trendChartData.length > 1 ? (
                 <ResponsiveContainer width="100%" height={320}>
                   <LineChart data={trendChartData}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                    <XAxis dataKey="month" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                    <YAxis domain={[0, 5]} tick={{ fill: "hsl(var(--muted-foreground))" }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
+                    <XAxis dataKey="month" tick={{ fontSize: 11, fill: "hsl(var(--chart-label))" }} />
+                    <YAxis domain={[0, 5]} tick={{ fill: "hsl(var(--chart-label))" }} />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "hsl(var(--card))",
@@ -754,9 +754,9 @@ const FeedbackAnalytics = () => {
                       type="monotone"
                       dataKey="avg"
                       name="Avg Rating"
-                      stroke="hsl(var(--primary))"
+                      stroke="hsl(var(--chart-1))"
                       strokeWidth={2}
-                      dot={{ fill: "hsl(var(--primary))", r: 4 }}
+                      dot={{ fill: "hsl(var(--chart-1))", r: 4 }}
                       activeDot={{ r: 6 }}
                     />
                   </LineChart>

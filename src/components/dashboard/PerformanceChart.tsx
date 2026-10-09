@@ -94,29 +94,29 @@ const PerformanceChart = () => {
       <AreaChart data={performanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
         <defs>
           <linearGradient id="colorTeaching" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+            <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.3} />
+            <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0} />
           </linearGradient>
           <linearGradient id="colorResearch" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3} />
-            <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
+            <stop offset="5%" stopColor="hsl(var(--chart-2))" stopOpacity={0.3} />
+            <stop offset="95%" stopColor="hsl(var(--chart-2))" stopOpacity={0} />
           </linearGradient>
           <linearGradient id="colorService" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
-            <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+            <stop offset="5%" stopColor="hsl(var(--chart-3))" stopOpacity={0.3} />
+            <stop offset="95%" stopColor="hsl(var(--chart-3))" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
         <XAxis 
           dataKey="month" 
-          tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-          axisLine={{ stroke: "hsl(var(--border))" }}
-          tickLine={{ stroke: "hsl(var(--border))" }}
+          tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }}
+          axisLine={{ stroke: "hsl(var(--chart-axis))" }}
+          tickLine={{ stroke: "hsl(var(--chart-axis))" }}
         />
         <YAxis 
-          tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-          axisLine={{ stroke: "hsl(var(--border))" }}
-          tickLine={{ stroke: "hsl(var(--border))" }}
+          tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }}
+          axisLine={{ stroke: "hsl(var(--chart-axis))" }}
+          tickLine={{ stroke: "hsl(var(--chart-axis))" }}
           domain={[50, 100]}
         />
         <Tooltip
@@ -131,7 +131,7 @@ const PerformanceChart = () => {
         <Area
           type="monotone"
           dataKey="teaching"
-          stroke="hsl(var(--primary))"
+          stroke="hsl(var(--chart-1))"
           fillOpacity={1}
           fill="url(#colorTeaching)"
           strokeWidth={2}
@@ -142,7 +142,7 @@ const PerformanceChart = () => {
         <Area
           type="monotone"
           dataKey="research"
-          stroke="hsl(var(--accent))"
+          stroke="hsl(var(--chart-2))"
           fillOpacity={1}
           fill="url(#colorResearch)"
           strokeWidth={2}
@@ -153,7 +153,7 @@ const PerformanceChart = () => {
         <Area
           type="monotone"
           dataKey="service"
-          stroke="#22c55e"
+          stroke="hsl(var(--chart-3))"
           fillOpacity={1}
           fill="url(#colorService)"
           strokeWidth={2}

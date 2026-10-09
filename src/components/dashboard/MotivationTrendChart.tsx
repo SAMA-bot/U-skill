@@ -91,17 +91,17 @@ const MotivationTrendChart = () => {
   return (
     <ResponsiveContainer width="100%" height={200}>
       <LineChart data={motivationData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
         <XAxis
           dataKey="week"
-          tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-          axisLine={{ stroke: "hsl(var(--border))" }}
-          tickLine={{ stroke: "hsl(var(--border))" }}
+          tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }}
+          axisLine={{ stroke: "hsl(var(--chart-axis))" }}
+          tickLine={{ stroke: "hsl(var(--chart-axis))" }}
         />
         <YAxis
-          tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-          axisLine={{ stroke: "hsl(var(--border))" }}
-          tickLine={{ stroke: "hsl(var(--border))" }}
+          tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }}
+          axisLine={{ stroke: "hsl(var(--chart-axis))" }}
+          tickLine={{ stroke: "hsl(var(--chart-axis))" }}
           domain={[60, 100]}
         />
         <Tooltip
@@ -115,31 +115,31 @@ const MotivationTrendChart = () => {
         />
         <ReferenceLine
           y={80}
-          stroke="hsl(var(--muted-foreground))"
+          stroke="hsl(var(--chart-reference))"
           strokeDasharray="5 5"
           label={{
             value: "Target",
             position: "right",
-            fill: "hsl(var(--muted-foreground))",
+            fill: "hsl(var(--chart-label))",
             fontSize: 10,
           }}
         />
         <Line
           type="monotone"
           dataKey="index"
-          stroke="hsl(var(--primary))"
+          stroke="hsl(var(--chart-1))"
           strokeWidth={2}
-          dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
-          activeDot={{ r: 6, fill: "hsl(var(--primary))" }}
+          dot={{ fill: "hsl(var(--chart-1))", strokeWidth: 2, r: 4 }}
+          activeDot={{ r: 6, fill: "hsl(var(--chart-1))" }}
           name="Motivation Index"
         />
         <Line
           type="monotone"
           dataKey="engagement"
-          stroke="hsl(var(--accent))"
+          stroke="hsl(var(--chart-2))"
           strokeWidth={2}
-          dot={{ fill: "hsl(var(--accent))", strokeWidth: 2, r: 4 }}
-          activeDot={{ r: 6, fill: "hsl(var(--accent))" }}
+          dot={{ fill: "hsl(var(--chart-2))", strokeWidth: 2, r: 4 }}
+          activeDot={{ r: 6, fill: "hsl(var(--chart-2))" }}
           name="Engagement Score"
         />
       </LineChart>

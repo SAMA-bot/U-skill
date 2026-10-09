@@ -112,16 +112,16 @@ const CapacityRadarChart = () => {
     <div className="flex items-center justify-center" style={{ minHeight: 300 }}>
       <ResponsiveContainer width="100%" height={300}>
         <RadarChart data={capacityData} cx="50%" cy="50%" outerRadius="70%">
-          <PolarGrid stroke="hsl(var(--border))" />
+          <PolarGrid stroke="hsl(var(--chart-grid))" />
           <PolarAngleAxis
             dataKey="skill"
-            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+            tick={{ fill: "hsl(var(--chart-label))", fontSize: 11 }}
           />
           <PolarRadiusAxis
             angle={30}
             domain={[0, 100]}
-            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
-            axisLine={{ stroke: "hsl(var(--border))" }}
+            tick={{ fill: "hsl(var(--chart-label))", fontSize: 10 }}
+            axisLine={{ stroke: "hsl(var(--chart-axis))" }}
           />
           <Tooltip
             contentStyle={{
@@ -135,8 +135,8 @@ const CapacityRadarChart = () => {
           <Radar
             name="Target"
             dataKey="target"
-            stroke="hsl(var(--muted-foreground))"
-            fill="hsl(var(--muted))"
+            stroke="hsl(var(--chart-reference))"
+            fill="hsl(var(--chart-track))"
             fillOpacity={0.3}
             strokeWidth={2}
             strokeDasharray="5 5"
@@ -146,8 +146,8 @@ const CapacityRadarChart = () => {
           <Radar
             name="Current"
             dataKey="current"
-            stroke="hsl(var(--primary))"
-            fill="hsl(var(--primary))"
+            stroke="hsl(var(--chart-1))"
+            fill="hsl(var(--chart-1))"
             fillOpacity={0.4}
             strokeWidth={2}
             animationDuration={1400}

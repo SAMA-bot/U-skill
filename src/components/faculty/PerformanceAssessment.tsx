@@ -246,19 +246,19 @@ const PerformanceAssessment = () => {
         {
           name: "Teaching",
           score: latestMetrics.teaching_score,
-          fill: "hsl(var(--primary))",
+          fill: "hsl(var(--chart-1))",
           icon: BookOpen,
         },
         {
           name: "Research",
           score: latestMetrics.research_score,
-          fill: "hsl(var(--accent))",
+          fill: "hsl(var(--chart-2))",
           icon: Target,
         },
         {
           name: "Service",
           score: latestMetrics.service_score,
-          fill: "#22c55e",
+          fill: "hsl(var(--chart-3))",
           icon: Users,
         },
       ]
@@ -268,7 +268,7 @@ const PerformanceAssessment = () => {
     {
       name: "Overall",
       value: overallScore,
-      fill: "hsl(var(--primary))",
+      fill: "hsl(var(--chart-1))",
     },
   ];
 
@@ -377,7 +377,7 @@ const PerformanceAssessment = () => {
                       endAngle={-270}
                     >
                       <RadialBar
-                        background={{ fill: "hsl(var(--muted))" }}
+                        background={{ fill: "hsl(var(--chart-track))" }}
                         dataKey="value"
                         cornerRadius={10}
                       />
@@ -444,8 +444,7 @@ const PerformanceAssessment = () => {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <div
-                          className="p-2 rounded-lg"
-                          style={{ backgroundColor: `${category.fill}20` }}
+                          className="p-2 rounded-lg bg-muted"
                         >
                           <category.icon
                             className="h-4 w-4"
@@ -544,11 +543,11 @@ const PerformanceAssessment = () => {
                   <span className="text-xs text-muted-foreground">Research</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-green-500" />
+                  <div className="w-3 h-3 rounded-full bg-chart-3" />
                   <span className="text-xs text-muted-foreground">Service</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-orange-500" />
+                  <div className="w-3 h-3 rounded-full bg-chart-4" />
                   <span className="text-xs text-muted-foreground">Average</span>
                 </div>
               </div>
@@ -556,27 +555,27 @@ const PerformanceAssessment = () => {
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorTeachingPerf" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                      <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="colorResearchPerf" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
+                      <stop offset="5%" stopColor="hsl(var(--chart-2))" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="hsl(var(--chart-2))" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="colorServicePerf" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                      <stop offset="5%" stopColor="hsl(var(--chart-3))" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="hsl(var(--chart-3))" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
                   <XAxis
                     dataKey="month"
-                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                    axisLine={{ stroke: "hsl(var(--border))" }}
+                    tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }}
+                    axisLine={{ stroke: "hsl(var(--chart-axis))" }}
                   />
                   <YAxis
-                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                    axisLine={{ stroke: "hsl(var(--border))" }}
+                    tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }}
+                    axisLine={{ stroke: "hsl(var(--chart-axis))" }}
                     domain={[50, 100]}
                   />
                   <RechartsTooltip
@@ -590,7 +589,7 @@ const PerformanceAssessment = () => {
                   <Area
                     type="monotone"
                     dataKey="teaching"
-                    stroke="hsl(var(--primary))"
+                    stroke="hsl(var(--chart-1))"
                     fill="url(#colorTeachingPerf)"
                     strokeWidth={2}
                     name="Teaching"
@@ -598,7 +597,7 @@ const PerformanceAssessment = () => {
                   <Area
                     type="monotone"
                     dataKey="research"
-                    stroke="hsl(var(--accent))"
+                    stroke="hsl(var(--chart-2))"
                     fill="url(#colorResearchPerf)"
                     strokeWidth={2}
                     name="Research"
@@ -606,7 +605,7 @@ const PerformanceAssessment = () => {
                   <Area
                     type="monotone"
                     dataKey="service"
-                    stroke="#22c55e"
+                    stroke="hsl(var(--chart-3))"
                     fill="url(#colorServicePerf)"
                     strokeWidth={2}
                     name="Service"

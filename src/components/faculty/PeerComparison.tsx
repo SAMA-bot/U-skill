@@ -279,25 +279,25 @@ const PeerComparison = () => {
         <CardContent>
           <div className="flex gap-4 mb-4">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-primary" />
+              <div className="w-3 h-3 rounded-full bg-chart-1" />
               <span className="text-xs text-muted-foreground">Your Score</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-muted-foreground" />
+              <div className="w-3 h-3 rounded-full bg-chart-reference" />
               <span className="text-xs text-muted-foreground">Department Average</span>
             </div>
           </div>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
               <XAxis
                 dataKey="category"
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                axisLine={{ stroke: "hsl(var(--border))" }}
+                tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }}
+                axisLine={{ stroke: "hsl(var(--chart-axis))" }}
               />
               <YAxis
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                axisLine={{ stroke: "hsl(var(--border))" }}
+                tick={{ fill: "hsl(var(--chart-label))", fontSize: 12 }}
+                axisLine={{ stroke: "hsl(var(--chart-axis))" }}
                 domain={[0, 100]}
               />
               <RechartsTooltip
@@ -309,8 +309,8 @@ const PeerComparison = () => {
                 }}
               />
               <Legend />
-              <Bar dataKey="yourScore" name="Your Score" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="departmentAvg" name="Department Average" fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="yourScore" name="Your Score" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="departmentAvg" name="Department Average" fill="hsl(var(--chart-reference))" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>

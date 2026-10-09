@@ -7,10 +7,10 @@ interface MetricProgressIndicatorProps {
 }
 
 const getColorForScore = (score: number) => {
-  if (score >= 80) return "hsl(217, 91%, 60%)";   // blue
-  if (score >= 70) return "hsl(142, 71%, 45%)";    // green
-  if (score >= 60) return "hsl(38, 92%, 50%)";     // amber
-  return "hsl(0, 84%, 60%)";                       // red
+  if (score >= 80) return "hsl(var(--chart-1))";
+  if (score >= 70) return "hsl(var(--success))";
+  if (score >= 60) return "hsl(var(--warning))";
+  return "hsl(var(--destructive))";
 };
 
 /** Capacity: horizontal progress bar */
@@ -33,9 +33,9 @@ const CapacityBar = ({ value }: { value: number }) => {
 const PerformanceDots = ({ value }: { value: number }) => {
   const tier = value >= 80 ? 3 : value >= 60 ? 2 : value > 0 ? 1 : 0;
   const colors = [
-    "hsl(0, 84%, 60%)",
-    "hsl(38, 92%, 50%)",
-    "hsl(142, 71%, 45%)",
+    "hsl(var(--destructive))",
+    "hsl(var(--warning))",
+    "hsl(var(--success))",
   ];
 
   return (
@@ -47,7 +47,7 @@ const PerformanceDots = ({ value }: { value: number }) => {
             key={i}
             className="h-2 w-2 rounded-full"
             style={{
-              backgroundColor: active ? colors[i] : "hsl(var(--muted))",
+              backgroundColor: active ? colors[i] : "hsl(var(--chart-track))",
             }}
             initial={{ scale: 0 }}
             animate={{
@@ -78,7 +78,7 @@ const MotivationRing = ({ value }: { value: number }) => {
       <circle
         cx="18" cy="18" r="14"
         fill="none"
-        stroke="hsl(var(--muted))"
+        stroke="hsl(var(--chart-track))"
         strokeWidth="3"
       />
       <motion.circle
@@ -110,7 +110,7 @@ const TrainingBlocks = ({ value, maxValue = 200 }: { value: number; maxValue?: n
           className="h-2 rounded-sm"
           style={{
             width: 12,
-            backgroundColor: i < filled ? "hsl(var(--primary))" : "hsl(var(--muted))",
+            backgroundColor: i < filled ? "hsl(var(--chart-1))" : "hsl(var(--chart-track))",
           }}
           initial={{ scaleY: 0 }}
           animate={{ scaleY: 1 }}
