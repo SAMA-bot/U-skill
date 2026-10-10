@@ -171,7 +171,7 @@ const FacultyComparison = () => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-48">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
         </CardContent>
       </Card>
     );
@@ -183,7 +183,7 @@ const FacultyComparison = () => {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary" />
+            <Users className="h-5 w-5 text-primary-ink" />
             Select Faculty to Compare
           </CardTitle>
           <CardDescription>Choose 2–5 faculty members for side-by-side comparison</CardDescription>
@@ -312,12 +312,12 @@ const FacultyComparison = () => {
                               const isMax = val === maxVal && val > 0;
                               return (
                                 <td key={d.profile.user_id} className="text-center py-2.5 px-3">
-                                  <span className={`font-semibold ${isMax ? "text-primary" : "text-foreground"}`}>
+                                  <span className={`font-semibold ${isMax ? "text-primary-ink" : "text-foreground"}`}>
                                     {val}
                                     {["teaching", "research", "service", "overall"].includes(row.key) ? "%" : ""}
                                   </span>
                                   {isMax && val > 0 && (
-                                    <span className="ml-1 text-xs text-primary">★</span>
+                                    <span className="ml-1 text-xs text-primary-ink">★</span>
                                   )}
                                 </td>
                               );

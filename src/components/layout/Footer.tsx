@@ -3,7 +3,7 @@ import { Sparkles, MapPin, Mail, Phone } from 'lucide-react';
 export function Footer() {
   return (
     <footer id="contact" className="relative overflow-hidden" style={{
-      background: 'linear-gradient(180deg, hsl(228 14% 5%), hsl(228 14% 3%))',
+      background: 'linear-gradient(180deg, hsl(var(--section-alt)), hsl(var(--background)))',
     }}>
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
       
@@ -15,7 +15,7 @@ export function Footer() {
               <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{
                 backgroundImage: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))',
               }}>
-                <Sparkles className="w-5 h-5 text-white" />
+                <Sparkles className="w-5 h-5 text-gradient-foreground" />
               </div>
               <div>
                 <h3 className="font-heading font-bold text-xl text-foreground">SKIT Jaipur</h3>
@@ -35,7 +35,7 @@ export function Footer() {
                 <li key={link}>
                   <a
                     href={`#${link.toLowerCase().replace(' ', '-')}`}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="text-sm text-muted-foreground hover:text-primary-ink transition-colors"
                   >
                     {link}
                   </a>
@@ -56,7 +56,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-muted-foreground" />
-                <a href="mailto:cse@skit.ac.in" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a href="mailto:cse@skit.ac.in" className="text-sm text-muted-foreground hover:text-primary-ink transition-colors">
                   cse@skit.ac.in
                 </a>
               </li>

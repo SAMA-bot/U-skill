@@ -49,7 +49,7 @@ const LevelCard = () => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-48">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
         </CardContent>
       </Card>
     );
@@ -59,7 +59,7 @@ const LevelCard = () => {
     <Card className="overflow-hidden">
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
+          <Sparkles className="h-5 w-5 text-primary-ink" />
           Level & Badges
         </CardTitle>
         <CardDescription>Your XP rank and earned achievements</CardDescription>
@@ -70,7 +70,7 @@ const LevelCard = () => {
             key={info.level}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="relative h-16 w-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg"
+            className="relative h-16 w-16 rounded-full bg-gradient-to-br from-primary-ink to-accent-ink flex items-center justify-center shadow-lg"
           >
             <span className="text-2xl font-bold text-primary-foreground">{info.level}</span>
           </motion.div>
@@ -86,7 +86,7 @@ const LevelCard = () => {
         <div className="border-t border-border pt-3">
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-              <Trophy className="h-3.5 w-3.5 text-yellow-500" />
+              <Trophy className="h-3.5 w-3.5 text-warning" />
               Earned Badges
             </p>
             <span className="text-xs text-muted-foreground">{badges.length}</span>
@@ -106,9 +106,9 @@ const LevelCard = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: i * 0.04 }}
                     title={b.badge_name}
-                    className="h-9 w-9 rounded-full bg-yellow-500/15 border border-yellow-500/40 flex items-center justify-center"
+                    className="h-9 w-9 rounded-full bg-warning/15 border border-warning/40 flex items-center justify-center"
                   >
-                    <Icon className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                    <Icon className="h-4 w-4 text-warning dark:text-warning" />
                   </motion.div>
                 );
               })}

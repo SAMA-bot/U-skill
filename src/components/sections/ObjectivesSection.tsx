@@ -69,7 +69,7 @@ export function ObjectivesSection() {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <span className="text-primary font-medium text-xs uppercase tracking-[0.2em]">Our Mission</span>
+            <span className="text-primary-ink font-medium text-xs uppercase tracking-[0.2em]">Our Mission</span>
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mt-4 mb-6 tracking-tight">
               Project Objectives
             </h2>
@@ -86,7 +86,7 @@ export function ObjectivesSection() {
                   transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
                   className="flex items-start gap-4 p-4 rounded-xl bg-secondary/30 hover:bg-secondary/50 border border-border/30 hover:border-primary/20 transition-all duration-300"
                 >
-                  <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-primary-ink flex-shrink-0 mt-0.5" />
                   <p className="text-foreground font-medium text-sm">{objective}</p>
                 </motion.div>
               ))}

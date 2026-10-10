@@ -24,7 +24,7 @@ export function HeroSection() {
 
       {/* Grid pattern overlay */}
       <div className="absolute inset-0 opacity-[0.03]" style={{
-        backgroundImage: `linear-gradient(hsl(210 40% 96%) 1px, transparent 1px), linear-gradient(90deg, hsl(210 40% 96%) 1px, transparent 1px)`,
+        backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
         backgroundSize: '60px 60px',
       }} />
 
@@ -41,7 +41,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-8 border border-primary/20 bg-primary/5 text-primary"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-8 border border-primary/20 bg-primary/5 text-primary-ink"
             >
               <Zap className="w-3.5 h-3.5" />
               Final Year Engineering Project 2025-26
@@ -110,7 +110,7 @@ export function HeroSection() {
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{
                     backgroundImage: 'linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--accent) / 0.15))',
                   }}>
-                    <TrendingUp className="w-6 h-6 text-primary" />
+                    <TrendingUp className="w-6 h-6 text-primary-ink" />
                   </div>
                   <div>
                     <h3 className="font-heading font-semibold text-lg">Performance Dashboard</h3>
@@ -154,7 +154,7 @@ export function HeroSection() {
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{
                     backgroundImage: 'linear-gradient(135deg, hsl(var(--accent) / 0.2), hsl(var(--brand-d) / 0.2))',
                   }}>
-                    <Award className="w-5 h-5 text-accent" />
+                    <Award className="w-5 h-5 text-accent-ink" />
                   </div>
                   <div>
                     <div className="text-sm font-semibold">Achievement</div>
@@ -172,7 +172,7 @@ export function HeroSection() {
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{
                     backgroundImage: 'linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(var(--brand-c) / 0.2))',
                   }}>
-                    <BookOpen className="w-5 h-5 text-primary" />
+                    <BookOpen className="w-5 h-5 text-primary-ink" />
                   </div>
                   <div>
                     <div className="text-sm font-semibold">Training</div>

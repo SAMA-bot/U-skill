@@ -10,21 +10,21 @@ const roleConfig: Record<AppRole, { icon: typeof Shield; label: string; descript
     icon: Crown,
     label: 'Administrator',
     description: 'Full system control — manage users, roles, courses, and institutional analytics.',
-    color: 'from-red-500 to-rose-600',
+    color: 'from-accent-ink to-accent-ink',
     path: '/admin',
   },
   hod: {
     icon: Users,
     label: 'Head of Department',
     description: 'Department overview — faculty performance, approvals, and feedback.',
-    color: 'from-primary to-accent',
+    color: 'from-primary-ink to-accent-ink',
     path: '/hod',
   },
   faculty: {
     icon: GraduationCap,
     label: 'Faculty',
     description: 'Learning, performance tracking, activities, and professional growth.',
-    color: 'from-emerald-500 to-green-600',
+    color: 'from-primary-ink to-primary-ink',
     path: '/dashboard',
   },
 };
@@ -51,7 +51,7 @@ export default function SelectRole() {
   if (authLoading || roleLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -106,13 +106,13 @@ export default function SelectRole() {
                   className="group flex items-center gap-5 p-5 rounded-xl bg-card border border-border hover:border-primary/50 hover:shadow-lg transition-all text-left w-full"
                 >
                   <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${config.color} flex items-center justify-center flex-shrink-0`}>
-                    <Icon className="w-7 h-7 text-white" />
+                    <Icon className="w-7 h-7 text-gradient-foreground" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-lg text-foreground">{config.label}</h3>
                     <p className="text-sm text-muted-foreground mt-0.5">{config.description}</p>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary-ink transition-colors flex-shrink-0" />
                 </motion.button>
               );
             })}

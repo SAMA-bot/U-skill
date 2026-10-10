@@ -55,9 +55,9 @@ const PerformanceReport = ({
   const latestMetrics = performanceMetrics[performanceMetrics.length - 1];
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    return "text-red-600";
+    if (score >= 80) return "text-success";
+    if (score >= 60) return "text-warning";
+    return "text-destructive";
   };
 
   const getPerformanceLabel = (score: number) => {
@@ -78,7 +78,7 @@ const PerformanceReport = ({
         scale: 2,
         useCORS: true,
         logging: false,
-        backgroundColor: "#ffffff",
+        backgroundColor: getComputedStyle(reportRef.current).backgroundColor,
       });
 
       const imgData = canvas.toDataURL("image/png");
@@ -142,18 +142,18 @@ const PerformanceReport = ({
       {/* Printable Report */}
       <div
         ref={reportRef}
-        className="bg-white text-black p-8 rounded-lg shadow-lg"
+        className="bg-card text-card-foreground p-8 rounded-lg shadow-lg"
         style={{ minHeight: "800px" }}
       >
         {/* Header */}
-        <div className="border-b-2 border-gray-200 pb-6 mb-6">
+        <div className="border-b-2 border-border pb-6 mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Performance Report</h1>
-              <p className="text-gray-600 mt-1">Faculty Development Assessment</p>
+              <h1 className="text-2xl font-bold text-foreground">Performance Report</h1>
+              <p className="text-muted-foreground mt-1">Faculty Development Assessment</p>
             </div>
             <div className="text-right">
-              <div className="flex items-center gap-2 text-gray-600">
+              <div className="flex items-center gap-2 text-muted-foreground">
                 <Calendar className="h-4 w-4" />
                 <span>{new Date().toLocaleDateString("en-US", { 
                   year: "numeric",
@@ -166,23 +166,23 @@ const PerformanceReport = ({
         </div>
 
         {/* Faculty Info */}
-        <div className="bg-gray-50 rounded-lg p-4 mb-6">
+        <div className="bg-muted rounded-lg p-4 mb-6">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-gray-500">Faculty Name</p>
-              <p className="font-semibold text-gray-900">{profileName}</p>
+              <p className="text-sm text-muted-foreground">Faculty Name</p>
+              <p className="font-semibold text-foreground">{profileName}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Department</p>
-              <p className="font-semibold text-gray-900">{department || "Not specified"}</p>
+              <p className="text-sm text-muted-foreground">Department</p>
+              <p className="font-semibold text-foreground">{department || "Not specified"}</p>
             </div>
           </div>
         </div>
 
         {/* Overall Score */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Award className="h-5 w-5 text-primary" />
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Award className="h-5 w-5 text-primary-ink" />
             Overall Performance
           </h2>
           <div className="flex items-center gap-6">
@@ -192,22 +192,22 @@ const PerformanceReport = ({
               </span>
             </div>
             <div>
-              <p className="text-xl font-semibold text-gray-900">
+              <p className="text-xl font-semibold text-foreground">
                 {getPerformanceLabel(overallScore)}
               </p>
-              <p className="text-gray-600 flex items-center gap-1 mt-1">
+              <p className="text-muted-foreground flex items-center gap-1 mt-1">
                 {trend === "up" ? (
                   <>
-                    <TrendingUp className="h-4 w-4 text-green-600" />
-                    <span className="text-green-600">+{trendPercentage}% from last period</span>
+                    <TrendingUp className="h-4 w-4 text-success" />
+                    <span className="text-success">+{trendPercentage}% from last period</span>
                   </>
                 ) : trend === "down" ? (
                   <>
-                    <TrendingUp className="h-4 w-4 text-red-600 rotate-180" />
-                    <span className="text-red-600">-{trendPercentage}% from last period</span>
+                    <TrendingUp className="h-4 w-4 text-destructive rotate-180" />
+                    <span className="text-destructive">-{trendPercentage}% from last period</span>
                   </>
                 ) : (
-                  <span className="text-gray-500">No change from last period</span>
+                  <span className="text-muted-foreground">No change from last period</span>
                 )}
               </p>
             </div>
@@ -216,19 +216,19 @@ const PerformanceReport = ({
 
         {/* Category Breakdown */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-primary" />
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-primary-ink" />
             Performance by Category
           </h2>
           <div className="space-y-4">
             {categoryData.map((category) => (
               <div key={category.name} className="flex items-center gap-4">
                 <div className="w-24 flex items-center gap-2">
-                  <category.icon className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm font-medium text-gray-700">{category.name}</span>
+                  <category.icon className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium text-foreground">{category.name}</span>
                 </div>
                 <div className="flex-1">
-                  <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-4 bg-muted rounded-full overflow-hidden">
                     <div
                       className="h-full bg-primary rounded-full"
                       style={{ width: `${category.score}%` }}
@@ -245,19 +245,19 @@ const PerformanceReport = ({
 
         {/* Historical Trend */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary-ink" />
             Performance History
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-2 px-2 font-medium text-gray-600">Period</th>
-                  <th className="text-right py-2 px-2 font-medium text-gray-600">Teaching</th>
-                  <th className="text-right py-2 px-2 font-medium text-gray-600">Research</th>
-                  <th className="text-right py-2 px-2 font-medium text-gray-600">Service</th>
-                  <th className="text-right py-2 px-2 font-medium text-gray-600">Average</th>
+                <tr className="border-b border-border">
+                  <th className="text-left py-2 px-2 font-medium text-muted-foreground">Period</th>
+                  <th className="text-right py-2 px-2 font-medium text-muted-foreground">Teaching</th>
+                  <th className="text-right py-2 px-2 font-medium text-muted-foreground">Research</th>
+                  <th className="text-right py-2 px-2 font-medium text-muted-foreground">Service</th>
+                  <th className="text-right py-2 px-2 font-medium text-muted-foreground">Average</th>
                 </tr>
               </thead>
               <tbody>
@@ -266,13 +266,13 @@ const PerformanceReport = ({
                     ((metric.teaching_score || 0) + (metric.research_score || 0) + (metric.service_score || 0)) / 3
                   );
                   return (
-                    <tr key={index} className="border-b border-gray-100">
-                      <td className="py-2 px-2 text-gray-900">
+                    <tr key={index} className="border-b border-border">
+                      <td className="py-2 px-2 text-foreground">
                         {metric.month} {metric.year}
                       </td>
-                      <td className="py-2 px-2 text-right text-gray-700">{metric.teaching_score}</td>
-                      <td className="py-2 px-2 text-right text-gray-700">{metric.research_score}</td>
-                      <td className="py-2 px-2 text-right text-gray-700">{metric.service_score}</td>
+                      <td className="py-2 px-2 text-right text-foreground">{metric.teaching_score}</td>
+                      <td className="py-2 px-2 text-right text-foreground">{metric.research_score}</td>
+                      <td className="py-2 px-2 text-right text-foreground">{metric.service_score}</td>
                       <td className={`py-2 px-2 text-right font-medium ${getScoreColor(avg)}`}>
                         {avg}
                       </td>
@@ -286,24 +286,24 @@ const PerformanceReport = ({
 
         {/* Skills Progress */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Target className="h-5 w-5 text-primary-ink" />
             Skills Development
           </h2>
           <div className="grid grid-cols-2 gap-4">
             {skills.map((skill) => {
               const progress = Math.round((skill.current_level / skill.target_level) * 100);
               return (
-                <div key={skill.skill_name} className="bg-gray-50 rounded-lg p-3">
+                <div key={skill.skill_name} className="bg-muted rounded-lg p-3">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-gray-700">{skill.skill_name}</span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-sm font-medium text-foreground">{skill.skill_name}</span>
+                    <span className="text-xs text-muted-foreground">
                       {skill.current_level}/{skill.target_level}
                     </span>
                   </div>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-green-500 rounded-full"
+                      className="h-full bg-success rounded-full"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
@@ -314,8 +314,8 @@ const PerformanceReport = ({
         </div>
 
         {/* Footer */}
-        <div className="border-t-2 border-gray-200 pt-4 mt-8 text-center">
-          <p className="text-xs text-gray-500">
+        <div className="border-t-2 border-border pt-4 mt-8 text-center">
+          <p className="text-xs text-muted-foreground">
             This report was generated automatically by the Faculty Development Portal.
             <br />
             For questions or concerns, please contact your department administrator.

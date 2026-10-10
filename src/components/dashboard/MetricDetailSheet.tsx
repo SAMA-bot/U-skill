@@ -289,18 +289,18 @@ const MetricDetailSheet = ({
 
   const getScoreColor = (value: number, max: number = 100) => {
     const pct = (value / max) * 100;
-    if (pct >= 80) return "text-green-600 dark:text-green-400";
-    if (pct >= 60) return "text-amber-600 dark:text-amber-400";
-    if (pct >= 40) return "text-orange-600 dark:text-orange-400";
-    return "text-red-600 dark:text-red-400";
+    if (pct >= 80) return "text-success dark:text-success";
+    if (pct >= 60) return "text-warning dark:text-warning";
+    if (pct >= 40) return "text-warning dark:text-warning";
+    return "text-destructive dark:text-destructive";
   };
 
   const getProgressColor = (value: number, max: number = 100) => {
     const pct = (value / max) * 100;
-    if (pct >= 80) return "bg-green-500";
-    if (pct >= 60) return "bg-amber-500";
-    if (pct >= 40) return "bg-orange-500";
-    return "bg-red-500";
+    if (pct >= 80) return "bg-success";
+    if (pct >= 60) return "bg-warning";
+    if (pct >= 40) return "bg-warning";
+    return "bg-destructive";
   };
 
   const getSectionForMetric = (): string | null => {
@@ -334,7 +334,7 @@ const MetricDetailSheet = ({
         <SheetHeader className="pb-4">
           <div className="flex items-center gap-3">
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-              <Icon className="h-6 w-6 text-primary" />
+              <Icon className="h-6 w-6 text-primary-ink" />
             </div>
             <div>
               <SheetTitle className="text-lg">{metricLabel}</SheetTitle>
@@ -350,7 +350,7 @@ const MetricDetailSheet = ({
 
         {loading ? (
           <div className="flex items-center justify-center py-16">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
           </div>
         ) : (
           <div className="space-y-5 mt-2">

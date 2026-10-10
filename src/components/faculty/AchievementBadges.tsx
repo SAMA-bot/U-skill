@@ -188,7 +188,7 @@ const AchievementBadges = () => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-48">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
         </CardContent>
       </Card>
     );
@@ -199,7 +199,7 @@ const AchievementBadges = () => {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
-            <Award className="h-5 w-5 text-yellow-500" />
+            <Award className="h-5 w-5 text-warning" />
             Achievement Badges
           </CardTitle>
           <Badge variant="secondary" className="text-xs">
@@ -285,21 +285,21 @@ const AchievementBadges = () => {
                   transition={{ delay: i * 0.03, duration: 0.2 }}
                   className={`flex flex-col items-center p-3 rounded-lg border text-center transition-all ${
                     badge.isEarned
-                      ? "border-yellow-500 bg-yellow-50 dark:border-yellow-500/50 dark:bg-yellow-500/5"
+                      ? "border-warning/40 bg-warning/10 dark:border-warning/50 dark:bg-warning/5"
                       : "border-border bg-muted/40"
                   }`}
                 >
                   <div
                     className={`h-10 w-10 rounded-full flex items-center justify-center mb-2 ${
                       badge.isEarned
-                        ? "bg-yellow-100 dark:bg-yellow-500/20"
+                        ? "bg-warning/10 dark:bg-warning/20"
                         : "bg-muted"
                     }`}
                   >
                     <Icon
                       className={`h-5 w-5 ${
                         badge.isEarned
-                          ? "text-yellow-600 dark:text-yellow-400"
+                          ? "text-warning dark:text-warning"
                           : "text-muted-foreground"
                       }`}
                     />
@@ -307,7 +307,7 @@ const AchievementBadges = () => {
                   <span className="text-xs font-semibold text-foreground">{badge.name}</span>
                   <span className="text-[10px] text-muted-foreground mt-0.5">{badge.description}</span>
                   {badge.isEarned && badge.earnedAt && (
-                    <span className="text-[9px] text-yellow-700 dark:text-yellow-400 mt-1 font-medium">
+                    <span className="text-[9px] text-warning dark:text-warning mt-1 font-medium">
                       {new Date(badge.earnedAt).toLocaleDateString()}
                     </span>
                   )}

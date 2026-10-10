@@ -177,16 +177,16 @@ const PeerComparison = () => {
   };
 
   const getTrendIcon = (difference: number) => {
-    if (difference > 0) return <TrendingUp className="h-4 w-4 text-green-500" />;
-    if (difference < 0) return <TrendingDown className="h-4 w-4 text-red-500" />;
+    if (difference > 0) return <TrendingUp className="h-4 w-4 text-success" />;
+    if (difference < 0) return <TrendingDown className="h-4 w-4 text-destructive" />;
     return <Minus className="h-4 w-4 text-muted-foreground" />;
   };
 
   const getDifferenceColor = (difference: number) => {
-    if (difference > 5) return "text-green-600 dark:text-green-400";
-    if (difference > 0) return "text-green-500 dark:text-green-400";
-    if (difference < -5) return "text-red-600 dark:text-red-400";
-    if (difference < 0) return "text-red-500 dark:text-red-400";
+    if (difference > 5) return "text-success dark:text-success";
+    if (difference > 0) return "text-success dark:text-success";
+    if (difference < -5) return "text-destructive dark:text-destructive";
+    if (difference < 0) return "text-destructive dark:text-destructive";
     return "text-muted-foreground";
   };
 
@@ -202,7 +202,7 @@ const PeerComparison = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -215,7 +215,7 @@ const PeerComparison = () => {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-lg flex items-center gap-2">
-                <Users className="h-5 w-5 text-primary" />
+                <Users className="h-5 w-5 text-primary-ink" />
                 Peer Comparison
               </CardTitle>
               <CardDescription>
@@ -271,7 +271,7 @@ const PeerComparison = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-primary" />
+            <BarChart3 className="h-5 w-5 text-primary-ink" />
             Category Comparison
           </CardTitle>
           <CardDescription>Your scores vs department averages by category</CardDescription>

@@ -50,7 +50,7 @@ export function ModulesSection() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="text-primary font-medium text-xs uppercase tracking-[0.2em]">System Architecture</span>
+          <span className="text-primary-ink font-medium text-xs uppercase tracking-[0.2em]">System Architecture</span>
           <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4 mb-6 tracking-tight">
             Core Modules
           </h2>
@@ -86,7 +86,7 @@ export function ModulesSection() {
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 absolute" style={{
                     background: 'transparent',
                   }}>
-                    <module.icon className="w-6 h-6" style={{ color: 'hsl(210 40% 96%)' }} />
+                    <module.icon className="w-6 h-6" style={{ color: 'hsl(var(--foreground))' }} />
                   </div>
                   <div className="ml-16">
                     <span className="text-xs font-medium text-muted-foreground tracking-wider">MODULE {module.number}</span>

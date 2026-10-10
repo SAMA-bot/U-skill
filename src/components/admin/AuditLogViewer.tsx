@@ -88,13 +88,13 @@ const getActionIcon = (actionType: string) => {
 
 const getActionColor = (actionType: string): string => {
   if (actionType.includes("COMPLETED") || actionType.includes("PUBLISHED"))
-    return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+    return "bg-success/10 text-success dark:bg-success/30 dark:text-success";
   if (actionType.includes("CREATED") || actionType.includes("ASSIGNED"))
-    return "bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary";
+    return "bg-primary/10 text-primary-ink dark:bg-primary/30 dark:text-primary-ink";
   if (actionType.includes("DELETED") || actionType.includes("REMOVED") || actionType.includes("UNPUBLISHED"))
-    return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+    return "bg-destructive/10 text-destructive dark:bg-destructive/30 dark:text-destructive";
   if (actionType.includes("CHANGED") || actionType.includes("UPDATED"))
-    return "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400";
+    return "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning";
   return "bg-muted text-muted-foreground";
 };
 
@@ -179,23 +179,23 @@ const AuditLogViewer = () => {
   }, [actionFilter, entityFilter, searchQuery, dateFrom, dateTo]);
 
   const stats = [
-    { label: "Total Events", value: logs.length, color: "from-primary to-primary", icon: Activity },
+    { label: "Total Events", value: logs.length, color: "from-primary-ink to-primary-ink", icon: Activity },
     {
       label: "Course Events",
       value: logs.filter((l) => l.action_type.startsWith("COURSE")).length,
-      color: "from-green-500 to-green-600",
+      color: "from-primary-ink to-primary-ink",
       icon: BookOpen,
     },
     {
       label: "Role Changes",
       value: logs.filter((l) => l.action_type.startsWith("ROLE")).length,
-      color: "from-accent to-accent",
+      color: "from-accent-ink to-accent-ink",
       icon: UserCog,
     },
     {
       label: "User Events",
       value: logs.filter((l) => l.action_type === "USER_CREATED" || l.action_type === "PROFILE_UPDATED").length,
-      color: "from-amber-500 to-amber-600",
+      color: "from-accent-ink to-accent-ink",
       icon: User,
     },
   ];
@@ -235,7 +235,7 @@ const AuditLogViewer = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Shield className="h-6 w-6 text-primary" />
+            <Shield className="h-6 w-6 text-primary-ink" />
             Audit Logs
           </h1>
           <p className="text-muted-foreground">Track system activities and monitor user actions</p>
@@ -259,7 +259,7 @@ const AuditLogViewer = () => {
             <Card>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className={`bg-gradient-to-br ${s.color} rounded-md p-2`}>
-                  <s.icon className="h-5 w-5 text-white" />
+                  <s.icon className="h-5 w-5 text-gradient-foreground" />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">{s.label}</p>
@@ -383,7 +383,7 @@ const AuditLogViewer = () => {
         <CardContent className="p-0">
           {loading ? (
             <div className="flex items-center justify-center py-16">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">

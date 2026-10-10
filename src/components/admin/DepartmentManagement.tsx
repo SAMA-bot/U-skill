@@ -223,28 +223,28 @@ const DepartmentManagement = () => {
   }, [departments, searchQuery]);
 
   const getPerformanceColor = (score: number) => {
-    if (score >= 80) return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
-    if (score >= 60) return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
-    if (score > 0) return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+    if (score >= 80) return "bg-success/10 text-success dark:bg-success/30 dark:text-success";
+    if (score >= 60) return "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning";
+    if (score > 0) return "bg-destructive/10 text-destructive dark:bg-destructive/30 dark:text-destructive";
     return "bg-muted text-muted-foreground";
   };
 
   const summaryCards = [
-    { label: "Total Departments", value: departments.length, icon: Building2, color: "from-primary to-primary" },
-    { label: "Total Faculty", value: profiles.length, icon: Users, color: "from-green-500 to-green-600" },
+    { label: "Total Departments", value: departments.length, icon: Building2, color: "from-primary-ink to-primary-ink" },
+    { label: "Total Faculty", value: profiles.length, icon: Users, color: "from-primary-ink to-primary-ink" },
     {
       label: "Avg Performance",
       value: departments.length > 0
         ? `${Math.round(departments.reduce((s, d) => s + d.avgPerformance, 0) / departments.length)}%`
         : "0%",
       icon: TrendingUp,
-      color: "from-accent to-accent",
+      color: "from-accent-ink to-accent-ink",
     },
     {
       label: "Top Department",
       value: departments[0]?.name || "N/A",
       icon: Award,
-      color: "from-orange-500 to-orange-600",
+      color: "from-accent-ink to-accent-ink",
     },
   ];
 
@@ -346,7 +346,7 @@ const DepartmentManagement = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -377,7 +377,7 @@ const DepartmentManagement = () => {
             <Card>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className={`bg-gradient-to-br ${stat.color} rounded-md p-2`}>
-                  <stat.icon className="h-5 w-5 text-white" />
+                  <stat.icon className="h-5 w-5 text-gradient-foreground" />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">{stat.label}</p>
@@ -404,7 +404,7 @@ const DepartmentManagement = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-primary" />
+            <Building2 className="h-5 w-5 text-primary-ink" />
             All Departments
           </CardTitle>
         </CardHeader>
@@ -430,7 +430,7 @@ const DepartmentManagement = () => {
                   <TableCell>
                     {dept.hod ? (
                       <div className="flex items-center gap-2">
-                        <UserCheck className="h-4 w-4 text-primary" />
+                        <UserCheck className="h-4 w-4 text-primary-ink" />
                         <span className="text-foreground">{dept.hod.full_name}</span>
                       </div>
                     ) : (
@@ -488,7 +488,7 @@ const DepartmentManagement = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-primary" />
+              <BarChart3 className="h-5 w-5 text-primary-ink" />
               Department Comparison
             </CardTitle>
           </CardHeader>
@@ -522,7 +522,7 @@ const DepartmentManagement = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
+              <TrendingUp className="h-5 w-5 text-primary-ink" />
               Skill Breakdown by Department
             </CardTitle>
           </CardHeader>

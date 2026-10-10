@@ -345,13 +345,13 @@ const CoursesViewer = () => {
                       <Badge variant="outline" className="text-[10px] gap-1 text-muted-foreground">
                         <BookOpen className="h-3 w-3" />{pathLessons.length} lessons
                       </Badge>
-                      <Badge variant="outline" className="text-[10px] gap-1 text-primary border-primary/30 tabular-nums">
+                      <Badge variant="outline" className="text-[10px] gap-1 text-primary-ink border-primary/30 tabular-nums">
                         <Star className="h-3 w-3" />{pathEarnedXp}/{pathTotalXp} XP
                       </Badge>
                     </div>
                     <div className="flex items-center gap-3 mt-2">
                       <Badge variant="outline" className={cn("text-[10px]",
-                        isPathComplete ? "text-success border-success/30" : isStarted ? "text-primary border-primary/30" : "text-muted-foreground")}>
+                        isPathComplete ? "text-success border-success/30" : isStarted ? "text-primary-ink border-primary/30" : "text-muted-foreground")}>
                         {isPathComplete ? "Completed" : isStarted ? "In progress" : "Not started"}
                       </Badge>
                       <span className="text-xs text-muted-foreground tabular-nums">{pathCompletedCount}/{pathLessons.length} lessons done</span>

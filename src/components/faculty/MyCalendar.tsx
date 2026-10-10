@@ -65,12 +65,12 @@ interface CalendarEvent {
 }
 
 const EVENT_TYPES = [
-  { value: "training", label: "Training", icon: BookOpen, color: "bg-primary" },
-  { value: "deadline", label: "Deadline", icon: AlertTriangle, color: "bg-red-500" },
-  { value: "reminder", label: "Reminder", icon: Bell, color: "bg-amber-500" },
-  { value: "personal", label: "Personal", icon: User, color: "bg-green-500" },
-  { value: "meeting", label: "Meeting", icon: Clock, color: "bg-accent" },
-  { value: "document", label: "Document", icon: FileText, color: "bg-teal-500" },
+  { value: "training", label: "Training", icon: BookOpen, color: "bg-primary/15 text-primary-ink" },
+  { value: "deadline", label: "Deadline", icon: AlertTriangle, color: "bg-destructive/15 text-destructive" },
+  { value: "reminder", label: "Reminder", icon: Bell, color: "bg-warning/15 text-warning" },
+  { value: "personal", label: "Personal", icon: User, color: "bg-success/15 text-success" },
+  { value: "meeting", label: "Meeting", icon: Clock, color: "bg-accent/15 text-accent-ink" },
+  { value: "document", label: "Document", icon: FileText, color: "bg-primary/15 text-primary-ink" },
 ];
 
 const getEventTypeConfig = (type: string) =>
@@ -284,7 +284,7 @@ export default function MyCalendar() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <CalendarIcon className="h-6 w-6 text-primary" />
+            <CalendarIcon className="h-6 w-6 text-primary-ink" />
             My Calendar
           </h1>
           <p className="text-muted-foreground">Track trainings, deadlines, reminders, and personal events</p>
@@ -446,7 +446,7 @@ export default function MyCalendar() {
                           {format(day, "d")}
                         </span>
                         {hasImportant && (
-                          <Star className="h-3 w-3 text-accent fill-accent" />
+                          <Star className="h-3 w-3 text-accent-ink fill-accent" />
                         )}
                       </div>
                       <div className="mt-1 space-y-0.5 overflow-hidden">
@@ -455,7 +455,7 @@ export default function MyCalendar() {
                           return (
                             <div
                               key={event.id}
-                              className={`text-[10px] px-1 py-0.5 rounded truncate ${config.color} text-white`}
+                              className={`text-[10px] px-1 py-0.5 rounded truncate ${config.color}`}
                             >
                               {event.title}
                             </div>
@@ -494,7 +494,7 @@ export default function MyCalendar() {
                       <p className="text-sm text-muted-foreground text-center py-4">
                         No events on this day.{" "}
                         <button
-                          className="text-primary hover:underline"
+                          className="text-primary-ink hover:underline"
                           onClick={() => {
                             setNewEvent((p) => ({ ...p, event_date: format(selectedDate, "yyyy-MM-dd") }));
                             setDialogOpen(true);
@@ -516,7 +516,7 @@ export default function MyCalendar() {
                                 event.is_important ? "border-destructive/30 bg-destructive/5" : "border-border"
                               }`}
                             >
-                              <div className={`p-2 rounded-lg ${config.color} text-white flex-shrink-0`}>
+                              <div className={`p-2 rounded-lg ${config.color} flex-shrink-0`}>
                                 <Icon className="h-4 w-4" />
                               </div>
                               <div className="flex-1 min-w-0">
@@ -571,7 +571,7 @@ export default function MyCalendar() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-accent" />
+                <AlertTriangle className="h-4 w-4 text-accent-ink" />
                 Upcoming Deadlines
               </CardTitle>
             </CardHeader>

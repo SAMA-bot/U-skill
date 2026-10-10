@@ -159,7 +159,7 @@ export default function VerifyEmail() {
             </Link>
             <div className="flex items-center gap-2">
               <ThemeToggle />
-              <Link to="/auth/login" className="text-primary hover:underline font-medium">
+              <Link to="/auth/login" className="text-primary-ink hover:underline font-medium">
                 Log In
               </Link>
             </div>
@@ -177,9 +177,9 @@ export default function VerifyEmail() {
           <div className="bg-card rounded-2xl shadow-lg p-8 text-center">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
               {status === 'sent' ? (
-                <MailCheck className="w-8 h-8 text-primary" />
+                <MailCheck className="w-8 h-8 text-primary-ink" />
               ) : (
-                <Mail className="w-8 h-8 text-primary" />
+                <Mail className="w-8 h-8 text-primary-ink" />
               )}
             </div>
 
@@ -203,7 +203,7 @@ export default function VerifyEmail() {
                 role="status"
                 className="mt-5 flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/10 p-3 text-left text-sm text-foreground"
               >
-                <CheckCircle2 className="w-4 h-4 mt-0.5 text-primary shrink-0" />
+                <CheckCircle2 className="w-4 h-4 mt-0.5 text-primary-ink shrink-0" />
                 <span>A new verification email is on its way. Check spam if you don't see it.</span>
               </div>
             )}
@@ -253,7 +253,7 @@ export default function VerifyEmail() {
 
             <p className="text-sm text-muted-foreground mt-6">
               Wrong address?{' '}
-              <Link to="/auth/signup" className="text-primary hover:underline font-medium">
+              <Link to="/auth/signup" className="text-primary-ink hover:underline font-medium">
                 Sign up again
               </Link>
             </p>

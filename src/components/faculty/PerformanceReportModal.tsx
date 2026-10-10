@@ -93,11 +93,11 @@ const getFallbackTrainingPaths = (data: ReportData): { title: string; reason: st
 const getBadgeStyle = (badge: string): React.CSSProperties => {
   switch (badge) {
     case "Excellent":
-      return { background: "rgba(59,130,246,0.15)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.4)" };
+      return { background: "hsl(var(--info) / 0.15)", color: "hsl(var(--info))", border: "1px solid hsl(var(--info) / 0.4)" };
     case "Good":
-      return { background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.4)" };
+      return { background: "hsl(var(--success) / 0.15)", color: "hsl(var(--success))", border: "1px solid hsl(var(--success) / 0.4)" };
     default:
-      return { background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.4)" };
+      return { background: "hsl(var(--destructive) / 0.15)", color: "hsl(var(--destructive))", border: "1px solid hsl(var(--destructive) / 0.4)" };
   }
 };
 
@@ -238,7 +238,7 @@ const PerformanceReportModal = ({ open, onOpenChange, data }: PerformanceReportM
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2 text-xl">
-              <Award className="h-5 w-5 text-primary" />
+              <Award className="h-5 w-5 text-primary-ink" />
               Faculty Performance Report
             </DialogTitle>
             <Button variant="outline" size="sm" onClick={exportPDF} className="gap-2">
@@ -275,7 +275,7 @@ const PerformanceReportModal = ({ open, onOpenChange, data }: PerformanceReportM
           {/* Performance Metrics Grid */}
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-primary" />
+              <BarChart3 className="h-4 w-4 text-primary-ink" />
               Performance Breakdown
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -303,16 +303,16 @@ const PerformanceReportModal = ({ open, onOpenChange, data }: PerformanceReportM
           {/* AI Summary */}
           {aiLoading ? (
             <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/30 border border-border">
-              <Loader2 className="h-5 w-5 animate-spin text-primary" />
+              <Loader2 className="h-5 w-5 animate-spin text-primary-ink" />
               <div>
                 <p className="text-sm font-medium text-foreground">Generating AI insights…</p>
                 <p className="text-xs text-muted-foreground">Analyzing your performance data</p>
               </div>
             </div>
           ) : summary ? (
-            <div className="p-4 rounded-lg border border-border" style={{ background: "rgba(59,130,246,0.05)" }}>
+            <div className="p-4 rounded-lg border border-border" style={{ background: "hsl(var(--info) / 0.05)" }}>
               <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
+                <Sparkles className="h-4 w-4 text-primary-ink" />
                 AI Performance Summary
               </h4>
               <p className="text-sm text-foreground leading-relaxed">{summary}</p>
@@ -322,14 +322,14 @@ const PerformanceReportModal = ({ open, onOpenChange, data }: PerformanceReportM
           {/* Strengths */}
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <CheckCircle className="h-4 w-4" style={{ color: "#22c55e" }} />
+              <CheckCircle className="h-4 w-4" style={{ color: "hsl(var(--success))" }} />
               Strengths
               {isAI && <Badge variant="outline" className="text-[9px] px-1.5 py-0 ml-1"><Sparkles className="h-2.5 w-2.5 mr-0.5" />AI</Badge>}
             </h4>
             <ul className="space-y-2">
               {strengths.map((s, i) => (
                 <motion.li key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} className="flex items-start gap-2 text-sm text-foreground">
-                  <div className="mt-1 h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ background: "#22c55e" }} />
+                  <div className="mt-1 h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--success))" }} />
                   {s}
                 </motion.li>
               ))}
@@ -339,14 +339,14 @@ const PerformanceReportModal = ({ open, onOpenChange, data }: PerformanceReportM
           {/* Areas for Improvement */}
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" style={{ color: "#f59e0b" }} />
+              <AlertTriangle className="h-4 w-4" style={{ color: "hsl(var(--warning))" }} />
               Areas for Improvement
               {isAI && <Badge variant="outline" className="text-[9px] px-1.5 py-0 ml-1"><Sparkles className="h-2.5 w-2.5 mr-0.5" />AI</Badge>}
             </h4>
             <ul className="space-y-2">
               {improvements.map((s, i) => (
                 <motion.li key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} className="flex items-start gap-2 text-sm text-foreground">
-                  <div className="mt-1 h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ background: "#f59e0b" }} />
+                  <div className="mt-1 h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ background: "hsl(var(--warning))" }} />
                   {s}
                 </motion.li>
               ))}
@@ -356,7 +356,7 @@ const PerformanceReportModal = ({ open, onOpenChange, data }: PerformanceReportM
           {/* Training Paths */}
           <div>
             <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <GraduationCap className="h-4 w-4" style={{ color: "#8b5cf6" }} />
+              <GraduationCap className="h-4 w-4" style={{ color: "hsl(var(--accent-ink))" }} />
               Suggested Training Paths
               {isAI && <Badge variant="outline" className="text-[9px] px-1.5 py-0 ml-1"><Sparkles className="h-2.5 w-2.5 mr-0.5" />AI</Badge>}
             </h4>
@@ -369,7 +369,7 @@ const PerformanceReportModal = ({ open, onOpenChange, data }: PerformanceReportM
                   transition={{ delay: i * 0.05 }}
                   className="flex items-start gap-3 p-3 rounded-lg border border-border bg-card"
                 >
-                  <div className="mt-0.5 h-2 w-2 rounded-full flex-shrink-0" style={{ background: "#8b5cf6" }} />
+                  <div className="mt-0.5 h-2 w-2 rounded-full flex-shrink-0" style={{ background: "hsl(var(--accent-ink))" }} />
                   <div>
                     <p className="text-sm font-medium text-foreground">{t.title}</p>
                     <p className="text-xs text-muted-foreground">{t.reason}</p>

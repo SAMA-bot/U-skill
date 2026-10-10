@@ -9,14 +9,14 @@ const highlights = [
     title: 'Data-Driven Assessment',
     description: 'Objective metrics and KPI-based evaluation for fair performance analysis.',
     gradient: 'linear-gradient(135deg, hsl(var(--primary) / 0.12), hsl(var(--brand-c) / 0.08))',
-    iconColor: 'text-primary',
+    iconColor: 'text-primary-ink',
   },
   {
     icon: Lightbulb,
     title: 'Personalized Recommendations',
     description: 'AI-powered suggestions for training, MOOCs, and certifications.',
     gradient: 'linear-gradient(135deg, hsl(var(--accent) / 0.12), hsl(var(--primary) / 0.08))',
-    iconColor: 'text-accent',
+    iconColor: 'text-accent-ink',
   },
   {
     icon: Target,
@@ -30,7 +30,7 @@ const highlights = [
     title: 'Motivation & Gamification',
     description: 'Achievement badges, progress tracking, and performance insights.',
     gradient: 'linear-gradient(135deg, hsl(var(--accent) / 0.12), hsl(var(--brand-d) / 0.08))',
-    iconColor: 'text-accent',
+    iconColor: 'text-accent-ink',
   },
 ];
 
@@ -50,7 +50,7 @@ export function AboutSection() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="text-primary font-medium text-xs uppercase tracking-[0.2em]">About The Project</span>
+          <span className="text-primary-ink font-medium text-xs uppercase tracking-[0.2em]">About The Project</span>
           <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4 mb-6 tracking-tight">
             Transforming Faculty Development
           </h2>

@@ -53,7 +53,7 @@ const StatCard = ({
       )}
     >
       <div className="flex items-start gap-3">
-        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
+        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary-ink transition-colors group-hover:bg-primary/15">
           <Icon className="h-[18px] w-[18px]" />
         </span>
         <p className="pt-1.5 text-[13px] font-medium leading-tight text-muted-foreground min-w-0 break-words">

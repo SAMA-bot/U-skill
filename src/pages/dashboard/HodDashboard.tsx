@@ -274,10 +274,10 @@ const HodDashboard = () => {
   const getInitials = (name: string) => name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 
   const statsCards = [
-    { label: "Dept. Performance", value: metrics.avgPerformance, suffix: "/100", icon: BarChart3, color: "from-primary to-accent" },
-    { label: "Faculty Count", value: metrics.totalFaculty, suffix: "", icon: Users, color: "from-primary to-accent" },
-    { label: "Training Participation", value: metrics.trainingParticipation, suffix: "%", icon: GraduationCap, color: "from-primary to-accent" },
-    { label: "Feedback Score", value: metrics.avgFeedback, suffix: "/100", icon: Star, color: "from-primary to-accent" },
+    { label: "Dept. Performance", value: metrics.avgPerformance, suffix: "/100", icon: BarChart3, color: "from-primary-ink to-accent-ink" },
+    { label: "Faculty Count", value: metrics.totalFaculty, suffix: "", icon: Users, color: "from-primary-ink to-accent-ink" },
+    { label: "Training Participation", value: metrics.trainingParticipation, suffix: "%", icon: GraduationCap, color: "from-primary-ink to-accent-ink" },
+    { label: "Feedback Score", value: metrics.avgFeedback, suffix: "/100", icon: Star, color: "from-primary-ink to-accent-ink" },
   ];
 
   // Radar data for department overview
@@ -292,7 +292,7 @@ const HodDashboard = () => {
   if (loading || roleLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -316,8 +316,8 @@ const HodDashboard = () => {
                   <Menu className="h-6 w-6" aria-hidden="true" />
                 </button>
                 <div className="flex-shrink-0 flex items-center">
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">FU</span>
+                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary-ink to-accent-ink flex items-center justify-center">
+                    <span className="text-gradient-foreground font-bold text-sm">FU</span>
                   </div>
                   <span className="ml-2 text-xl font-semibold text-foreground hidden md:block">USKILL</span>
                 </div>
@@ -334,7 +334,7 @@ const HodDashboard = () => {
 
         <div className="flex flex-1 overflow-hidden">
           {/* Sidebar overlay */}
-          {sidebarOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" aria-hidden="true" onClick={() => setSidebarOpen(false)} />}
+          {sidebarOpen && <div className="fixed inset-0 bg-overlay/50 z-40 md:hidden" aria-hidden="true" onClick={() => setSidebarOpen(false)} />}
 
           {/* Sidebar */}
           <aside
@@ -412,7 +412,7 @@ const HodDashboard = () => {
                             {isActive && !sidebarCollapsed && (
                               <span className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-r-full bg-primary" aria-hidden="true" />
                             )}
-                            <tab.icon className={`flex-shrink-0 h-[16px] w-[16px] ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={2} aria-hidden="true" />
+                            <tab.icon className={`flex-shrink-0 h-[16px] w-[16px] ${isActive ? "text-primary-ink" : "text-muted-foreground group-hover:text-foreground"} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={2} aria-hidden="true" />
                             {!sidebarCollapsed && tab.label}
                           </button>
                         );
@@ -513,7 +513,7 @@ const HodDashboard = () => {
                     <Card>
                       <CardHeader>
                         <CardTitle className="text-lg flex items-center gap-2">
-                          <TrendingUp className="h-5 w-5 text-primary" />
+                          <TrendingUp className="h-5 w-5 text-primary-ink" />
                           Department Performance Radar
                         </CardTitle>
                         <CardDescription>Overview across key performance areas</CardDescription>
@@ -535,7 +535,7 @@ const HodDashboard = () => {
                     <Card>
                       <CardHeader>
                         <CardTitle className="text-lg flex items-center gap-2">
-                          <Activity className="h-5 w-5 text-primary" />
+                          <Activity className="h-5 w-5 text-primary-ink" />
                           Activity Breakdown
                         </CardTitle>
                         <CardDescription>Completed activities by category</CardDescription>
@@ -568,7 +568,7 @@ const HodDashboard = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
-                        <GraduationCap className="h-5 w-5 text-primary" />
+                        <GraduationCap className="h-5 w-5 text-primary-ink" />
                         Training Participation
                       </CardTitle>
                       <CardDescription>
@@ -608,7 +608,7 @@ const HodDashboard = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
-                        <Award className="h-5 w-5 text-primary" />
+                        <Award className="h-5 w-5 text-primary-ink" />
                         Faculty Rankings
                       </CardTitle>
                       <CardDescription>
@@ -635,9 +635,9 @@ const HodDashboard = () => {
                               <TableRow key={faculty.user_id}>
                                 <TableCell>
                                   <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                                    idx === 0 ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400" :
+                                    idx === 0 ? "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning" :
                                     idx === 1 ? "bg-muted text-foreground" :
-                                    idx === 2 ? "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400" :
+                                    idx === 2 ? "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning" :
                                     "bg-muted text-muted-foreground"
                                   }`}>
                                     {idx + 1}
@@ -647,7 +647,7 @@ const HodDashboard = () => {
                                   <div className="flex items-center gap-3">
                                     <Avatar className="h-8 w-8">
                                       <AvatarImage src={faculty.avatar_url || undefined} />
-                                      <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                                      <AvatarFallback className="text-xs bg-primary/10 text-primary-ink">
                                         {getInitials(faculty.full_name)}
                                       </AvatarFallback>
                                     </Avatar>

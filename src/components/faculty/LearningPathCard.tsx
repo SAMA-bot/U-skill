@@ -88,7 +88,7 @@ const LearningPathCard = ({ track, courses, getEnrollment, isCompleted, onLesson
           </div>
           <div className="flex items-center gap-3 mt-1">
             <span className="text-xs text-muted-foreground">{completedCount}/{totalCount} lessons</span>
-            <span className="text-xs font-semibold text-primary flex items-center gap-0.5">
+            <span className="text-xs font-semibold text-primary-ink flex items-center gap-0.5">
               <Star className="h-3 w-3" /> {earnedXp}/{totalXp} XP
             </span>
           </div>
@@ -114,7 +114,7 @@ const LearningPathCard = ({ track, courses, getEnrollment, isCompleted, onLesson
               {/* XP summary bar */}
               <div className="flex items-center justify-center gap-4 mb-6 py-3 rounded-lg bg-muted/40 border border-border/30">
                 <div className="flex items-center gap-1.5">
-                  <Star className="h-4 w-4 text-primary" />
+                  <Star className="h-4 w-4 text-primary-ink" />
                   <span className="text-sm font-bold text-foreground">{earnedXp} XP earned</span>
                 </div>
                 <div className="h-4 w-px bg-border" />

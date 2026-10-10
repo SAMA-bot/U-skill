@@ -49,14 +49,14 @@ interface Predictions {
 }
 
 const directionIcon = {
-  up: <TrendingUp className="h-4 w-4 text-emerald-500" />,
+  up: <TrendingUp className="h-4 w-4 text-success" />,
   down: <TrendingDown className="h-4 w-4 text-destructive" />,
   stable: <Minus className="h-4 w-4 text-muted-foreground" />,
 };
 
 const confidenceColor = {
-  high: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  medium: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  high: "bg-success/10 text-success dark:text-success",
+  medium: "bg-warning/10 text-warning dark:text-warning",
   low: "bg-muted text-muted-foreground",
 };
 
@@ -107,7 +107,7 @@ const PredictiveAnalytics = () => {
             className="inline-flex flex-col items-center gap-4"
           >
             <div className="p-4 rounded-full bg-primary/10">
-              <Sparkles className="h-10 w-10 text-primary" />
+              <Sparkles className="h-10 w-10 text-primary-ink" />
             </div>
             <h2 className="text-xl font-semibold text-foreground">Predictive Analytics</h2>
             <p className="text-muted-foreground max-w-md">
@@ -146,7 +146,7 @@ const PredictiveAnalytics = () => {
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <Card className="border-primary/20 bg-primary/5">
           <CardContent className="p-5 flex items-start gap-3">
-            <Sparkles className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+            <Sparkles className="h-5 w-5 text-primary-ink mt-0.5 shrink-0" />
             <p className="text-sm text-foreground leading-relaxed">{predictions.overallOutlook}</p>
           </CardContent>
         </Card>
@@ -157,7 +157,7 @@ const PredictiveAnalytics = () => {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
+              <TrendingUp className="h-5 w-5 text-primary-ink" />
               Performance Trend Predictions
             </CardTitle>
             <CardDescription>Forecasted direction of faculty performance</CardDescription>
@@ -184,7 +184,7 @@ const PredictiveAnalytics = () => {
                     <p className="text-xs text-muted-foreground mt-1">{trend.description}</p>
                   </div>
                   {trend.direction === "up" ? (
-                    <ArrowUpRight className="h-4 w-4 text-emerald-500 shrink-0" />
+                    <ArrowUpRight className="h-4 w-4 text-success shrink-0" />
                   ) : trend.direction === "down" ? (
                     <ArrowDownRight className="h-4 w-4 text-destructive shrink-0" />
                   ) : null}
@@ -201,7 +201,7 @@ const PredictiveAnalytics = () => {
           <Card className="h-full">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <GraduationCap className="h-5 w-5 text-primary" />
+                <GraduationCap className="h-5 w-5 text-primary-ink" />
                 Predicted Training Needs
               </CardTitle>
               <CardDescription>Skills requiring development investment</CardDescription>
@@ -263,7 +263,7 @@ const PredictiveAnalytics = () => {
                     </div>
                     <p className="text-xs text-muted-foreground mb-2">{risk.risk}</p>
                     <div className="flex items-start gap-1.5 bg-card p-2 rounded-md">
-                      <Sparkles className="h-3 w-3 text-primary mt-0.5 shrink-0" />
+                      <Sparkles className="h-3 w-3 text-primary-ink mt-0.5 shrink-0" />
                       <p className="text-xs text-foreground">{risk.mitigation}</p>
                     </div>
                   </motion.div>

@@ -7,16 +7,16 @@ const XpSummaryCard = () => {
   const { total, lesson, course, streak, recent, loading } = useUserXp();
 
   const items = [
-    { label: "Lessons", value: lesson, icon: BookOpen, color: "text-primary" },
-    { label: "Courses", value: course, icon: GraduationCap, color: "text-green-500" },
-    { label: "Streaks", value: streak, icon: Flame, color: "text-orange-500" },
+    { label: "Lessons", value: lesson, icon: BookOpen, color: "text-primary-ink" },
+    { label: "Courses", value: course, icon: GraduationCap, color: "text-success" },
+    { label: "Streaks", value: streak, icon: Flame, color: "text-warning" },
   ];
 
   return (
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
-          <Zap className="h-5 w-5 text-primary" />
+          <Zap className="h-5 w-5 text-primary-ink" />
           Total XP
         </CardTitle>
         <CardDescription>Earned across lessons, courses & streaks</CardDescription>
@@ -50,7 +50,7 @@ const XpSummaryCard = () => {
             {recent.slice(0, 4).map((r, i) => (
               <div key={i} className="flex items-center justify-between text-xs">
                 <span className="text-foreground truncate flex-1 mr-2">{r.description || r.source_type}</span>
-                <span className="text-primary font-semibold whitespace-nowrap">+{r.xp_amount} XP</span>
+                <span className="text-primary-ink font-semibold whitespace-nowrap">+{r.xp_amount} XP</span>
               </div>
             ))}
           </div>

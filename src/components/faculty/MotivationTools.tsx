@@ -18,7 +18,7 @@ const MotivationTools = () => {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-primary" />
+          <Sparkles className="h-6 w-6 text-primary-ink" />
           Motivation Tools
         </h1>
         <p className="text-muted-foreground mt-1">

@@ -144,22 +144,22 @@ export default function CourseEnrollmentStats({ courseId, courseTitle }: Props) 
         {/* Stats Summary */}
         <div className="grid grid-cols-4 gap-3 my-4">
           <div className="bg-muted/50 rounded-lg p-3 text-center">
-            <Users className="h-4 w-4 mx-auto mb-1 text-primary" />
+            <Users className="h-4 w-4 mx-auto mb-1 text-primary-ink" />
             <p className="text-xl font-bold text-foreground">{stats.enrolled}</p>
             <p className="text-[11px] text-muted-foreground">Enrolled</p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 text-center">
-            <CheckCircle2 className="h-4 w-4 mx-auto mb-1 text-emerald-500" />
+            <CheckCircle2 className="h-4 w-4 mx-auto mb-1 text-success" />
             <p className="text-xl font-bold text-foreground">{stats.completed}</p>
             <p className="text-[11px] text-muted-foreground">Completed</p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 text-center">
-            <Clock className="h-4 w-4 mx-auto mb-1 text-amber-500" />
+            <Clock className="h-4 w-4 mx-auto mb-1 text-warning" />
             <p className="text-xl font-bold text-foreground">{stats.inProgress}</p>
             <p className="text-[11px] text-muted-foreground">In Progress</p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 text-center">
-            <TrendingUp className="h-4 w-4 mx-auto mb-1 text-primary" />
+            <TrendingUp className="h-4 w-4 mx-auto mb-1 text-primary-ink" />
             <p className="text-xl font-bold text-foreground">{stats.avgProgress}%</p>
             <p className="text-[11px] text-muted-foreground">Avg Progress</p>
           </div>
@@ -195,7 +195,7 @@ export default function CourseEnrollmentStats({ courseId, courseTitle }: Props) 
                       <div className="flex items-center gap-2">
                         <Avatar className="h-7 w-7">
                           <AvatarImage src={u.avatar_url || undefined} />
-                          <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
+                          <AvatarFallback className="text-[10px] bg-primary/10 text-primary-ink">
                             {getInitials(u.full_name)}
                           </AvatarFallback>
                         </Avatar>
@@ -221,8 +221,8 @@ export default function CourseEnrollmentStats({ courseId, courseTitle }: Props) 
                         variant="secondary"
                         className={
                           u.status === "completed"
-                            ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
-                            : "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
+                            ? "bg-success/10 text-success dark:bg-success/30 dark:text-success"
+                            : "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning"
                         }
                       >
                         {u.status === "completed" ? "Completed" : "In Progress"}

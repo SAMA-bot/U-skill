@@ -96,7 +96,7 @@ const InstitutionalOverview = () => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-40">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
         </CardContent>
       </Card>
     );
@@ -108,7 +108,7 @@ const InstitutionalOverview = () => {
       value: metrics.totalFaculty,
       suffix: "",
       icon: Users,
-      color: "text-primary",
+      color: "text-primary-ink",
       bgColor: "bg-primary/10",
       progress: null,
     },
@@ -117,8 +117,8 @@ const InstitutionalOverview = () => {
       value: metrics.trainingCompliance,
       suffix: "%",
       icon: GraduationCap,
-      color: "text-emerald-500",
-      bgColor: "bg-emerald-500/10",
+      color: "text-success",
+      bgColor: "bg-success/10",
       progress: metrics.trainingCompliance,
     },
     {
@@ -126,8 +126,8 @@ const InstitutionalOverview = () => {
       value: metrics.avgPerformance,
       suffix: "%",
       icon: BarChart3,
-      color: "text-violet-500",
-      bgColor: "bg-violet-500/10",
+      color: "text-accent-ink",
+      bgColor: "bg-accent/10",
       progress: metrics.avgPerformance,
     },
     {
@@ -135,8 +135,8 @@ const InstitutionalOverview = () => {
       value: metrics.documentsVerified,
       suffix: "%",
       icon: FolderCheck,
-      color: "text-amber-500",
-      bgColor: "bg-amber-500/10",
+      color: "text-warning",
+      bgColor: "bg-warning/10",
       progress: metrics.documentsVerified,
     },
   ];

@@ -132,7 +132,7 @@ const LearningPathDetailPage = () => {
   if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -204,7 +204,7 @@ const LearningPathDetailPage = () => {
                   ? `${path.estimated_hours}h`
                   : `${Math.max(1, Math.round(allLessons.reduce((s, l) => s + (l.duration_minutes || 15), 0) / 60))}h`}
               </Badge>
-              <Badge variant="outline" className="text-[10px] gap-1 text-primary border-primary/30 tabular-nums">
+              <Badge variant="outline" className="text-[10px] gap-1 text-primary-ink border-primary/30 tabular-nums">
                 <Star className="h-3 w-3" />{earnedXp}/{totalXp} XP
               </Badge>
               {path.target_audience && (
@@ -303,7 +303,7 @@ const LearningPathDetailPage = () => {
                               state === "completed" ? "bg-success/15 border-success/40 text-success"
                                 : state === "in_progress" ? "bg-accent/15 border-accent/40 text-accent-foreground"
                                 : locked ? "bg-muted border-border text-muted-foreground"
-                                : "bg-primary/10 border-primary/40 text-primary"
+                                : "bg-primary/10 border-primary/40 text-primary-ink"
                             )}>
                               <Icon className="h-4 w-4" />
                             </span>
@@ -316,7 +316,7 @@ const LearningPathDetailPage = () => {
                             </span>
                             <span className={cn(
                               "text-[11px] font-bold shrink-0 tabular-nums",
-                              state === "completed" ? "text-success" : locked ? "text-muted-foreground/50" : "text-primary"
+                              state === "completed" ? "text-success" : locked ? "text-muted-foreground/50" : "text-primary-ink"
                             )}>
                               +{lesson.xp_reward} XP
                             </span>
@@ -360,8 +360,8 @@ const LearningPathDetailPage = () => {
             className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] rounded-full border border-primary/40 bg-card px-5 py-2.5 shadow-lg flex items-center gap-2"
             role="status"
           >
-            <Star className="h-4 w-4 text-primary" />
-            <span className="text-sm font-bold text-primary tabular-nums">+{xpBurst.amount} XP</span>
+            <Star className="h-4 w-4 text-primary-ink" />
+            <span className="text-sm font-bold text-primary-ink tabular-nums">+{xpBurst.amount} XP</span>
             {xpBurst.bonus && <span className="text-xs text-muted-foreground">incl. path bonus</span>}
           </motion.div>
         )}

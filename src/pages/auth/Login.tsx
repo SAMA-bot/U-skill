@@ -150,7 +150,7 @@ export default function Login() {
               <div className="flex justify-end">
                 <Link
                   to="/auth/forgot-password"
-                  className="text-sm text-primary hover:underline"
+                  className="text-sm text-primary-ink hover:underline"
                 >
                   Forgot your password?
                 </Link>
@@ -174,7 +174,7 @@ export default function Login() {
 
             <p className="text-center text-muted-foreground mt-6">
               New user?{' '}
-              <Link to="/auth/signup" className="text-primary hover:underline font-medium">
+              <Link to="/auth/signup" className="text-primary-ink hover:underline font-medium">
                 Sign Up
               </Link>
             </p>

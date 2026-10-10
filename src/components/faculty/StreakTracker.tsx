@@ -12,9 +12,9 @@ interface Streak {
 }
 
 const streakConfig: Record<string, { label: string; icon: typeof Flame; color: string }> = {
-  daily_login: { label: "Login Streak", icon: Flame, color: "text-orange-500" },
-  activity_completion: { label: "Activity Streak", icon: Zap, color: "text-yellow-500" },
-  journal_streak: { label: "Journal Streak", icon: Calendar, color: "text-primary" },
+  daily_login: { label: "Login Streak", icon: Flame, color: "text-warning" },
+  activity_completion: { label: "Activity Streak", icon: Zap, color: "text-warning" },
+  journal_streak: { label: "Journal Streak", icon: Calendar, color: "text-primary-ink" },
 };
 
 const StreakTracker = () => {
@@ -79,7 +79,7 @@ const StreakTracker = () => {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
-          <Flame className="h-5 w-5 text-orange-500" />
+          <Flame className="h-5 w-5 text-warning" />
           Streak Tracker
         </CardTitle>
         <CardDescription>Keep your momentum going!</CardDescription>
@@ -90,7 +90,7 @@ const StreakTracker = () => {
             const config = streakConfig[streak.streak_type] || {
               label: streak.streak_type,
               icon: Flame,
-              color: "text-primary",
+              color: "text-primary-ink",
             };
             const Icon = config.icon;
             return (

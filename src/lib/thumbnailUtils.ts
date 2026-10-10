@@ -4,16 +4,16 @@
  */
 
 const GRADIENT_PAIRS = [
-  ["#3b82f6", "#8b5cf6"], // blue → purple
-  ["#06b6d4", "#3b82f6"], // cyan → blue
-  ["#8b5cf6", "#ec4899"], // purple → pink
+  ["hsl(var(--info))", "hsl(var(--accent-ink))"], // blue → purple
+  ["#06b6d4", "hsl(var(--info))"], // cyan → blue
+  ["hsl(var(--accent-ink))", "#ec4899"], // purple → pink
   ["#10b981", "#06b6d4"], // emerald → cyan
-  ["#f59e0b", "#ef4444"], // amber → red
+  ["hsl(var(--warning))", "hsl(var(--destructive))"], // amber → red
   ["#6366f1", "#06b6d4"], // indigo → cyan
-  ["#ec4899", "#f59e0b"], // pink → amber
-  ["#14b8a6", "#8b5cf6"], // teal → purple
+  ["#ec4899", "hsl(var(--warning))"], // pink → amber
+  ["#14b8a6", "hsl(var(--accent-ink))"], // teal → purple
   ["#f43f5e", "#a855f7"], // rose → violet
-  ["#0ea5e9", "#22c55e"], // sky → green
+  ["#0ea5e9", "hsl(var(--success))"], // sky → green
 ];
 
 const ICONS: Record<string, string> = {

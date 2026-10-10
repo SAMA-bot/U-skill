@@ -89,7 +89,7 @@ export function ThemeToggle() {
             exit={{ rotate: 90, scale: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <Sun className="w-[18px] h-[18px] text-amber-400" />
+            <Sun className="w-[18px] h-[18px] text-warning" />
           </motion.div>
         ) : (
           <motion.div
@@ -99,7 +99,7 @@ export function ThemeToggle() {
             exit={{ rotate: -90, scale: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <Moon className="w-[18px] h-[18px] text-primary" />
+            <Moon className="w-[18px] h-[18px] text-primary-ink" />
           </motion.div>
         )}
       </AnimatePresence>
