@@ -139,22 +139,22 @@ const getActionIcon = (actionType: string) => {
 const getActionColor = (actionType: string): string => {
   switch (actionType) {
     case "COURSE_COMPLETED":
-      return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+      return "bg-success/10 text-success dark:bg-success/30 dark:text-success";
     case "COURSE_CREATED":
     case "USER_CREATED":
-      return "bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary";
+      return "bg-primary/10 text-primary-ink dark:bg-primary/30 dark:text-primary-ink";
     case "COURSE_PUBLISHED":
-      return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400";
+      return "bg-success/10 text-success dark:bg-success/30 dark:text-success";
     case "COURSE_UNPUBLISHED":
     case "COURSE_DELETED":
     case "ROLE_REMOVED":
-      return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+      return "bg-destructive/10 text-destructive dark:bg-destructive/30 dark:text-destructive";
     case "ROLE_ASSIGNED":
     case "ROLE_CHANGED":
-      return "bg-accent/10 text-accent dark:bg-accent/30 dark:text-accent";
+      return "bg-accent/10 text-accent-ink dark:bg-accent/30 dark:text-accent-ink";
     case "PROFILE_UPDATED":
     case "COURSE_UPDATED":
-      return "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400";
+      return "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning";
     default:
       return "bg-muted text-muted-foreground";
   }
@@ -378,9 +378,9 @@ const ActivityLogTimeline = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
           { label: "Total Events", value: stats.total, color: "text-foreground" },
-          { label: "Training", value: stats.training, color: "text-green-600 dark:text-green-400" },
-          { label: "Documents", value: stats.documents, color: "text-accent dark:text-accent" },
-          { label: "Profile", value: stats.profile, color: "text-amber-600 dark:text-amber-400" },
+          { label: "Training", value: stats.training, color: "text-success dark:text-success" },
+          { label: "Documents", value: stats.documents, color: "text-accent-ink dark:text-accent-ink" },
+          { label: "Profile", value: stats.profile, color: "text-warning dark:text-warning" },
         ].map((s) => (
           <Card key={s.label}>
             <CardContent className="p-4">
@@ -499,14 +499,14 @@ const ActivityLogTimeline = () => {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg flex items-center gap-2">
-            <History className="h-5 w-5 text-primary" />
+            <History className="h-5 w-5 text-primary-ink" />
             Activity Timeline
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-2">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
             </div>
           ) : filteredLogs.length === 0 ? (
             <SmartEmptyState

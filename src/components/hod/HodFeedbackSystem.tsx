@@ -143,7 +143,7 @@ const HodFeedbackSystem = ({ department }: HodFeedbackSystemProps) => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
         </CardContent>
       </Card>
     );
@@ -155,7 +155,7 @@ const HodFeedbackSystem = ({ department }: HodFeedbackSystemProps) => {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <MessageSquarePlus className="h-5 w-5 text-primary" />
+          <MessageSquarePlus className="h-5 w-5 text-primary-ink" />
           Faculty Feedback System
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -231,7 +231,7 @@ const HodFeedbackSystem = ({ department }: HodFeedbackSystemProps) => {
                         <Star
                           className={`h-7 w-7 transition-colors ${
                             star <= (hoverRating || rating)
-                              ? "fill-amber-400 text-amber-400"
+                              ? "fill-warning text-warning"
                               : "text-muted-foreground/30"
                           }`}
                         />
@@ -304,7 +304,7 @@ const HodFeedbackSystem = ({ department }: HodFeedbackSystemProps) => {
                           <Star
                             key={s}
                             className={`h-3.5 w-3.5 ${
-                              s <= fb.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/20"
+                              s <= fb.rating ? "fill-warning text-warning" : "text-muted-foreground/20"
                             }`}
                           />
                         ))}

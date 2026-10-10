@@ -26,7 +26,7 @@ export function FutureScopeSection() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="text-primary font-medium text-xs uppercase tracking-[0.2em]">What's Next</span>
+          <span className="text-primary-ink font-medium text-xs uppercase tracking-[0.2em]">What's Next</span>
           <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4 mb-6 tracking-tight">
             Future Scope
           </h2>
@@ -53,7 +53,7 @@ export function FutureScopeSection() {
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 border border-border/50" style={{
                     background: 'linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.05))',
                   }}>
-                    <item.icon className="w-5 h-5 text-primary" />
+                    <item.icon className="w-5 h-5 text-primary-ink" />
                   </div>
                   <h3 className="font-heading font-semibold text-lg text-foreground mb-2">{item.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
@@ -61,7 +61,7 @@ export function FutureScopeSection() {
 
                 {index < futureScope.length - 1 && (
                   <div className="hidden lg:block absolute top-1/2 -right-3 -translate-y-1/2 z-10">
-                    <ArrowRight className="w-5 h-5 text-primary/40" />
+                    <ArrowRight className="w-5 h-5 text-primary-ink/40" />
                   </div>
                 )}
               </motion.div>

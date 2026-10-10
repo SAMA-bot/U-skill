@@ -147,11 +147,11 @@ const HodDocumentApprovals = ({ department }: HodDocumentApprovalsProps) => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge variant="outline" className="text-amber-600 border-amber-300 dark:text-amber-400 dark:border-amber-700"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
+        return <Badge variant="outline" className="text-warning border-warning/40 dark:text-warning dark:border-warning/40"><Clock className="h-3 w-3 mr-1" />Pending</Badge>;
       case "verified":
-        return <Badge variant="outline" className="text-green-600 border-green-300 dark:text-green-400 dark:border-green-700"><CheckCircle className="h-3 w-3 mr-1" />Approved</Badge>;
+        return <Badge variant="outline" className="text-success border-success/40 dark:text-success dark:border-success/40"><CheckCircle className="h-3 w-3 mr-1" />Approved</Badge>;
       case "rejected":
-        return <Badge variant="outline" className="text-red-600 border-red-300 dark:text-red-400 dark:border-red-700"><XCircle className="h-3 w-3 mr-1" />Rejected</Badge>;
+        return <Badge variant="outline" className="text-destructive border-destructive/40 dark:text-destructive dark:border-destructive/40"><XCircle className="h-3 w-3 mr-1" />Rejected</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -161,7 +161,7 @@ const HodDocumentApprovals = ({ department }: HodDocumentApprovalsProps) => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
         </CardContent>
       </Card>
     );
@@ -173,7 +173,7 @@ const HodDocumentApprovals = ({ department }: HodDocumentApprovalsProps) => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <FileCheck className="h-5 w-5 text-primary" />
+            <FileCheck className="h-5 w-5 text-primary-ink" />
             Document Approvals
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -231,7 +231,7 @@ const HodDocumentApprovals = ({ department }: HodDocumentApprovalsProps) => {
                       <div className="flex items-center gap-2">
                         <Avatar className="h-7 w-7">
                           <AvatarImage src={doc.avatar_url || undefined} />
-                          <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                          <AvatarFallback className="text-xs bg-primary/10 text-primary-ink">
                             {getInitials(doc.faculty_name)}
                           </AvatarFallback>
                         </Avatar>
@@ -261,7 +261,7 @@ const HodDocumentApprovals = ({ department }: HodDocumentApprovalsProps) => {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
+                              className="h-8 w-8 text-success hover:text-success hover:bg-success/10 dark:hover:bg-success/20"
                               onClick={() => handleReview(doc.id, "verified")}
                               disabled={processing}
                             >
@@ -270,7 +270,7 @@ const HodDocumentApprovals = ({ department }: HodDocumentApprovalsProps) => {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20"
                               onClick={() => setSelectedDoc(doc)}
                               disabled={processing}
                             >

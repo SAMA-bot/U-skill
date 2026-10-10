@@ -31,7 +31,7 @@ export function TeamSection() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="text-primary font-medium text-xs uppercase tracking-[0.2em]">The People</span>
+          <span className="text-primary-ink font-medium text-xs uppercase tracking-[0.2em]">The People</span>
           <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4 mb-6 tracking-tight">
             Our Team
           </h2>
@@ -52,10 +52,10 @@ export function TeamSection() {
               <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform duration-300" style={{
                 background: 'linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.1))',
               }}>
-                <member.icon className="w-8 h-8 text-primary" />
+                <member.icon className="w-8 h-8 text-primary-ink" />
               </div>
               <h3 className="font-heading font-semibold text-lg text-foreground mb-1">{member.name}</h3>
-              <p className="text-primary font-medium text-sm mb-2">{member.role}</p>
+              <p className="text-primary-ink font-medium text-sm mb-2">{member.role}</p>
               <p className="text-sm text-muted-foreground">{member.description}</p>
             </motion.div>
           ))}
@@ -81,11 +81,11 @@ export function TeamSection() {
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0" style={{
                   background: 'linear-gradient(135deg, hsl(var(--accent) / 0.12), hsl(var(--brand-d) / 0.08))',
                 }}>
-                  <mentor.icon className="w-7 h-7 text-accent" />
+                  <mentor.icon className="w-7 h-7 text-accent-ink" />
                 </div>
                 <div>
                   <h4 className="font-heading font-semibold text-foreground">{mentor.name}</h4>
-                  <p className="text-primary text-sm font-medium">{mentor.role}</p>
+                  <p className="text-primary-ink text-sm font-medium">{mentor.role}</p>
                   <p className="text-muted-foreground text-sm">{mentor.designation}</p>
                 </div>
               </motion.div>

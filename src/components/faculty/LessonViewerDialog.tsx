@@ -38,7 +38,7 @@ export const getYouTubeEmbedUrl = (url: string): string | null => {
 
 const getContentTypeIcon = (type: string) => {
   switch (type) {
-    case "platform_video": return <Video className="h-3.5 w-3.5 text-primary" />;
+    case "platform_video": return <Video className="h-3.5 w-3.5 text-primary-ink" />;
     case "pdf": return <FileText className="h-3.5 w-3.5 text-destructive" />;
     case "external_url": return <Link2 className="h-3.5 w-3.5 text-info" />;
     case "text": return <Type className="h-3.5 w-3.5" />;
@@ -119,7 +119,7 @@ const LessonViewerDialog = ({ lesson, isCompleted, onClose, onComplete }: Props)
           <DialogTitle className="text-sm font-medium text-foreground truncate max-w-[60%]">
             {lesson?.title}
           </DialogTitle>
-          <Badge variant="outline" className="text-primary border-primary/30 text-xs">
+          <Badge variant="outline" className="text-primary-ink border-primary/30 text-xs">
             <Star className="h-3 w-3 mr-1" /> {lesson?.xp_reward} XP
           </Badge>
         </div>
@@ -127,7 +127,7 @@ const LessonViewerDialog = ({ lesson, isCompleted, onClose, onComplete }: Props)
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {loadingMedia ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
             </div>
           ) : content.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
@@ -212,7 +212,7 @@ const LessonViewerDialog = ({ lesson, isCompleted, onClose, onComplete }: Props)
               </div>
             )}
             {autoCompleting ? (
-              <div className="flex items-center justify-center gap-2 text-sm text-primary font-medium py-1">
+              <div className="flex items-center justify-center gap-2 text-sm text-primary-ink font-medium py-1">
                 <Loader2 className="h-4 w-4 animate-spin" /> Completing lesson...
               </div>
             ) : (

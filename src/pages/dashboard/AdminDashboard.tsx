@@ -336,12 +336,12 @@ const AdminDashboard = () => {
   const getPerformanceColor = (score: number) => getPerformanceBadgeColor(score);
 
   const statsCards = [
-    { label: "Total Faculty", numValue: institutionStats.totalFaculty, suffix: "", icon: Users, color: "from-primary to-primary", metricType: "total_faculty" as const },
-    { label: "Avg Performance", numValue: institutionStats.avgPerformance, suffix: "%", icon: BarChart3, color: "from-green-500 to-green-600", metricType: "avg_performance" as const },
-    { label: "Avg Capacity", numValue: institutionStats.avgCapacity, suffix: "%", icon: TrendingUp, color: "from-accent to-accent", metricType: "avg_capacity" as const },
-    { label: "Avg Motivation", numValue: institutionStats.avgMotivation, suffix: "%", icon: Award, color: "from-orange-500 to-orange-600", metricType: "avg_motivation" as const },
-    { label: "Departments", numValue: institutionStats.totalDepartments, suffix: "", icon: Building2, color: "from-pink-500 to-pink-600", metricType: "departments" as const },
-    { label: "Completed Trainings", numValue: institutionStats.completedTrainings, suffix: "", icon: GraduationCap, color: "from-teal-500 to-teal-600", metricType: "completed_trainings" as const },
+    { label: "Total Faculty", numValue: institutionStats.totalFaculty, suffix: "", icon: Users, color: "from-primary-ink to-primary-ink", metricType: "total_faculty" as const },
+    { label: "Avg Performance", numValue: institutionStats.avgPerformance, suffix: "%", icon: BarChart3, color: "from-primary-ink to-primary-ink", metricType: "avg_performance" as const },
+    { label: "Avg Capacity", numValue: institutionStats.avgCapacity, suffix: "%", icon: TrendingUp, color: "from-accent-ink to-accent-ink", metricType: "avg_capacity" as const },
+    { label: "Avg Motivation", numValue: institutionStats.avgMotivation, suffix: "%", icon: Award, color: "from-accent-ink to-accent-ink", metricType: "avg_motivation" as const },
+    { label: "Departments", numValue: institutionStats.totalDepartments, suffix: "", icon: Building2, color: "from-accent-ink to-accent-ink", metricType: "departments" as const },
+    { label: "Completed Trainings", numValue: institutionStats.completedTrainings, suffix: "", icon: GraduationCap, color: "from-primary-ink to-primary-ink", metricType: "completed_trainings" as const },
   ];
 
   const [adminMetricSheetOpen, setAdminMetricSheetOpen] = useState(false);
@@ -350,7 +350,7 @@ const AdminDashboard = () => {
   if (authLoading || roleLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -373,8 +373,8 @@ const AdminDashboard = () => {
                 <Menu className="h-6 w-6" aria-hidden="true" />
               </button>
               <div className="flex-shrink-0 flex items-center">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">AD</span>
+                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-accent-ink to-accent-ink flex items-center justify-center">
+                  <span className="text-gradient-foreground font-bold text-sm">AD</span>
                 </div>
                 <span className="ml-2 text-xl font-semibold text-foreground hidden md:block">
                   Admin Dashboard
@@ -388,7 +388,7 @@ const AdminDashboard = () => {
               <button className="bg-muted p-2 rounded-full text-muted-foreground hover:text-foreground focus:outline-none">
                 <Bell className="h-5 w-5" />
               </button>
-              <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+              <Badge variant="secondary" className="bg-destructive/10 text-destructive dark:bg-destructive/30 dark:text-destructive">
                 Admin
               </Badge>
             </div>
@@ -400,7 +400,7 @@ const AdminDashboard = () => {
         {/* Mobile Sidebar Overlay */}
         {sidebarOpen && (
           <div
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            className="fixed inset-0 bg-overlay/50 z-40 md:hidden"
             aria-hidden="true"
             onClick={() => setSidebarOpen(false)}
           />
@@ -481,7 +481,7 @@ const AdminDashboard = () => {
                           {isActive && !sidebarCollapsed && (
                             <span className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-r-full bg-primary" aria-hidden="true" />
                           )}
-                          <item.icon className={`flex-shrink-0 h-[16px] w-[16px] ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={2} aria-hidden="true" />
+                          <item.icon className={`flex-shrink-0 h-[16px] w-[16px] ${isActive ? "text-primary-ink" : "text-muted-foreground group-hover:text-foreground"} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={2} aria-hidden="true" />
                           {!sidebarCollapsed && item.label}
                         </button>
                       );
@@ -698,7 +698,7 @@ const AdminDashboard = () => {
           >
             <div className="px-4 py-4 sm:px-6 border-b border-border">
               <h3 className="text-lg font-medium text-foreground flex items-center gap-2">
-                <ChevronRight className="h-5 w-5 text-primary" />
+                <ChevronRight className="h-5 w-5 text-primary-ink" />
                 Quick Actions
               </h3>
             </div>
@@ -720,14 +720,14 @@ const AdminDashboard = () => {
                   className="group relative flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-5 text-left shadow-sm transition-all duration-300 hover:border-primary/40 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${item.accent} transition-colors duration-300`}>
-                    <item.icon className="h-6 w-6 text-primary transition-transform duration-300 group-hover:scale-110" />
+                    <item.icon className="h-6 w-6 text-primary-ink transition-transform duration-300 group-hover:scale-110" />
                   </div>
                   <div className="text-center">
                     <span className="text-sm font-semibold text-foreground">{item.label}</span>
                     <p className="mt-0.5 text-xs text-muted-foreground">{item.desc}</p>
                   </div>
                   <span className="absolute bottom-2 right-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <ArrowRight className="h-3.5 w-3.5 text-primary" />
+                    <ArrowRight className="h-3.5 w-3.5 text-primary-ink" />
                   </span>
                 </motion.button>
               ))}
@@ -744,7 +744,7 @@ const AdminDashboard = () => {
             >
               <div className="px-4 py-5 sm:px-6 border-b border-border">
                 <h3 className="text-lg font-medium text-foreground flex items-center gap-2">
-                  <FolderCheck className="h-5 w-5 text-primary" />
+                  <FolderCheck className="h-5 w-5 text-primary-ink" />
                   Document Approvals
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -824,7 +824,7 @@ const AdminDashboard = () => {
                   {departmentStats.length === 0 && (
                     <div className="flex flex-col items-center py-8 text-center">
                       <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-3">
-                        <Building2 className="h-7 w-7 text-primary" />
+                        <Building2 className="h-7 w-7 text-primary-ink" />
                       </div>
                       <p className="font-medium text-foreground mb-1">No departments yet</p>
                       <p className="text-xs text-muted-foreground max-w-[200px]">Add departments and assign faculty to see rankings here.</p>
@@ -851,7 +851,7 @@ const AdminDashboard = () => {
                     All faculty members and their metrics
                   </p>
                 </div>
-                <Button variant="ghost" size="sm" className="text-primary">
+                <Button variant="ghost" size="sm" className="text-primary-ink">
                   View All <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
@@ -874,7 +874,7 @@ const AdminDashboard = () => {
                           <div className="flex items-center gap-3">
                             <Avatar className="h-8 w-8">
                               <AvatarImage src={faculty.avatar_url || undefined} />
-                              <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-xs">
+                              <AvatarFallback className="bg-gradient-to-br from-primary-ink to-accent-ink text-gradient-foreground text-xs">
                                 {getInitials(faculty.full_name)}
                               </AvatarFallback>
                             </Avatar>
@@ -899,11 +899,11 @@ const AdminDashboard = () => {
                           <div className="flex items-center gap-2 min-w-[100px]">
                             <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
                               <div
-                                className={`h-full rounded-full transition-all ${(faculty.avgCapacity || 0) >= 80 ? 'bg-[#3b82f6]' : (faculty.avgCapacity || 0) >= 70 ? 'bg-[#22c55e]' : (faculty.avgCapacity || 0) >= 60 ? 'bg-[#f59e0b]' : 'bg-[#ef4444]'}`}
+                                className={`h-full rounded-full transition-all ${(faculty.avgCapacity || 0) >= 80 ? 'bg-info' : (faculty.avgCapacity || 0) >= 70 ? 'bg-success' : (faculty.avgCapacity || 0) >= 60 ? 'bg-warning' : 'bg-destructive'}`}
                                 style={{ width: `${faculty.avgCapacity || 0}%` }}
                               />
                             </div>
-                            <span className={`text-xs font-semibold tabular-nums w-8 text-right ${(faculty.avgCapacity || 0) >= 80 ? 'text-[#3b82f6]' : (faculty.avgCapacity || 0) >= 70 ? 'text-[#22c55e]' : (faculty.avgCapacity || 0) >= 60 ? 'text-[#f59e0b]' : 'text-[#ef4444]'}`}>
+                            <span className={`text-xs font-semibold tabular-nums w-8 text-right ${(faculty.avgCapacity || 0) >= 80 ? 'text-info' : (faculty.avgCapacity || 0) >= 70 ? 'text-success' : (faculty.avgCapacity || 0) >= 60 ? 'text-warning' : 'text-destructive'}`}>
                               {faculty.avgCapacity || 0}%
                             </span>
                           </div>
@@ -912,11 +912,11 @@ const AdminDashboard = () => {
                           <div className="flex items-center gap-2 min-w-[100px]">
                             <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
                               <div
-                                className={`h-full rounded-full transition-all ${(faculty.latestMotivation || 0) >= 80 ? 'bg-[#3b82f6]' : (faculty.latestMotivation || 0) >= 70 ? 'bg-[#22c55e]' : (faculty.latestMotivation || 0) >= 60 ? 'bg-[#f59e0b]' : 'bg-[#ef4444]'}`}
+                                className={`h-full rounded-full transition-all ${(faculty.latestMotivation || 0) >= 80 ? 'bg-info' : (faculty.latestMotivation || 0) >= 70 ? 'bg-success' : (faculty.latestMotivation || 0) >= 60 ? 'bg-warning' : 'bg-destructive'}`}
                                 style={{ width: `${faculty.latestMotivation || 0}%` }}
                               />
                             </div>
-                            <span className={`text-xs font-semibold tabular-nums w-8 text-right ${(faculty.latestMotivation || 0) >= 80 ? 'text-[#3b82f6]' : (faculty.latestMotivation || 0) >= 70 ? 'text-[#22c55e]' : (faculty.latestMotivation || 0) >= 60 ? 'text-[#f59e0b]' : 'text-[#ef4444]'}`}>
+                            <span className={`text-xs font-semibold tabular-nums w-8 text-right ${(faculty.latestMotivation || 0) >= 80 ? 'text-info' : (faculty.latestMotivation || 0) >= 70 ? 'text-success' : (faculty.latestMotivation || 0) >= 60 ? 'text-warning' : 'text-destructive'}`}>
                               {faculty.latestMotivation || 0}%
                             </span>
                           </div>
@@ -925,7 +925,7 @@ const AdminDashboard = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-primary text-xs"
+                            className="text-primary-ink text-xs"
                             onClick={() => setSelectedFacultyId(
                               selectedFacultyId === faculty.user_id ? null : faculty.user_id
                             )}

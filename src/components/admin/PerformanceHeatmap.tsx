@@ -90,7 +90,7 @@ const PerformanceHeatmap = () => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-48">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
         </CardContent>
       </Card>
     );
@@ -100,7 +100,7 @@ const PerformanceHeatmap = () => {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
-          <Grid3X3 className="h-5 w-5 text-primary" />
+          <Grid3X3 className="h-5 w-5 text-primary-ink" />
           Performance Heatmap
         </CardTitle>
         <CardDescription>Faculty performance scores across departments — hover for details</CardDescription>

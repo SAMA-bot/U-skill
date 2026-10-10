@@ -190,16 +190,16 @@ const NotificationCenter = () => {
   const getIcon = (type: Notification["type"], severity: Notification["severity"]) => {
     switch (type) {
       case "goal_achieved":
-        return <CheckCircle2 className="h-5 w-5 text-green-500" />;
+        return <CheckCircle2 className="h-5 w-5 text-success" />;
       case "goal_deadline":
-        return <Calendar className="h-5 w-5 text-amber-500" />;
+        return <Calendar className="h-5 w-5 text-warning" />;
       case "goal_at_risk":
-        return <AlertTriangle className="h-5 w-5 text-red-500" />;
+        return <AlertTriangle className="h-5 w-5 text-destructive" />;
       case "performance_change":
         return severity === "success" ? (
-          <TrendingUp className="h-5 w-5 text-green-500" />
+          <TrendingUp className="h-5 w-5 text-success" />
         ) : (
-          <TrendingDown className="h-5 w-5 text-red-500" />
+          <TrendingDown className="h-5 w-5 text-destructive" />
         );
       default:
         return <Bell className="h-5 w-5 text-muted-foreground" />;
@@ -209,11 +209,11 @@ const NotificationCenter = () => {
   const getSeverityStyles = (severity: Notification["severity"]) => {
     switch (severity) {
       case "success":
-        return "border-l-green-500 bg-green-50 dark:bg-green-900/10";
+        return "border-l-success/40 bg-success/10 dark:bg-success/10";
       case "warning":
-        return "border-l-amber-500 bg-amber-50 dark:bg-amber-900/10";
+        return "border-l-warning/40 bg-warning/10 dark:bg-warning/10";
       case "error":
-        return "border-l-red-500 bg-red-50 dark:bg-red-900/10";
+        return "border-l-destructive/40 bg-destructive/10 dark:bg-destructive/10";
       default:
         return "border-l-primary bg-primary/10 dark:bg-primary/10";
     }
@@ -227,7 +227,7 @@ const NotificationCenter = () => {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Bell className="h-5 w-5 text-primary" />
+              <Bell className="h-5 w-5 text-primary-ink" />
               Notifications
               {unreadCount > 0 && (
                 <Badge variant="destructive" className="ml-2">
@@ -257,7 +257,7 @@ const NotificationCenter = () => {
           </div>
         ) : notifications.length === 0 ? (
           <div className="text-center py-8">
-            <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-3" />
+            <CheckCircle2 className="h-12 w-12 text-success mx-auto mb-3" />
             <h4 className="text-lg font-medium text-foreground mb-1">All Caught Up!</h4>
             <p className="text-sm text-muted-foreground">
               You have no new notifications at this time.

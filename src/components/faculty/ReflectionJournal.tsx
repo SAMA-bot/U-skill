@@ -21,11 +21,11 @@ interface JournalEntry {
 }
 
 const moodOptions = [
-  { value: "great", icon: Heart, label: "Great", color: "text-green-500" },
-  { value: "good", icon: Smile, label: "Good", color: "text-primary" },
+  { value: "great", icon: Heart, label: "Great", color: "text-success" },
+  { value: "good", icon: Smile, label: "Good", color: "text-primary-ink" },
   { value: "neutral", icon: Meh, label: "Neutral", color: "text-muted-foreground" },
-  { value: "low", icon: Frown, label: "Low", color: "text-orange-500" },
-  { value: "energized", icon: Zap, label: "Energized", color: "text-yellow-500" },
+  { value: "low", icon: Frown, label: "Low", color: "text-warning" },
+  { value: "energized", icon: Zap, label: "Energized", color: "text-warning" },
 ];
 
 const ReflectionJournal = () => {
@@ -109,7 +109,7 @@ const ReflectionJournal = () => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-48">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
         </CardContent>
       </Card>
     );
@@ -121,7 +121,7 @@ const ReflectionJournal = () => {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-base flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-primary" />
+              <BookOpen className="h-5 w-5 text-primary-ink" />
               Reflection Journal
             </CardTitle>
             <CardDescription>Record your thoughts, learnings, and reflections</CardDescription>

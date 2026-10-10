@@ -108,15 +108,15 @@ const AreasToImprove = () => {
   if (scoreData.loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
       </div>
     );
   }
 
   const getScoreColor = (score: number) => {
-    if (score >= 70) return "text-green-600 dark:text-green-400";
-    if (score >= 40) return "text-yellow-600 dark:text-yellow-400";
-    return "text-red-600 dark:text-red-400";
+    if (score >= 70) return "text-success dark:text-success";
+    if (score >= 40) return "text-warning dark:text-warning";
+    return "text-destructive dark:text-destructive";
   };
 
   return (
@@ -132,7 +132,7 @@ const AreasToImprove = () => {
         <CardContent>
           {weakAreas.length === 0 ? (
             <div className="text-center py-6">
-              <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 text-sm">
+              <Badge className="bg-success/10 text-success dark:bg-success/30 dark:text-success text-sm">
                 All areas on track!
               </Badge>
               <p className="text-sm text-muted-foreground mt-2">
@@ -173,7 +173,7 @@ const AreasToImprove = () => {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
-              <GraduationCap className="h-5 w-5 text-primary" />
+              <GraduationCap className="h-5 w-5 text-primary-ink" />
               Suggested Trainings
             </CardTitle>
           </CardHeader>

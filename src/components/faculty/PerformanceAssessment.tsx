@@ -206,9 +206,9 @@ const PerformanceAssessment = () => {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600 dark:text-green-400";
-    if (score >= 60) return "text-yellow-600 dark:text-yellow-400";
-    return "text-red-600 dark:text-red-400";
+    if (score >= 80) return "text-success dark:text-success";
+    if (score >= 60) return "text-warning dark:text-warning";
+    return "text-destructive dark:text-destructive";
   };
 
   const getBadgeVariant = (score: number) => {
@@ -275,7 +275,7 @@ const PerformanceAssessment = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -297,7 +297,7 @@ const PerformanceAssessment = () => {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
             <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <BarChart3 className="h-8 w-8 text-primary" />
+              <BarChart3 className="h-8 w-8 text-primary-ink" />
             </div>
             <h3 className="text-xl font-semibold text-foreground mb-2">Welcome to Your Performance Dashboard</h3>
             <p className="text-muted-foreground max-w-md mb-4">
@@ -357,7 +357,7 @@ const PerformanceAssessment = () => {
           <Card className="h-full">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Award className="h-5 w-5 text-primary" />
+                <Award className="h-5 w-5 text-primary-ink" />
                 Overall Performance
               </CardTitle>
               <CardDescription>Your current standing</CardDescription>
@@ -399,8 +399,8 @@ const PerformanceAssessment = () => {
                     <div
                       className={`flex items-center text-sm ${
                         trend === "up"
-                          ? "text-green-600 dark:text-green-400"
-                          : "text-red-600 dark:text-red-400"
+                          ? "text-success dark:text-success"
+                          : "text-destructive dark:text-destructive"
                       }`}
                     >
                       {trend === "up" ? (
@@ -427,7 +427,7 @@ const PerformanceAssessment = () => {
           <Card className="h-full">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-primary" />
+                <BarChart3 className="h-5 w-5 text-primary-ink" />
                 Performance by Category
               </CardTitle>
               <CardDescription>Breakdown of your scores</CardDescription>
@@ -646,7 +646,7 @@ const PerformanceAssessment = () => {
                       >
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-2">
-                            <Briefcase className="h-4 w-4 text-primary" />
+                            <Briefcase className="h-4 w-4 text-primary-ink" />
                             <span className="font-medium text-foreground">{skill.skill_name}</span>
                           </div>
                           <div className="flex items-center gap-4 text-sm">
@@ -655,7 +655,7 @@ const PerformanceAssessment = () => {
                             </span>
                             <ChevronRight className="h-4 w-4 text-muted-foreground" />
                             <span className="text-muted-foreground">
-                              Target: <span className="font-medium text-primary">{skill.target_level}</span>
+                              Target: <span className="font-medium text-primary-ink">{skill.target_level}</span>
                             </span>
                           </div>
                         </div>
@@ -671,10 +671,10 @@ const PerformanceAssessment = () => {
                           <span
                             className={
                               gap <= 10
-                                ? "text-green-600 dark:text-green-400"
+                                ? "text-success dark:text-success"
                                 : gap <= 25
-                                ? "text-yellow-600 dark:text-yellow-400"
-                                : "text-red-600 dark:text-red-400"
+                                ? "text-warning dark:text-warning"
+                                : "text-destructive dark:text-destructive"
                             }
                           >
                             {gap} points to reach target
@@ -734,7 +734,7 @@ const PerformanceAssessment = () => {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                <FileDown className="h-5 w-5 text-primary" />
+                <FileDown className="h-5 w-5 text-primary-ink" />
                 Performance Report
               </CardTitle>
               <CardDescription>

@@ -62,7 +62,7 @@ export const TRACKS: TrackDefinition[] = [
     icon: Shield,
     categories: ["technology"],
     accentClass: "border-primary/40",
-    iconBgClass: "bg-primary/10 text-primary",
+    iconBgClass: "bg-primary/10 text-primary-ink",
   },
   {
     key: "ai-ml",
@@ -174,7 +174,7 @@ const TrackRow = ({ track, courses }: { track: TrackDefinition; courses: Course[
             <Icon className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="font-semibold text-foreground hover:text-primary transition-colors">{track.label}</h3>
+            <h3 className="font-semibold text-foreground hover:text-primary-ink transition-colors">{track.label}</h3>
             <p className="text-xs text-muted-foreground">{courses.length} course{courses.length !== 1 ? "s" : ""}</p>
           </div>
         </div>
@@ -314,11 +314,11 @@ const TrackCourseCard = ({
         />
         {completed && (
           <div className="absolute top-2 right-2 bg-success/90 backdrop-blur-sm rounded-full p-1">
-            <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-success-foreground" />
           </div>
         )}
         {course.duration_hours && (
-          <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm rounded-md px-2 py-0.5 text-[10px] text-white flex items-center gap-1">
+          <div className="absolute bottom-2 left-2 bg-card/90 backdrop-blur-sm rounded-md px-2 py-0.5 text-[10px] text-card-foreground flex items-center gap-1">
             <Clock className="h-2.5 w-2.5" />
             {course.duration_hours}h
           </div>
@@ -344,7 +344,7 @@ const TrackCourseCard = ({
             </Badge>
           )}
           {course.duration_hours && (
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-primary border-primary/30">
+            <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-primary-ink border-primary/30">
               <Award className="h-2.5 w-2.5 mr-0.5" />
               +{Math.min(course.duration_hours * 5, 25)} pts
             </Badge>

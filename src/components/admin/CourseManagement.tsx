@@ -339,12 +339,12 @@ export function CourseManagement() {
   const getCategoryBadgeStyle = (category: string) => {
     const styles: Record<string, string> = {
       general: 'bg-muted text-muted-foreground',
-      teaching: 'bg-primary/10 text-primary',
+      teaching: 'bg-primary/10 text-primary-ink',
       research: 'bg-info/10 text-info',
       technology: 'bg-success/10 text-success',
       leadership: 'bg-accent/10 text-accent-foreground',
       communication: 'bg-destructive/10 text-destructive',
-      'professional-development': 'bg-primary/10 text-primary',
+      'professional-development': 'bg-primary/10 text-primary-ink',
     };
     return styles[category] || styles.general;
   };
@@ -352,7 +352,7 @@ export function CourseManagement() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -419,7 +419,7 @@ export function CourseManagement() {
                           className={`
                             flex flex-col items-center gap-1.5 p-3 rounded-lg border-2 text-center transition-all
                             ${isSelected
-                              ? 'border-primary bg-primary/5 text-primary'
+                              ? 'border-primary bg-primary/5 text-primary-ink'
                               : 'border-border hover:border-primary/30 text-muted-foreground hover:text-foreground'}
                           `}
                         >
@@ -535,7 +535,7 @@ export function CourseManagement() {
                 {formData.content_type === 'platform_video' && (
                   <div className="space-y-2 p-3 bg-muted/30 rounded-lg border border-border/50">
                     <Label htmlFor="video_file" className="flex items-center gap-2">
-                      <Video className="h-4 w-4 text-primary" />
+                      <Video className="h-4 w-4 text-primary-ink" />
                       Video File *
                     </Label>
                     <Input
@@ -603,7 +603,7 @@ export function CourseManagement() {
                 </div>
 
                 {uploadProgress && (
-                  <div className="flex items-center gap-2 text-sm text-primary">
+                  <div className="flex items-center gap-2 text-sm text-primary-ink">
                     <Loader2 className="h-4 w-4 animate-spin" />
                     {uploadProgress}
                   </div>
@@ -617,7 +617,7 @@ export function CourseManagement() {
                   <div className="flex items-center space-x-2">
                     <Switch id="mandatory" checked={formData.is_mandatory} onCheckedChange={(checked) => setFormData({ ...formData, is_mandatory: checked })} />
                     <Label htmlFor="mandatory" className="flex items-center gap-1.5">
-                      <AlertTriangle className="h-3.5 w-3.5 text-accent" />
+                      <AlertTriangle className="h-3.5 w-3.5 text-accent-ink" />
                       Mark as mandatory training
                     </Label>
                   </div>

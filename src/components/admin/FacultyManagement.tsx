@@ -254,17 +254,17 @@ export default function FacultyManagement() {
 
   const getBadgeStyle = (badge?: string) => {
     switch (badge) {
-      case "Excellent": return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400";
-      case "Good": return "bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary";
-      default: return "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400";
+      case "Excellent": return "bg-success/10 text-success dark:bg-success/30 dark:text-success";
+      case "Good": return "bg-primary/10 text-primary-ink dark:bg-primary/30 dark:text-primary-ink";
+      default: return "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning";
     }
   };
 
   const getStatusStyle = (status: string) => {
     switch (status) {
-      case "completed": case "verified": return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400";
-      case "pending": case "enrolled": return "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400";
-      case "rejected": return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+      case "completed": case "verified": return "bg-success/10 text-success dark:bg-success/30 dark:text-success";
+      case "pending": case "enrolled": return "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning";
+      case "rejected": return "bg-destructive/10 text-destructive dark:bg-destructive/30 dark:text-destructive";
       default: return "bg-muted text-muted-foreground";
     }
   };
@@ -283,7 +283,7 @@ export default function FacultyManagement() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -306,10 +306,10 @@ export default function FacultyManagement() {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Faculty", value: faculty.length, icon: GraduationCap, color: "text-primary" },
-          { label: "Excellent", value: faculty.filter((f) => f.badge === "Excellent").length, icon: Award, color: "text-emerald-500" },
-          { label: "Good", value: faculty.filter((f) => f.badge === "Good").length, icon: TrendingUp, color: "text-primary" },
-          { label: "Needs Improvement", value: faculty.filter((f) => f.badge === "Needs Improvement").length, icon: BarChart3, color: "text-amber-500" },
+          { label: "Total Faculty", value: faculty.length, icon: GraduationCap, color: "text-primary-ink" },
+          { label: "Excellent", value: faculty.filter((f) => f.badge === "Excellent").length, icon: Award, color: "text-success" },
+          { label: "Good", value: faculty.filter((f) => f.badge === "Good").length, icon: TrendingUp, color: "text-primary-ink" },
+          { label: "Needs Improvement", value: faculty.filter((f) => f.badge === "Needs Improvement").length, icon: BarChart3, color: "text-warning" },
         ].map((card) => (
           <div key={card.label} className="bg-card border border-border rounded-lg p-4 flex items-center gap-3">
             <card.icon className={`h-5 w-5 ${card.color}`} />
@@ -372,7 +372,7 @@ export default function FacultyManagement() {
                       <div className="flex items-center gap-3">
                         <Avatar className="h-9 w-9">
                           <AvatarImage src={fac.avatar_url || undefined} />
-                          <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                          <AvatarFallback className="bg-primary/10 text-primary-ink text-xs">
                             {getInitials(fac.full_name)}
                           </AvatarFallback>
                         </Avatar>
@@ -495,7 +495,7 @@ export default function FacultyManagement() {
               <div className="flex items-center gap-4 pb-4">
                 <Avatar className="h-14 w-14">
                   <AvatarImage src={selectedFaculty.avatar_url || undefined} />
-                  <AvatarFallback className="bg-primary/10 text-primary text-lg">
+                  <AvatarFallback className="bg-primary/10 text-primary-ink text-lg">
                     {getInitials(selectedFaculty.full_name)}
                   </AvatarFallback>
                 </Avatar>
@@ -517,7 +517,7 @@ export default function FacultyManagement() {
 
           {profileLoading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
             </div>
           ) : (
             <Tabs defaultValue="trainings" className="mt-4">

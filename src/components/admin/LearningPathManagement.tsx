@@ -70,7 +70,7 @@ interface LessonContentItem {
 
 const CONTENT_TYPE_OPTIONS = [
   { value: "text", label: "Text Explanation", icon: Type, color: "text-foreground" },
-  { value: "platform_video", label: "Platform Video", icon: Video, color: "text-primary" },
+  { value: "platform_video", label: "Platform Video", icon: Video, color: "text-primary-ink" },
   { value: "external_url", label: "External URL", icon: Link2, color: "text-info" },
   { value: "pdf", label: "PDF Document", icon: FileText, color: "text-destructive" },
 ];
@@ -422,7 +422,7 @@ export function LearningPathManagement() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+    return <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary-ink" /></div>;
   }
 
   return (
@@ -502,7 +502,7 @@ export function LearningPathManagement() {
                             <AccordionItem key={mod.id} value={mod.id} className="border rounded-lg overflow-hidden">
                               <AccordionTrigger className="px-3 py-2 hover:no-underline hover:bg-muted/30 text-sm">
                                 <div className="flex items-center gap-2 flex-1 min-w-0 text-left">
-                                  <Layers className="h-4 w-4 text-accent shrink-0" />
+                                  <Layers className="h-4 w-4 text-accent-ink shrink-0" />
                                   <span className="font-medium truncate">{mod.title}</span>
                                   <Badge variant="outline" className="text-[10px] ml-auto mr-2">
                                     {(lessons[mod.id] || []).length} lessons
@@ -528,9 +528,9 @@ export function LearningPathManagement() {
                                   {(lessons[mod.id] || []).map((lesson) => (
                                     <div key={lesson.id} className="border rounded-lg p-2.5 bg-muted/20">
                                       <div className="flex items-center gap-2 mb-1.5">
-                                        <Zap className="h-3.5 w-3.5 text-primary shrink-0" />
+                                        <Zap className="h-3.5 w-3.5 text-primary-ink shrink-0" />
                                         <span className="text-sm font-medium flex-1 truncate">{lesson.title}</span>
-                                        <Badge variant="outline" className="text-[10px] text-primary border-primary/30">
+                                        <Badge variant="outline" className="text-[10px] text-primary-ink border-primary/30">
                                           {lesson.xp_reward} XP
                                         </Badge>
                                         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => openLessonDialog(mod.id, lesson)}>
@@ -722,7 +722,7 @@ export function LearningPathManagement() {
                       type="button"
                       onClick={() => setContentForm({ ...contentForm, content_type: opt.value })}
                       className={`flex flex-col items-center gap-1 p-2.5 rounded-lg border-2 transition-all text-xs ${
-                        selected ? "border-primary bg-primary/5 text-primary" : "border-border hover:border-primary/30 text-muted-foreground"
+                        selected ? "border-primary bg-primary/5 text-primary-ink" : "border-border hover:border-primary/30 text-muted-foreground"
                       }`}
                     >
                       <opt.icon className="h-4 w-4" />
@@ -768,7 +768,7 @@ export function LearningPathManagement() {
               </div>
             )}
 
-            {uploadProgress && <p className="text-sm text-primary animate-pulse">{uploadProgress}</p>}
+            {uploadProgress && <p className="text-sm text-primary-ink animate-pulse">{uploadProgress}</p>}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setContentDialogOpen(false)}>Cancel</Button>

@@ -52,8 +52,8 @@ export default function RoleSummaryCards() {
       label: "Admin",
       description: "Full system access with user management, role assignment, and all administrative capabilities.",
       icon: Shield,
-      color: "text-red-600 dark:text-red-400",
-      bgColor: "bg-red-100 dark:bg-red-900/30",
+      color: "text-destructive dark:text-destructive",
+      bgColor: "bg-destructive/10 dark:bg-destructive/30",
       permissions: ["View All", "Edit All", "Approve", "Delete", "Manage Users", "Manage Roles"],
       userCount: roleCounts["admin"] || 0,
     },
@@ -62,7 +62,7 @@ export default function RoleSummaryCards() {
       label: "HOD / Reviewer",
       description: "Department-level oversight with document approval, performance review, and feedback capabilities.",
       icon: Eye,
-      color: "text-accent dark:text-accent",
+      color: "text-accent-ink dark:text-accent-ink",
       bgColor: "bg-accent/10 dark:bg-accent/30",
       permissions: ["View Department", "Approve Documents", "Review Performance", "Submit Feedback"],
       userCount: roleCounts["hod"] || 0,
@@ -72,7 +72,7 @@ export default function RoleSummaryCards() {
       label: "Faculty",
       description: "Personal workspace for managing activities, self-assessments, documents, and motivation tools.",
       icon: GraduationCap,
-      color: "text-primary dark:text-primary",
+      color: "text-primary-ink dark:text-primary-ink",
       bgColor: "bg-primary/10 dark:bg-primary/30",
       permissions: ["View Own Data", "Edit Profile", "Upload Documents", "Self-Assess", "Enroll Courses"],
       userCount: roleCounts["faculty"] || 0,
@@ -82,7 +82,7 @@ export default function RoleSummaryCards() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }

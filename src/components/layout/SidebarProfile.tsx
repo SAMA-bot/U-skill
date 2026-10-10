@@ -35,7 +35,7 @@ export function SidebarProfile({ user, profile, role, collapsed }: SidebarProfil
         }`}
         title={collapsed ? displayName : undefined}
       >
-        <div className="relative flex-shrink-0 h-9 w-9 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center overflow-hidden ring-2 ring-background/50 shadow-md">
+        <div className="relative flex-shrink-0 h-9 w-9 rounded-full bg-gradient-to-br from-primary-ink to-accent-ink flex items-center justify-center overflow-hidden ring-2 ring-background/50 shadow-md">
           {profile?.avatar_url ? (
             <img
               src={profile.avatar_url}
@@ -43,7 +43,7 @@ export function SidebarProfile({ user, profile, role, collapsed }: SidebarProfil
               className="h-full w-full object-cover"
             />
           ) : (
-            <span className="text-white font-bold text-xs">{initials}</span>
+            <span className="text-gradient-foreground font-bold text-xs">{initials}</span>
           )}
         </div>
         {!collapsed && (
@@ -51,7 +51,7 @@ export function SidebarProfile({ user, profile, role, collapsed }: SidebarProfil
             <span className="text-sm font-semibold text-foreground truncate w-full">
               {displayName}
             </span>
-            <span className="text-xs font-medium text-primary dark:text-white">
+            <span className="text-xs font-medium text-primary-ink dark:text-gradient-foreground">
               {role}
             </span>
           </div>

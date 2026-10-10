@@ -172,7 +172,7 @@ const HodPerformanceReview = ({ department }: HodPerformanceReviewProps) => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
         </CardContent>
       </Card>
     );
@@ -184,7 +184,7 @@ const HodPerformanceReview = ({ department }: HodPerformanceReviewProps) => {
       <div className="flex flex-col gap-4">
         <div>
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-primary" />
+            <BarChart3 className="h-5 w-5 text-primary-ink" />
             Faculty Performance Review
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -251,7 +251,7 @@ const HodPerformanceReview = ({ department }: HodPerformanceReviewProps) => {
                   >
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={f.avatar_url || undefined} />
-                      <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                      <AvatarFallback className="bg-primary/10 text-primary-ink text-sm">
                         {getInitials(f.full_name)}
                       </AvatarFallback>
                     </Avatar>
@@ -319,9 +319,9 @@ const HodPerformanceReview = ({ department }: HodPerformanceReviewProps) => {
                       </div>
 
                       {f.performanceScore < 60 && (
-                        <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800/30">
-                          <p className="text-xs font-medium text-amber-800 dark:text-amber-400 mb-1">💡 Improvement Recommendations</p>
-                          <ul className="text-xs text-amber-700 dark:text-amber-500 space-y-0.5 list-disc list-inside">
+                        <div className="p-3 rounded-lg bg-warning/10 dark:bg-warning/10 border border-warning/40 dark:border-warning/30">
+                          <p className="text-xs font-medium text-warning dark:text-warning mb-1">💡 Improvement Recommendations</p>
+                          <ul className="text-xs text-warning dark:text-warning space-y-0.5 list-disc list-inside">
                             {f.trainingsCompleted === 0 && <li>Encourage enrollment in training programs</li>}
                             {f.capacityScore < 40 && <li>Focus on skill development workshops</li>}
                             {f.motivationIndex < 40 && <li>Schedule 1-on-1 mentoring session</li>}

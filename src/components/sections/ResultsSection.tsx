@@ -30,7 +30,7 @@ export function ResultsSection() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="text-primary font-medium text-xs uppercase tracking-[0.2em]">Expected Impact</span>
+          <span className="text-primary-ink font-medium text-xs uppercase tracking-[0.2em]">Expected Impact</span>
           <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4 mb-6 tracking-tight">
             Projected Results
           </h2>
@@ -51,7 +51,7 @@ export function ResultsSection() {
               <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4" style={{
                 background: 'linear-gradient(135deg, hsl(var(--primary) / 0.12), hsl(var(--accent) / 0.08))',
               }}>
-                <result.icon className="w-6 h-6 text-primary" />
+                <result.icon className="w-6 h-6 text-primary-ink" />
               </div>
               <div className="text-3xl font-bold font-heading gradient-text mb-2">{result.value}</div>
               <h3 className="font-heading font-semibold text-lg text-foreground mb-2">{result.title}</h3>

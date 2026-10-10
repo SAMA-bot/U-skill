@@ -93,15 +93,15 @@ const YearWiseComparison = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
       </div>
     );
   }
 
   const getTrendIcon = (current: number, previous: number) => {
     const diff = current - previous;
-    if (diff > 0) return <TrendingUp className="h-4 w-4 text-green-500" />;
-    if (diff < 0) return <TrendingDown className="h-4 w-4 text-red-500" />;
+    if (diff > 0) return <TrendingUp className="h-4 w-4 text-success" />;
+    if (diff < 0) return <TrendingDown className="h-4 w-4 text-destructive" />;
     return <Minus className="h-4 w-4 text-muted-foreground" />;
   };
 
@@ -111,7 +111,7 @@ const YearWiseComparison = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <CalendarRange className="h-5 w-5 text-primary" />
+            <CalendarRange className="h-5 w-5 text-primary-ink" />
             Year-wise Performance Comparison
           </CardTitle>
           <CardDescription>Compare your performance across academic years</CardDescription>
@@ -169,7 +169,7 @@ const YearWiseComparison = () => {
                     <span className="text-sm font-semibold text-foreground">{s.year}</span>
                     {idx > 0 && getTrendIcon(s.average, summaries[idx - 1].average)}
                   </div>
-                  <div className="text-3xl font-bold text-primary mb-1">{s.average}</div>
+                  <div className="text-3xl font-bold text-primary-ink mb-1">{s.average}</div>
                   <div className="text-xs text-muted-foreground">Average Score</div>
                   <div className="mt-3 space-y-1 text-xs">
                     <div className="flex justify-between">

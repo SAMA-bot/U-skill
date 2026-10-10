@@ -65,9 +65,9 @@ const getIconConfig = (type: Notification["type"], severity: Notification["sever
     case "course_completed":
       return { icon: <GraduationCap className={cls} />, bg: "bg-success/15", text: "text-success" };
     case "course_started":
-      return { icon: <PlayCircle className={cls} />, bg: "bg-primary/15", text: "text-primary" };
+      return { icon: <PlayCircle className={cls} />, bg: "bg-primary/15", text: "text-primary-ink" };
     case "course_enrolled":
-      return { icon: <BookOpen className={cls} />, bg: "bg-primary/15", text: "text-primary" };
+      return { icon: <BookOpen className={cls} />, bg: "bg-primary/15", text: "text-primary-ink" };
     case "training_reminder":
       return { icon: <ClipboardList className={cls} />, bg: "bg-warning/15", text: "text-warning" };
     case "achievement_earned":
@@ -243,12 +243,12 @@ const HeaderNotifications = () => {
                     className={cn(
                       "flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium transition-all",
                       isActive
-                        ? "bg-primary/10 text-primary"
+                        ? "bg-primary/10 text-primary-ink"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted/60",
                     )}
                   >
                     {tab.label}
-                    <span className={cn("text-[10px] tabular-nums", isActive ? "text-primary/70" : "text-muted-foreground/60")}>
+                    <span className={cn("text-[10px] tabular-nums", isActive ? "text-primary-ink/70" : "text-muted-foreground/60")}>
                       ({count})
                     </span>
                   </button>
@@ -262,7 +262,7 @@ const HeaderNotifications = () => {
                 className={cn(
                   "text-[11px] font-medium px-2 py-0.5 rounded-full border transition-colors",
                   unreadOnly
-                    ? "border-primary/40 bg-primary/10 text-primary"
+                    ? "border-primary/40 bg-primary/10 text-primary-ink"
                     : "border-border text-muted-foreground hover:text-foreground",
                 )}
               >
@@ -277,7 +277,7 @@ const HeaderNotifications = () => {
           {/* Content */}
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-primary" />
+              <Loader2 className="h-5 w-5 animate-spin text-primary-ink" />
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-8 px-4">
@@ -302,7 +302,7 @@ const HeaderNotifications = () => {
                         {section.label}
                       </span>
                       {section.unread > 0 && (
-                        <span className="text-[10px] font-semibold text-primary tabular-nums">
+                        <span className="text-[10px] font-semibold text-primary-ink tabular-nums">
                           {section.unread} unread
                         </span>
                       )}

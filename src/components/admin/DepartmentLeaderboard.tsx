@@ -130,11 +130,11 @@ const DepartmentLeaderboard = () => {
 
   const getRankStyle = (rank: number) => {
     if (rank === 0)
-      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border-yellow-300 dark:border-yellow-700 ring-2 ring-yellow-400/30";
+      return "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning border-warning/40 dark:border-warning/40 ring-2 ring-warning/30";
     if (rank === 1)
       return "bg-muted text-foreground border-border ring-2 ring-muted-foreground/20";
     if (rank === 2)
-      return "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400 border-orange-300 dark:border-orange-700 ring-2 ring-orange-400/20";
+      return "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning border-warning/40 dark:border-warning/40 ring-2 ring-warning/20";
     return "bg-muted text-muted-foreground border-border";
   };
 
@@ -153,7 +153,7 @@ const DepartmentLeaderboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -163,7 +163,7 @@ const DepartmentLeaderboard = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Trophy className="h-6 w-6 text-primary" />
+            <Trophy className="h-6 w-6 text-primary-ink" />
             Department Leaderboards
           </h1>
           <p className="text-muted-foreground">
@@ -212,7 +212,7 @@ const DepartmentLeaderboard = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <Users className="h-5 w-5 text-primary" />
+                        <Users className="h-5 w-5 text-primary-ink" />
                       </div>
                       <div>
                         <CardTitle className="text-lg">{dept.name}</CardTitle>
@@ -245,7 +245,7 @@ const DepartmentLeaderboard = () => {
                             <div className="text-2xl mb-2">{getRankIcon(idx)}</div>
                             <Avatar className="h-14 w-14 mx-auto mb-2 ring-2 ring-background">
                               <AvatarImage src={faculty.avatar_url || undefined} />
-                              <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                              <AvatarFallback className="bg-primary/10 text-primary-ink font-semibold">
                                 {getInitials(faculty.full_name)}
                               </AvatarFallback>
                             </Avatar>
@@ -287,7 +287,7 @@ const DepartmentLeaderboard = () => {
                               </div>
                               <Avatar className="h-8 w-8">
                                 <AvatarImage src={faculty.avatar_url || undefined} />
-                                <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                                <AvatarFallback className="text-xs bg-primary/10 text-primary-ink">
                                   {getInitials(faculty.full_name)}
                                 </AvatarFallback>
                               </Avatar>

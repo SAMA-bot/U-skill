@@ -46,7 +46,7 @@ const RatingStars = ({
           <Star
             className={`h-6 w-6 transition-colors ${
               star <= value
-                ? "fill-yellow-400 text-yellow-400"
+                ? "fill-warning text-warning"
                 : "text-muted-foreground/30"
             }`}
           />
@@ -179,7 +179,7 @@ const SelfAssessmentForm = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -190,7 +190,7 @@ const SelfAssessmentForm = () => {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-lg flex items-center gap-2">
-              <ClipboardCheck className="h-5 w-5 text-primary" />
+              <ClipboardCheck className="h-5 w-5 text-primary-ink" />
               Self-Assessment — {selectedYear}
             </CardTitle>
             <CardDescription>

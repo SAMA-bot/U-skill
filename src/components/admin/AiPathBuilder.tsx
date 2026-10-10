@@ -297,14 +297,14 @@ const AiPathBuilder = ({ onCreated, sortOrder }: AiPathBuilderProps) => {
   return (
     <>
       <Button variant="outline" onClick={() => setOpen(true)} className="gap-2">
-        <Sparkles className="h-4 w-4 text-primary" /> Build with AI
+        <Sparkles className="h-4 w-4 text-primary-ink" /> Build with AI
       </Button>
 
       <Dialog open={open} onOpenChange={o => { setOpen(o); if (!o) reset(); }}>
         <DialogContent className="sm:max-w-2xl max-h-[88vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Wand2 className="h-5 w-5 text-primary" /> AI Learning Path Builder
+              <Wand2 className="h-5 w-5 text-primary-ink" /> AI Learning Path Builder
             </DialogTitle>
             <DialogDescription>
               Describe the topic and shape of the path — AI drafts the modules, lessons and teaching notes for you to review before saving.
@@ -463,7 +463,7 @@ const AiPathBuilder = ({ onCreated, sortOrder }: AiPathBuilderProps) => {
                     <Badge variant="outline" className="capitalize">{plan.difficulty}</Badge>
                     <Badge variant="outline" className="gap-1"><Clock className="h-3 w-3" />{plan.estimated_hours}h</Badge>
                     <Badge variant="outline" className="gap-1"><BookOpen className="h-3 w-3" />{totalLessons} lessons</Badge>
-                    <Badge variant="outline" className="gap-1 text-primary border-primary/30"><Star className="h-3 w-3" />{totalXp} XP</Badge>
+                    <Badge variant="outline" className="gap-1 text-primary-ink border-primary/30"><Star className="h-3 w-3" />{totalXp} XP</Badge>
                   </div>
                 </div>
 

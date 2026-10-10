@@ -56,17 +56,17 @@ const MotivationIndexCard = () => {
   };
 
   const getLabel = (score: number) => {
-    if (score >= 80) return { text: "Highly Motivated", color: "text-green-500" };
-    if (score >= 60) return { text: "Motivated", color: "text-primary" };
-    if (score >= 40) return { text: "Moderate", color: "text-yellow-500" };
-    return { text: "Needs Boost", color: "text-orange-500" };
+    if (score >= 80) return { text: "Highly Motivated", color: "text-success" };
+    if (score >= 60) return { text: "Motivated", color: "text-primary-ink" };
+    if (score >= 40) return { text: "Moderate", color: "text-warning" };
+    return { text: "Needs Boost", color: "text-warning" };
   };
 
   if (loading) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-48">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
         </CardContent>
       </Card>
     );
@@ -85,7 +85,7 @@ const MotivationIndexCard = () => {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-primary" />
+          <TrendingUp className="h-5 w-5 text-primary-ink" />
           Motivation Index
         </CardTitle>
         <CardDescription>Based on your real engagement data</CardDescription>

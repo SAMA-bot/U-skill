@@ -35,7 +35,7 @@ export function FeaturesSection() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="text-primary font-medium text-xs uppercase tracking-[0.2em]">Functional Requirements</span>
+          <span className="text-primary-ink font-medium text-xs uppercase tracking-[0.2em]">Functional Requirements</span>
           <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4 mb-6 tracking-tight">
             Platform Features
           </h2>
@@ -57,7 +57,7 @@ export function FeaturesSection() {
                 <div className="w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0 border border-border/50 group-hover:border-primary/30 transition-colors" style={{
                   background: 'linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.05))',
                 }}>
-                  <feature.icon className="w-5 h-5 text-primary" />
+                  <feature.icon className="w-5 h-5 text-primary-ink" />
                 </div>
                 <div>
                   <h3 className="font-heading font-semibold text-foreground mb-1.5">{feature.title}</h3>

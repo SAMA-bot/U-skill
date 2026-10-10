@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -18,6 +16,9 @@
 
     --primary: 203 100% 59%; /* #30AFFF */
     --primary-foreground: 210 45% 10%;
+    --primary-ink: 203 100% 36%;
+    --accent-ink: 162 75% 26%;
+    --overlay: 216 19% 8%;
 
     --secondary: 190 100% 92%; /* tint of #92EEFF */
     --secondary-foreground: 205 45% 18%;
@@ -54,9 +55,9 @@
     --section-highlight: 126 74% 94%;
 
     /* Success/Info */
-    --success: 162 70% 36%;
+    --success: 162 70% 26%;
     --success-foreground: 0 0% 100%;
-    --info: 203 100% 45%;
+    --info: 203 100% 36%;
     --info-foreground: 0 0% 100%;
 
     --sidebar-background: 0 0% 100%;
@@ -105,6 +106,9 @@
 
     --primary: 183 100% 35%; /* #00ADB5 */
     --primary-foreground: 216 19% 10%;
+    --primary-ink: 183 100% 42%;
+    --accent-ink: 279 82% 72%;
+    --overlay: 216 19% 8%;
 
     --secondary: 218 10% 25%; /* #393E46 */
     --secondary-foreground: 0 0% 93%;
@@ -216,13 +220,13 @@
   .dark .glass-card {
     background: linear-gradient(
       145deg,
-      hsl(222 40% 13% / 0.75),
-      hsl(222 44% 9% / 0.65)
+      hsl(var(--card) / 0.9),
+      hsl(var(--background) / 0.85)
     );
     backdrop-filter: blur(24px) saturate(1.4);
     -webkit-backdrop-filter: blur(24px) saturate(1.4);
-    border: 1px solid hsl(210 40% 98% / 0.08);
-    box-shadow: var(--shadow-card), 0 1px 0 hsl(210 40% 98% / 0.05) inset;
+    border: 1px solid hsl(var(--border) / 0.8);
+    box-shadow: var(--shadow-card);
   }
 
   .glass-sidebar {
@@ -233,9 +237,9 @@
   }
 
   .dark .glass-sidebar {
-    background: linear-gradient(180deg, hsl(222 47% 9% / 0.88) 0%, hsl(222 47% 7% / 0.88) 100%);
-    border-right: 1px solid hsl(210 40% 98% / 0.06);
-    box-shadow: 1px 0 0 hsl(210 40% 98% / 0.03) inset;
+    background: hsl(var(--sidebar-background) / 0.95);
+    border-right: 1px solid hsl(var(--sidebar-border) / 0.8);
+    box-shadow: var(--shadow-card);
   }
 
 
@@ -244,14 +248,14 @@
   }
 
   .glass-card-hover:hover {
-    border-color: hsl(210 100% 60% / 0.25);
-    box-shadow: var(--shadow-elevated), 0 0 40px -10px hsl(210 100% 60% / 0.1);
+    border-color: hsl(var(--primary) / 0.4);
+    box-shadow: var(--shadow-elevated), var(--shadow-glow);
     transform: translateY(-2px);
   }
 
   .gradient-text {
     @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-primary);
+    background-image: linear-gradient(135deg, hsl(var(--primary-ink)), hsl(var(--accent-ink)));
   }
 
   .hover-lift {

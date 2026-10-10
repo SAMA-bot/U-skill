@@ -200,16 +200,16 @@ export default function PerformanceReports() {
 
   const getBadgeStyle = (badge: string) => {
     switch (badge) {
-      case "Excellent": return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400";
-      case "Good": return "bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary";
-      default: return "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400";
+      case "Excellent": return "bg-success/10 text-success dark:bg-success/30 dark:text-success";
+      case "Good": return "bg-primary/10 text-primary-ink dark:bg-primary/30 dark:text-primary-ink";
+      default: return "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning";
     }
   };
 
   const getRankIcon = (rank: number) => {
-    if (rank === 1) return <Trophy className="h-5 w-5 text-amber-500" />;
-    if (rank === 2) return <Medal className="h-5 w-5 text-gray-400" />;
-    if (rank === 3) return <Medal className="h-5 w-5 text-amber-700" />;
+    if (rank === 1) return <Trophy className="h-5 w-5 text-warning" />;
+    if (rank === 2) return <Medal className="h-5 w-5 text-muted-foreground" />;
+    if (rank === 3) return <Medal className="h-5 w-5 text-warning" />;
     return <span className="text-sm font-semibold text-muted-foreground w-5 text-center">{rank}</span>;
   };
 
@@ -299,7 +299,7 @@ export default function PerformanceReports() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -373,7 +373,7 @@ export default function PerformanceReports() {
                   <div
                     key={f.user_id}
                     className={`bg-card border border-border rounded-lg p-4 text-center ${
-                      isFirst ? "ring-2 ring-amber-400/50 order-2 md:-mt-4" : idx === 1 ? "order-1" : "order-3"
+                      isFirst ? "ring-2 ring-warning/50 order-2 md:-mt-4" : idx === 1 ? "order-1" : "order-3"
                     }`}
                   >
                     <div className="flex justify-center mb-2">
@@ -381,7 +381,7 @@ export default function PerformanceReports() {
                     </div>
                     <Avatar className="h-12 w-12 mx-auto mb-2">
                       <AvatarImage src={f.avatar_url || undefined} />
-                      <AvatarFallback className="bg-primary/10 text-primary">
+                      <AvatarFallback className="bg-primary/10 text-primary-ink">
                         {getInitials(f.full_name)}
                       </AvatarFallback>
                     </Avatar>
@@ -419,7 +419,7 @@ export default function PerformanceReports() {
                       <div className="flex items-center gap-2">
                         <Avatar className="h-8 w-8">
                           <AvatarImage src={f.avatar_url || undefined} />
-                          <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                          <AvatarFallback className="bg-primary/10 text-primary-ink text-xs">
                             {getInitials(f.full_name)}
                           </AvatarFallback>
                         </Avatar>
@@ -467,7 +467,7 @@ export default function PerformanceReports() {
             {/* Bar Chart */}
             <div className="bg-card border border-border rounded-lg p-6">
               <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-primary" />
+                <BarChart3 className="h-5 w-5 text-primary-ink" />
                 Average Score by Department
               </h3>
               <div className="h-[300px]">

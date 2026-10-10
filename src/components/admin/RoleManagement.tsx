@@ -351,13 +351,13 @@ export function RoleManagement() {
   const getRoleBadgeStyle = (role: AppRole): React.CSSProperties => {
     switch (role) {
       case "admin":
-        return { background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.4)" };
+        return { background: "hsl(var(--destructive) / 0.15)", color: "hsl(var(--destructive))", border: "1px solid hsl(var(--destructive) / 0.4)" };
       case "hod":
-        return { background: "rgba(59,130,246,0.15)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.3)" };
+        return { background: "hsl(var(--info) / 0.15)", color: "hsl(var(--info))", border: "1px solid hsl(var(--info) / 0.3)" };
       case "faculty":
-        return { background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.3)" };
+        return { background: "hsl(var(--success) / 0.15)", color: "hsl(var(--success))", border: "1px solid hsl(var(--success) / 0.3)" };
       default:
-        return { background: "rgba(156,163,175,0.15)", color: "#9ca3af", border: "1px solid rgba(156,163,175,0.3)" };
+        return { background: "hsl(var(--muted-foreground) / 0.15)", color: "hsl(var(--muted-foreground))", border: "1px solid hsl(var(--muted-foreground) / 0.3)" };
     }
   };
 
@@ -385,7 +385,7 @@ export function RoleManagement() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -399,8 +399,8 @@ export function RoleManagement() {
       <div className="px-4 py-5 sm:px-6 border-b border-border">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-br from-red-500 to-orange-500 rounded-md p-2">
-              <Shield className="h-5 w-5 text-white" />
+            <div className="bg-gradient-to-br from-accent-ink to-accent-ink rounded-md p-2">
+              <Shield className="h-5 w-5 text-gradient-foreground" />
             </div>
             <div>
               <h3 className="text-lg font-medium text-foreground">User Management</h3>
@@ -533,7 +533,7 @@ export function RoleManagement() {
             className="px-4 py-3 bg-primary/10 border-b border-border flex items-center gap-3 flex-wrap"
           >
             <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-              <Users className="h-4 w-4 text-primary" />
+              <Users className="h-4 w-4 text-primary-ink" />
               {selectedUsers.size} user{selectedUsers.size > 1 ? "s" : ""} selected
             </div>
             <Select
@@ -605,7 +605,7 @@ export function RoleManagement() {
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={user.avatar_url || undefined} />
-                      <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-primary-foreground text-xs">
+                      <AvatarFallback className="bg-gradient-to-br from-primary-ink to-accent-ink text-primary-foreground text-xs">
                         {getInitials(user.full_name)}
                       </AvatarFallback>
                     </Avatar>

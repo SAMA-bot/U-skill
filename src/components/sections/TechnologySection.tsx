@@ -13,13 +13,13 @@ const technologies = [
     name: 'Node.js', category: 'Backend',
     description: 'JavaScript runtime for scalable server-side applications',
     icon: '🟢',
-    gradient: 'linear-gradient(135deg, hsl(var(--success)), hsl(140 60% 50%))',
+    gradient: 'linear-gradient(135deg, hsl(var(--success)), hsl(var(--brand-c)))',
   },
   {
     name: 'MongoDB', category: 'Database',
     description: 'NoSQL database for flexible, document-based data storage',
     icon: '🍃',
-    gradient: 'linear-gradient(135deg, hsl(140 60% 40%), hsl(160 50% 45%))',
+    gradient: 'linear-gradient(135deg, hsl(var(--success)), hsl(var(--brand-c)))',
   },
   {
     name: 'Express.js', category: 'API',
@@ -45,7 +45,7 @@ export function TechnologySection() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="text-primary font-medium text-xs uppercase tracking-[0.2em]">Tech Stack</span>
+          <span className="text-primary-ink font-medium text-xs uppercase tracking-[0.2em]">Tech Stack</span>
           <h2 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mt-4 mb-6 tracking-tight">
             Technologies Used
           </h2>
@@ -79,7 +79,7 @@ export function TechnologySection() {
               <div className="h-1 w-full" style={{ backgroundImage: tech.gradient }} />
               <div className="p-6 text-center">
                 <div className="text-5xl mb-4">{tech.icon}</div>
-                <span className="text-xs font-medium text-primary uppercase tracking-[0.15em]">{tech.category}</span>
+                <span className="text-xs font-medium text-primary-ink uppercase tracking-[0.15em]">{tech.category}</span>
                 <h3 className="font-heading font-semibold text-xl text-foreground mt-1 mb-2">{tech.name}</h3>
                 <p className="text-sm text-muted-foreground">{tech.description}</p>
               </div>

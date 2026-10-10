@@ -33,10 +33,10 @@ const ICON_MAP = {
 };
 
 const COLOR_MAP = {
-  activity: "bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary",
-  course: "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400",
-  document: "bg-accent/10 text-accent dark:bg-accent/30 dark:text-accent",
-  assessment: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
+  activity: "bg-primary/10 text-primary-ink dark:bg-primary/30 dark:text-primary-ink",
+  course: "bg-success/10 text-success dark:bg-success/30 dark:text-success",
+  document: "bg-accent/10 text-accent-ink dark:bg-accent/30 dark:text-accent-ink",
+  assessment: "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning",
 };
 
 const PerformanceTimeline = () => {
@@ -155,7 +155,7 @@ const PerformanceTimeline = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -164,7 +164,7 @@ const PerformanceTimeline = () => {
     <Card>
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
-          <History className="h-5 w-5 text-primary" />
+          <History className="h-5 w-5 text-primary-ink" />
           Performance History — {selectedYear}
         </CardTitle>
         <CardDescription>Timeline of your achievements and milestones</CardDescription>

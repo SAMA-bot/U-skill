@@ -203,7 +203,7 @@ const GoalSetting = () => {
     const isOverdue = new Date(goal.deadline) < new Date();
 
     if (progress >= 100) {
-      return <Badge className="bg-green-500">Achieved</Badge>;
+      return <Badge className="bg-success">Achieved</Badge>;
     }
     if (isOverdue) {
       return <Badge variant="destructive">Overdue</Badge>;
@@ -221,7 +221,7 @@ const GoalSetting = () => {
       case "research":
         return "hsl(var(--accent))";
       case "service":
-        return "#22c55e";
+        return "hsl(var(--success))";
       default:
         return "hsl(var(--primary))";
     }
@@ -239,7 +239,7 @@ const GoalSetting = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -250,7 +250,7 @@ const GoalSetting = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
+            <Target className="h-5 w-5 text-primary-ink" />
             Performance Goals
           </h3>
           <p className="text-muted-foreground mt-1">
@@ -430,7 +430,7 @@ const GoalSetting = () => {
                             {gap} points to go
                           </span>
                         ) : (
-                          <span className="flex items-center gap-1 text-green-600">
+                          <span className="flex items-center gap-1 text-success">
                             <CheckCircle2 className="h-3 w-3" />
                             Goal achieved!
                           </span>

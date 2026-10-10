@@ -82,7 +82,7 @@ const DailyChecklist = () => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-48">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
         </CardContent>
       </Card>
     );
@@ -92,7 +92,7 @@ const DailyChecklist = () => {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
-          <CheckSquare className="h-5 w-5 text-primary" />
+          <CheckSquare className="h-5 w-5 text-primary-ink" />
           Daily Productivity Checklist
         </CardTitle>
         <CardDescription>

@@ -283,9 +283,9 @@ const FeedbackAnalytics = () => {
   const getInitials = (name: string) => name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 
   const getRatingColor = (rating: number) => {
-    if (rating >= 4) return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
-    if (rating >= 3) return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
-    if (rating > 0) return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+    if (rating >= 4) return "bg-success/10 text-success dark:bg-success/30 dark:text-success";
+    if (rating >= 3) return "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning";
+    if (rating > 0) return "bg-destructive/10 text-destructive dark:bg-destructive/30 dark:text-destructive";
     return "bg-muted text-muted-foreground";
   };
 
@@ -296,14 +296,14 @@ const FeedbackAnalytics = () => {
   };
 
   const getTrendIcon = (trend: string) => {
-    if (trend === "improving") return <TrendingUp className="h-4 w-4 text-green-500" />;
-    if (trend === "declining") return <TrendingDown className="h-4 w-4 text-red-500" />;
+    if (trend === "improving") return <TrendingUp className="h-4 w-4 text-success" />;
+    if (trend === "declining") return <TrendingDown className="h-4 w-4 text-destructive" />;
     return <Minus className="h-4 w-4 text-muted-foreground" />;
   };
 
   const getTrendBadge = (trend: string) => {
-    if (trend === "improving") return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 text-xs">Improving</Badge>;
-    if (trend === "declining") return <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 text-xs">Declining</Badge>;
+    if (trend === "improving") return <Badge className="bg-success/10 text-success dark:bg-success/30 dark:text-success text-xs">Improving</Badge>;
+    if (trend === "declining") return <Badge className="bg-destructive/10 text-destructive dark:bg-destructive/30 dark:text-destructive text-xs">Declining</Badge>;
     return <Badge variant="secondary" className="text-xs">Stable</Badge>;
   };
 
@@ -311,7 +311,7 @@ const FeedbackAnalytics = () => {
     Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`h-3.5 w-3.5 ${i < Math.round(rating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30"}`}
+        className={`h-3.5 w-3.5 ${i < Math.round(rating) ? "fill-warning text-warning" : "text-muted-foreground/30"}`}
       />
     ));
 
@@ -358,7 +358,7 @@ const FeedbackAnalytics = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -374,16 +374,16 @@ const FeedbackAnalytics = () => {
       {/* Overview Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Average Rating", value: `${overallStats.avgRating || "—"}/5`, icon: Star, color: "from-amber-500 to-amber-600" },
-          { label: "Total Feedback", value: overallStats.totalFeedback, icon: MessageSquare, color: "from-primary to-primary" },
-          { label: "Faculty Reviewed", value: overallStats.totalFaculty, icon: Users, color: "from-green-500 to-green-600" },
-          { label: "Departments", value: departments.length, icon: Building2, color: "from-accent to-accent" },
+          { label: "Average Rating", value: `${overallStats.avgRating || "—"}/5`, icon: Star, color: "from-accent-ink to-accent-ink" },
+          { label: "Total Feedback", value: overallStats.totalFeedback, icon: MessageSquare, color: "from-primary-ink to-primary-ink" },
+          { label: "Faculty Reviewed", value: overallStats.totalFaculty, icon: Users, color: "from-primary-ink to-primary-ink" },
+          { label: "Departments", value: departments.length, icon: Building2, color: "from-accent-ink to-accent-ink" },
         ].map((stat, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
             <Card>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className={`bg-gradient-to-br ${stat.color} rounded-md p-2`}>
-                  <stat.icon className="h-5 w-5 text-white" />
+                  <stat.icon className="h-5 w-5 text-gradient-foreground" />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">{stat.label}</p>
@@ -400,10 +400,10 @@ const FeedbackAnalytics = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {topFaculty && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-              <Card className="border-green-200 dark:border-green-800/50">
+              <Card className="border-success/40 dark:border-success/50">
                 <CardContent className="p-5 flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                    <Crown className="h-6 w-6 text-green-600 dark:text-green-400" />
+                  <div className="h-12 w-12 rounded-full bg-success/10 dark:bg-success/30 flex items-center justify-center">
+                    <Crown className="h-6 w-6 text-success dark:text-success" />
                   </div>
                   <div className="flex-1">
                     <p className="text-xs text-muted-foreground">Highest Rated Faculty</p>
@@ -421,10 +421,10 @@ const FeedbackAnalytics = () => {
           )}
           {bottomFaculty && summaries.length > 1 && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-              <Card className="border-red-200 dark:border-red-800/50">
+              <Card className="border-destructive/40 dark:border-destructive/50">
                 <CardContent className="p-5 flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                    <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
+                  <div className="h-12 w-12 rounded-full bg-destructive/10 dark:bg-destructive/30 flex items-center justify-center">
+                    <AlertTriangle className="h-6 w-6 text-destructive dark:text-destructive" />
                   </div>
                   <div className="flex-1">
                     <p className="text-xs text-muted-foreground">Lowest Rated Faculty</p>
@@ -481,7 +481,7 @@ const FeedbackAnalytics = () => {
             <Card className="lg:col-span-2">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-primary" />
+                  <BarChart3 className="h-5 w-5 text-primary-ink" />
                   Average Rating per Faculty
                 </CardTitle>
               </CardHeader>
@@ -528,7 +528,7 @@ const FeedbackAnalytics = () => {
                       <span className="text-xs text-muted-foreground w-5 font-medium">#{i + 1}</span>
                       <Avatar className="h-7 w-7">
                         <AvatarImage src={faculty.avatarUrl || undefined} />
-                        <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-[10px]">
+                        <AvatarFallback className="bg-gradient-to-br from-primary-ink to-accent-ink text-gradient-foreground text-[10px]">
                           {getInitials(faculty.facultyName)}
                         </AvatarFallback>
                       </Avatar>
@@ -575,7 +575,7 @@ const FeedbackAnalytics = () => {
                         <div className="flex items-center gap-2">
                           <Avatar className="h-8 w-8">
                             <AvatarImage src={f.avatarUrl || undefined} />
-                            <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-xs">
+                            <AvatarFallback className="bg-gradient-to-br from-primary-ink to-accent-ink text-gradient-foreground text-xs">
                               {getInitials(f.facultyName)}
                             </AvatarFallback>
                           </Avatar>
@@ -618,7 +618,7 @@ const FeedbackAnalytics = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Building2 className="h-5 w-5 text-primary" />
+                  <Building2 className="h-5 w-5 text-primary-ink" />
                   Department Average Ratings
                 </CardTitle>
               </CardHeader>
@@ -651,7 +651,7 @@ const FeedbackAnalytics = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Award className="h-5 w-5 text-primary" />
+                  <Award className="h-5 w-5 text-primary-ink" />
                   Category Breakdown by Department
                 </CardTitle>
               </CardHeader>
@@ -730,7 +730,7 @@ const FeedbackAnalytics = () => {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
+                <TrendingUp className="h-5 w-5 text-primary-ink" />
                 Overall Feedback Rating Trend
               </CardTitle>
               <CardDescription>Average rating across all faculty over time</CardDescription>
@@ -777,8 +777,8 @@ const FeedbackAnalytics = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="text-center p-4 rounded-lg bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800/30">
-                    <TrendingUp className="h-6 w-6 text-green-600 mx-auto mb-1" />
+                  <div className="text-center p-4 rounded-lg bg-success/10 dark:bg-success/10 border border-success/40 dark:border-success/30">
+                    <TrendingUp className="h-6 w-6 text-success mx-auto mb-1" />
                     <p className="text-2xl font-bold text-foreground">
                       {summaries.filter((s) => s.trend === "improving").length}
                     </p>
@@ -791,8 +791,8 @@ const FeedbackAnalytics = () => {
                     </p>
                     <p className="text-sm text-muted-foreground">Stable</p>
                   </div>
-                  <div className="text-center p-4 rounded-lg bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/30">
-                    <TrendingDown className="h-6 w-6 text-red-600 mx-auto mb-1" />
+                  <div className="text-center p-4 rounded-lg bg-destructive/10 dark:bg-destructive/10 border border-destructive/40 dark:border-destructive/30">
+                    <TrendingDown className="h-6 w-6 text-destructive mx-auto mb-1" />
                     <p className="text-2xl font-bold text-foreground">
                       {summaries.filter((s) => s.trend === "declining").length}
                     </p>
@@ -809,7 +809,7 @@ const FeedbackAnalytics = () => {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
-                <MessageSquare className="h-5 w-5 text-primary" />
+                <MessageSquare className="h-5 w-5 text-primary-ink" />
                 Common Keywords from Feedback
               </CardTitle>
               <CardDescription>Extracted from all feedback comments</CardDescription>

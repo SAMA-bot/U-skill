@@ -41,14 +41,14 @@ const iconMap = {
 };
 
 const typeStyles = {
-  positive: "border-green-200 bg-green-50/50 dark:border-green-800/50 dark:bg-green-900/10",
-  warning: "border-yellow-200 bg-yellow-50/50 dark:border-yellow-800/50 dark:bg-yellow-900/10",
+  positive: "border-success/40 bg-success/50 dark:border-success/50 dark:bg-success/10",
+  warning: "border-warning/40 bg-warning/50 dark:border-warning/50 dark:bg-warning/10",
   neutral: "border-border bg-muted/30",
 };
 
 const typeIconStyles = {
-  positive: "text-green-600 dark:text-green-400",
-  warning: "text-yellow-600 dark:text-yellow-400",
+  positive: "text-success dark:text-success",
+  warning: "text-warning dark:text-warning",
   neutral: "text-muted-foreground",
 };
 
@@ -146,8 +146,8 @@ const AIInsightsPanel = () => {
       <div className="px-4 py-5 sm:px-6 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="bg-gradient-to-br from-primary to-accent rounded-md p-1.5">
-              <Sparkles className="h-4 w-4 text-white" />
+            <div className="bg-gradient-to-br from-primary-ink to-accent-ink rounded-md p-1.5">
+              <Sparkles className="h-4 w-4 text-gradient-foreground" />
             </div>
             <div>
               <h3 className="text-lg font-medium text-foreground">AI Insights</h3>
@@ -177,7 +177,7 @@ const AIInsightsPanel = () => {
       <div className="p-4 sm:p-6">
         {!hasGenerated && !loading ? (
           <div className="flex flex-col items-center justify-center py-8 gap-4">
-            <Sparkles className="h-10 w-10 text-primary" />
+            <Sparkles className="h-10 w-10 text-primary-ink" />
             <p className="text-sm text-muted-foreground text-center">
               Get AI-powered insights based on your performance data.
             </p>
@@ -189,8 +189,8 @@ const AIInsightsPanel = () => {
         ) : loading && insights.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 gap-3">
             <div className="relative">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <Sparkles className="h-3 w-3 text-accent absolute -top-1 -right-1 animate-pulse" />
+              <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
+              <Sparkles className="h-3 w-3 text-accent-ink absolute -top-1 -right-1 animate-pulse" />
             </div>
             <p className="text-sm text-muted-foreground">Analyzing your performance data…</p>
           </div>

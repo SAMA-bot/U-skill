@@ -65,19 +65,19 @@ const statusConfig: Record<
     icon: Clock,
     label: "Pending",
     className:
-      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+      "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning",
   },
   verified: {
     icon: CheckCircle2,
     label: "Verified",
     className:
-      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+      "bg-success/10 text-success dark:bg-success/30 dark:text-success",
   },
   rejected: {
     icon: XCircle,
     label: "Rejected",
     className:
-      "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+      "bg-destructive/10 text-destructive dark:bg-destructive/30 dark:text-destructive",
   },
 };
 
@@ -150,7 +150,7 @@ export default function DocumentUpload() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -174,7 +174,7 @@ export default function DocumentUpload() {
           className="bg-card border border-border rounded-lg p-4"
         >
           <p className="text-sm text-muted-foreground">Pending</p>
-          <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+          <p className="text-2xl font-bold text-warning dark:text-warning">
             {stats.pending}
           </p>
         </motion.div>
@@ -185,7 +185,7 @@ export default function DocumentUpload() {
           className="bg-card border border-border rounded-lg p-4"
         >
           <p className="text-sm text-muted-foreground">Verified</p>
-          <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+          <p className="text-2xl font-bold text-success dark:text-success">
             {stats.verified}
           </p>
         </motion.div>
@@ -196,7 +196,7 @@ export default function DocumentUpload() {
           className="bg-card border border-border rounded-lg p-4"
         >
           <p className="text-sm text-muted-foreground">Rejected</p>
-          <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+          <p className="text-2xl font-bold text-destructive dark:text-destructive">
             {stats.rejected}
           </p>
         </motion.div>
@@ -313,7 +313,7 @@ export default function DocumentUpload() {
                 >
                   <div className="flex items-start gap-4">
                     <div className="p-2 rounded-lg flex-shrink-0 bg-primary/10">
-                      <FileIcon className="h-5 w-5 text-primary" />
+                      <FileIcon className="h-5 w-5 text-primary-ink" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
@@ -336,9 +336,9 @@ export default function DocumentUpload() {
 
                       {/* Rejection reason */}
                       {doc.status === "rejected" && doc.rejection_reason && (
-                        <div className="mt-2 flex items-start gap-2 p-2 rounded-md bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800">
-                          <AlertCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
-                          <p className="text-sm text-red-700 dark:text-red-400">
+                        <div className="mt-2 flex items-start gap-2 p-2 rounded-md bg-destructive/10 dark:bg-destructive/10 border border-destructive/40 dark:border-destructive/40">
+                          <AlertCircle className="h-4 w-4 text-destructive mt-0.5 flex-shrink-0" />
+                          <p className="text-sm text-destructive dark:text-destructive">
                             <span className="font-medium">Reason: </span>
                             {doc.rejection_reason}
                           </p>

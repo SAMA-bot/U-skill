@@ -73,7 +73,7 @@ const PerformanceChart = () => {
   if (loading) {
     return (
       <div className="h-64 flex items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
       </div>
     );
   }

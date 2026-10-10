@@ -87,7 +87,7 @@ const SkillGrowthChart = () => {
   if (loading) {
     return (
       <div className="bg-card border border-border rounded-lg p-6 flex items-center justify-center h-64">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -102,8 +102,8 @@ const SkillGrowthChart = () => {
       <div className="px-4 py-5 sm:px-6 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="bg-gradient-to-br from-primary to-accent rounded-md p-1.5">
-              <Zap className="h-4 w-4 text-white" />
+            <div className="bg-gradient-to-br from-primary-ink to-accent-ink rounded-md p-1.5">
+              <Zap className="h-4 w-4 text-gradient-foreground" />
             </div>
             <div>
               <h3 className="text-lg font-medium text-foreground">Skill Growth</h3>
@@ -126,7 +126,7 @@ const SkillGrowthChart = () => {
       <div className="p-4 sm:p-6">
         {!hasProgress ? (
           <div className="flex flex-col items-center justify-center py-10 text-center">
-            <Zap className="h-10 w-10 text-primary mb-3" />
+            <Zap className="h-10 w-10 text-primary-ink mb-3" />
             <p className="text-base font-medium text-foreground mb-1">
               Start Growing Your Skills
             </p>

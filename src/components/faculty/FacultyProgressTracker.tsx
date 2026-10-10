@@ -92,7 +92,7 @@ const FacultyProgressTracker = () => {
   if (loading || performanceData.loading) {
     return (
       <div className="bg-card border border-border rounded-lg p-6 flex items-center justify-center h-48">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -107,8 +107,8 @@ const FacultyProgressTracker = () => {
       <div className="px-4 py-5 sm:px-6 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="bg-gradient-to-br from-primary to-accent rounded-md p-1.5">
-              <Target className="h-4 w-4 text-white" />
+            <div className="bg-gradient-to-br from-primary-ink to-accent-ink rounded-md p-1.5">
+              <Target className="h-4 w-4 text-gradient-foreground" />
             </div>
             <div>
               <h3 className="text-lg font-medium text-foreground">Progress Tracker</h3>
@@ -185,7 +185,7 @@ const FacultyProgressTracker = () => {
               </div>
               <div className="text-right">
                 {goalReached ? (
-                  <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800">
+                  <Badge className="bg-success/10 text-success dark:bg-success/30 dark:text-success border-success/40 dark:border-success/40">
                     🎉 Goal Reached!
                   </Badge>
                 ) : (

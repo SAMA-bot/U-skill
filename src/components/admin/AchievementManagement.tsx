@@ -248,12 +248,12 @@ const AchievementManagement = () => {
   };
 
   const summaryCards = [
-    { label: "Total Achievements", value: achievements.length, icon: Award, color: "from-amber-500 to-amber-600" },
+    { label: "Total Achievements", value: achievements.length, icon: Award, color: "from-accent-ink to-accent-ink" },
     {
       label: "Faculty Awarded",
       value: new Set(achievements.map((a) => a.user_id)).size,
       icon: Users,
-      color: "from-primary to-primary",
+      color: "from-primary-ink to-primary-ink",
     },
     {
       label: "This Month",
@@ -263,20 +263,20 @@ const AchievementManagement = () => {
         return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
       }).length,
       icon: Calendar,
-      color: "from-green-500 to-green-600",
+      color: "from-primary-ink to-primary-ink",
     },
     {
       label: "Top Performer",
       value: topFaculty[0]?.profile.full_name.split(" ")[0] || "N/A",
       icon: Crown,
-      color: "from-accent to-accent",
+      color: "from-accent-ink to-accent-ink",
     },
   ];
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -302,7 +302,7 @@ const AchievementManagement = () => {
             <Card>
               <CardContent className="p-4 flex items-center gap-3">
                 <div className={`bg-gradient-to-br ${stat.color} rounded-md p-2`}>
-                  <stat.icon className="h-5 w-5 text-white" />
+                  <stat.icon className="h-5 w-5 text-gradient-foreground" />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">{stat.label}</p>
@@ -371,7 +371,7 @@ const AchievementManagement = () => {
                           <div className="flex items-center gap-3">
                             <Avatar className="h-8 w-8">
                               <AvatarImage src={profile?.avatar_url || undefined} />
-                              <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-xs">
+                              <AvatarFallback className="bg-gradient-to-br from-primary-ink to-accent-ink text-gradient-foreground text-xs">
                                 {getInitials(profile?.full_name || "?")}
                               </AvatarFallback>
                             </Avatar>
@@ -383,8 +383,8 @@ const AchievementManagement = () => {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <div className="h-7 w-7 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                              <IconComp className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                            <div className="h-7 w-7 rounded-full bg-warning/10 dark:bg-warning/30 flex items-center justify-center">
+                              <IconComp className="h-3.5 w-3.5 text-warning dark:text-warning" />
                             </div>
                             <span className="font-medium text-foreground text-sm">{a.badge_name}</span>
                           </div>
@@ -428,12 +428,12 @@ const AchievementManagement = () => {
               const rank = i + 1;
               const rankColors =
                 rank === 1
-                  ? "from-amber-400 to-amber-600 ring-amber-300"
+                  ? "from-accent-ink to-accent-ink ring-warning"
                   : rank === 2
-                  ? "from-slate-300 to-slate-500 ring-slate-200"
+                  ? "from-muted-foreground to-muted-foreground ring-muted-foreground"
                   : rank === 3
-                  ? "from-orange-400 to-orange-600 ring-orange-300"
-                  : "from-primary/60 to-primary ring-primary/30";
+                  ? "from-accent-ink to-accent-ink ring-warning"
+                  : "from-primary/60 to-primary-ink ring-primary/30";
 
               const userBadges = achievements.filter((a) => a.user_id === f.profile.user_id).slice(0, 4);
 
@@ -448,7 +448,7 @@ const AchievementManagement = () => {
                     {rank <= 3 && (
                       <div className="absolute top-3 right-3">
                         <div className={`bg-gradient-to-br ${rankColors} rounded-full h-8 w-8 flex items-center justify-center ring-2 ${rank <= 3 ? rankColors.split(" ")[2] : ""}`}>
-                          <span className="text-white font-bold text-xs">#{rank}</span>
+                          <span className="text-gradient-foreground font-bold text-xs">#{rank}</span>
                         </div>
                       </div>
                     )}
@@ -456,7 +456,7 @@ const AchievementManagement = () => {
                       <div className="flex items-center gap-3 mb-4">
                         <Avatar className="h-12 w-12">
                           <AvatarImage src={f.profile.avatar_url || undefined} />
-                          <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white">
+                          <AvatarFallback className="bg-gradient-to-br from-primary-ink to-accent-ink text-gradient-foreground">
                             {getInitials(f.profile.full_name)}
                           </AvatarFallback>
                         </Avatar>

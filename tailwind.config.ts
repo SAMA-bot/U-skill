@@ -19,8 +19,10 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        overlay: "hsl(var(--overlay))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
+          ink: "hsl(var(--primary-ink))",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -37,6 +39,7 @@ export default {
         },
         accent: {
           DEFAULT: "hsl(var(--accent))",
+          ink: "hsl(var(--accent-ink))",
           foreground: "hsl(var(--accent-foreground))",
         },
         popover: {

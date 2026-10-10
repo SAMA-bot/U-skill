@@ -411,7 +411,7 @@ const FacultyDashboard = () => {
   };
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>;
   }
   const displayName = profile?.full_name || user?.email || 'Faculty Member';
@@ -433,8 +433,8 @@ const FacultyDashboard = () => {
                 <Menu className="h-6 w-6" aria-hidden="true" />
               </button>
               <div className="flex-shrink-0 flex items-center">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">USL</span>
+                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary-ink to-accent-ink flex items-center justify-center">
+                  <span className="text-gradient-foreground font-bold text-sm">USL</span>
                 </div>
                 <span className="ml-2 text-xl font-semibold text-foreground hidden md:block">USKILL</span>
               </div>
@@ -445,8 +445,8 @@ const FacultyDashboard = () => {
               <ThemeToggle />
               <HeaderNotifications />
               <div className="flex items-center">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center overflow-hidden">
-                  {profile?.avatar_url ? <img src={profile.avatar_url} alt="Avatar" className="h-full w-full object-cover" /> : <span className="text-white font-bold text-xs">{getInitials(displayName)}</span>}
+                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary-ink to-accent-ink flex items-center justify-center overflow-hidden">
+                  {profile?.avatar_url ? <img src={profile.avatar_url} alt="Avatar" className="h-full w-full object-cover" /> : <span className="text-gradient-foreground font-bold text-xs">{getInitials(displayName)}</span>}
                 </div>
                 <span className="ml-2 text-foreground font-medium hidden md:inline">
                   {displayName}
@@ -459,7 +459,7 @@ const FacultyDashboard = () => {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Mobile Sidebar Overlay */}
-        {sidebarOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" aria-hidden="true" onClick={() => setSidebarOpen(false)} />}
+        {sidebarOpen && <div className="fixed inset-0 bg-overlay/50 z-40 md:hidden" aria-hidden="true" onClick={() => setSidebarOpen(false)} />}
 
         {/* Sidebar */}
         <aside
@@ -535,7 +535,7 @@ const FacultyDashboard = () => {
                           {isActive && !sidebarCollapsed && (
                             <span className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-r-full bg-primary" aria-hidden="true" />
                           )}
-                          <item.icon className={`flex-shrink-0 h-[16px] w-[16px] ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={2} aria-hidden="true" />
+                          <item.icon className={`flex-shrink-0 h-[16px] w-[16px] ${isActive ? "text-primary-ink" : "text-muted-foreground group-hover:text-foreground"} ${sidebarCollapsed ? "" : "mr-2.5"}`} strokeWidth={2} aria-hidden="true" />
                           {!sidebarCollapsed && item.label}
                         </button>
                       );
@@ -671,7 +671,7 @@ const FacultyDashboard = () => {
                   const score = stat.value;
                   const badgeLabel = stat.suffix === "/100" ? getPerformanceBadgeLabel(score) : (stat.value > 0 ? "On Track" : "Not Started");
                   const badgeColor = stat.suffix === "/100" ? getPerformanceBadgeColor(score) : (stat.value > 0
-                    ? "bg-[rgba(34,197,94,0.15)] text-[#22c55e] border-[rgba(34,197,94,0.3)] dark:bg-[rgba(34,197,94,0.2)] dark:text-[#4ade80] dark:border-[rgba(34,197,94,0.4)]"
+                    ? "bg-success/15 text-success border-success/30 dark:bg-success/20 dark:text-success dark:border-success/40"
                     : "bg-muted text-muted-foreground border-border");
 
                   return (
@@ -763,7 +763,7 @@ const FacultyDashboard = () => {
                         <span className="text-xs text-muted-foreground">Research</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-green-500" />
+                        <div className="w-3 h-3 rounded-full bg-success" />
                         <span className="text-xs text-muted-foreground">Service</span>
                       </div>
                     </div>
@@ -789,7 +789,7 @@ const FacultyDashboard = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-lg font-medium text-foreground flex items-center gap-2">
-                        <TrendingUp className="h-5 w-5 text-primary" />
+                        <TrendingUp className="h-5 w-5 text-primary-ink" />
                         Motivation Index Trends
                       </h3>
                       <p className="mt-1 text-sm text-muted-foreground">

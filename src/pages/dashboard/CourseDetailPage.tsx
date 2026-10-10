@@ -162,7 +162,7 @@ const CourseDetailPage = () => {
   if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -269,7 +269,7 @@ const CourseDetailPage = () => {
               )}
               {course.duration_hours && (
                 <span className="flex items-center gap-1.5">
-                  <Award className="h-4 w-4 text-primary" /> +{Math.min(course.duration_hours * 5, 50)} skill points
+                  <Award className="h-4 w-4 text-primary-ink" /> +{Math.min(course.duration_hours * 5, 50)} skill points
                 </span>
               )}
             </div>
@@ -279,7 +279,7 @@ const CourseDetailPage = () => {
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Progress</span>
-                  <span className="font-medium text-primary">{enrollment.progress_percentage}%</span>
+                  <span className="font-medium text-primary-ink">{enrollment.progress_percentage}%</span>
                 </div>
                 <Progress value={enrollment.progress_percentage} className="h-2" />
               </div>
@@ -326,7 +326,7 @@ const CourseDetailPage = () => {
             className="rounded-2xl border border-border/40 bg-card overflow-hidden"
           >
             <div className="p-4 border-b border-border/30 flex items-center gap-2">
-              <Video className="h-4 w-4 text-primary" />
+              <Video className="h-4 w-4 text-primary-ink" />
               <h3 className="text-sm font-semibold text-foreground">Video Player</h3>
             </div>
             <div className="aspect-video">
@@ -342,7 +342,7 @@ const CourseDetailPage = () => {
                 <video
                   src={signedVideoUrl}
                   controls
-                  className="w-full h-full bg-black"
+                  className="w-full h-full bg-overlay"
                 />
               )}
             </div>

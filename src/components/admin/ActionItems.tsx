@@ -182,7 +182,7 @@ const ActionItems = () => {
             >
               <Avatar className="h-8 w-8 flex-shrink-0">
                 <AvatarImage src={item.avatarUrl || undefined} />
-                <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-xs">
+                <AvatarFallback className="bg-gradient-to-br from-primary-ink to-accent-ink text-gradient-foreground text-xs">
                   {getInitials(item.name)}
                 </AvatarFallback>
               </Avatar>

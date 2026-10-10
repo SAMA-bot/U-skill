@@ -141,7 +141,7 @@ const RecommendationPanel = ({ onNavigate }: RecommendationPanelProps) => {
       case "high":
         return "bg-destructive/10 text-destructive border-destructive/20";
       case "medium":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800";
+        return "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning border-warning/40 dark:border-warning/40";
       default:
         return "bg-muted text-muted-foreground border-border";
     }
@@ -155,7 +155,7 @@ const RecommendationPanel = ({ onNavigate }: RecommendationPanelProps) => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+          <Loader2 className="h-5 w-5 animate-spin text-primary-ink" />
         </CardContent>
       </Card>
     );
@@ -165,7 +165,7 @@ const RecommendationPanel = ({ onNavigate }: RecommendationPanelProps) => {
     <Card className="overflow-hidden">
       <CardHeader className="pb-3 bg-gradient-to-r from-primary/5 to-accent/5">
         <CardTitle className="text-lg flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
+          <Sparkles className="h-5 w-5 text-primary-ink" />
           Smart Recommendations
         </CardTitle>
         <p className="text-sm text-muted-foreground">
@@ -186,7 +186,7 @@ const RecommendationPanel = ({ onNavigate }: RecommendationPanelProps) => {
               >
                 <div className="flex-shrink-0 mt-0.5">
                   <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Icon className="h-4 w-4 text-primary" />
+                    <Icon className="h-4 w-4 text-primary-ink" />
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
@@ -207,7 +207,7 @@ const RecommendationPanel = ({ onNavigate }: RecommendationPanelProps) => {
         {courses.length > 0 && (
           <div className="mt-5 pt-4 border-t border-border">
             <h4 className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
-              <GraduationCap className="h-4 w-4 text-primary" />
+              <GraduationCap className="h-4 w-4 text-primary-ink" />
               Recommended Courses
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">

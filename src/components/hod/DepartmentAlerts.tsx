@@ -24,17 +24,17 @@ const ALERT_CONFIG = {
   missing_documents: {
     icon: FileX,
     label: "Missing Documents",
-    color: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
+    color: "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning",
   },
   low_feedback: {
     icon: ThumbsDown,
     label: "Low Feedback",
-    color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+    color: "bg-destructive/10 text-destructive dark:bg-destructive/30 dark:text-destructive",
   },
   incomplete_training: {
     icon: BookOpen,
     label: "Incomplete Training",
-    color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+    color: "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning",
   },
 };
 
@@ -185,7 +185,7 @@ const DepartmentAlerts = ({ department }: DepartmentAlertsProps) => {
     <Card>
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5 text-primary" />
+          <AlertTriangle className="h-5 w-5 text-primary-ink" />
           Department Alerts
         </CardTitle>
         <CardDescription>
@@ -197,7 +197,7 @@ const DepartmentAlerts = ({ department }: DepartmentAlertsProps) => {
       <CardContent>
         {alerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-muted-foreground gap-2">
-            <CheckCircle className="h-10 w-10 text-green-500" />
+            <CheckCircle className="h-10 w-10 text-success" />
             <p className="text-sm">All faculty are on track</p>
           </div>
         ) : (
@@ -215,7 +215,7 @@ const DepartmentAlerts = ({ department }: DepartmentAlertsProps) => {
                 >
                   <Avatar className="h-8 w-8 flex-shrink-0">
                     <AvatarImage src={alert.avatarUrl || undefined} />
-                    <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                    <AvatarFallback className="text-xs bg-primary/10 text-primary-ink">
                       {getInitials(alert.facultyName)}
                     </AvatarFallback>
                   </Avatar>
@@ -232,8 +232,8 @@ const DepartmentAlerts = ({ department }: DepartmentAlertsProps) => {
                       variant="outline"
                       className={`text-[10px] ${
                         alert.priority === "high"
-                          ? "border-red-300 text-red-700 dark:border-red-800 dark:text-red-400"
-                          : "border-yellow-300 text-yellow-700 dark:border-yellow-800 dark:text-yellow-400"
+                          ? "border-destructive/40 text-destructive dark:border-destructive/40 dark:text-destructive"
+                          : "border-warning/40 text-warning dark:border-warning/40 dark:text-warning"
                       }`}
                     >
                       {alert.priority === "high" ? "High" : "Medium"}

@@ -80,7 +80,7 @@ const LearningTrackPage = () => {
   if (authLoading || !user) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -157,7 +157,7 @@ const LearningTrackPage = () => {
         {/* Course Playlist */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
           </div>
         ) : courses.length === 0 ? (
           <SmartEmptyState
@@ -237,7 +237,7 @@ const LearningTrackPage = () => {
                         </Badge>
                       )}
                       {course.duration_hours && (
-                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-primary border-primary/30">
+                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 text-primary-ink border-primary/30">
                           <Award className="h-2.5 w-2.5 mr-0.5" />
                           +{Math.min(course.duration_hours * 5, 25)} pts
                         </Badge>

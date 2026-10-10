@@ -112,7 +112,7 @@ const permissionTypes = ["view", "edit", "approve", "delete"] as const;
 const PermissionCell = ({ allowed }: { allowed: boolean }) => (
   <span className="flex items-center justify-center">
     {allowed ? (
-      <Check className="h-4 w-4 text-emerald-500" />
+      <Check className="h-4 w-4 text-success" />
     ) : (
       <X className="h-4 w-4 text-muted-foreground/40" />
     )}
@@ -122,13 +122,13 @@ const PermissionCell = ({ allowed }: { allowed: boolean }) => (
 const getRoleBadgeStyle = (role: string): React.CSSProperties => {
   switch (role) {
     case "admin":
-      return { background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.4)" };
+      return { background: "hsl(var(--destructive) / 0.15)", color: "hsl(var(--destructive))", border: "1px solid hsl(var(--destructive) / 0.4)" };
     case "hod":
-      return { background: "rgba(59,130,246,0.15)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.3)" };
+      return { background: "hsl(var(--info) / 0.15)", color: "hsl(var(--info))", border: "1px solid hsl(var(--info) / 0.3)" };
     case "faculty":
-      return { background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.3)" };
+      return { background: "hsl(var(--success) / 0.15)", color: "hsl(var(--success))", border: "1px solid hsl(var(--success) / 0.3)" };
     default:
-      return { background: "rgba(156,163,175,0.15)", color: "#9ca3af", border: "1px solid rgba(156,163,175,0.3)" };
+      return { background: "hsl(var(--muted-foreground) / 0.15)", color: "hsl(var(--muted-foreground))", border: "1px solid hsl(var(--muted-foreground) / 0.3)" };
   }
 };
 
@@ -171,7 +171,7 @@ export default function RoleAccessMatrix() {
       <div className="flex items-center gap-4 text-xs text-muted-foreground bg-muted/50 rounded-lg px-4 py-2">
         <span className="font-medium">Legend:</span>
         <span className="flex items-center gap-1">
-          <Check className="h-3 w-3 text-emerald-500" /> Allowed
+          <Check className="h-3 w-3 text-success" /> Allowed
         </span>
         <span className="flex items-center gap-1">
           <X className="h-3 w-3 text-muted-foreground/40" /> Denied

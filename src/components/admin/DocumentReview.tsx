@@ -86,17 +86,17 @@ const statusConfig: Record<
   pending: {
     icon: Clock,
     label: "Pending",
-    className: "bg-[rgba(245,158,11,0.15)] text-[#f59e0b] border-[rgba(245,158,11,0.4)] dark:bg-[rgba(245,158,11,0.2)] dark:text-[#fbbf24]",
+    className: "bg-warning/15 text-warning border-warning/40 dark:bg-warning/20 dark:text-warning",
   },
   verified: {
     icon: CheckCircle2,
     label: "Verified",
-    className: "bg-[rgba(34,197,94,0.15)] text-[#22c55e] border-[rgba(34,197,94,0.4)] dark:bg-[rgba(34,197,94,0.2)] dark:text-[#4ade80]",
+    className: "bg-success/15 text-success border-success/40 dark:bg-success/20 dark:text-success",
   },
   rejected: {
     icon: XCircle,
     label: "Rejected",
-    className: "bg-[rgba(239,68,68,0.15)] text-[#ef4444] border-[rgba(239,68,68,0.4)] dark:bg-[rgba(239,68,68,0.2)] dark:text-[#f87171]",
+    className: "bg-destructive/15 text-destructive border-destructive/40 dark:bg-destructive/20 dark:text-destructive",
   },
 };
 
@@ -439,7 +439,7 @@ export default function DocumentReview() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -451,7 +451,7 @@ export default function DocumentReview() {
         <p className="text-muted-foreground">
           Review and verify faculty-uploaded documents
           {pendingCount > 0 && (
-            <span className="ml-2 inline-flex items-center rounded-full border border-[rgba(245,158,11,0.4)] bg-[rgba(245,158,11,0.15)] px-2 py-0.5 text-xs font-semibold text-[#f59e0b] dark:bg-[rgba(245,158,11,0.2)] dark:text-[#fbbf24]">
+            <span className="ml-2 inline-flex items-center rounded-full border border-warning/40 bg-warning/15 px-2 py-0.5 text-xs font-semibold text-warning dark:bg-warning/20 dark:text-warning">
               {pendingCount} pending
             </span>
           )}
@@ -544,7 +544,7 @@ export default function DocumentReview() {
                         <div className="flex items-center gap-3">
                           <Avatar className="h-8 w-8">
                             <AvatarImage src={doc.avatar_url || undefined} />
-                            <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-white text-xs">
+                            <AvatarFallback className="bg-gradient-to-br from-primary-ink to-accent-ink text-gradient-foreground text-xs">
                               {getInitials(doc.full_name || "?")}
                             </AvatarFallback>
                           </Avatar>
@@ -586,7 +586,7 @@ export default function DocumentReview() {
                           {statusInfo.label}
                         </Badge>
                         {doc.status === "rejected" && doc.rejection_reason && (
-                          <p className="text-xs text-red-500 mt-1 max-w-[200px] truncate">
+                          <p className="text-xs text-destructive mt-1 max-w-[200px] truncate">
                             {doc.rejection_reason}
                           </p>
                         )}
@@ -607,7 +607,7 @@ export default function DocumentReview() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                                className="text-success hover:text-success hover:bg-success/10 dark:hover:bg-success/20"
                                 onClick={() => openCommentDialog(doc)}
                                 disabled={processing}
                               >
@@ -747,7 +747,7 @@ export default function DocumentReview() {
             <Button
               onClick={handleApproveWithComment}
               disabled={processing}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white"
+              className="bg-success hover:bg-success/90 text-success-foreground"
             >
               {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Approve Document

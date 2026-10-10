@@ -22,14 +22,14 @@ const stateConfig: Record<NodeState, { bg: string; border: string; icon: typeof 
     pulse: false,
   },
   available: {
-    bg: "bg-gradient-to-br from-primary to-primary/80",
+    bg: "bg-gradient-to-br from-primary-ink to-primary/80",
     border: "border-primary/60 shadow-[0_0_20px_hsl(var(--primary)/0.3)]",
     icon: Play,
     iconColor: "text-primary-foreground",
     pulse: true,
   },
   in_progress: {
-    bg: "bg-gradient-to-br from-accent to-accent/80",
+    bg: "bg-gradient-to-br from-accent-ink to-accent/80",
     border: "border-accent/60 shadow-[0_0_20px_hsl(var(--accent)/0.3)]",
     icon: Play,
     iconColor: "text-accent-foreground",
@@ -101,7 +101,7 @@ const LearningPathNode = ({ title, state, contentType, xp, index, onClick }: Lea
           {getContentIcon(contentType)}
           <span className={cn(
             "text-[10px] font-bold",
-            state === "completed" ? "text-success" : state === "locked" ? "text-muted-foreground/40" : "text-primary"
+            state === "completed" ? "text-success" : state === "locked" ? "text-muted-foreground/40" : "text-primary-ink"
           )}>
             +{xp} XP
           </span>

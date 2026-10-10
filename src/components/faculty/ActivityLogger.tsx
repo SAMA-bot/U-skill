@@ -67,17 +67,17 @@ const statusConfig = {
   pending: { 
     icon: Circle, 
     label: "Pending", 
-    className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400" 
+    className: "bg-warning/10 text-warning dark:bg-warning/30 dark:text-warning" 
   },
   in_progress: { 
     icon: Clock, 
     label: "In Progress", 
-    className: "bg-primary/10 text-primary dark:bg-primary/30 dark:text-primary" 
+    className: "bg-primary/10 text-primary-ink dark:bg-primary/30 dark:text-primary-ink" 
   },
   completed: { 
     icon: CheckCircle2, 
     label: "Completed", 
-    className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" 
+    className: "bg-success/10 text-success dark:bg-success/30 dark:text-success" 
   },
 };
 
@@ -128,7 +128,7 @@ export default function ActivityLogger() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -152,7 +152,7 @@ export default function ActivityLogger() {
           className="bg-card border border-border rounded-lg p-4"
         >
           <p className="text-sm text-muted-foreground">Completed</p>
-          <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.completed}</p>
+          <p className="text-2xl font-bold text-success dark:text-success">{stats.completed}</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -161,7 +161,7 @@ export default function ActivityLogger() {
           className="bg-card border border-border rounded-lg p-4"
         >
           <p className="text-sm text-muted-foreground">In Progress</p>
-          <p className="text-2xl font-bold text-primary dark:text-primary">{stats.inProgress}</p>
+          <p className="text-2xl font-bold text-primary-ink dark:text-primary-ink">{stats.inProgress}</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -170,7 +170,7 @@ export default function ActivityLogger() {
           className="bg-card border border-border rounded-lg p-4"
         >
           <p className="text-sm text-muted-foreground">Pending</p>
-          <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
+          <p className="text-2xl font-bold text-warning dark:text-warning">{stats.pending}</p>
         </motion.div>
       </div>
 
@@ -298,14 +298,14 @@ export default function ActivityLogger() {
                     <div className={cn(
                       "p-2 rounded-lg flex-shrink-0",
                       activity.status === "completed" 
-                        ? "bg-green-100 dark:bg-green-900/30" 
+                        ? "bg-success/10 dark:bg-success/30" 
                         : "bg-primary/10"
                     )}>
                       <Icon className={cn(
                         "h-5 w-5",
                         activity.status === "completed" 
-                          ? "text-green-600 dark:text-green-400" 
-                          : "text-primary"
+                          ? "text-success dark:text-success" 
+                          : "text-primary-ink"
                       )} />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -335,7 +335,7 @@ export default function ActivityLogger() {
                           Created {formatDate(activity.created_at)}
                         </span>
                         {activity.completed_at && (
-                          <span className="text-xs text-green-600 dark:text-green-400">
+                          <span className="text-xs text-success dark:text-success">
                             Completed {formatDate(activity.completed_at)}
                           </span>
                         )}

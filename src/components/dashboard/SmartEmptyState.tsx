@@ -45,7 +45,7 @@ const SmartEmptyState = ({
             className="relative z-10"
           >
             <div className={`h-20 w-20 rounded-2xl bg-gradient-to-br ${illustrationColor} flex items-center justify-center shadow-lg`}>
-              <Icon className="h-10 w-10 text-primary" />
+              <Icon className="h-10 w-10 text-primary-ink" />
             </div>
           </motion.div>
           {/* Decorative rings */}

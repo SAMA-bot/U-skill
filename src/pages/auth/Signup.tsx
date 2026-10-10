@@ -311,7 +311,7 @@ export default function Signup() {
               <ThemeToggle />
               <Link
                 to="/auth/login"
-                className="text-primary hover:underline font-medium"
+                className="text-primary-ink hover:underline font-medium"
               >
                 Log In
               </Link>
@@ -442,7 +442,7 @@ export default function Signup() {
 
           <p className="text-center text-muted-foreground mt-6">
             Already have an account?{' '}
-            <Link to="/auth/login" className="text-primary hover:underline font-medium">
+            <Link to="/auth/login" className="text-primary-ink hover:underline font-medium">
               Log in
             </Link>
           </p>

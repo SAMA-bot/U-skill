@@ -9,14 +9,14 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-sm",
+          "border-transparent bg-gradient-to-r from-primary-ink to-primary/80 text-primary-foreground shadow-sm",
         secondary:
           "border-transparent bg-gradient-to-r from-secondary to-secondary/80 text-secondary-foreground",
         destructive:
           "border-transparent bg-gradient-to-r from-destructive to-destructive/80 text-destructive-foreground",
         outline: "text-foreground",
         accent:
-          "border-transparent bg-gradient-to-r from-accent to-accent/80 text-accent-foreground shadow-sm",
+          "border-transparent bg-gradient-to-r from-accent-ink to-accent/80 text-accent-foreground shadow-sm",
       },
     },
     defaultVariants: {

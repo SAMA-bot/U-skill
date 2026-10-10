@@ -33,7 +33,7 @@ const PageHeader = ({ eyebrow, title, description, icon: Icon, actions, classNam
       )}
       <h1 className="text-[22px] sm:text-2xl font-semibold tracking-tight text-foreground flex items-center gap-2.5">
         {Icon && (
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary-ink">
             <Icon className="h-[18px] w-[18px]" />
           </span>
         )}

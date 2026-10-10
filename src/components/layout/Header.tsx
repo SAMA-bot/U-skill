@@ -59,7 +59,7 @@ export function Header() {
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{
               backgroundImage: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))',
             }}>
-              <Sparkles className="w-5 h-5 text-white" />
+              <Sparkles className="w-5 h-5 text-gradient-foreground" />
             </div>
             <div className="hidden sm:block">
               <span className="font-heading font-bold text-lg tracking-tight">SKIT</span>

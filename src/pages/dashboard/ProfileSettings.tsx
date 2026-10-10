@@ -234,7 +234,7 @@ const ProfileSettings = () => {
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -283,7 +283,7 @@ const ProfileSettings = () => {
             <h2 className="text-lg font-semibold text-foreground mb-4">Profile Photo</h2>
             <div className="flex items-center gap-6">
               <div className="relative">
-                <div className="h-24 w-24 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center overflow-hidden">
+                <div className="h-24 w-24 rounded-full bg-gradient-to-br from-primary-ink to-accent-ink flex items-center justify-center overflow-hidden">
                   {profile?.avatar_url ? (
                     <img 
                       src={profile.avatar_url} 
@@ -291,7 +291,7 @@ const ProfileSettings = () => {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <span className="text-white font-bold text-2xl">
+                    <span className="text-gradient-foreground font-bold text-2xl">
                       {getInitials(profile?.full_name || 'U')}
                     </span>
                   )}

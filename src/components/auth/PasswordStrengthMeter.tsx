@@ -17,10 +17,10 @@ export function getPasswordScore(value: string) {
 const levels = [
   { label: 'Very weak', bar: 'bg-destructive', text: 'text-destructive' },
   { label: 'Weak', bar: 'bg-destructive', text: 'text-destructive' },
-  { label: 'Fair', bar: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400' },
-  { label: 'Good', bar: 'bg-primary', text: 'text-primary dark:text-primary' },
-  { label: 'Strong', bar: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400' },
-  { label: 'Very strong', bar: 'bg-emerald-600', text: 'text-emerald-600 dark:text-emerald-400' },
+  { label: 'Fair', bar: 'bg-warning', text: 'text-warning dark:text-warning' },
+  { label: 'Good', bar: 'bg-primary', text: 'text-primary-ink dark:text-primary-ink' },
+  { label: 'Strong', bar: 'bg-success', text: 'text-success dark:text-success' },
+  { label: 'Very strong', bar: 'bg-success', text: 'text-success dark:text-success' },
 ];
 
 interface Props {
@@ -36,7 +36,7 @@ export function PasswordStrengthMeter({ value }: Props) {
 
   return (
     <div className="space-y-2 pt-1" aria-live="polite">
-      <div className="h-1.5 w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+      <div className="h-1.5 w-full rounded-full bg-muted dark:bg-muted overflow-hidden">
         <motion.div
           className={`h-full rounded-full ${level.bar}`}
           initial={{ width: 0 }}
@@ -53,7 +53,7 @@ export function PasswordStrengthMeter({ value }: Props) {
             <li
               key={rule.id}
               className={`flex items-center gap-1.5 text-xs ${
-                ok ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'
+                ok ? 'text-success dark:text-success' : 'text-muted-foreground'
               }`}
             >
               {ok ? (

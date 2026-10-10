@@ -12,26 +12,26 @@ interface PerformanceScoreCardProps {
 const badgeInlineStyle = (badge: PerformanceScoreData["badge"]): React.CSSProperties => {
   switch (badge) {
     case "Excellent":
-      return { background: "rgba(59,130,246,0.15)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.4)" };
+      return { background: "hsl(var(--info) / 0.15)", color: "hsl(var(--info))", border: "1px solid hsl(var(--info) / 0.4)" };
     case "Good":
-      return { background: "rgba(34,197,94,0.15)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.4)" };
+      return { background: "hsl(var(--success) / 0.15)", color: "hsl(var(--success))", border: "1px solid hsl(var(--success) / 0.4)" };
     default: // Needs Improvement
-      return { background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.4)", boxShadow: "0 0 12px rgba(239,68,68,0.25)" };
+      return { background: "hsl(var(--destructive) / 0.15)", color: "hsl(var(--destructive))", border: "1px solid hsl(var(--destructive) / 0.4)", boxShadow: "0 0 12px hsl(var(--destructive) / 0.25)" };
   }
 };
 
 const getScoreColor = (score: number) => {
-  if (score >= 80) return "text-[#3b82f6]";
-  if (score >= 70) return "text-[#22c55e]";
-  if (score >= 60) return "text-[#f59e0b]";
-  return "text-[#ef4444]";
+  if (score >= 80) return "text-info";
+  if (score >= 70) return "text-success";
+  if (score >= 60) return "text-warning";
+  return "text-destructive";
 };
 
 const PerformanceScoreCard = ({ data, compact = false }: PerformanceScoreCardProps) => {
   if (data.loading) {
     return (
       <div className="bg-card border border-border rounded-lg p-6 flex items-center justify-center h-48">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary-ink" />
       </div>
     );
   }
@@ -84,7 +84,7 @@ const PerformanceScoreCard = ({ data, compact = false }: PerformanceScoreCardPro
       <div className="px-4 py-5 sm:px-6 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Award className="h-5 w-5 text-primary" />
+            <Award className="h-5 w-5 text-primary-ink" />
             <h3 className="text-lg font-medium text-foreground">
               Faculty Performance Score
             </h3>
