@@ -32,11 +32,11 @@ const skillColors: Record<string, string> = {
   Mentoring: "bg-chart-3",
 };
 
-const getGrowthLabel = (level: number): { text: string; inlineStyle: React.CSSProperties } => {
-  if (level >= 80) return { text: "Expert", inlineStyle: { background: "rgba(34,197,94,0.15)", color: "hsl(var(--chart-3))", border: "1px solid rgba(34,197,94,0.4)" } };
-  if (level >= 60) return { text: "Advanced", inlineStyle: { background: "rgba(59,130,246,0.15)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.4)" } };
-  if (level >= 30) return { text: "Intermediate", inlineStyle: { background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.4)" } };
-  return { text: "Beginner", inlineStyle: { background: "rgba(161,161,170,0.15)", color: "#a1a1aa", border: "1px solid rgba(161,161,170,0.4)" } };
+const getGrowthLabel = (level: number): { text: string; className: string } => {
+  if (level >= 80) return { text: "Expert", className: "bg-success/15 text-success border-success/40" };
+  if (level >= 60) return { text: "Advanced", className: "bg-chart-1/15 text-chart-1 border-chart-1/40" };
+  if (level >= 30) return { text: "Intermediate", className: "bg-warning/15 text-warning border-warning/40" };
+  return { text: "Beginner", className: "bg-muted text-muted-foreground border-border" };
 };
 
 const SkillGrowthChart = () => {
@@ -156,7 +156,7 @@ const SkillGrowthChart = () => {
                         <span className="text-sm font-medium text-foreground">{sk.skill}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge style={growth.inlineStyle} className="text-[9px] px-1.5 py-0 border-0">{growth.text}</Badge>
+                        <Badge className={`text-[9px] px-1.5 py-0 ${growth.className}`}>{growth.text}</Badge>
                         <span className="text-xs text-muted-foreground w-8 text-right">{sk.current}%</span>
                       </div>
                     </div>
@@ -248,7 +248,7 @@ const SkillGrowthChart = () => {
                           <span className="text-xs font-medium text-foreground">{sk.skill}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge style={growth.inlineStyle} className="text-[9px] px-1.5 py-0 border-0">{growth.text}</Badge>
+                          <Badge className={`text-[9px] px-1.5 py-0 ${growth.className}`}>{growth.text}</Badge>
                           <span className="text-xs text-muted-foreground w-8 text-right">{sk.current}%</span>
                         </div>
                       </div>
