@@ -535,11 +535,11 @@ const PerformanceAssessment = () => {
             <CardContent>
               <div className="flex gap-4 mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-primary" />
+                  <div className="w-3 h-3 rounded-full bg-chart-1" />
                   <span className="text-xs text-muted-foreground">Teaching</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "hsl(var(--accent))" }} />
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "hsl(var(--chart-2))" }} />
                   <span className="text-xs text-muted-foreground">Research</span>
                 </div>
                 <div className="flex items-center gap-2">
