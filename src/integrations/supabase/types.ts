@@ -1137,6 +1137,25 @@ export type Database = {
         Returns: boolean
       }
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
+      complete_lesson: {
+        Args: { p_lesson_id: string }
+        Returns: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          lesson_id: string
+          status: string
+          updated_at: string
+          user_id: string
+          xp_earned: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lesson_progress"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1154,6 +1173,25 @@ export type Database = {
           p_user_id: string
         }
         Returns: string
+      }
+      start_lesson: {
+        Args: { p_lesson_id: string }
+        Returns: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          lesson_id: string
+          status: string
+          updated_at: string
+          user_id: string
+          xp_earned: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "lesson_progress"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
     }
     Enums: {

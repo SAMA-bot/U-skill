@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791725968240,
+      "tag": "0000_secure_lesson_and_enrollment_writes",
+      "breakpoints": true
+    }
+  ]
+}
