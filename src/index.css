@@ -19,6 +19,8 @@
     --primary-ink: 203 100% 36%;
     --accent-ink: 162 75% 26%;
     --overlay: 216 19% 8%;
+    --gradient-foreground: 0 0% 100%;
+    --gradient-button: linear-gradient(135deg, hsl(var(--primary-ink)), hsl(var(--accent-ink)));
 
     --secondary: 190 100% 92%; /* tint of #92EEFF */
     --secondary-foreground: 205 45% 18%;
@@ -109,6 +111,8 @@
     --primary-ink: 183 100% 42%;
     --accent-ink: 279 82% 72%;
     --overlay: 216 19% 8%;
+    --gradient-foreground: 216 19% 10%;
+    --gradient-button: linear-gradient(135deg, hsl(var(--primary-ink)), hsl(var(--accent-ink)));
 
     --secondary: 218 10% 25%; /* #393E46 */
     --secondary-foreground: 0 0% 93%;
