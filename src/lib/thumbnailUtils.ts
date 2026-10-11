@@ -4,17 +4,19 @@
  */
 
 const GRADIENT_PAIRS = [
-  ["hsl(var(--info))", "hsl(var(--accent-ink))"], // blue → purple
-  ["#06b6d4", "hsl(var(--info))"], // cyan → blue
-  ["hsl(var(--accent-ink))", "#ec4899"], // purple → pink
-  ["#10b981", "#06b6d4"], // emerald → cyan
-  ["hsl(var(--warning))", "hsl(var(--destructive))"], // amber → red
-  ["#6366f1", "#06b6d4"], // indigo → cyan
-  ["#ec4899", "hsl(var(--warning))"], // pink → amber
-  ["#14b8a6", "hsl(var(--accent-ink))"], // teal → purple
-  ["#f43f5e", "#a855f7"], // rose → violet
-  ["#0ea5e9", "hsl(var(--success))"], // sky → green
+  ["primary", "accent"],
+  ["brand-d", "primary"],
+  ["accent", "brand-c"],
+  ["brand-c", "brand-d"],
+  ["primary", "brand-c"],
 ];
+
+// SVG images cannot inherit CSS variables from their embedding page.
+function resolveToken(token: string): string {
+  if (typeof document === "undefined") return "currentColor";
+  const value = getComputedStyle(document.documentElement).getPropertyValue(`--${token}`).trim();
+  return value ? `hsl(${value})` : "currentColor";
+}
 
 const ICONS: Record<string, string> = {
   cyber: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
@@ -58,7 +60,10 @@ function getInitials(title: string): string {
 
 export function generateCourseThumbnail(title: string): string {
   const hash = hashString(title);
-  const [color1, color2] = GRADIENT_PAIRS[hash % GRADIENT_PAIRS.length];
+  const [color1, color2] = GRADIENT_PAIRS[hash % GRADIENT_PAIRS.length].map(resolveToken);
+  const ink = resolveToken("primary-foreground");
+  const highlight = resolveToken("foreground");
+  const overlay = resolveToken("overlay");
   const angle = (hash % 4) * 45 + 135;
   const iconPath = getIconPath(title);
   const initials = getInitials(title);
@@ -70,18 +75,18 @@ export function generateCourseThumbnail(title: string): string {
         <stop offset="100%" stop-color="${color2}" stop-opacity="1"/>
       </linearGradient>
       <linearGradient id="overlay" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="white" stop-opacity="0.1"/>
-        <stop offset="100%" stop-color="black" stop-opacity="0.15"/>
+        <stop offset="0%" stop-color="${highlight}" stop-opacity="0.1"/>
+        <stop offset="100%" stop-color="${overlay}" stop-opacity="0.15"/>
       </linearGradient>
     </defs>
     <rect width="320" height="180" rx="12" fill="url(#bg)"/>
     <rect width="320" height="180" rx="12" fill="url(#overlay)"/>
-    <circle cx="260" cy="40" r="60" fill="white" fill-opacity="0.06"/>
-    <circle cx="60" cy="150" r="40" fill="white" fill-opacity="0.04"/>
-    <g transform="translate(140, 50) scale(1.7)" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
+    <circle cx="260" cy="40" r="60" fill="${ink}" fill-opacity="0.06"/>
+    <circle cx="60" cy="150" r="40" fill="${ink}" fill-opacity="0.04"/>
+    <g transform="translate(140, 50) scale(1.7)" fill="none" stroke="${ink}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
       <path d="${iconPath}"/>
     </g>
-    <text x="160" y="145" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="16" fill="white" opacity="0.85">${initials}</text>
+    <text x="160" y="145" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="16" fill="${ink}" opacity="0.85">${initials}</text>
   </svg>`;
 
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
@@ -93,7 +98,10 @@ export function getCourseThumbnail(course: { title: string; thumbnail_url: strin
 
 export function generatePathThumbnail(title: string): string {
   const hash = hashString(title);
-  const [color1, color2] = GRADIENT_PAIRS[hash % GRADIENT_PAIRS.length];
+  const [color1, color2] = GRADIENT_PAIRS[hash % GRADIENT_PAIRS.length].map(resolveToken);
+  const ink = resolveToken("primary-foreground");
+  const highlight = resolveToken("foreground");
+  const overlay = resolveToken("overlay");
   const angle = (hash % 4) * 45 + 135;
   const iconPath = getIconPath(title);
   const initials = getInitials(title);
@@ -105,19 +113,19 @@ export function generatePathThumbnail(title: string): string {
         <stop offset="100%" stop-color="${color2}" stop-opacity="1"/>
       </linearGradient>
       <linearGradient id="overlay" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="white" stop-opacity="0.12"/>
-        <stop offset="100%" stop-color="black" stop-opacity="0.2"/>
+        <stop offset="0%" stop-color="${highlight}" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="${overlay}" stop-opacity="0.2"/>
       </linearGradient>
     </defs>
     <rect width="400" height="200" rx="16" fill="url(#bg)"/>
     <rect width="400" height="200" rx="16" fill="url(#overlay)"/>
-    <circle cx="320" cy="40" r="70" fill="white" fill-opacity="0.06"/>
-    <circle cx="80" cy="170" r="50" fill="white" fill-opacity="0.04"/>
-    <circle cx="200" cy="100" r="90" fill="white" fill-opacity="0.03"/>
-    <g transform="translate(172, 45) scale(2.3)" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
+    <circle cx="320" cy="40" r="70" fill="${ink}" fill-opacity="0.06"/>
+    <circle cx="80" cy="170" r="50" fill="${ink}" fill-opacity="0.04"/>
+    <circle cx="200" cy="100" r="90" fill="${ink}" fill-opacity="0.03"/>
+    <g transform="translate(172, 45) scale(2.3)" fill="none" stroke="${ink}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
       <path d="${iconPath}"/>
     </g>
-    <text x="200" y="165" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="18" fill="white" opacity="0.9">${initials}</text>
+    <text x="200" y="165" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="700" font-size="18" fill="${ink}" opacity="0.9">${initials}</text>
   </svg>`;
 
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;

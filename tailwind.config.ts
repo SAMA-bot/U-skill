@@ -20,6 +20,7 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         overlay: "hsl(var(--overlay))",
+        "gradient-foreground": "hsl(var(--gradient-foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           ink: "hsl(var(--primary-ink))",

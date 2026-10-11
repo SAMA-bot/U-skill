@@ -6,7 +6,7 @@ import {
   ExternalLink, FileText, Video, Loader2, BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getCourseThumbnail } from "@/lib/thumbnailUtils";
+import { ThemedThumbnail } from "@/components/ui/themed-thumbnail";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
@@ -221,9 +221,7 @@ const CourseDetailPage = () => {
         >
           {/* Thumbnail - always shown */}
           <div className="aspect-[3/1] w-full overflow-hidden bg-muted relative">
-            <img
-              src={getCourseThumbnail(course)}
-              alt={course.title}
+            <ThemedThumbnail item={course} kind="course"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />

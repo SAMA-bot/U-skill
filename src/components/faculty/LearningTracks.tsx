@@ -26,7 +26,7 @@ import { Progress } from "@/components/ui/progress";
 import SmartEmptyState from "@/components/dashboard/SmartEmptyState";
 import { NoCoursesSVG } from "@/components/dashboard/EmptyStateIllustrations";
 import { useCourseEnrollments } from "@/hooks/useCourseEnrollments";
-import { getCourseThumbnail } from "@/lib/thumbnailUtils";
+import { ThemedThumbnail } from "@/components/ui/themed-thumbnail";
 import { LucideIcon } from "lucide-react";
 
 export interface Course {
@@ -307,9 +307,7 @@ const TrackCourseCard = ({
     >
       {/* Thumbnail */}
       <div className="relative h-28 overflow-hidden">
-        <img
-          src={getCourseThumbnail(course)}
-          alt={course.title}
+        <ThemedThumbnail item={course} kind="course"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
         {completed && (

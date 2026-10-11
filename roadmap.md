@@ -5,5 +5,5 @@
 
 # Site-wide color token audit
 
-- [ ] Replace fixed component colors with semantic light/dark tokens, including icons, badges, gradients, overlays, and reports.
-- [ ] Validate remaining color sources and check both themes.
+- [x] Replace fixed component colors with semantic light/dark tokens, including icons, badges, gradients, overlays, and reports.
+- [x] Validate remaining color sources and check public pages in both themes; signed-in role views were source-audited, not browser-verified.

@@ -20,7 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLessonProgress } from "@/hooks/useLessonProgress";
 import { useLearningPathProgress } from "@/hooks/useLearningPathProgress";
-import { getPathThumbnail } from "@/lib/thumbnailUtils";
+import { ThemedThumbnail } from "@/components/ui/themed-thumbnail";
 import { cn } from "@/lib/utils";
 
 // Types
@@ -308,9 +308,7 @@ const CoursesViewer = () => {
               >
                 {/* Path thumbnail + header */}
                 <div className="relative h-24 sm:h-28 overflow-hidden">
-                  <img
-                    src={getPathThumbnail(path)}
-                    alt={`${path.title} learning path cover`}
+                  <ThemedThumbnail item={path} kind="path"
                     loading="lazy"
                     className="w-full h-full object-cover"
                   />
