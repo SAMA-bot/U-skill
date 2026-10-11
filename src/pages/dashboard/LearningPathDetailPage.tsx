@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLessonProgress } from "@/hooks/useLessonProgress";
 import { useLearningPathProgress, PATH_COMPLETION_BONUS_XP } from "@/hooks/useLearningPathProgress";
 import { AnimatePresence } from "framer-motion";
-import { getPathThumbnail } from "@/lib/thumbnailUtils";
+import { ThemedThumbnail } from "@/components/ui/themed-thumbnail";
 import { cn } from "@/lib/utils";
 
 interface LearningPath {
@@ -180,9 +180,7 @@ const LearningPathDetailPage = () => {
           className="rounded-xl border border-border bg-card overflow-hidden"
         >
           <div className="relative h-36 sm:h-44">
-            <img
-              src={getPathThumbnail(path)}
-              alt={`${path.title} course cover`}
+            <ThemedThumbnail item={path} kind="path"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
