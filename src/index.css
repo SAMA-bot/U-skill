@@ -217,7 +217,7 @@
   }
 
   .glass-card {
-    @apply rounded-xl bg-card border border-border;
+    @apply rounded-xl bg-card text-card-foreground border border-border;
     box-shadow: var(--shadow-card);
   }
 

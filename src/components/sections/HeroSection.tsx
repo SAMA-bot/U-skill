@@ -121,9 +121,9 @@ export function HeroSection() {
                 {/* Mock Chart */}
                 <div className="space-y-5">
                   {[
-                    { label: 'Teaching Excellence', value: 85, gradient: 'linear-gradient(90deg, hsl(var(--primary)), hsl(var(--brand-c)))' },
-                    { label: 'Research Output', value: 72, gradient: 'linear-gradient(90deg, hsl(var(--accent)), hsl(var(--primary)))' },
-                    { label: 'Administrative Skills', value: 90, gradient: 'linear-gradient(90deg, hsl(var(--brand-c)), hsl(var(--success)))' },
+                    { label: 'Teaching Excellence', value: 85, gradient: 'linear-gradient(90deg, hsl(var(--chart-1)), hsl(var(--chart-4)))' },
+                    { label: 'Research Output', value: 72, gradient: 'linear-gradient(90deg, hsl(var(--chart-2)), hsl(var(--chart-1)))' },
+                    { label: 'Administrative Skills', value: 90, gradient: 'linear-gradient(90deg, hsl(var(--chart-3)), hsl(var(--chart-5)))' },
                   ].map((item) => (
                     <div key={item.label}>
                       <div className="flex justify-between text-sm mb-2">

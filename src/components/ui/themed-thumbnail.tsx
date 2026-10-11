@@ -5,13 +5,14 @@ interface ThemedThumbnailProps {
   item: { title: string; thumbnail_url?: string | null };
   kind?: "course" | "path";
   className?: string;
+  loading?: "eager" | "lazy";
 }
 
 /** Re-resolves generated SVG colors when the global theme changes. */
-export function ThemedThumbnail({ item, kind = "path", className }: ThemedThumbnailProps) {
+export function ThemedThumbnail({ item, kind = "path", className, loading }: ThemedThumbnailProps) {
   const { resolvedTheme } = useTheme();
   const source = kind === "course"
     ? getCourseThumbnail({ ...item, thumbnail_url: item.thumbnail_url ?? null })
     : getPathThumbnail(item);
-  return <img key={resolvedTheme} src={source} alt={item.title} className={className} />;
+  return <img key={resolvedTheme} src={source} alt={item.title} className={className} loading={loading} />;
 }
