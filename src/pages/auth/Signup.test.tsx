@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import Signup from './Signup';
 import { Toaster } from '@/components/ui/toaster';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { supabase } from '@/integrations/supabase/client';
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -33,10 +34,12 @@ const signUpMock = supabase.auth.signUp as unknown as ReturnType<typeof vi.fn>;
 
 function renderSignup() {
   return render(
-    <MemoryRouter>
-      <Signup />
-      <Toaster />
-    </MemoryRouter>
+    <TooltipProvider>
+      <MemoryRouter>
+        <Signup />
+        <Toaster />
+      </MemoryRouter>
+    </TooltipProvider>
   );
 }
 
