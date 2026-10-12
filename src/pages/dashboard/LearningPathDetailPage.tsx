@@ -338,9 +338,9 @@ const LearningPathDetailPage = () => {
           const wasCompleted = isLessonCompleted(l.id);
           const willFinishPath = !wasCompleted && allLessons.length > 0 &&
             completedLessons.length + 1 === allLessons.length;
-          await completeLesson(l.id, l.xp_reward);
-          if (!wasCompleted) {
-            setXpBurst({ amount: l.xp_reward + (willFinishPath ? PATH_COMPLETION_BONUS_XP : 0), key: Date.now(), bonus: willFinishPath });
+          const awarded = await completeLesson(l.id);
+          if (!wasCompleted && awarded !== null) {
+            setXpBurst({ amount: awarded + (willFinishPath ? PATH_COMPLETION_BONUS_XP : 0), key: Date.now(), bonus: willFinishPath });
             setTimeout(() => setXpBurst(null), 2600);
             if (willFinishPath) toast({ title: `🏆 Path complete! +${PATH_COMPLETION_BONUS_XP} bonus XP`, description: path.title });
           }
