@@ -17,23 +17,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
+    let active = true;
+    // Once any auth event arrives, the initial getSession() result is stale and must not overwrite it.
+    let eventReceived = false;
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    const apply = (s: Session | null) => {
+      if (!active) return;
+      setSession(s);
+      // Keep the same user object identity when the account hasn't changed to avoid refetch storms.
+      setUser(prev => (prev && s?.user && prev.id === s.user.id ? prev : s?.user ?? null));
       setLoading(false);
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
+      eventReceived = true;
+      apply(s);
     });
 
-    return () => subscription.unsubscribe();
+    supabase.auth.getSession()
+      .then(({ data: { session: s } }) => { if (!eventReceived) apply(s); })
+      .catch(() => { if (!eventReceived) apply(null); });
+
+    return () => { active = false; subscription.unsubscribe(); };
   }, []);
 
   const signOut = async () => {
