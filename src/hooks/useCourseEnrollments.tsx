@@ -24,7 +24,7 @@ export const useCourseEnrollments = () => {
   
 
   const fetchEnrollments = useCallback(async () => {
-    if (!user) return;
+    if (!user) { setEnrollments([]); setLoading(false); return; }
 
     try {
       // Fetch ALL enrollments (no date filter) so enrollment status checks work correctly
@@ -136,148 +136,78 @@ export const useCourseEnrollments = () => {
     }
   };
 
+  // Status, progress and completion are changed only by the course-actions
+  // backend function, which validates the user and enforces rate limits.
+  const callCourseAction = async (
+    action: "start" | "complete" | "progress",
+    courseId: string,
+    progressPercentage?: number,
+  ): Promise<CourseEnrollment> => {
+    const { data, error } = await supabase.functions.invoke("course-actions", {
+      body: { action, courseId, progressPercentage },
+    });
+    if (error) {
+      let message = "Something went wrong. Please try again.";
+      try {
+        const ctx = (error as { context?: Response }).context;
+        const body = ctx ? await ctx.json() : null;
+        if (body?.message) message = body.message;
+      } catch { /* keep generic message */ }
+      throw new Error(message);
+    }
+    if (!data?.data) throw new Error("No enrollment returned. Please try again.");
+    return data.data as CourseEnrollment;
+  };
+
+  const applyLocal = (enrollment: CourseEnrollment) =>
+    setEnrollments((prev) =>
+      prev.some((e) => e.course_id === enrollment.course_id)
+        ? prev.map((e) => (e.course_id === enrollment.course_id ? enrollment : e))
+        : [enrollment, ...prev]
+    );
+
   const startCourse = async (courseId: string) => {
     if (!user) return null;
-
     try {
-      const existing = enrollments.find((e) => e.course_id === courseId);
-
-      if (!existing) {
-        // Auto-enroll and start
-        const { data, error } = await supabase
-          .from("course_enrollments")
-          .insert({
-            user_id: user.id,
-            course_id: courseId,
-            status: "in_progress",
-            progress_percentage: 10,
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
-        const enrollment = data as CourseEnrollment;
-        setEnrollments((prev) => [enrollment, ...prev]);
-        toast({
-          title: "🚀 Course started!",
-          description: "Good luck with your learning journey.",
-        });
-        return enrollment;
-      }
-
-      const { data, error } = await supabase
-        .from("course_enrollments")
-        .update({
-          status: "in_progress",
-          progress_percentage: Math.max(existing.progress_percentage || 0, 10),
-        })
-        .eq("user_id", user.id)
-        .eq("course_id", courseId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      const enrollment = data as CourseEnrollment;
-      setEnrollments((prev) =>
-        prev.map((e) => (e.course_id === courseId ? enrollment : e))
-      );
-      toast({
-        title: "🚀 Course started!",
-        description: "Good luck with your learning journey.",
-      });
+      const enrollment = await callCourseAction("start", courseId);
+      applyLocal(enrollment);
+      toast({ title: "🚀 Course started!", description: "Good luck with your learning journey." });
       return enrollment;
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to start course:", error);
-      toast({
-        title: "Failed to start course",
-        description: error.message || "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Failed to start course", description: (error as Error).message, variant: "destructive" });
       return null;
     }
   };
 
   const completeCourse = async (courseId: string) => {
     if (!user) return null;
-
     try {
-      const { data, error } = await supabase
-        .from("course_enrollments")
-        .update({
-          status: "completed",
-          progress_percentage: 100,
-          completed_at: new Date().toISOString(),
-        })
-        .eq("user_id", user.id)
-        .eq("course_id", courseId)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      if (!data) {
-        toast({
-          title: "Not enrolled",
-          description: "You need to enroll in this course first.",
-          variant: "destructive",
-        });
-        return null;
-      }
-
-      const enrollment = data as CourseEnrollment;
-      setEnrollments((prev) =>
-        prev.map((e) => (e.course_id === courseId ? enrollment : e))
-      );
+      const enrollment = await callCourseAction("complete", courseId);
+      applyLocal(enrollment);
       toast({
         title: "🎉 Training Completed!",
         description: "Congratulations! Your skill points and capacity score have been updated.",
       });
       return enrollment;
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to complete course:", error);
-      toast({
-        title: "Failed to complete course",
-        description: error.message || "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Failed to complete course", description: (error as Error).message, variant: "destructive" });
       return null;
     }
   };
 
   const updateProgress = async (courseId: string, percentage: number) => {
     if (!user) return null;
-
     try {
-      const safePercentage = Math.min(100, Math.max(0, percentage));
-      const isComplete = safePercentage >= 100;
-
-      const { data, error } = await supabase
-        .from("course_enrollments")
-        .update({
-          progress_percentage: safePercentage,
-          status: isComplete ? "completed" : "in_progress",
-          completed_at: isComplete ? new Date().toISOString() : null,
-        })
-        .eq("user_id", user.id)
-        .eq("course_id", courseId)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      const enrollment = data as CourseEnrollment;
-      setEnrollments((prev) =>
-        prev.map((e) => (e.course_id === courseId ? enrollment : e))
-      );
-
-      if (isComplete) {
-        toast({
-          title: "🎉 Course completed!",
-          description: "Congratulations! Your skill points have been updated.",
-        });
+      const safe = Math.min(100, Math.max(0, percentage));
+      const enrollment = await callCourseAction("progress", courseId, safe);
+      applyLocal(enrollment);
+      if (enrollment.status === "completed") {
+        toast({ title: "🎉 Course completed!", description: "Congratulations! Your skill points have been updated." });
       }
       return enrollment;
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to update progress:", error);
       return null;
     }

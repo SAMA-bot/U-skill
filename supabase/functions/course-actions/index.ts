@@ -267,23 +267,24 @@ async function handleComplete(supabase: any, userId: string, courseId: string) {
 }
 
 async function handleProgress(supabase: any, userId: string, courseId: string, percentage: number) {
-  const safePercentage = Math.min(100, Math.max(0, percentage || 0));
-  const isComplete = safePercentage >= 100;
+  // Progress updates never complete a course (use the "complete" action) and
+  // never move a completed enrollment backwards.
+  const safePercentage = Math.min(99, Math.max(0, percentage || 0));
 
   const { data, error } = await supabase
     .from("course_enrollments")
-    .update({
-      progress_percentage: safePercentage,
-      status: isComplete ? "completed" : "in_progress",
-      completed_at: isComplete ? new Date().toISOString() : null,
-    })
+    .update({ progress_percentage: safePercentage, status: "in_progress" })
     .eq("user_id", userId)
     .eq("course_id", courseId)
+    .neq("status", "completed")
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) {
     return { error: { message: error.message }, status: 400 };
+  }
+  if (!data) {
+    return { error: { code: "NOT_UPDATABLE", message: "Enrollment not found or already completed" }, status: 409 };
   }
 
   return { data };
