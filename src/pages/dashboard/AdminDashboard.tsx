@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useId } from "react";
+import LessonProgressTable from "@/components/learning/LessonProgressTable";
 import { getPerformanceBadgeColor, getPerformanceBadgeLabel } from "@/lib/performanceUtils";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
