@@ -133,7 +133,7 @@ export default function LessonProgressTable({ scope }: Props) {
     { id: "completed", header: "Completed", accessor: r => r.completed_at ?? "", sortable: true, excludeFromSearch: true, cell: r => fmt(r.completed_at) },
     {
       id: "activity", header: "Last activity", accessor: r => r.last_activity, sortable: true, excludeFromSearch: true,
-      cell: r => <span title={fmt(r.last_activity)}>{formatRelativeTime(r.last_activity)}</span>,
+      cell: r => <span title={fmt(r.last_activity)}>{formatRelativeTime(new Date(r.last_activity))}</span>,
     },
     { id: "xp", header: "XP", accessor: r => r.xp_earned, sortable: true, align: "right", excludeFromSearch: true },
   ];
