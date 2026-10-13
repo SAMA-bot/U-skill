@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useId } from "react";
+import LessonProgressTable from "@/components/learning/LessonProgressTable";
 import { getPerformanceBadgeColor, getPerformanceBadgeLabel } from "@/lib/performanceUtils";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -577,10 +578,14 @@ const AdminDashboard = () => {
               <Tabs defaultValue="paths" className="space-y-6">
                 <TabsList>
                   <TabsTrigger value="paths">Learning Paths</TabsTrigger>
+                  <TabsTrigger value="activity">Learner Activity</TabsTrigger>
                   <TabsTrigger value="courses">Legacy Courses</TabsTrigger>
                 </TabsList>
                 <TabsContent value="paths">
                   <LearningPathManagement />
+                </TabsContent>
+                <TabsContent value="activity">
+                  <LessonProgressTable scope="all" />
                 </TabsContent>
                 <TabsContent value="courses">
                   <CourseManagement />

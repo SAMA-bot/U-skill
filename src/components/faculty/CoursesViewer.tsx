@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import LessonProgressTable from "@/components/learning/LessonProgressTable";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -207,6 +208,7 @@ const CoursesViewer = () => {
         </StatCard>
       </div>
 
+      <LessonProgressTable scope="self" />
 
       {/* Learning Paths */}
       {paths.length === 0 ? (
