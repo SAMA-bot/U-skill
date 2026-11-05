@@ -61,7 +61,7 @@ export function FutureScopeSection() {
 
                 {index < futureScope.length - 1 && (
                   <div className="hidden lg:block absolute top-1/2 -right-3 -translate-y-1/2 z-10">
-                    <ArrowRight className="w-5 h-5 text-primary-ink/40" />
+                    <ArrowRight className="w-5 h-5 text-primary-ink" />
                   </div>
                 )}
               </motion.div>

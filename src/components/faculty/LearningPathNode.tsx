@@ -18,7 +18,7 @@ const stateConfig: Record<NodeState, { bg: string; border: string; icon: typeof 
     bg: "bg-muted/60",
     border: "border-border/50",
     icon: Lock,
-    iconColor: "text-muted-foreground/50",
+    iconColor: "text-muted-foreground",
     pulse: false,
   },
   available: {
@@ -93,7 +93,7 @@ const LearningPathNode = ({ title, state, contentType, xp, index, onClick }: Lea
       <div className="mt-2 text-center max-w-[140px]">
         <p className={cn(
           "text-xs font-semibold leading-tight line-clamp-2",
-          state === "locked" ? "text-muted-foreground/50" : "text-foreground"
+          state === "locked" ? "text-muted-foreground" : "text-foreground"
         )}>
           {title}
         </p>
@@ -101,7 +101,7 @@ const LearningPathNode = ({ title, state, contentType, xp, index, onClick }: Lea
           {getContentIcon(contentType)}
           <span className={cn(
             "text-[10px] font-bold",
-            state === "completed" ? "text-success" : state === "locked" ? "text-muted-foreground/40" : "text-primary-ink"
+            state === "completed" ? "text-success" : state === "locked" ? "text-muted-foreground" : "text-primary-ink"
           )}>
             +{xp} XP
           </span>

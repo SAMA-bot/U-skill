@@ -385,7 +385,7 @@ const HodDashboard = () => {
                   return (
                     <div key={group.label} data-tour={`sidebar-${group.label.toLowerCase()}`} className="flex flex-col gap-0.5" role="group" aria-labelledby={groupId}>
                       {!sidebarCollapsed ? (
-                        <p id={groupId} className="px-2 mb-1 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60">
+                        <p id={groupId} className="px-2 mb-1 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
                           {group.label}
                         </p>
                       ) : (
@@ -431,7 +431,7 @@ const HodDashboard = () => {
               <div className="px-3 pt-4 pb-2 mt-2 border-t border-border space-y-1">
 
                 {!sidebarCollapsed && (
-                  <p className="px-2 mb-1 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60">Account</p>
+                  <p className="px-2 mb-1 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground">Account</p>
                 )}
                 {roles.length > 1 && (
                   <button onClick={() => navigate("/select-role")} aria-label={sidebarCollapsed ? "Switch Role" : undefined} title={sidebarCollapsed ? "Switch Role" : undefined} className={`w-full text-muted-foreground hover:bg-muted/80 hover:text-foreground group flex items-center ${sidebarCollapsed ? "justify-center px-2" : "px-2.5"} py-1.5 text-[13px] font-medium rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}>

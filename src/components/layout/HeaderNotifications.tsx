@@ -248,7 +248,7 @@ const HeaderNotifications = () => {
                     )}
                   >
                     {tab.label}
-                    <span className={cn("text-[10px] tabular-nums", isActive ? "text-primary-ink/70" : "text-muted-foreground/60")}>
+                    <span className={cn("text-[10px] tabular-nums", isActive ? "text-primary-ink" : "text-muted-foreground")}>
                       ({count})
                     </span>
                   </button>
@@ -347,7 +347,7 @@ const HeaderNotifications = () => {
                               >
                                 {stripEmojis(notification.title)}
                               </p>
-                              <p className="text-[11px] text-muted-foreground/80 line-clamp-1 mt-0.5">
+                              <p className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">
                                 {notification.message}
                               </p>
                               <p className="text-[10px] text-muted-foreground mt-0.5">

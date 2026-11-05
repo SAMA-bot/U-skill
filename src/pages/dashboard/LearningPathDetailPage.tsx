@@ -314,7 +314,7 @@ const LearningPathDetailPage = () => {
                             </span>
                             <span className={cn(
                               "text-[11px] font-bold shrink-0 tabular-nums",
-                              state === "completed" ? "text-success" : locked ? "text-muted-foreground/50" : "text-primary-ink"
+                              state === "completed" ? "text-success" : locked ? "text-muted-foreground" : "text-primary-ink"
                             )}>
                               +{lesson.xp_reward} XP
                             </span>

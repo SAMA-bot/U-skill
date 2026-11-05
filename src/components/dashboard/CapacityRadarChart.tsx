@@ -75,7 +75,7 @@ const CapacityRadarChart = () => {
     return (
       <div className="flex flex-col items-center justify-center text-center px-4" style={{ minHeight: 300 }}>
         <div className="text-muted-foreground mb-2">No capacity data available</div>
-        <p className="text-sm text-muted-foreground/70">Complete activities to build your skills</p>
+        <p className="text-sm text-muted-foreground">Complete activities to build your skills</p>
       </div>
     );
   }

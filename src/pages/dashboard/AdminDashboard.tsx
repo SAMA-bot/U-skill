@@ -456,7 +456,7 @@ const AdminDashboard = () => {
                 return (
                   <div key={group.label} data-tour={`sidebar-${group.label.toLowerCase()}`} className="flex flex-col gap-0.5" role="group" aria-labelledby={groupId}>
                     {!sidebarCollapsed ? (
-                      <p id={groupId} className="px-2 mb-1 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60">
+                      <p id={groupId} className="px-2 mb-1 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
                         {group.label}
                       </p>
                     ) : (
@@ -503,7 +503,7 @@ const AdminDashboard = () => {
             <div className="px-3 pt-4 pb-2 mt-2 border-t border-border space-y-1">
 
               {!sidebarCollapsed && (
-                <p className="px-2 mb-1 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60">Account</p>
+                <p className="px-2 mb-1 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground">Account</p>
               )}
               {roles.length > 1 && (
                 <button

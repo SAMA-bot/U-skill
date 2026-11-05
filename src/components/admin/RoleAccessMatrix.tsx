@@ -114,7 +114,7 @@ const PermissionCell = ({ allowed }: { allowed: boolean }) => (
     {allowed ? (
       <Check className="h-4 w-4 text-success" />
     ) : (
-      <X className="h-4 w-4 text-muted-foreground/40" />
+      <X className="h-4 w-4 text-muted-foreground" />
     )}
   </span>
 );
@@ -174,7 +174,7 @@ export default function RoleAccessMatrix() {
           <Check className="h-3 w-3 text-success" /> Allowed
         </span>
         <span className="flex items-center gap-1">
-          <X className="h-3 w-3 text-muted-foreground/40" /> Denied
+          <X className="h-3 w-3 text-muted-foreground" /> Denied
         </span>
         <span className="ml-auto flex items-center gap-1">
           <Info className="h-3 w-3" /> Permissions are enforced at the database level via RLS policies
@@ -226,7 +226,7 @@ export default function RoleAccessMatrix() {
                       <Tooltip>
                         <TooltipTrigger className="flex items-center gap-1.5 cursor-help">
                           {mod.module}
-                          <Info className="h-3 w-3 text-muted-foreground/50" />
+                          <Info className="h-3 w-3 text-muted-foreground" />
                         </TooltipTrigger>
                         <TooltipContent side="right">
                           <p className="text-xs max-w-[200px]">{mod.description}</p>

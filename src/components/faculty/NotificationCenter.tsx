@@ -290,7 +290,7 @@ const NotificationCenter = () => {
                     <p className="text-sm text-muted-foreground mt-0.5">
                       {notification.message}
                     </p>
-                    <p className="text-xs text-muted-foreground/60 mt-1.5">
+                    <p className="text-xs text-muted-foreground mt-1.5">
                       Just now
                     </p>
                   </div>

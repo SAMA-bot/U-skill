@@ -27,7 +27,7 @@ const PageHeader = ({ eyebrow, title, description, icon: Icon, actions, classNam
   >
     <div className="min-w-0">
       {eyebrow && (
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/70 mb-1.5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-1.5">
           {eyebrow}
         </p>
       )}
